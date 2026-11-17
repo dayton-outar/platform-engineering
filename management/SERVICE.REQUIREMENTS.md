@@ -1,8 +1,4 @@
-# Chapter 16
-
-## Service Requirements
-
-Source: [The.Practice.of.System.and.Network.Administration-Vol.I-2017-16.pdf](./The.Practice.of.System.and.Network.Administration-Vol.I-2017-16.pdf), PDF pages 1–21.
+# Service Requirements
 
 The case studies and first-person accounts below reflect the source authors’ experience, as published in 2017.
 
@@ -22,7 +18,7 @@ In general, this document treats this subject from the perspective of an organiz
 
 We will discuss services in four parts. This document is an overview of services and service requirements. [Service Planning and Engineering](SERVICE.PLANNING.ENGINEERING.md) covers engineering the solution once the product is selected. [Service Launch: Fundamentals](SERVICE.LAUNCH.FUNDAMENTALS.md) and [Service Launch: DevOps](SERVICE.LAUNCH.DEVOPS.md) examine the service launch process. [Customer Support](CUSTOMER.SUPPORT.md) and [Handling an Incident Report](HANDLING.INCIDENT.REPORT.md) cover ongoing support.
 
-### 16.1 Services Make the Environment
+## Services Make the Environment
 
 The richness and utility of the environment we provide to our users depends on the quantity and quality of services we provide.
 
@@ -34,7 +30,7 @@ Services are what distinguish a structured computing environment that is managed
 
 Lastly, there are **primary applications** and the **back-office systems** that support them. Applications generally drive business functions such as payroll, inventory management, enterprise resource planning (ERP), supply chain management, and so on. Back-office services include the databases and other behind-the-scenes services that support applications. Together they form the company’s critical path: The company cannot function without them.
 
-##### Companies No Longer Sell Atoms, They Manage Bits
+#### Companies No Longer Sell Atoms, They Manage Bits
 
 In the old days computers were not in the critical path to accomplish the business’s objectives. Rather, the computer was viewed as an ancillary device. You could sell a car or perform surgery on a sick patient even if the computer was down. The computer was required after the fact for billing, inventory, and other things after the primary task was complete.
 
@@ -44,7 +40,7 @@ All aspects of modern society require that our services are available and perfor
 
 No matter which business a company thinks it is in, it is really in the software and operations business. If its management does not realize this foundational fact, the company is doomed.
 
-### 16.2 Starting with a Kick-Off Meeting
+## Starting with a Kick-Off Meeting
 
 Creating and launching a new service is difficult. It cannot be done alone or in a vacuum.
 
@@ -58,7 +54,7 @@ Although painfully low-tech, in-person meetings work better. People ignore email
 
 Once the kick-off meeting has put everyone on the same page, status meetings can be held by phone and updates provided via email.
 
-### 16.3 Gathering Written Requirements
+## Gathering Written Requirements
 
 The next step is gathering requirements. Requirements are a list of what the service will be able to do. Requirements should list desired functionality, features, and capabilities. Focus on the end goal: what the system will enable people to achieve. The list of requirements guides all the other steps: design, engineering, implementation, testing, and so on. It avoids confusion and finger-pointing. It sets expectations with customers. It can even be a checklist that lets you know when you are done.
 
@@ -85,7 +81,7 @@ Define terminology early in the document. Getting agreement to the ontology that
 
 Annotate the importance of each requirement. Marking each as “must have,” “desired,” or “optional/nice to have” communicates intent, gives the system designers flexibility, and helps implementors prioritize work when deadlines are looming and features must be cut.
 
-##### Applied Ontology: Clarifying Definitions
+#### Applied Ontology: Clarifying Definitions
 
 A very inefficient and contentious requirements-gathering process was improved when someone pointed out that everyone had a different definition of a computer. Is a computer the virtual machine, the machine that the virtual machine runs on, or the entity in a IPAM database, which might be out-of-date and describe a machine that used to exist or will exist in the future?
 
@@ -95,13 +91,13 @@ Once this ontology was defined, the confusing discussions were greatly reduced. 
 
 Ontology resolves confusion regarding many things, including the names of various customer roles, types of transactions, and the phases of a process. Ontology is the bedrock of communication.
 
-### 16.4 Customer Requirements
+## Customer Requirements
 
 Services are built for the customers. If a service does not meet the customers’ needs, building the service was a wasted effort. If we don’t gather customer requirements, we don’t know our customers’ needs. We may *think* we know their needs, but the ESP skills of most system administrators are surprisingly overrated.
 
 Gathering customer requirements is an art and a skill. It requires patience and listening, and many iterations going back and forth until the list is complete.
 
-#### 16.4.1 Describing Features
+### Describing Features
 
 The requirements should focus on the list of features, stated from the perspective of what the customer should be able to accomplish using business terms, not technical terms. Record the “what,” not the “how.”
 
@@ -113,7 +109,7 @@ Conversely, specifying IMAP support may under-specify the feature. Imagine the u
 
 It is this kind of situation that makes perfect sense to a technical person but is frustrating and unreasonable to a typical user. This is one reason why users view IT departments as difficult to deal with. They’re being told they got what they asked for, but in their mind that’s not true: They can’t read email from their phone. Phrasing requirements at the right level of abstraction is one way that we can prevent this problem.
 
-#### 16.4.2 Questions to Ask
+### Questions to Ask
 
 Ask how, why, where, and when, as if you are a journalist conducting an interview.
 
@@ -123,7 +119,7 @@ Determine how large the customer base for this service will be and what sort of 
 
 Another way to record requirements is through use cases that tell a story. As long as the story can be completed by the final design, the use case is sufficiently covered. In Agile methodology, the format is “As a <type of user>, I want <some goal> so that <some reason>.” For example, one might specify: “As a payroll clerk, I want to be able to enter future payroll adjustments so that I don’t need to do them all on the day they take effect.” Another example: “As a user, I want to indicate which folders should not be backed up so that my backup drive isn’t filled up with things I don’t need saved.”
 
-#### 16.4.3 Service Level Agreements
+### Service Level Agreements
 
 The requirements document should include the service level agreement (SLA), or at least some general specifications that can be used to build an SLA.
 
@@ -131,7 +127,7 @@ An SLA enumerates the services that will be provided and the level of support th
 
 The SLA creation process is a forum for the SAs to understand the customers’ expectations and to set them appropriately, so that the customers understand what is and isn’t possible and why. It is also a tool to plan which resources will be required for the project. The SLA should document the customers’ needs and set realistic goals for the SA team in terms of features, availability, performance, and support. It should document future needs and capacity so that all parties understand the growth plans, and their approximate costs. The SLA is a document that the SA team can refer to during the engineering process to make sure that they meet customers’ and their own expectations and to help keep them on track.
 
-#### 16.4.4 Handling Difficult Requests
+### Handling Difficult Requests
 
 Requirements gathering is a collaborative process. The ultimate goal is to find the middle ground between what the customer ideally wants, what is technically possible, what is financially affordable, what can be accomplished by the date that the solution needs to be available, and what the SA team can provide. A feature that will take years to develop is not reasonable for a system that must be deployed next month. A feature that will cost $1 million is not reasonable for a project with a budget that’s in the thousands of dollars. A small company with only one or two SAs will not get 24/7 support, no matter how much the company wants that.
 
@@ -149,7 +145,7 @@ At this point you have a common basis for understanding and can have a more reas
 
 You’ll find taking a few minutes to educate a customer is well worth the effort.
 
-### 16.5 Scope, Schedule, and Resources
+## Scope, Schedule, and Resources
 
 A project plan generally has three elements: scope (the features), schedule (the deadline), and resources (the budget and the staffing). If a project is at risk of not making its deadline, one or more of these will have to change. Features will need to be dropped, the deadline will need to be extended, or the budget (in the form of money or staff allocation) will need to be increased.
 
@@ -161,11 +157,11 @@ Get buy-in from management as to which of these elements are flexible and which 
 
 If the project does look like it will be late, and you have agreement that the schedule is more flexible than the features, then you’ve already set expectations with management. Giving bad news is easier when such expectations have already been set. In an ideal situation, the conversation will not be about what to do, but rather will simply request permission to act on a previously made decision.
 
-### 16.6 Operational Requirements
+## Operational Requirements
 
 Operational requirements are the things that make a system maintainable. These are the features required if we are to have a system that is reliable, scalable, and secure. These features are often invisible to the customers—yet reliability is the most visible aspect of a service.
 
-#### 16.6.1 System Observability
+### System Observability
 
 The most fundamental, and therefore most important, key to a manageable system is that you can see what it is doing. That is, it must be observable or we cannot manage it, fix it, or scale it. The system must provide enough visibility and introspection to debug it when there are problems, optimize it when it is slow, and detect when resources are low before they become a problem. We must have situational awareness to reason about it, predict its future behavior, and do capacity planning. We laugh hysterically when salespeople tell us that their system runs itself, or that their company’s goal is to build a system so that it doesn’t need maintenance. Yes, that should be their goal, but until it is achieved vendors must build observable systems.
 
@@ -179,7 +175,7 @@ The new system should integrate into existing monitoring systems, dashboards, tr
 
 See [Monitoring Distributed Systems](../principles/MONITORING.DISTRIBUTED.SYSTEMS.md) for monitoring practices.
 
-#### 16.6.2 Remote and Central Management
+### Remote and Central Management
 
 Services should be remotely managed. If you have to be on the console of a machine to do rudimentary maintenance and configuration, each task will be more timeconsuming. This is also an indication that automating management tasks may not be possible.
 
@@ -189,11 +185,11 @@ Services that are replicated in many places must be manageable in a centralized 
 
 Remote management systems should work well over long-distance (highlatency) connections. For example, some remote management utilities fail to work if the management client is in California and the service itself is in Europe. In this situation each network packet takes more than 100 ms to reach its destination. Protocols may time out. User interfaces may work but can be unusably slow. This is not a limit of the technology, but rather bad software engineering. Plenty of APIs and user interfaces work well over high-latency links—and so should management tools.
 
-##### Management Over High-Latency Links
+#### Management Over High-Latency Links
 
 When Tom complained to Dell that iDRAC’s web-based user interface ran unacceptably slowly from as little as 12 miles away, he was told that iDRAC wasn’t designed to work at long distances. We’ll assume the representative misspoke, since it would be hilarious if a remote management system wasn’t designed to work well remotely.
 
-#### 16.6.3 Scaling Up or Out
+### Scaling Up or Out
 
 If a service is successful, more people will want to use it. Over time it will need to scale to handle more users, more transactions, or more capacity. Services generally scale in one of two ways: up or out.
 
@@ -201,7 +197,7 @@ If a service is successful, more people will want to use it. Over time it will n
 
 **Scale-out** means the system is expanded by adding more replicas. For example, a web-based service is often made up of web servers behind a load balancer. Scaling out means adding more redundant web servers (replicas). Each web server scales out the system to handle more requests per second.
 
-#### 16.6.4 Software Upgrades
+### Software Upgrades
 
 A system must have a reasonable way to upgrade the software and firmware. Ideally, it should be possible to test a new software release outside of production and upgrade the service without interrupting it. Typically, commercial software requires some kind of service interruption when it is upgraded. In that case the interruption should be minimized such that it fits in a scheduled maintenance window.
 
@@ -209,7 +205,7 @@ Software is never done. There will always be the need for new software releases,
 
 More importantly, software is malleable and vendors should be providing new features and improvements over time. There’s always room for improvement.
 
-##### Software Is Not a Hammer
+#### Software Is Not a Hammer
 
 A hammer is manufactured and is ready to be sold to the customer. At that point the product is complete. Software is never complete. Anyone who disagrees should leave the software business and go back to making hammers. Be wary of vendors that provide upgrades rarely, sparingly, or only begrudgingly. If a security hole is discovered, the vendor should be able to provide a software patch within hours or days, not leaving you to wait for the annual software release. If software releases aren’t frequent, periodic, and scheduled, then this is a sign that the vendor’s management thinks their company is making hammers. Such companies should not receive our support because they fail to support us.
 
@@ -219,7 +215,7 @@ The more people depend on a service, the more visible a failed upgrade will be. 
 
 A **production assurance test (PAT)** or **user acceptance test (UAT)** environment can be a good option for preproduction testing. PAT and UAT environments are run at production standard, but upgraded ahead of the main production environment. Some sites select volunteers who use the PAT or UAT environment, rather than the production environment, at all times, to ensure that when an upgrade is rolled out in that environment, it is really used and production tested.
 
-#### 16.6.5 Environment Fit
+### Environment Fit
 
 The better a service fits into the existing IT environment, the easier it is to adopt it in your environment. Integration issues are reduced and less training or skill development is required. For example, if you use ActiveDirectory, then using a product that interfaces with it will be easier than using a product that has its own directory service. If the service runs on an operating system with which the team is unfamiliar, using it will require not just additional training, but entirely new procedures that have to be developed for tasks such as data backups, account creation, and configuration.
 
@@ -238,7 +234,7 @@ Here are some environmental factors to consider:
 - DNS and other name services
 - Printing systems
 
-#### 16.6.6 Support Model
+### Support Model
 
 A key component in the success of a new service is support processes. Proper support is a requirement that everyone takes for granted, so no one will think to mention it explicitly. This aspect is often forgotten or neglected by the engineers, who are intent on developing the technical solution.
 
@@ -258,7 +254,7 @@ Once the service goes into production, people will start using it. When they hav
 
 The project plan will need to include time and budget resources to implement the answers to these questions. Documentation may need to be written, new staff hired, training completed, helpdesk operations updated, monitoring systems expanded, and so on.
 
-#### 16.6.7 Service Requests
+### Service Requests
 
 Most services will include standard service requests that people can raise. Depending on the service, these may be access or authorization requests, data changes, configuration changes, resource requests, and so on. A checklist for building requirements might look like this:
 
@@ -273,7 +269,7 @@ Most services will include standard service requests that people can raise. Depe
 
 The answers to these questions will provide some new requirements. For example, depending on whether the requests should be self-service or automated, there are API requirements that need to be taken into consideration. The requirements and dependencies on other systems, such as the service request system, also need to be documented, agreed to, signed-off on, budgeted, and planned.
 
-#### 16.6.8 Disaster Recovery
+### Disaster Recovery
 
 Failures happen. Hardware fails, buildings lose power, Internet access gets cut, and so on. Acting like everything will always function perfectly is irrational. Instead, we need to prepare for failures so that we know how to recover from them.
 
@@ -285,13 +281,13 @@ It can be useful to be able to separately back up the system configuration and t
 
 Enterprise applications tend to assume data integrity and resiliency issues are handled at the hardware layer. In other words, working around hardware faults is your problem. Therefore, operational requirements should be specified to meet your needs. For example, you may require that the service run from multiple datacenters, assuming that at least one will be up at any time. If the service will be single-homed, the service can be only as reliable as the datacenter it is in. That may be sufficient for some services.
 
-### 16.7 Open Architecture
+## Open Architecture
 
 Wherever possible, a new service should be built around an architecture that uses **open standards** and open protocols. This means protocols, file formats, and APIs that are publicly documented so that others can write to those standards and make interoperable products without having to worry about royalties or patent restrictions. Any service with an open architecture can be more easily integrated with other services that follow the same standards.
 
 By contrast, a **closed service** uses standards, protocols, APIs, and file formats that are owned by one company, are controlled by that one company, and do not interoperate with other products. Other products are prevented from using the standard because the standard is not publicly documented, because it requires licensing, or because the vendor forbids it. Vendors use proprietary protocols when they are covering new territory or are attempting to maintain market share by preventing the creation of a level playing field. In the former scenario, the vendor should then work with the appropriate standards bodies to define and document open standards, and many vendors do so.
 
-##### The Protocol Versus the Product
+#### The Protocol Versus the Product
 
 SAs should understand the difference between the protocol and the product. For example, there is a difference between the IMAP protocol and the software that implement it. IMAP is not a product but rather a document, written in plain English, that explains how bits are to be transmitted over the wire. This is different from a product that uses IMAP to permit clients to access email. The confusion manifests itself frequently by SAs who conflate the protocol and the software that implements the protocol.
 
@@ -311,7 +307,7 @@ A better way is to select protocols based on open standards, permitting users an
 
 For comparison, the next anecdote illustrates what can happen when customers select a proprietary email system that does not use open protocols but fits their client-side needs.
 
-##### Hazards of Proprietary Email Software
+#### Hazards of Proprietary Email Software
 
 A pharmaceutical company based in New Jersey selected a particular proprietary email package for its PC user base after a long evaluation. The selection was based on user interface and features, with little concern for ease of server management, reliability, or scalability.
 
@@ -327,7 +323,7 @@ Open protocols and file formats typically change only in upwardly compatible way
 
 Another benefit from using open systems is that they don’t require gateways to the rest of the world. Gateways are the “glue” that translate between different systems. Although a gateway is a lifesaver when you need to bridge the gap between two incompatible systems, not needing a gateway is even better. Gateways are an additional service that adds to the administrative workload, requiring capacity planning, engineering, monitoring, and ongoing operational support. Reducing the number of services is a good thing.
 
-##### Protocol Gateways and Reliability Reduction
+#### Protocol Gateways and Reliability Reduction
 
 In college, Tom’s email system was a proprietary system that was not based on Internet standard protocols, such as SMTP. Instead, the system was sold with a separate service that used a gateway to send email to and from the Internet. The gateway used its proprietary protocol to communicate with the mail server and SMTP to communicate with the rest of the world, and vice versa. The gateway added to the administrative burden of running the system: It was yet another thing to manage, debug, do capacity planning for, and so on.
 
@@ -341,14 +337,10 @@ History repeated itself nearly a decade later when Microsoft’s Exchange mail s
 
 These examples might seem outdated, since today no one now would sell an email system that is ignorant of the Internet. However, it is important to remember these lessons the next time a salesperson tries to sell you a calendar management system, directory service, or other product that ignores Internet and other industry standards but promises excellent gateways at an extra cost or for free. Using standard protocols means using open standards, such as Internet Engineering Task Force (IETF) and Institute of Electrical and Electronic Engineers (IEEE) standards, not vendor-proprietary standards. Vendor-proprietary protocols lead to future headaches. A vendor that offers gateways is probably not using open standards. If you are unsure, directly ask which open standards the gateways interoperate with.
 
-### 16.8 Summary
+## Summary
 
 A fundamental role of system administration is to provide services to users. Here, we use the term “service” to mean all the parts that make the application work: the software, the hardware, and the operations that bring it all together. In some organizations the IT department provides a rich set of services; in others, very few. Some SA teams are responsible for all services; others are responsible for one of many. Some services form the foundation of all other services, others are basic infrastructure that users require to work and communicate, and still others are applications that drive the company.
 
 When creating a new service, begin by getting agreement from all involved about the end goal, timeline, and approximate budget. Gather requirements. Customer requirements are the attributes and features that provide value to the company. Operational requirements are the features that make it possible to run the service. Requirements should be written down to provide transparency and to assure accountability in agreements and approvals. When gathering customer requirements, specify end results, rather than the technologies or details used to get there. Ask open-ended questions. Define an SLA. Be prepared for impossible-sounding requests that will require you to investigate the need behind the request.
 
 Specifying operational requirements creates a foundation that enables SLA requirements to match what is required to achieve the SLA. A system must be observable, so that it can be monitored and debugged. Other requirements include remote management and the ability for the system to scale, to be upgraded, to survive failures, and to be restored after a disaster. Systems based on open architectures, standards, and protocols encourage vendor competition. Systems should fit into the existing technology environment, including monitoring systems, directory services, and so on.
-
-### Exercises
-
-1. What is a service? What are the qualities of a good service? 2. Why are services important? 3. What are requirements? 4. Which types of requirements should be gathered when building a new service? 5. What can you do if a customer requests an impossible (or impossiblesounding) requirement? 6. Why do you need to write down requirements? 7. Pick a service that you use. If you were going to make a similar service, which requirements would it have? 8. What is an SLA? 9. Pick a service you are responsible for. What is the SLA? If it doesn’t have one, what do you imagine the unofficial SLA is? 10. What are the three elements of a project plan?
