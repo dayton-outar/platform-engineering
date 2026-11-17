@@ -4,14 +4,14 @@ The supplied filenames use `Title-Year-Chapter.pdf`, rather than the plan’s ch
 
 | Source ID | Chapter | Source PDF | Pages | Markdown |
 | --- | --- | --- | --- | --- |
-| S2 | 2 | [Designing.Secure.Software-2021-2.pdf](Designing.Secure.Software-2021-2.pdf) | 20 | [Chapter 2](chapter-02.md) |
-| S3 | 3 | [Designing.Secure.Software-2021-3.pdf](Designing.Secure.Software-2021-3.pdf) | 10 | [Chapter 3](chapter-03.md) |
-| S4 | 4 | [Designing.Secure.Software-2021-4.pdf](Designing.Secure.Software-2021-4.pdf) | 22 | [Chapter 4 - Patterns](chapter-04.md) |
-| S6 | 6 | [Designing.Secure.Software-2021-6.pdf](Designing.Secure.Software-2021-6.pdf) | 14 | [Chapter 6](chapter-06.md) |
-| S7 | 7 | [Designing.Secure.Software-2021-7.pdf](Designing.Secure.Software-2021-7.pdf) | 17 | [Chapter 7](chapter-07.md) |
-| S10 | 10 | [Designing.Secure.Software-2021-10.pdf](Designing.Secure.Software-2021-10.pdf) | 18 | [Chapter 10](chapter-10.md) |
-| S12 | 12 | [Designing.Secure.Software-2021-12.pdf](Designing.Secure.Software-2021-12.pdf) | 16 | [Chapter 12](chapter-12.md) |
-| S13 | 13 | [Designing.Secure.Software-2021-13.pdf](Designing.Secure.Software-2021-13.pdf) | 12 | [Chapter 13](chapter-13.md) |
+| S2 | 2 | [Designing.Secure.Software-2021-2.pdf](Designing.Secure.Software-2021-2.pdf) | 20 | [Chapter 2](THREATS.md) |
+| S3 | 3 | [Designing.Secure.Software-2021-3.pdf](Designing.Secure.Software-2021-3.pdf) | 10 | [Chapter 3](MITIGATION.md) |
+| S4 | 4 | [Designing.Secure.Software-2021-4.pdf](Designing.Secure.Software-2021-4.pdf) | 22 | [Chapter 4 - Patterns](PATTERNS.md) |
+| S6 | 6 | [Designing.Secure.Software-2021-6.pdf](Designing.Secure.Software-2021-6.pdf) | 14 | [Chapter 6](SECURE.DESIGN.md) |
+| S7 | 7 | [Designing.Secure.Software-2021-7.pdf](Designing.Secure.Software-2021-7.pdf) | 17 | [Chapter 7](SECURITY.DESIGN.REVIEWS.md) |
+| S10 | 10 | [Designing.Secure.Software-2021-10.pdf](Designing.Secure.Software-2021-10.pdf) | 18 | [Chapter 10](UNTRUSTED.INPUT.md) |
+| S12 | 12 | [Designing.Secure.Software-2021-12.pdf](Designing.Secure.Software-2021-12.pdf) | 16 | [Chapter 12](SECURITY.TESTING.md) |
+| S13 | 13 | [Designing.Secure.Software-2021-13.pdf](Designing.Secure.Software-2021-13.pdf) | 12 | [Chapter 13](SECURE.DEVELOPMENT.BEST.PRACTICES.md) |
 
 ## Coverage and review
 
