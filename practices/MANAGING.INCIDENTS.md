@@ -4,17 +4,19 @@
 
 Source: [Site.Reliability.Engineering-2016-14.pdf](./Site.Reliability.Engineering-2016-14.pdf), PDF pages 1–6.
 
-Written by Andrew Stribblehill[^p1-1]
+The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
 
-Edited by Kavita Guliani
+***Written by Andrew Stribblehill[^p1-1]***
+
+***Edited by Kavita Guliani***
 
 Effective incident management is key to limiting the disruption caused by an incident and restoring normal business operations as quickly as possible. If you haven’t gamed out your response to potential incidents in advance, principled incident management can go out the window in real-life situations.
 
-This chapter walks through a portrait of an incident that spirals out of control due to ad hoc incident management practices, outlines a well-managed approach to the incident, and reviews how the same incident might have played out if handled with well-functioning incident management.
+This document walks through a portrait of an incident that spirals out of control due to ad hoc incident management practices, outlines a well-managed approach to the incident, and reviews how the same incident might have played out if handled with well-functioning incident management.
 
 ### Unmanaged Incidents
 
-Put yourself in the shoes of Mary, the on-call engineer for The Firm. It’s 2 p.m. on a Friday afternoon and your pager has just exploded. Black-box monitoring tells you that your service has stopped serving any traffic in an entire datacenter. With a sigh, you put down your coffee and set about the job of fixing it. A few minutes into the task, another alert tells you that a second datacenter has stopped serving. Then the third out of your five datacenters fails. To exacerbate the situation, there is more traffic than the remaining datacenters can handle, so they start to overload. Before you know it, the service is overloaded and unable to serve any requests.
+Put yourself in the shoes of Mary, the on-call engineer for The Firm. It’s 2 p.m. on a Friday afternoon and your pager has just exploded. Black-box monitoring tells you that your service has stopped serving *any* traffic in an entire datacenter. With a sigh, you put down your coffee and set about the job of fixing it. A few minutes into the task, another alert tells you that a second datacenter has stopped serving. Then the third out of your five datacenters fails. To exacerbate the situation, there is more traffic than the remaining datacenters can handle, so they start to overload. Before you know it, the service is overloaded and unable to serve any requests.
 
 You stare at the logs for what seems like an eternity. Thousands of lines of logging suggest there’s an error in one of the recently updated modules, so you decide to revert the servers to the previous release. When you see that the rollback hasn’t helped, you call Josephine, who wrote most of the code for the now-hemorrhaging service. Reminding you that it’s 3:30 a.m. in her time zone, she blearily agrees to log in and take a look. Your colleagues Sabrina and Robin start poking around from their own terminals. “Just looking,” they tell you.
 
@@ -52,19 +54,19 @@ If the load on a given member becomes excessive, that person needs to ask the pl
 
 Several distinct roles should be delegated to particular individuals:
 
-Incident Command
+*Incident Command*
 
-The incident commander holds the high-level state about the incident. They structure the incident response task force, assigning responsibilities according to need and priority. De facto, the commander holds all positions that they have not delegated. If appropriate, they can remove roadblocks that prevent Ops from working most effectively.
+The incident commander holds the high-level state about the incident. They structure the incident response task force, assigning responsibilities according to need and priority. *De facto*, the commander holds all positions that they have not delegated. If appropriate, they can remove roadblocks that prevent Ops from working most effectively.
 
-Operational Work
+*Operational Work*
 
 The Ops lead works with the incident commander to respond to the incident by applying operational tools to the task at hand. The operations team should be the only group modifying the system during an incident.
 
-Communication
+*Communication*
 
 This person is the public face of the incident response task force. Their duties most definitely include issuing periodic updates to the incident response team and stakeholders (usually via email), and may extend to tasks such as keeping the incident document accurate and up to date.
 
-Planning
+*Planning*
 
 The planning role supports Ops by dealing with longer-term issues, such as filing bugs, ordering dinner, arranging handoffs, and tracking how the system has diverged from the norm so it can be reverted once the incident is resolved.
 
@@ -78,7 +80,7 @@ Google has found IRC to be a huge boon in incident response. IRC is very reliabl
 
 The incident commander’s most important responsibility is to keep a living incident document. This can live in a wiki, but should ideally be editable by several people concurrently. Most of our teams use Google Docs, though Google Docs SRE use Google Sites: after all, depending on the software you are trying to fix as part of your incident management system is unlikely to end well.
 
-See Appendix C for a sample incident document. This living doc can be messy, but must be functional. Using a template makes generating this documentation easier, and keeping the most important information at the top makes it more usable.Retain this documentation for postmortem analysis and, if necessary, meta analysis.
+See [Example Incident State Document](../management/SRE.SUPPLEMENTARY.MATERIAL.md#appendix-c-example-incident-state-document) for a sample incident document. This living doc can be messy, but must be functional. Using a template makes generating this documentation easier, and keeping the most important information at the top makes it more usable. Retain this documentation for postmortem analysis and, if necessary, meta analysis.
 
 #### Clear, Live Handoff
 
@@ -112,7 +114,7 @@ It is better to declare an incident early and then find a simple fix and close o
 
 - Is the issue unsolved even after an hour’s concentrated analysis?
 
-Incident management proficiency atrophies quickly when it’s not in constant use. So how can engineers keep their incident management skills up to date—handle more incidents? Fortunately, the incident management framework can apply to other operational changes that need to span time zones and/or teams. If you use the framework frequently as a regular part of your change management procedures, you can easily follow this framework when an actual incident occurs. If your organization performs disaster-recovery testing (you should, it’s fun: see [Kri12]), incident management should be part of that testing process. We often role-play the response to an on-call issue that has already been solved, perhaps by colleagues in another location, to further familiarize ourselves with incident management.
+Incident management proficiency atrophies quickly when it’s not in constant use. So how can engineers keep their incident management skills up to date—handle more incidents? Fortunately, the incident management framework can apply to other operational changes that need to span time zones and/or teams. If you use the framework frequently as a regular part of your change management procedures, you can easily follow this framework when an actual incident occurs. If your organization performs disaster-recovery testing (you should, it’s *fun*: see [Kri12]), incident management should be part of that testing process. We often role-play the response to an on-call issue that has already been solved, perhaps by colleagues in another location, to further familiarize ourselves with incident management.
 
 ### In Summary
 
@@ -120,6 +122,6 @@ We’ve found that by formulating an incident management strategy in advance, st
 
 ### Notes
 
-[^p1-1]: An earlier version of this chapter appeared as an article in ;login: (April 2015, vol. 40, no. 2).
+[^p1-1]: An earlier version of this document appeared as an article in *;login:* (April 2015, vol. 40, no. 2).
 
-[^p3-2]: See http://www.fema.gov/national-incident-management-system for further details.
+[^p3-2]: See *http://www.fema.gov/national-incident-management-system* for further details.

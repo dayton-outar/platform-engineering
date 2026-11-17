@@ -4,21 +4,23 @@
 
 Source: [Site.Reliability.Engineering-2016-13.pdf](./Site.Reliability.Engineering-2016-13.pdf), PDF pages 1–9.
 
-Written by Corey Adam Baye
+The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
 
-Edited by Diane Bates
+***Written by Corey Adam Baye***
+
+***Edited by Diane Bates***
 
 Things break; that’s life.
 
 Regardless of the stakes involved or the size of an organization, one trait that’s vital to the long-term health of an organization, and that consequently sets that organization apart from others, is how the people involved respond to an emergency. Few of us naturally respond well during an emergency. A proper response takes preparation and periodic, pertinent, hands-on training. Establishing and maintaining thorough training and testing processes requires the support of the board and management, in addition to the careful attention of staff. All of these elements are essential in fostering an environment in which teams can spend money, time, energy, and possibly even uptime to ensure that systems, processes, and people respond efficiently during an emergency.
 
-Note that the chapter on postmortem culture discusses the specifics of how to write postmortems in order to make sure that incidents that require emergency response also become a learning opportunity (see Chapter 15). This chapter provides more concrete examples of such incidents.
+Note that the chapter on postmortem culture discusses the specifics of how to write postmortems in order to make sure that incidents that require emergency response also become a learning opportunity (see [Postmortem Culture: Learning from Failure](POSTMORTEM.CULTURE.LEARNING.FAILURE.md)). This document provides more concrete examples of such incidents.
 
 ### What to Do When Systems Break
 
 First of all, don’t panic! You aren’t alone, and the sky isn’t falling. You’re a professional and trained to handle this sort of situation. Typically, no one is in physical danger— only those poor electrons are in peril. At the very worst, half of the Internet is down. So take a deep breath...and carry on.
 
-If you feel overwhelmed, pull in more people. Sometimes it may even be necessary to page the entire company. If your company has an incident response process (see Chapter 14), make sure that you’re familiar with it and follow that process.
+If you feel overwhelmed, pull in more people. Sometimes it may even be necessary to page the entire company. If your company has an incident response process (see [Managing Incidents](MANAGING.INCIDENTS.md)), make sure that you’re familiar with it and follow that process.
 
 ### Test-Induced Emergency
 
@@ -108,7 +110,7 @@ This is one example where moving fast was not such a good thing.
 
 #### Details
 
-As part of routine automation testing, two consecutive turndown requests for the same soon-to-be-decommissioned server installation were submitted. In the case of the second turndown request, a subtle bug in the automation sent all of the machines in all of these installations globally to the Diskerase queue, where their hard drives were destined to be wiped; see “Automation: Enabling Failure at Scale” on page 85 for more details.
+As part of routine automation testing, two consecutive turndown requests for the same soon-to-be-decommissioned server installation were submitted. In the case of the second turndown request, a subtle bug in the automation sent all of the machines in all of these installations globally to the Diskerase queue, where their hard drives were destined to be wiped; see [Automation: Enabling Failure at Scale](../principles/EVOLUTION.AUTOMATION.GOOGLE.md#automation-enabling-failure-at-scale) for more details.
 
 #### Response
 
@@ -132,7 +134,7 @@ The turndown process for the small installations worked efficiently and well. Fr
 
 Although turndown automation quickly tore down monitoring for the small installations, on-call engineers were able to promptly revert those monitoring changes. Doing so helped them to assess the extent of the damage.
 
-The engineers quickly followed incident response protocols, which had matured considerably in the year since the first outage described in this chapter. Communication and collaboration throughout the company and across teams was superb—a real testament to the incident management program and training. All hands within the respective teams chipped in, bringing their vast experience to bear.
+The engineers quickly followed incident response protocols, which had matured considerably in the year since the first outage described in this document. Communication and collaboration throughout the company and across teams was superb—a real testament to the incident management program and training. All hands within the respective teams chipped in, bringing their vast experience to bear.
 
 ##### What we learned
 
@@ -168,7 +170,7 @@ When it comes to failures, theory and reality are two very different realms. Unt
 
 We’ve reviewed three different cases where parts of our systems broke. Although all three emergencies were triggered differently—one by a proactive test, another by a configuration change, and yet another by turndown automation—the responses shared many characteristics. The responders didn’t panic. They pulled in others when they thought it necessary. The responders studied and learned from earlier outages. Subsequently, they built their systems to better respond to those types of outages. Each time new failure modes presented themselves, responders documented those failure modes. This follow-up helped other teams learn how to better troubleshoot and fortify their systems against similar outages. Responders proactively tested their systems. Such testing ensured that the changes fixed the underlying problems, and identified other weaknesses before they became outages.
 
-And as our systems evolve the cycle continues, with each outage or test resulting in incremental improvements to both processes and systems. While the case studies in this chapter are specific to Google, this approach to emergency response can be applied over time to any organization of any size.
+And as our systems evolve the cycle continues, with each outage or test resulting in incremental improvements to both processes and systems. While the case studies in this document are specific to Google, this approach to emergency response can be applied over time to any organization of any size.
 
 ### Notes
 

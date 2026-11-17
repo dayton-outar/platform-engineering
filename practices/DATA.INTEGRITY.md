@@ -4,19 +4,21 @@
 
 Source: [Site.Reliability.Engineering-2016-26.pdf](./Site.Reliability.Engineering-2016-26.pdf), PDF pages 1–30.
 
-Written by Raymond Blum and Rhandeev Singh
+The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
 
-Edited by Betsy Beyer
+***Written by Raymond Blum and Rhandeev Singh***
+
+***Edited by Betsy Beyer***
 
 What is “data integrity”? When users come first, data integrity is whatever users think it is.
 
-We might say data integrity is a measure of the accessibility and accuracy of the datastores needed to provide users with an adequate level of service. But this definition is insufficient.
+We might say *data integrity is a measure of the accessibility and accuracy of the datastores needed to provide users with an adequate level of service*. But this definition is insufficient.
 
-For instance, if a user interface bug in Gmail displays an empty mailbox for too long, users might believe data has been lost. Thus, even if no data was actually lost, the world would question Google’s ability to act as a responsible steward of data, and the viability of cloud computing would be threatened. Were Gmail to display an error or maintenance message for too long while “only a bit of metadata” is repaired, the trust of Google’s users would similarly erode.
+For instance, if a user interface bug in Gmail displays an empty mailbox for too long, users might believe data has been lost. Thus, even if no data was *actually* lost, the world would question Google’s ability to act as a responsible steward of data, and the viability of cloud computing would be threatened. Were Gmail to display an error or maintenance message for too long while “only a bit of metadata” is repaired, the trust of Google’s users would similarly erode.
 
 How long is “too long” for data to be unavailable? As demonstrated by an actual Gmail incident in 2011 [Hic11], four days is a long time—perhaps “too long.” Subsequently, we believe 24 hours is a good starting point for establishing the threshold of “too long” for Google Apps.
 
-Similar reasoning applies to applications like Google Photos, Drive, Cloud Storage, and Cloud Datastore, because users don’t necessarily draw a distinction between these discrete products (reasoning, “this product is still Google” or “Google, Amazon, whatever; this product is still part of the cloud”). Data loss, data corruption, and extended unavailability are typically indistinguishable to users. Therefore, data integrity applies to all types of data across all services. When considering data integrity, what matters is that services in the cloud remain accessible to users. User access to data is especially important.
+Similar reasoning applies to applications like Google Photos, Drive, Cloud Storage, and Cloud Datastore, because users don’t necessarily draw a distinction between these discrete products (reasoning, “this product is still Google” or “Google, Amazon, whatever; this product is still part of the cloud”). Data loss, data corruption, and extended unavailability are typically indistinguishable to users. Therefore, data integrity applies to all types of data across all services. When considering data integrity, what matters is that *services in the cloud remain accessible to users. User access to data is especially important*.
 
 ### Data Integrity’s Strict Requirements
 
@@ -24,22 +26,21 @@ When considering the reliability needs of a given system, it may seem that uptim
 
 An SLO of 99.99% uptime leaves room for only an hour of downtime in a whole year. This SLO sets a rather high bar, which likely exceeds the expectations of most Internet and Enterprise users.
 
-In contrast, an SLO of 99.99% good bytes in a 2 GB artifact would render documents, executables, and databases corrupt (up to 200 KB garbled). This amount of corruption is catastrophic in the majority of cases—resulting in executables with random opcodes and completely unloadable databases.
+In contrast, an SLO of 99.99% good bytes in a 2 GB artifact would render documents, executables, and databases corrupt (up to 200 KB garbled). This amount of corruption is *catastrophic* in the majority of cases—resulting in executables with random opcodes and completely unloadable databases.
 
 From the user perspective, then, every service has independent uptime and data integrity requirements, even if these requirements are implicit. The worst time to disagree with users about these requirements is after the demise of their data!
 
-<!-- Source: Site.Reliability.Engineering-2016-26.pdf, PDF page 2. -->
 ![Figure 26-3. Comic contrasting service uptime with access to intact user data](/.attachments/26-3-Site.Reliability.Engineering-2016-26.png)
 
 *Figure 26-3. Comic contrasting service uptime with access to intact user data*
 
-To revise our earlier definition of data integrity, we might say that data integrity means that services in the cloud remain accessible to users. User access to data is especially important, so this access should remain in perfect shape.
+To revise our earlier definition of data integrity, we might say that *data integrity means that services in the cloud remain accessible to users. User access to data is especially important, so this access should remain in perfect shape*.
 
-Now, suppose an artifact were corrupted or lost exactly once a year. If the loss were unrecoverable, uptime of the affected artifact is lost for that year. The most likely means to avoid any such loss is through proactive detection, coupled with rapid repair.
+Now, suppose an artifact were corrupted or lost exactly once a year. If the loss were unrecoverable, uptime of the affected artifact is *lost* for that year. The most likely means to avoid any such loss is through proactive detection, coupled with rapid repair.
 
 In an alternate universe, suppose the corruption were immediately detected before users were affected and that the artifact was removed, fixed, and returned to service within half an hour. Ignoring any other downtime during that 30 minutes, such an object would be 99.99% available that year.
 
-Astonishingly, at least from the user perspective, in this scenario, data integrity is still 100% (or close to 100%) during the accessible lifetime of the object. As demonstrated by this example, the secret to superior data integrity is proactive detection and rapid repair and recovery.
+Astonishingly, at least from the user perspective, in this scenario, data integrity is still 100% (or close to 100%) during the accessible lifetime of the object. As demonstrated by this example, *the secret to superior data integrity is proactive detection and rapid repair and recovery.*
 
 #### Choosing a Strategy for Superior Data Integrity
 
@@ -47,27 +48,27 @@ There are many possible strategies for rapid detection, repair, and recovery of 
 
 Most cloud computing applications seek to optimize for some combination of uptime, latency, scale, velocity, and privacy. To provide a working definition for each of these terms:
 
-Uptime
+*Uptime*
 
-Also referred to as availability, the proportion of time a service is usable by its users.
+Also referred to as *availability*, the proportion of time a service is usable by its users.
 
-Latency
+*Latency*
 
 How responsive a service appears to its users.
 
-Scale
+*Scale*
 
 A service’s volume of users and the mixture of workloads the service can handle before latency suffers or the service falls apart.
 
-Velocity
+*Velocity*
 
 How fast a service can innovate to provide users with superior value at reasonable cost.
 
-Privacy
+*Privacy*
 
-This concept imposes complex requirements. As a simplification, this chapter limits its scope in discussing privacy to data deletion: data must be destroyed within a reasonable time after users delete it.
+This concept imposes complex requirements. As a simplification, this document limits its scope in discussing privacy to data deletion: data must be destroyed within a reasonable time after users delete it.
 
-Many cloud applications continually evolve atop a mixture of ACID[^p3-1] and BASE[^p3-2] APIs to meet the demands of these five components.[^p3-3] BASE allows for higher availability than ACID, in exchange for a softer distributed consistency guarantee. Specifically, BASE only guarantees that once a piece of data is no longer updated, its value will eventually become consistent across (potentially distributed) storage locations.
+Many cloud applications continually evolve atop a mixture of ACID[^p3-1] and BASE[^p3-2] APIs to meet the demands of these five components.[^p3-3] BASE allows for higher availability than ACID, in exchange for a softer distributed consistency guarantee. Specifically, BASE only guarantees that once a piece of data is no longer updated, its value will *eventually* become consistent across (potentially distributed) storage locations.
 
 The following scenario provides an example of how trade-offs between uptime, latency, scale, velocity, and privacy might play out.
 
@@ -83,7 +84,7 @@ For example, an application may take advantage of an efficient BLOB[^p4-4] stora
 
 Such cloud applications face a variety of data integrity challenges at runtime, such as referential integrity between datastores (in the preceding example, Blobstore, Megastore, and client-side caches). The vagaries of high velocity dictate that schema changes, data migrations, the piling of new features atop old features, rewrites, and evolving integration points with other applications collude to produce an environment riddled with complex relationships between various pieces of data that no single engineer fully groks.
 
-To prevent such an application’s data from degrading before its users’ eyes, a system of out-of-band checks and balances is needed within and between its datastores. “Third Layer: Early Detection” on page 356 discusses such a system.
+To prevent such an application’s data from degrading before its users’ eyes, a system of out-of-band checks and balances is needed within and between its datastores. [Third Layer: Early Detection](DATA.INTEGRITY.md#third-layer-early-detection) discusses such a system.
 
 In addition, if such an application relies on independent, uncoordinated backups of several datastores (in the preceding example, Blobstore and Megastore), then its ability to make effective use of restored data during a data recovery effort is complicated by the variety of relationships between restored and live data. Our example application would have to sort through and distinguish between restored blobs versus live Megastore, restored Megastore versus live blobs, restored blobs versus restored Megastore, and interactions with client-side caches.
 
@@ -91,20 +92,19 @@ In consideration of these dependencies and complications, how many resources sho
 
 #### Backups Versus Archives
 
-Traditionally, companies “protect” data against loss by investing in backup strategies. However, the real focus of such backup efforts should be data recovery, which distinguishes real backups from archives. As is sometimes observed: No one really wants to make backups; what people really want are restores.
+Traditionally, companies “protect” data against loss by investing in backup strategies. However, the real focus of such backup efforts should be data recovery, which distinguishes *real* backups from archives. As is sometimes observed: No one really *wants* to make backups; what people *really* want are *restores*.
 
 Is your “backup” really an archive, rather than appropriate for use in disaster recovery?
 
-<!-- Source: Site.Reliability.Engineering-2016-26.pdf, PDF page 5. -->
 ![Figure 26-4. Comic emphasizing that backups must be checked and restores tested](/.attachments/26-4-Site.Reliability.Engineering-2016-26.png)
 
 *Figure 26-4. Comic emphasizing that backups must be checked and restores tested*
 
-The most important difference between backups and archives is that backups can be loaded back into an application, while archives cannot. Therefore, backups and archives have quite differing use cases.
+The most important difference between backups and archives is that backups *can* be loaded back into an application, while archives *cannot*. Therefore, backups and archives have quite differing use cases.
 
-Archives safekeep data for long periods of time to meet auditing, discovery, and compliance needs. Data recovery for such purposes generally doesn’t need to complete within uptime requirements of a service. For example, you might need to retain financial transaction data for seven years. To achieve this goal, you could move accumulated audit logs to long-term archival storage at an offsite location once a month. Retrieving and recovering the logs during a month-long financial audit may take a week, and this weeklong time window for recovery may be acceptable for an archive.
+*Archives* safekeep data for long periods of time to meet auditing, discovery, and compliance needs. Data recovery for such purposes generally doesn’t need to complete within uptime requirements of a service. For example, you might need to retain financial transaction data for seven years. To achieve this goal, you could move accumulated audit logs to long-term archival storage at an offsite location once a month. Retrieving and recovering the logs during a month-long financial audit may take a week, and this weeklong time window for recovery may be acceptable for an archive.
 
-On the other hand, when disaster strikes, data must be recovered from real backups quickly, preferably well within the uptime needs of a service. Otherwise, affected users are left without useful access to the application from the onset of the data integrity issue until the completion of the recovery effort.
+On the other hand, when disaster strikes, data must be recovered from *real backups* quickly, preferably well within the uptime needs of a service. Otherwise, affected users are left without useful access to the application from the onset of the data integrity issue until the completion of the recovery effort.
 
 It’s also important to consider that because the most recent data is at risk until safely backed up, it may be optimal to schedule real backups (as opposed to archives) to occur daily, hourly, or more frequently, using full and incremental or continuous (streaming) approaches.
 
@@ -146,9 +146,9 @@ Consider the case of an email provider who suffered a weeklong data outage [Kinc
 
 Then, the worst possible news arrived: the provider announced that despite earlier expectations, the trove of past email and contacts was in fact gone—evaporated and never to be seen again. It seemed that a series of mishaps in managing data integrity had conspired to leave the service provider with no usable backups. Furious users either stuck with their interim identities or established new identities, abandoning their troubled former email provider.
 
-But wait! Several days after the declaration of absolute loss, the provider announced that the users’ personal information could be recovered. There was no data loss; this was only an outage. All was well!
+But wait! Several days after the declaration of absolute loss, the provider announced that the users’ personal information *could* be recovered. There was no data loss; this was only an outage. All was well!
 
-Except, all was not well. User data had been preserved, but the data was not accessible by the people who needed it for too long.
+Except, *all was not well*. User data had been preserved, but the data was not accessible by the people who needed it for too long.
 
 The moral of this example: From the user’s point of view, data integrity without expected and regular data availability is effectively the same as having no data at all.
 
@@ -156,7 +156,7 @@ The moral of this example: From the user’s point of view, data integrity witho
 
 Making backups is a classically neglected, delegated, and deferred task of system administration. Backups aren’t a high priority for anyone—they’re an ongoing drain on time and resources, and yield no immediate visible benefit. For this reason, a lack of diligence in implementing a backup strategy is typically met with a sympathetic eye roll. One might argue that, like most measures of protection against low-risk dangers, such an attitude is pragmatic. The fundamental problem with this lackadaisical strategy is that the dangers it entails may be low risk, but they are also high impact. When your service’s data is unavailable, your response can make or break your service, product, and even your company.
 
-Instead of focusing on the thankless job of taking a backup, it’s much more useful, not to mention easier, to motivate participation in taking backups by concentrating on a task with a visible payoff: the restore! Backups are a tax, one paid on an ongoing basis for the municipal service of guaranteed data availability. Instead of emphasizing the tax, draw attention to the service the tax funds: data availability. We don’t make teams “practice” their backups, instead:
+Instead of focusing on the thankless job of taking a backup, it’s much more useful, not to mention easier, to motivate participation in taking backups by concentrating on a task with a visible payoff: the *restore*! *Backups are a tax*, one paid on an ongoing basis for the municipal service of guaranteed data availability. Instead of emphasizing the tax, draw attention to the service the tax funds: data availability. We don’t make teams “practice” their backups, instead:
 
 - Teams define service level objectives (SLOs) for data availability in a variety of failure modes.
 
@@ -166,19 +166,18 @@ Instead of focusing on the thankless job of taking a backup, it’s much more us
 
 As illustrated by Figure 26-1, at a very high level, there are 24 distinct types of failures when the 3 factors can occur in any combination. You should consider each of these potential failures when designing a data integrity program. The factors of data integrity failure modes are as follows:
 
-Root cause
+*Root cause*
 
 An unrecoverable loss of data may be caused by a number of factors: user action, operator error, application bugs, defects in infrastructure, faulty hardware, or site catastrophes.
 
-Scope
+*Scope*
 
 Some losses are widespread, affecting many entities. Some losses are narrow and directed, deleting or corrupting data specific to a small subset of users.
 
-Rate
+*Rate*
 
 Some data losses are a big bang event (for example, 1 million rows are replaced by only 10 rows in a single minute), whereas some data losses are creeping (for example, 10 rows of data are deleted every minute over the course of weeks).
 
-<!-- Source: Site.Reliability.Engineering-2016-26.pdf, PDF page 8. -->
 ![Figure 26-1. The factors of data integrity failure modes](/.attachments/26-1-Site.Reliability.Engineering-2016-26.png)
 
 *Figure 26-1. The factors of data integrity failure modes*
@@ -197,7 +196,7 @@ Consider the data recovery options provided by the cloud APIs you are about to u
 
 #### Challenges of Maintaining Data Integrity Deep and Wide
 
-In designing a data integrity program, it’s important to recognize that replication and redundancy are not recoverability.
+In designing a data integrity program, it’s important to recognize that *replication and redundancy are not recoverability*.
 
 ##### Scaling issues: Fulls, incrementals, and the competing forces of backups and restores
 
@@ -225,9 +224,8 @@ Similar to our assumption that Google’s underlying systems are prone to failur
 
 Given the many ways data can be lost (as described previously), there is no silver bullet that guards against the many combinations of failure modes. Instead, you need defense in depth. Defense in depth comprises multiple layers, with each successive layer of defense conferring protection from progressively less common data loss scenarios. Figure 26-2 illustrates an object’s journey from soft deletion to destruction, and the data recovery strategies that should be employed along this journey to ensure defense in depth.
 
-The first layer is soft deletion (or “lazy deletion” in the case of developer API offerings), which has proven to be an effective defense against inadvertent data deletion scenarios. The second line of defense is backups and their related recovery methods. The third and final layer is regular data validation, covered in “Third Layer: Early Detection” on page 356. Across all these layers, the presence of replication is occasionally useful for data recovery in specific scenarios (although data recovery plans should not rely upon replication).
+The first layer is *soft deletion* (or “lazy deletion” in the case of developer API offerings), which has proven to be an effective defense against inadvertent data deletion scenarios. The second line of defense is *backups and their related recovery methods*. The third and final layer is *regular data validation*, covered in [Third Layer: Early Detection](DATA.INTEGRITY.md#third-layer-early-detection). Across all these layers, the presence of *replication* is occasionally useful for data recovery in specific scenarios (although data recovery plans should not rely upon replication).
 
-<!-- Source: Site.Reliability.Engineering-2016-26.pdf, PDF page 11. -->
 ![Figure 26-2. An object’s journey from soft deletion to destruction](/.attachments/26-2-Site.Reliability.Engineering-2016-26.png)
 
 *Figure 26-2. An object’s journey from soft deletion to destruction*
@@ -246,7 +244,7 @@ Another common source of unwanted data deletion occurs as a result of account hi
 
 Soft deletion implies that once data is marked as such, it is destroyed after a reasonable delay. The length of the delay depends upon an organization’s policies and applicable laws, available storage resources and cost, and product pricing and market positioning, especially in cases involving much short-lived data. Common choices of soft deletion delays are 15, 30, 45, or 60 days. In Google’s experience, the majority of account hijacking and data integrity issues are reported or detected within 60 days. Therefore, the case for soft deleting data for longer than 60 days may not be strong.
 
-Google has also found that the most devastating acute data deletion cases are caused by application developers unfamiliar with existing code but working on deletion-related code, especially batch processing pipelines (e.g., an offline MapReduce or Hadoop pipeline). It’s advantageous to design your interfaces to hinder developers unfamiliar with your code from circumventing soft deletion features with new code. One effective way of achieving this is to implement cloud computing offerings that include built-in soft deletion and undeletion APIs, making sure to enable said feature.[^p13-7] Even the best armor is useless if you don’t put it on.
+Google has also found that the most devastating acute data deletion cases are caused by application developers unfamiliar with existing code but working on deletion-related code, especially batch processing pipelines (e.g., an offline MapReduce or Hadoop pipeline). It’s advantageous to design your interfaces to hinder developers unfamiliar with your code from circumventing soft deletion features with new code. One effective way of achieving this is to implement cloud computing offerings that include built-in soft deletion and undeletion APIs, making sure to *enable said feature*.[^p13-7] Even the best armor is useless if you don’t put it on.
 
 Soft deletion strategies cover data deletion features in consumer products like Gmail or Google Drive, but what if you support a cloud computing offering instead? Assuming your cloud computing offering already supports a programmatic soft deletion and undeletion feature with reasonable defaults, the remaining accidental data deletion scenarios will originate in mistakes made by your own internal developers or your developer customers.
 
@@ -260,7 +258,7 @@ To sum up the first layer of defense in depth:
 
 - In developer offerings, lazy deletion is the primary defense against internal developer error and the secondary defense against external developer error.
 
-What about revision history? Some products provide the ability to revert items to previous states. When such a feature is available to users, it is a form of trash. When available to developers, it may or may not substitute for soft deletion, depending on its implementation.
+What about *revision history*? Some products provide the ability to revert items to previous states. When such a feature is available to users, it is a form of trash. When available to developers, it may or may not substitute for soft deletion, depending on its implementation.
 
 At Google, revision history has proven useful in recovering from certain data corruption scenarios, but not in recovering from most data loss scenarios involving accidental deletion, programmatic or otherwise. This is because some revision history implementations treat deletion as a special case in which previous states must be removed, as opposed to mutating an item whose history may be retained for a certain time period. To provide adequate protection against unwanted deletion, apply the lazy and/or soft deletion principles to revision history also.
 
@@ -290,7 +288,7 @@ In Google’s experience, low-grade data mutation or deletion bugs within applic
 
 On the flip side, in a high-velocity development environment, changes to code and schema may render older backups expensive or impossible to use. Furthermore, it is challenging to recover different subsets of data to different restore points, because doing so would involve multiple backups. Yet, that is exactly the sort of recovery effort demanded by low-grade data corruption or deletion scenarios.
 
-The strategies described in “Third Layer: Early Detection” on page 356 are meant to speed detection of low-grade data mutation or deletion bugs within application code, at least partly warding off the need for this type of complex recovery effort. Still, how do you confer reasonable protection before you know what kinds of issues to detect? Google chose to draw the line between 30 and 90 days of backups for many services. Where a service falls within this window depends on its tolerance for data loss and its relative investments in early detection.
+The strategies described in [Third Layer: Early Detection](DATA.INTEGRITY.md#third-layer-early-detection) are meant to speed detection of low-grade data mutation or deletion bugs within application code, at least partly warding off the need for this type of complex recovery effort. Still, how do you confer reasonable protection before you know what kinds of issues to detect? Google chose to draw the line between 30 and 90 days of backups for many services. Where a service falls within this window depends on its tolerance for data loss and its relative investments in early detection.
 
 To sum up our advice for guarding against the 24 combinations of data integrity failure modes: addressing a broad range of scenarios at reasonable cost demands a tiered backup strategy. The first tier comprises many frequent and quickly restored backups stored closest to the live datastores, perhaps using the same or similar storage technologies as the data sources. Doing so confers protection from the majority of scenarios involving software bugs and developer error. Due to relative expense, backups are retained in this tier for anywhere from hours to single-digit days, and may take minutes to restore.
 
@@ -316,9 +314,9 @@ Now let’s up the ante: instead of a few gigabytes, let’s try securing and va
 
 The most common and largely effective technique used to back up massive amounts of data is to establish “trust points” in your data—portions of your stored data that are verified after being rendered immutable, usually by the passage of time. Once we know that a given user profile or transaction is fixed and won’t be subject to further change, we can verify its internal state and make suitable copies for recovery purposes. You can then make incremental backups that only include data that has been modified or added since your last backup. This technique brings your backup time in line with your “mainline” processing time, meaning that frequent incremental backups can save you from the 80-year monolithic verify and copy job.
 
-However, remember that we care about restores, not backups. Let’s say that we took a full backup three years ago and have been making daily incremental backups since. A full restore of our data will serially process a chain of over 1,000 highly interdependent backups. Each independent backup incurs additional risk of failure, not to mention the logistical burden of scheduling and the runtime cost of those jobs.
+However, remember that we care about *restores*, not backups. Let’s say that we took a full backup three years ago and have been making daily incremental backups since. A full restore of our data will serially process a chain of over 1,000 highly interdependent backups. Each independent backup incurs additional risk of failure, not to mention the logistical burden of scheduling and the runtime cost of those jobs.
 
-Another way we can reduce the wall time of our copying and verification jobs is to distribute the load. If we shard our data well, it’s possible to run N tasks in parallel, with each task responsible for copying and verifying 1/Nth of our data. Doing so requires some forethought and planning in the schema design and the physical deployment of our data in order to:
+Another way we can reduce the wall time of our copying and verification jobs is to distribute the load. If we shard our data well, it’s possible to run *N* tasks in parallel, with each task responsible for copying and verifying 1/*N*th of our data. Doing so requires some forethought and planning in the schema design and the physical deployment of our data in order to:
 
 - Balance the data correctly
 
@@ -348,7 +346,7 @@ In high-velocity environments, cloud application and infrastructure services fac
 
 Without conscious engineering effort to track emerging relationships in its data, the data quality of a successful and growing service degrades over time.
 
-Often, the novice cloud developer who chooses a distributed consistent storage API (such as Megastore) delegates the integrity of the application’s data to the distributed consistent algorithm implemented beneath the API (such as Paxos; see Chapter 23). The developer reasons that the selected API alone will keep the application’s data in good shape. As a result, they unify all application data into a single storage solution that guarantees distributed consistency, avoiding referential integrity problems in exchange for reduced performance and/or scale.
+Often, the novice cloud developer who chooses a distributed consistent storage API (such as Megastore) delegates the integrity of the application’s data to the distributed consistent algorithm implemented beneath the API (such as Paxos; see [Managing Critical State: Distributed Consensus for Reliability](DISTRIBUTED.CONSENSUS.RELIABILITY.md)). The developer reasons that the selected API alone will keep the application’s data in good shape. As a result, they unify all application data into a single storage solution that guarantees distributed consistency, avoiding referential integrity problems in exchange for reduced performance and/or scale.
 
 While such algorithms are infallible in theory, their implementations are often riddled with hacks, optimizations, bugs, and educated guesses. For example: in theory, Paxos ignores failed compute nodes and can make progress as long as a quorum of functioning nodes is maintained. In practice, however, ignoring a failed node may correspond to timeouts, retries, and other failure-handling approaches beneath the particular Paxos implementation [Cha07]. How long should Paxos try to contact an unresponsive node before timing it out? When a particular machine fails (perhaps intermittently) in a certain way, with a certain timing, and at a particular datacenter, unpredictable behavior results. The larger the scale of an application, the more frequently the application is affected, unbeknownst, by such inconsistencies. If this logic holds true even when applied to Paxos implementations (as has been true for Google), then it must be more true for eventually consistent implementations such as Bigtable (which has also shown to be true). Affected applications have no way to know that 100% of their data is good until they check: trust storage systems, but verify!
 
@@ -408,7 +406,7 @@ If you discover that your restore process is broken before you need to rely upon
 
 - Set up alerts that fire when a recovery process fails to provide a heartbeat indication of its success
 
-What can go wrong with your recovery process? Anything and everything—which is why the only test that should let you sleep at night is a full end-to-end test. Let the proof be in the pudding. Even if you recently ran a successful recovery, parts of your recovery process can still break. If you take away just one lesson from this chapter, remember that you only know that you can recover your recent state if you actually do so.
+What can go wrong with your recovery process? Anything and everything—which is why the only test that should let you sleep at night is a full end-to-end test. Let the proof be in the pudding. Even if you recently ran a successful recovery, parts of your recovery process can still break. If you take away just one lesson from this document, remember that *you only know that you can recover your recent state if you actually do so*.
 
 If recovery tests are a manual, staged event, testing becomes an unwelcome bit of drudgery that isn’t performed either deeply or frequently enough to deserve your confidence. Therefore, automate these tests whenever possible and then run them continuously.
 
@@ -448,7 +446,7 @@ This was the first large-scale use of GTape, a global backup system for Gmail, t
 
 - Recover 99%+ of the data before the estimated completion time
 
-Was the ability to formulate such an estimate luck? No—our success was the fruit of planning, adherence to best practices, hard work, and cooperation, and we were glad to see our investment in each of these elements pay off as well as it did. Google was able to restore the lost data in a timely manner by executing a plan designed according to the best practices of Defense in Depth and Emergency Preparedness.
+Was the ability to formulate such an estimate luck? No—our success was the fruit of planning, adherence to best practices, hard work, and cooperation, and we were glad to see our investment in each of these elements pay off as well as it did. Google was able to restore the lost data in a timely manner by executing a plan designed according to the best practices of *Defense in Depth* and *Emergency Preparedness*.
 
 When Google publicly revealed that we recovered this data from our previously undisclosed tape backup system [Slo11], public reaction was a mix of surprise and amusement. Tape? Doesn’t Google have lots of disks and a fast network to replicate data this important? Of course Google has such resources, but the principle of Defense in Depth dictates providing multiple layers of protection to guard against the breakdown or compromise of any single protection mechanism. Backing up online systems such as Gmail provides defense in depth at two layers:
 
@@ -460,7 +458,7 @@ This particular failure resulted from the first scenario—while Gmail had inter
 
 One of the most internally celebrated aspects of the Gmail data recovery was the degree of cooperation and smooth coordination that comprised the recovery. Many teams, some completely unrelated to Gmail or data recovery, pitched in to help. The recovery couldn’t have succeeded so smoothly without a central plan to choreograph such a widely distributed Herculean effort; this plan was the product of regular dress rehearsals and dry runs. Google’s devotion to emergency preparedness leads us to view such failures as inevitable. Accepting this inevitability, we don’t hope or bet to avoid such disasters, but anticipate that they will occur. Thus, we need a plan for dealing not only with the foreseeable failures, but for some amount of random undifferentiated breakage, as well.
 
-In short, we always knew that adherence to best practices is important, and it was good to see that maxim proven true.
+In short, we always *knew* that adherence to best practices is important, and it was good to see that maxim proven true.
 
 #### Google Music—March 2012: Runaway Deletion Detection
 
@@ -544,11 +542,11 @@ General principles of SRE can be applied to the specifics of data integrity and 
 
 #### Beginner’s Mind
 
-Large-scale, complex services have inherent bugs that can’t be fully grokked. Never think you understand enough of a complex system to say it won’t fail in a certain way. Trust but verify, and apply defense in depth. (Note: “Beginner’s mind” does not suggest putting a new hire in charge of that data deletion pipeline!)
+Large-scale, complex services have inherent bugs that can’t be fully grokked. Never think you understand enough of a complex system to say it won’t fail in a certain way. Trust but verify, and apply defense in depth. (Note: “Beginner’s mind” does *not* suggest putting a new hire in charge of that data deletion pipeline!)
 
 #### Trust but Verify
 
-Any API upon which you depend won’t work perfectly all of the time. It’s a given that regardless of your engineering quality or rigor of testing, the API will have defects. Check the correctness of the most critical elements of your data using out-of-band data validators, even if API semantics suggest that you need not do so. Perfect algorithms may not have perfect implementations.
+Any API upon which you depend won’t work perfectly *all* of the time. It’s a given that regardless of your engineering quality or rigor of testing, the API will have defects. Check the correctness of the most critical elements of your data using out-of-band data validators, even if API semantics suggest that you need not do so. Perfect algorithms may not have perfect implementations.
 
 #### Hope Is Not a Strategy
 
@@ -562,7 +560,7 @@ Even the most bulletproof system is susceptible to bugs and operator error. In o
 
 The fact that your data “was safe yesterday” isn’t going to help you tomorrow, or even today. Systems and infrastructure change, and you’ve got to prove that your assumptions and processes remain relevant in the face of progress. Consider the following.
 
-The Shakespeare service has received quite a bit of positive press, and its user base is steadily increasing. No real attention was paid to data integrity as the service was being built. Of course, we don’t want to serve bad bits, but if the index Bigtable is lost, we can easily re-create it from the original Shakespeare texts and a MapReduce. Doing so would take very little time, so we never made backups of the index.
+The Shakespeare service has received quite a bit of positive press, and its user base is steadily increasing. No real attention was paid to data integrity as the service was being built. Of course, we don’t want to serve *bad* bits, but if the index Bigtable is lost, we can easily re-create it from the original Shakespeare texts and a MapReduce. Doing so would take very little time, so we never made backups of the index.
 
 Now a new feature allows users to make text annotations. Suddenly, our dataset can no longer be easily re-created, while the user data is increasingly valuable to our users. Therefore, we need to revisit our replication options—we’re not just replicating for latency and bandwidth, but for data integrity, as well. Therefore, we need to create and test a backup and restore procedure. This procedure is also periodically tested by a DiRT exercise to ensure that we can restore users’ annotations from backups within the time set by the SLO.
 
@@ -570,21 +568,21 @@ Now a new feature allows users to make text annotations. Suddenly, our dataset c
 
 Data availability must be a foremost concern of any data-centric system. Rather than focusing on the means to the end, Google SRE finds it useful to borrow a page from test-driven development by proving that our systems can maintain data availability with a predicted maximum down time. The means and mechanisms that we use to achieve this end goal are necessary evils. By keeping our eyes on the goal, we avoid falling into the trap in which “The operation was a success, but the system died.”
 
-Recognizing that not just anything can go wrong, but that everything will go wrong is a significant step toward preparation for any real emergency. A matrix of all possible combinations of disasters with plans to address each of these disasters permits you to sleep soundly for at least one night; keeping your recovery plans current and exercised permits you to sleep the other 364 nights of the year.
+Recognizing that not just *anything* can go wrong, but that *everything* will go wrong is a significant step toward preparation for any real emergency. A matrix of all possible combinations of disasters with plans to address each of these disasters permits you to sleep soundly for at least one night; keeping your recovery plans current and exercised permits you to sleep the other 364 nights of the year.
 
-As you get better at recovering from any breakage in reasonable time N, find ways to whittle down that time through more rapid and finer-grained loss detection, with the goal of approaching N = 0. You can then switch from planning recovery to planning prevention, with the aim of achieving the holy grail of all the data, all the time. Achieve this goal, and you can sleep on the beach on that well-deserved vacation.
+As you get better at recovering from any breakage in reasonable time *N*, find ways to whittle down that time through more rapid and finer-grained loss detection, with the goal of approaching *N* = 0. You can then switch from planning recovery to planning prevention, with the aim of achieving the holy grail of *all the data, all the time*. Achieve this goal, and you can sleep on the beach on that well-deserved vacation.
 
 ### Notes
 
-[^p3-1]: Atomicity, Consistency, Isolation, Durability; see https://en.wikipedia.org/wiki/ACID. SQL databases such as MySQL and PostgreSQL strive to achieve these properties.
+[^p3-1]: Atomicity, Consistency, Isolation, Durability; see *https://en.wikipedia.org/wiki/ACID*. SQL databases such as MySQL and PostgreSQL strive to achieve these properties.
 
-[^p3-2]: Basically Available, Soft state, Eventual consistency; see https://en.wikipedia.org/wiki/Eventual_consistency. BASE systems, like Bigtable and Megastore, are often also described as “NoSQL.”
+[^p3-2]: Basically Available, Soft state, Eventual consistency; see *https://en.wikipedia.org/wiki/Eventual_consistency*. BASE systems, like Bigtable and Megastore, are often also described as “NoSQL.”
 
 [^p3-3]: For further reading on ACID and BASE APIs, see [Gol14] and [Bai13].
 
-[^p4-4]: Binary Large Object; see https://en.wikipedia.org/wiki/Binary_large_object.
+[^p4-4]: Binary Large Object; see *https://en.wikipedia.org/wiki/Binary_large_object*.
 
-[^p10-5]: See https://en.wikipedia.org/wiki/Zero-day_(computing).
+[^p10-5]: See *https://en.wikipedia.org/wiki/Zero-day_(computing)*.
 
 [^p10-6]: Clay tablets are the oldest known examples of writing. For a broader discussion of preserving data for the long haul, see [Con96].
 
@@ -592,9 +590,9 @@ As you get better at recovering from any breakage in reasonable time N, find way
 
 [^p15-8]: “Snapshot” here refers to a read-only, static view of a storage instance, such as snapshots of SQL databases. Snapshots are often implemented using copy-on-write semantics for storage efficiency. They can be expensive for two reasons: first, they contend for the same storage capacity as the live datastores, and second, the faster your data mutates, the less efficiency is gained from copying-on-write.
 
-[^p16-9]: For more information on GFS-style replication, see [Ghe03]. For more information on Reed-Solomon erasure codes, see https://en.wikipedia.org/wiki/Reed–Solomon_error_correction.
+[^p16-9]: For more information on GFS-style replication, see [Ghe03]. For more information on Reed-Solomon erasure codes, see *https://en.wikipedia.org/wiki/Reed–Solomon_error_correction*.
 
-[^p25-10]: See http://en.wikipedia.org/wiki/Catch-22_(logic).
+[^p25-10]: See *http://en.wikipedia.org/wiki/Catch-22_(logic)*.
 
 [^p26-11]: In practice, coming up with a programmatic solution was not a hurdle because the majority of SREs are experienced software engineers, as was the case here. The expectation of such experience makes SREs notoriously hard to find and hire, and from this case study and other data points, you can begin to appreciate why SRE hires practicing software engineers; see [Jon15].
 

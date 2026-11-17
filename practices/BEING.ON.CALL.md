@@ -4,11 +4,13 @@
 
 Source: [Site.Reliability.Engineering-2016-11.pdf](./Site.Reliability.Engineering-2016-11.pdf), PDF pages 1–8.
 
-Written by Andrea Spadaccini[^p1-1]
+The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
 
-Edited by Kavita Guliani
+***Written by Andrea Spadaccini[^p1-1]***
 
-Being on-call is a critical duty that many operations and engineering teams must undertake in order to keep their services reliable and available. However, there are several pitfalls in the organization of on-call rotations and responsibilities that can lead to serious consequences for the services and for the teams if not avoided. This chapter describes the primary tenets of the approach to on-call that Google’s Site Reliability Engineers (SREs) have developed over years, and explains how that approach has led to reliable services and sustainable workload over time.
+***Edited by Kavita Guliani***
+
+Being on-call is a critical duty that many operations and engineering teams must undertake in order to keep their services reliable and available. However, there are several pitfalls in the organization of on-call rotations and responsibilities that can lead to serious consequences for the services and for the teams if not avoided. This document describes the primary tenets of the approach to on-call that Google’s Site Reliability Engineers (SREs) have developed over years, and explains how that approach has led to reliable services and sustainable workload over time.
 
 ### Introduction
 
@@ -20,17 +22,17 @@ To enforce this type of problem solving, Google hires people with a diverse back
 
 ### Life of an On-Call Engineer
 
-This section describes the typical activities of an on-call engineer and provides some background for the rest of the chapter.
+This section describes the typical activities of an on-call engineer and provides some background for the rest of this document.
 
 As the guardians of production systems, on-call engineers take care of their assigned operations by managing outages that affect the team and performing and/or vetting production changes.
 
 When on-call, an engineer is available to perform operations on production systems within minutes, according to the paging response times agreed to by the team and the business system owners. Typical values are 5 minutes for user-facing or otherwise highly time-critical services, and 30 minutes for less time-sensitive systems. The company provides the page-receiving device, which is typically a phone. Google has flexible alert delivery systems that can dispatch pages via multiple mechanisms (email, SMS, robot call, app) across multiple devices.
 
-Response times are related to desired service availability, as demonstrated by the following simplistic example: if a user-facing system must obtain 4 nines of availability in a given quarter (99.99%), the allowed quarterly downtime is around 13 minutes (Appendix A). This constraint implies that the reaction time of on-call engineers has to be in the order of minutes (strictly speaking, 13 minutes). For systems with more relaxed SLOs, the reaction time can be on the order of tens of minutes.
+Response times are related to desired service availability, as demonstrated by the following simplistic example: if a user-facing system must obtain 4 nines of availability in a given quarter (99.99%), the allowed quarterly downtime is around 13 minutes ([Availability Table](../management/SRE.SUPPLEMENTARY.MATERIAL.md#appendix-a-availability-table)). This constraint implies that the reaction time of on-call engineers has to be in the order of minutes (strictly speaking, 13 minutes). For systems with more relaxed SLOs, the reaction time can be on the order of tens of minutes.
 
 As soon as a page is received and acknowledged, the on-call engineer is expected to triage the problem and work toward its resolution, possibly involving other team members and escalating as needed.
 
-Nonpaging production events, such as lower priority alerts or software releases, can also be handled and/or vetted by the on-call engineer during business hours. These activities are less urgent than paging events, which take priority over almost every other task, including project work. For more insight on interrupts and other non-paging events that contribute to operational load, see Chapter 29.
+Nonpaging production events, such as lower priority alerts or software releases, can also be handled and/or vetted by the on-call engineer during business hours. These activities are less urgent than paging events, which take priority over almost every other task, including project work. For more insight on interrupts and other non-paging events that contribute to operational load, see [Dealing with Interrupts](../management/DEALING.WITH.INTERRUPTS.md).
 
 Many teams have both a primary and a secondary on-call rotation. The distribution of duties between the primary and the secondary varies from team to team. One team might employ the secondary as a fall-through for the pages the primary on-call misses. Another team might specify that the primary on-call handles only pages, while the secondary handles all other non-urgent production activities.
 
@@ -54,7 +56,7 @@ If a service entails enough work to justify growing a single-site team, we prefe
 
 - Night shifts have detrimental effects on people’s health [Dur05], and a multi-site “follow the sun” rotation allows teams to avoid night shifts altogether.
 
-- Limiting the number of engineers in the on-call rotation ensures that engineers do not lose touch with the production systems (see “A Treacherous Enemy: Operational Underload” on page 132).
+- Limiting the number of engineers in the on-call rotation ensures that engineers do not lose touch with the production systems (see [A Treacherous Enemy: Operational Underload](BEING.ON.CALL.md#a-treacherous-enemy-operational-underload)).
 
 However, multi-site teams incur communication and coordination overhead. Therefore, the decision to go multi-site or single-site should be based upon the trade-offs each option entails, the importance of the system, and the workload each system generates.
 
@@ -62,7 +64,7 @@ However, multi-site teams incur communication and coordination overhead. Therefo
 
 For each on-call shift, an engineer should have sufficient time to deal with any incidents and follow-up activities such as writing postmortems [Loo10]. Let’s define an incident as a sequence of events and alerts that are related to the same root cause and would be discussed as part of the same postmortem. We’ve found that on average, dealing with the tasks involved in an on-call incident—root-cause analysis, remediation, and follow-up activities like writing a postmortem and fixing bugs—takes 6 hours. It follows that the maximum number of incidents per day is 2 per 12-hour on-call shift. In order to stay within this upper bound, the distribution of paging events should be very flat over time, with a likely median value of 0: if a given component or issue causes pages every day (median incidents/day > 1), it is likely that something else will break at some point, thus causing more incidents than should be permitted.
 
-If this limit is temporarily exceeded, e.g., for a quarter, corrective measures should be put in place to make sure that the operational load returns to a sustainable state (see “Operational Overload” on page 130 and Chapter 30).
+If this limit is temporarily exceeded, e.g., for a quarter, corrective measures should be put in place to make sure that the operational load returns to a sustainable state (see [Operational Overload](BEING.ON.CALL.md#operational-overload) and [Embedding an SRE to Recover from Operational Overload](../management/SRE.RECOVERY.OPERATIONAL.OVERLOAD.md)).
 
 #### Compensation
 
@@ -98,21 +100,21 @@ The developer teams of SRE-supported systems usually participate in a 24/7 on-ca
 
 The appropriate escalation of outages is generally a principled way to react to serious outages with significant unknown dimensions.
 
-When one is handling incidents, if the issue is complex enough to involve multiple teams or if, after some investigation, it is not yet possible to estimate an upper bound for the incident’s time span, it can be useful to adopt a formal incident-management protocol. Google SRE uses the protocol described in Chapter 14, which offers an easy-to-follow and well-defined set of steps that aid an on-call engineer to rationally pursue a satisfactory incident resolution with all the required help. This protocol is internally supported by a web-based tool that automates most of the incident management actions, such as handing off roles and recording and communicating status updates. This tool allows incident managers to focus on dealing with the incident, rather than spending time and cognitive effort on mundane actions such as formatting emails or updating several communication channels at once.
+When one is handling incidents, if the issue is complex enough to involve multiple teams or if, after some investigation, it is not yet possible to estimate an upper bound for the incident’s time span, it can be useful to adopt a formal incident-management protocol. Google SRE uses the protocol described in [Managing Incidents](MANAGING.INCIDENTS.md), which offers an easy-to-follow and well-defined set of steps that aid an on-call engineer to rationally pursue a satisfactory incident resolution with all the required help. This protocol is internally supported by a web-based tool that automates most of the incident management actions, such as handing off roles and recording and communicating status updates. This tool allows incident managers to focus on dealing with the incident, rather than spending time and cognitive effort on mundane actions such as formatting emails or updating several communication channels at once.
 
 Finally, when an incident occurs, it’s important to evaluate what went wrong, recognize what went well, and take action to prevent the same errors from recurring in the future. SRE teams must write postmortems after significant incidents and detail a full timeline of the events that occurred. By focusing on events rather than the people, these postmortems provide significant value. Rather than placing blame on individuals, they derive value from the systematic analysis of production incidents. Mistakes happen, and software should make sure that we make as few mistakes as possible. Recognizing automation opportunities is one of the best ways to prevent human errors [Loo10].
 
 ### Avoiding Inappropriate Operational Load
 
-As mentioned in “Balanced On-Call” on page 127, SREs spend at most 50% of their time on operational work. What happens if operational activities exceed this limit?
+As mentioned in [Balanced On-Call](BEING.ON.CALL.md#balanced-on-call), SREs spend at most 50% of their time on operational work. What happens if operational activities exceed this limit?
 
 #### Operational Overload
 
-The SRE team and leadership are responsible for including concrete objectives in quarterly work planning in order to make sure that the workload returns to sustainable levels. Temporarily loaning an experienced SRE to an overloaded team, discussed in Chapter 30, can provide enough breathing room so that the team can make headway in addressing issues.
+The SRE team and leadership are responsible for including concrete objectives in quarterly work planning in order to make sure that the workload returns to sustainable levels. Temporarily loaning an experienced SRE to an overloaded team, discussed in [Embedding an SRE to Recover from Operational Overload](../management/SRE.RECOVERY.OPERATIONAL.OVERLOAD.md), can provide enough breathing room so that the team can make headway in addressing issues.
 
 Ideally, symptoms of operational overload should be measurable, so that the goals can be quantified (e.g., number of daily tickets < 5, paging events per shift < 2).
 
-Misconfigured monitoring is a common cause of operational overload. Paging alerts should be aligned with the symptoms that threaten a service’s SLOs. All paging alerts should also be actionable. Low-priority alerts that bother the on-call engineer every hour (or more frequently) disrupt productivity, and the fatigue such alerts induce can also cause serious alerts to be treated with less attention than necessary. See Chapter 29 for further discussion.
+Misconfigured monitoring is a common cause of operational overload. Paging alerts should be aligned with the symptoms that threaten a service’s SLOs. All paging alerts should also be actionable. Low-priority alerts that bother the on-call engineer every hour (or more frequently) disrupt productivity, and the fatigue such alerts induce can also cause serious alerts to be treated with less attention than necessary. See [Dealing with Interrupts](../management/DEALING.WITH.INTERRUPTS.md) for further discussion.
 
 It is also important to control the number of alerts that the on-call engineers receive for a single incident. Sometimes a single abnormal condition can generate several alerts, so it’s important to regulate the alert fan-out by ensuring that related alerts are grouped together by the monitoring or alerting system. If, for any reason, duplicate or uninformative alerts are generated during an incident, silencing those alerts can provide the necessary quiet for the on-call engineer to focus on the incident itself. Noisy alerts that systematically generate more than one alert per incident should be tweaked to approach a 1:1 alert/incident ratio. Doing so allows the on-call engineer to focus on the incident instead of triaging duplicate alerts.
 
@@ -126,16 +128,16 @@ The possibility of renegotiating on-call responsibilities between SRE and produc
 
 Being on-call for a quiet system is blissful, but what happens if the system is too quiet or when SREs are not on-call often enough? An operational underload is undesirable for an SRE team. Being out of touch with production for long periods of time can lead to confidence issues, both in terms of overconfidence and underconfidence, while knowledge gaps are discovered only when an incident occurs.
 
-To counteract this eventuality, SRE teams should be sized to allow every engineer to be on-call at least once or twice a quarter, thus ensuring that each team member is sufficiently exposed to production. “Wheel of Misfortune” exercises (discussed in Chapter 28) are also useful team activities that can help to hone and improve troubleshooting skills and knowledge of the service. Google also has a company-wide annual disaster recovery event called DiRT (Disaster Recovery Training) that combines theoretical and practical drills to perform multiday testing of infrastructure systems and individual services; see [Kri12].
+To counteract this eventuality, SRE teams should be sized to allow every engineer to be on-call at least once or twice a quarter, thus ensuring that each team member is sufficiently exposed to production. “Wheel of Misfortune” exercises (discussed in [Accelerating SREs to On-Call and Beyond](../management/ACCELERATING.SRES.ON.CALL.md)) are also useful team activities that can help to hone and improve troubleshooting skills and knowledge of the service. Google also has a company-wide annual disaster recovery event called DiRT (Disaster Recovery Training) that combines theoretical and practical drills to perform multiday testing of infrastructure systems and individual services; see [Kri12].
 
 ### Conclusions
 
-The approach to on-call described in this chapter serves as a guideline for all SRE teams in Google and is key to fostering a sustainable and manageable work environment. Google’s approach to on-call has enabled us to use engineering work as the primary means to scale production responsibilities and maintain high reliability and availability despite the increasing complexity and number of systems and services for which SREs are responsible.
+The approach to on-call described in this document serves as a guideline for all SRE teams in Google and is key to fostering a sustainable and manageable work environment. Google’s approach to on-call has enabled us to use engineering work as the primary means to scale production responsibilities and maintain high reliability and availability despite the increasing complexity and number of systems and services for which SREs are responsible.
 
 While this approach might not be immediately applicable to all contexts in which engineers need to be on-call for IT services, we believe it represents a solid model that organizations can adopt in scaling to meet a growing volume of on-call work.
 
 ### Notes
 
-[^p1-1]: An earlier version of this chapter appeared as an article in ;login: (October 2015, vol. 40, no. 5).
+[^p1-1]: An earlier version of this document appeared as an article in *;login:* (October 2015, vol. 40, no. 5).
 
-[^p7-2]: For more discussion on the natural tension between SRE and product development teams, see Chapter 1.
+[^p7-2]: For more discussion on the natural tension between SRE and product development teams, see [Introduction](../INTRODUCTION.md).

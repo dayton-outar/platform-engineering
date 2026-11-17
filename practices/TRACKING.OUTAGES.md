@@ -4,13 +4,15 @@
 
 Source: [Site.Reliability.Engineering-2016-16.pdf](./Site.Reliability.Engineering-2016-16.pdf), PDF pages 1–6.
 
-Written by Gabe Krabbe
+The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
 
-Edited by Lisa Carey
+***Written by Gabe Krabbe***
+
+***Edited by Lisa Carey***
 
 Improving reliability over time is only possible if you start from a known baseline and can track progress. “Outalator,” our outage tracker, is one of the tools we use to do just that. Outalator is a system that passively receives all alerts sent by our monitoring systems and allows us to annotate, group, and analyze this data.
 
-Systematically learning from past problems is essential to effective service management. Postmortems (see Chapter 15) provide detailed information for individual outages, but they are only part of the answer. They are only written for incidents with a large impact, so issues that have individually small impact but are frequent and widespread don’t fall within their scope. Similarly, postmortems tend to provide useful insights for improving a single service or set of services, but may miss opportunities that would have a small effect in individual cases, or opportunities that have a poor cost/benefit ratio, but that would have large horizontal impact.[^p1-1]
+Systematically learning from past problems is essential to effective service management. Postmortems (see [Postmortem Culture: Learning from Failure](POSTMORTEM.CULTURE.LEARNING.FAILURE.md)) provide detailed information for individual outages, but they are only part of the answer. They are only written for incidents with a large impact, so issues that have individually small impact but are frequent and widespread don’t fall within their scope. Similarly, postmortems tend to provide useful insights for improving a single service or set of services, but may miss opportunities that would have a small effect in individual cases, or opportunities that have a poor cost/benefit ratio, but that would have large horizontal impact.[^p1-1]
 
 We can also get useful information from questions such as, “How many alerts per on-call shift does this team get?”, “What’s the ratio of actionable/nonactionable alerts over the last quarter?”, or even simply “Which of the services this team manages creates the most toil?”
 
@@ -24,7 +26,6 @@ Following Escalator’s example, where we added useful features to existing infr
 
 Outalator lets users view a time-interleaved list of notifications for multiple queues at once, instead of requiring a user to switch between queues manually. Figure 16-1 shows multiple queues as they appear in Outalator’s queue view. This functionality is handy because frequently a single SRE team is the primary point of contact for services with distinct secondary escalation targets, usually the developer teams.
 
-<!-- Source: Site.Reliability.Engineering-2016-16.pdf, PDF page 2. -->
 ![Figure 16-1. Outalator queue view](/.attachments/16-1-Site.Reliability.Engineering-2016-16.png)
 
 *Figure 16-1. Outalator queue view*
@@ -33,7 +34,6 @@ Outalator stores a copy of the original notification and allows annotating incid
 
 Multiple escalating notifications (“alerts”) can be combined into a single entity (“incident”) in the Outalator. These notifications may be related to the same single incident, may be otherwise unrelated and uninteresting auditable events such as privileged database access, or may be spurious monitoring failures. This grouping functionality, shown in Figure 16-2, unclutters the overview displays and allows for separate analysis of “incidents per day” versus “alerts per day.”
 
-<!-- Source: Site.Reliability.Engineering-2016-16.pdf, PDF page 3. -->
 ![Figure 16-2. Outalator view of an incident](/.attachments/16-2-Site.Reliability.Engineering-2016-16.png)
 
 *Figure 16-2. Outalator view of an incident*
@@ -46,11 +46,11 @@ Many organizations use messaging systems like Slack, Hipchat, or even IRC for in
 
 A single event may, and often will, trigger multiple alerts. For example, network failures cause timeouts and unreachable backend services for everyone, so all affected teams receive their own alerts, including the owners of backend services; meanwhile, the network operations center will have its own klaxons ringing. However, even smaller issues affecting a single service may trigger multiple alerts due to multiple error conditions being diagnosed. While it is worthwhile to attempt to minimize the number of alerts triggered by a single event, triggering multiple alerts is unavoidable in most trade-off calculations between false positives and false negatives.
 
-The ability to group multiple alerts together into a single incident is critical in dealing with this duplication. Sending an email saying “this is the same thing as that other thing; they are symptoms of the same incident” works for a given alert: it can prevent duplication of debugging or panic. But sending an email for each alert is not a practical or scalable solution for handling duplicate alerts within a team, let alone between teams or over longer periods of time.
+The ability to group multiple alerts together into a single *incident* is critical in dealing with this duplication. Sending an email saying “this is the same thing as that other thing; they are symptoms of the same incident” works for a given alert: it can prevent duplication of debugging or panic. But sending an email for each alert is not a practical or scalable solution for handling duplicate alerts within a team, let alone between teams or over longer periods of time.
 
 #### Tagging
 
-Of course, not every alerting event is an incident. False-positive alerts occur, as well as test events or mistargeted emails from humans. The Outalator itself does not distinguish between these events, but it allows general-purpose tagging to add metadata to notifications, at any level. Tags are mostly free-form, single “words.” Colons, however, are interpreted as semantic separators, which subtly promotes the use of hierarchical namespaces and allows some automatic treatment. This namespacing is supported by suggested tag prefixes, primarily “cause” and “action,” but the list is team-specific and generated based on historical usage. For example, “cause:network” might be sufficient information for some teams, whereas another team might opt for more specific tags, such as “cause:network:switch” versus “cause:network:cable.” Some teams may frequently use “customer:132456”-style tags, so “customer” would be suggested for those teams, but not for others.
+Of course, not every alerting event is an incident. False-positive alerts occur, as well as test events or mistargeted emails from humans. The Outalator itself does not distinguish between these events, but it allows general-purpose *tagging* to add metadata to notifications, at any level. Tags are mostly free-form, single “words.” Colons, however, are interpreted as semantic separators, which subtly promotes the use of hierarchical namespaces and allows some automatic treatment. This namespacing is supported by suggested tag prefixes, primarily “cause” and “action,” but the list is team-specific and generated based on historical usage. For example, “cause:network” might be sufficient information for some teams, whereas another team might opt for more specific tags, such as “cause:network:switch” versus “cause:network:cable.” Some teams may frequently use “customer:132456”-style tags, so “customer” would be suggested for those teams, but not for others.
 
 Tags can be parsed and turned into a convenient link (“bug:76543” links to the bug tracking system). Other tags are just a single word (“bogus” is widely used for false positives). Of course, some tags are typos (“cause:netwrok”) and some tags aren’t particularly helpful (“problem-went-away”), but avoiding a predetermined list and allowing teams to find their own preferences and standards will result in a more useful tool and better data. Overall, tags have been a remarkably powerful tool for teams to obtain and provide an overview of a given service’s pain points, even without much, or even any, formal analysis. As trivial as tagging appears, it is probably one of the Outalator’s most useful unique features.
 

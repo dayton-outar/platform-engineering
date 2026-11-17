@@ -4,21 +4,23 @@
 
 Source: [Site.Reliability.Engineering-2016-15.pdf](./Site.Reliability.Engineering-2016-15.pdf), PDF pages 1–7.
 
-Written by John Lunney and Sue Lueder
+The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
 
-Edited by Gary O’ Connor
+***Written by John Lunney and Sue Lueder***
 
-> The cost of failure is education.
+***Edited by Gary O’ Connor***
+
+> *The cost of failure is education.*
 
 > —Devin Carraway
 
 As SREs, we work with large-scale, complex, distributed systems. We constantly enhance our services with new features and add new systems. Incidents and outages are inevitable given our scale and velocity of change. When an incident occurs, we fix the underlying issue, and services return to their normal operating conditions. Unless we have some formalized process of learning from these incidents in place, they may recur ad infinitum. Left unchecked, incidents can multiply in complexity or even cascade, overwhelming a system and its operators and ultimately impacting our users. Therefore, postmortems are an essential tool for SRE.
 
-The postmortem concept is well known in the technology industry [All12]. A postmortem is a written record of an incident, its impact, the actions taken to mitigate or resolve it, the root cause(s), and the follow-up actions to prevent the incident from recurring. This chapter describes criteria for deciding when to conduct postmortems, some best practices around postmortems, and advice on how to cultivate a postmortem culture based on the experience we’ve gained over the years.
+The postmortem concept is well known in the technology industry [All12]. A postmortem is a written record of an incident, its impact, the actions taken to mitigate or resolve it, the root cause(s), and the follow-up actions to prevent the incident from recurring. This document describes criteria for deciding when to conduct postmortems, some best practices around postmortems, and advice on how to cultivate a postmortem culture based on the experience we’ve gained over the years.
 
 ### Google’s Postmortem Philosophy
 
-The primary goals of writing a postmortem are to ensure that the incident is documented, that all contributing root cause(s) are well understood, and, especially, that effective preventive actions are put in place to reduce the likelihood and/or impact of recurrence. A detailed survey of root-cause analysis techniques is beyond the scope of this chapter (instead, see [Roo04]); however, articles, best practices, and tools abound in the system quality domain. Our teams use a variety of techniques for root-cause analysis and choose the technique best suited to their services. Postmortems are expected after any significant undesirable event. Writing a postmortem is not punishment—it is a learning opportunity for the entire company. The postmortem process does present an inherent cost in terms of time or effort, so we are deliberate in choosing when to write one. Teams have some internal flexibility, but common postmortem triggers include:
+The primary goals of writing a postmortem are to ensure that the incident is documented, that all contributing root cause(s) are well understood, and, especially, that effective preventive actions are put in place to reduce the likelihood and/or impact of recurrence. A detailed survey of root-cause analysis techniques is beyond the scope of this document (instead, see [Roo04]); however, articles, best practices, and tools abound in the system quality domain. Our teams use a variety of techniques for root-cause analysis and choose the technique best suited to their services. Postmortems are expected after any significant undesirable event. Writing a postmortem is not punishment—it is a learning opportunity for the entire company. The postmortem process does present an inherent cost in terms of time or effort, so we are deliberate in choosing when to write one. Teams have some internal flexibility, but common postmortem triggers include:
 
 - User-visible downtime or degradation beyond a certain threshold
 
@@ -36,13 +38,13 @@ Blameless postmortems are a tenet of SRE culture. For a postmortem to be truly b
 
 Blameless culture originated in the healthcare and avionics industries where mistakes can be fatal. These industries nurture an environment where every “mistake” is seen as an opportunity to strengthen the system. When postmortems shift from allocating blame to investigating the systematic reasons why an individual or team had incomplete or incorrect information, effective prevention plans can be put in place. You can’t “fix” people, but you can fix systems and processes to better support people making the right choices when designing and maintaining complex systems.
 
-When an outage does occur, a postmortem is not written as a formality to be forgotten. Instead the postmortem is seen by engineers as an opportunity not only to fix a weakness, but to make Google more resilient as a whole. While a blameless postmortem doesn’t simply vent frustration by pointing fingers, it should call out where and how services can be improved. Here are two examples:
+When an outage does occur, a postmortem is not written as a formality to be forgotten. Instead the postmortem is seen by engineers as an opportunity not only to fix a weakness, but to make Google more resilient as a whole. While a blameless postmortem doesn’t simply vent frustration by pointing fingers, it *should* call out where and how services can be improved. Here are two examples:
 
-Pointing fingers
+*Pointing fingers*
 
 “We need to rewrite the entire complicated backend system! It’s been breaking weekly for the last three quarters and I’m sure we’re all tired of fixing things onesy-twosy. Seriously, if I get paged one more time I’ll rewrite it myself...”
 
-Blameless
+*Blameless*
 
 “An action item to rewrite the entire backend system might actually prevent these annoying pages from continuing to happen, and the maintenance manual for this version is quite long and really difficult to be fully trained up on. I’m sure our future on-callers will thank us!”
 
@@ -54,17 +56,17 @@ Blameless postmortems can be challenging to write, because the postmortem format
 
 We value collaboration, and the postmortem process is no exception. The postmortem workflow includes collaboration and knowledge-sharing at every stage.
 
-Our postmortem documents are Google Docs, with an in-house template (see Appendix D). Regardless of the specific tool you use, look for the following key features:
+Our postmortem documents are Google Docs, with an in-house template (see [Example Postmortem](../management/SRE.SUPPLEMENTARY.MATERIAL.md#appendix-d-example-postmortem)). Regardless of the specific tool you use, look for the following key features:
 
-Real-time collaboration
+*Real-time collaboration*
 
 Enables the rapid collection of data and ideas. Essential during the early creation of a postmortem.
 
-An open commenting/annotation system
+*An open commenting/annotation system*
 
 Makes crowdsourcing solutions easy and improves coverage.
 
-Email notifications
+*Email notifications*
 
 Can be directed at collaborators within the document or used to loop in others to provide input.
 
@@ -92,21 +94,21 @@ Once those involved are satisfied with the document and its action items, the po
 
 Introducing a postmortem culture to your organization is easier said than done; such an effort requires continuous cultivation and reinforcement. We reinforce a collaborative postmortem culture through senior management’s active participation in the review and collaboration process. Management can encourage this culture, but blameless postmortems are ideally the product of engineer self-motivation. In the spirit of nurturing the postmortem culture, SREs proactively create activities that disseminate what we learn about system infrastructure. Some example activities include:
 
-Postmortem of the month
+*Postmortem of the month*
 
 In a monthly newsletter, an interesting and well-written postmortem is shared with the entire organization.
 
-Google+ postmortem group
+*Google+ postmortem group*
 
 This group shares and discusses internal and external postmortems, best practices, and commentary about postmortems.
 
-Postmortem reading clubs
+*Postmortem reading clubs*
 
 Teams host regular postmortem reading clubs, in which an interesting or impactful postmortem is brought to the table (along with some tasty refreshments) for an open dialogue with participants, nonparticipants, and new Googlers about what happened, what lessons the incident imparted, and the aftermath of the incident. Often, the postmortem being reviewed is months or years old!
 
-Wheel of Misfortune
+*Wheel of Misfortune*
 
-New SREs are often treated to the Wheel of Misfortune exercise (see “Disaster Role Playing” on page 401), in which a previous postmortem is reenacted with a cast of engineers playing roles as laid out in the postmortem. The original incident commander attends to help make the experience as “real” as possible.
+New SREs are often treated to the Wheel of Misfortune exercise (see [Disaster Role Playing](../management/ACCELERATING.SRES.ON.CALL.md#disaster-role-playing)), in which a previous postmortem is reenacted with a cast of engineers playing roles as laid out in the postmortem. The original incident commander attends to help make the experience as “real” as possible.
 
 One of the biggest challenges of introducing postmortems to an organization is that some may question their value given the cost of their preparation. The following strategies can help in facing this challenge:
 
@@ -122,7 +124,7 @@ Google’s founders Larry Page and Sergey Brin host TGIF, a weekly all-hands hel
 
 #### Best Practice: Ask for Feedback on Postmortem Effectiveness
 
-At Google, we strive to address problems as they arise and share innovations internally. We regularly survey our teams on how the postmortem process is supporting their goals and how the process might be improved. We ask questions such as: Is the culture supporting your work? Does writing a postmortem entail too much toil (see Chapter 5)? What best practices does your team recommend for other teams? What kinds of tools would you like to see developed? The survey results give the SREs in the trenches the opportunity to ask for improvements that will increase the effectiveness of the postmortem culture.
+At Google, we strive to address problems as they arise and share innovations internally. We regularly survey our teams on how the postmortem process is supporting their goals and how the process might be improved. We ask questions such as: Is the culture supporting your work? Does writing a postmortem entail too much toil (see [Eliminating Toil](../principles/ELIMINATING.TOIL.md))? What best practices does your team recommend for other teams? What kinds of tools would you like to see developed? The survey results give the SREs in the trenches the opportunity to ask for improvements that will increase the effectiveness of the postmortem culture.
 
 Beyond the operational aspects of incident management and follow-up, postmortem practice has been woven into the culture at Google: it’s now a cultural norm that any significant incident is followed by a comprehensive postmortem.
 
@@ -130,14 +132,14 @@ Beyond the operational aspects of incident management and follow-up, postmortem 
 
 We can say with confidence that thanks to our continuous investment in cultivating a postmortem culture, Google weathers fewer outages and fosters a better user experience. Our “Postmortems at Google” working group is one example of our commitment to the culture of blameless postmortems. This group coordinates postmortem efforts across the company: pulling together postmortem templates, automating postmortem creation with data from tools used during an incident, and helping automate data extraction from postmortems so we can perform trend analysis. We’ve been able to collaborate on best practices from products as disparate as YouTube, Google Fiber, Gmail, Google Cloud, AdWords, and Google Maps. While these products are quite diverse, they all conduct postmortems with the universal goal of learning from our darkest hours.
 
-With a large number of postmortems produced each month across Google, tools to aggregate postmortems are becoming more and more useful. These tools help us identify common themes and areas for improvement across product boundaries. To facilitate comprehension and automated analysis, we have recently enhanced our postmortem template (see Appendix D) with additional metadata fields. Future work in this domain includes machine learning to help predict our weaknesses, facilitate real-time incident investigation, and reduce duplicate incidents.
+With a large number of postmortems produced each month across Google, tools to aggregate postmortems are becoming more and more useful. These tools help us identify common themes and areas for improvement across product boundaries. To facilitate comprehension and automated analysis, we have recently enhanced our postmortem template (see [Example Postmortem](../management/SRE.SUPPLEMENTARY.MATERIAL.md#appendix-d-example-postmortem)) with additional metadata fields. Future work in this domain includes machine learning to help predict our weaknesses, facilitate real-time incident investigation, and reduce duplicate incidents.
 
 ### Notes
 
-[^p4-1]: See http://www.google.com/policies/privacy/.
+[^p4-1]: See *http://www.google.com/policies/privacy/*.
 
-[^p4-2]: If you’d like to start your own repository, Etsy has released Morgue, a tool for managing postmortems.
+[^p4-2]: If you’d like to start your own repository, Etsy has released *Morgue*, a tool for managing postmortems.
 
 [^p6-3]: Google’s Peer Bonus program is a way for fellow Googlers to recognize colleagues for exceptional efforts and involves a token cash reward.
 
-[^p6-4]: For further discussion of this particular incident, see Chapter 13.
+[^p6-4]: For further discussion of this particular incident, see [Emergency Response](EMERGENCY.RESPONSE.md).

@@ -4,11 +4,11 @@
 
 Source: [Site.Reliability.Engineering-2016-18.pdf](./Site.Reliability.Engineering-2016-18.pdf), PDF pages 1–18.
 
-Written by Dave Helstroom and Trisha Weir
+The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
 
-with Evan Leonard and Kurt Delimon
+***Written by Dave Helstroom and Trisha Weir with Evan Leonard and Kurt Delimon***
 
-Edited by Kavita Guliani
+***Edited by Kavita Guliani***
 
 Ask someone to name a Google software engineering effort and they’ll likely list a consumer-facing product like Gmail or Maps; some might even mention underlying infrastructure such as Bigtable or Colossus. But in truth, there is a massive amount of behind-the-scenes software engineering that consumers never see. A number of those products are developed within SRE.
 
@@ -36,25 +36,25 @@ Beyond the design of automation tools and other efforts to reduce the workload f
 
 ### Auxon Case Study: Project Background and Problem Space
 
-This case study examines Auxon, a powerful tool developed within SRE to automate capacity planning for services running in Google production. To best understand how Auxon was conceived and the problems it addresses, we’ll first examine the problem space associated with capacity planning, and the difficulties that traditional approaches to this task present for services at Google and across the industry as a whole. For more context on how Google uses the terms service and cluster, see Chapter 2.
+This case study examines Auxon, a powerful tool developed within SRE to automate capacity planning for services running in Google production. To best understand how Auxon was conceived and the problems it addresses, we’ll first examine the problem space associated with capacity planning, and the difficulties that traditional approaches to this task present for services at Google and across the industry as a whole. For more context on how Google uses the terms *service* and *cluster*, see [The Production Environment at Google, from the Viewpoint of an SRE](../GOOGLE.PRODUCTION.ENVIRONMENT.md).
 
 #### Traditional Capacity Planning
 
-There are myriad tactics for capacity planning of compute resources (see [Hix15a]), but the majority of these approaches boil down to a cycle that can be approximated as follows:
+There are myriad tactics for capacity planning of compute resources (see [Hix15a]), but the majority of these approaches boil down to a *cycle* that can be approximated as follows:
 
-1) Collect demand forecasts. How many resources are needed? When and where are these resources needed?
+*1) Collect demand forecasts.* How many resources are needed? When and where are these resources needed?
 
 - Uses the best data we have available today to plan into the future
 
 - Typically covers anywhere from several quarters to years
 
-2) Devise build and allocation plans. Given this forecasted outlook, what’s the best way to meet this demand with additional supply of resources? How much supply, and in what locations?
+*2) Devise build and allocation plans.* Given this forecasted outlook, what’s the best way to meet this demand with additional supply of resources? How much supply, and in what locations?
 
-3) Review and sign off on plan. Is the forecast reasonable? Does the plan line up with budgetary, product-level, and technical considerations?
+*3) Review and sign off on plan.* Is the forecast reasonable? Does the plan line up with budgetary, product-level, and technical considerations?
 
-4) Deploy and configure resources. Once resources eventually arrive (potentially in phases over the course of some defined period of time), which services get to use the resources? How do I make typically lower-level resources (CPU, disk, etc.) useful for services?
+*4) Deploy and configure resources.* Once resources eventually arrive (potentially in phases over the course of some defined period of time), which services get to use the resources? How do I make typically lower-level resources (CPU, disk, etc.) useful for services?
 
-It bears stressing that capacity planning is a neverending cycle: assumptions change, deployments slip, and budgets are cut, resulting in revision upon revision of The Plan. And each revision has trickle-down effects that must propagate throughout the plans of all subsequent quarters. For example, a shortfall this quarter must be made up in future quarters. Traditional capacity planning uses demand as a key driver, and manually shapes supply to fit demand in response to each change.
+It bears stressing that capacity planning is a neverending *cycle*: assumptions change, deployments slip, and budgets are cut, resulting in revision upon revision of The Plan. And each revision has trickle-down effects that must propagate throughout the plans of all subsequent quarters. For example, a shortfall this quarter must be made up in future quarters. Traditional capacity planning uses demand as a key driver, and manually shapes supply to fit demand in response to each change.
 
 ##### Brittle by nature
 
@@ -74,21 +74,21 @@ Also, consider that the capacity plan for any given quarter (or other time frame
 
 ##### Laborious and imprecise
 
-For many teams, the process of collecting the data necessary to generate demand forecasts is slow and error-prone. And when it is time to find capacity to meet this future demand, not all resources are equally suitable. For example, if latency requirements mean that a service must commit to serve user demand on the same continent as the user, obtaining additional resources in North America won’t alleviate a capacity shortfall in Asia. Every forecast has constraints, or parameters around how it can be fulfilled; constraints are fundamentally related to intent, which is discussed in the next section.
+For many teams, the process of collecting the data necessary to generate demand forecasts is slow and error-prone. And when it is time to find capacity to meet this future demand, not all resources are equally suitable. For example, if latency requirements mean that a service must commit to serve user demand on the same continent as the user, obtaining additional resources in North America won’t alleviate a capacity shortfall in Asia. Every forecast has *constraints*, or parameters around how it can be fulfilled; constraints are fundamentally related to intent, which is discussed in the next section.
 
 Mapping constrained resource requests into allocations of actual resources from the available capacity is equally slow: it’s both complex and tedious to bin pack requests into limited space by hand, or to find solutions that fit a limited budget.
 
 This process may already paint a grim picture, but to make matters worse, the tools it requires are typically unreliable or cumbersome. Spreadsheets suffer severely from scalability problems and have limited error-checking abilities. Data becomes stale, and tracking changes becomes difficult. Teams often are forced to make simplifying assumptions and reduce the complexity of their requirements, simply to render maintaining adequate capacity a tractable problem.
 
-When service owners face the challenges of fitting a series of requests for capacity from various services into the resources available to them, in a manner that meets the various constraints a service may have, additional imprecision ensues. Bin packing is an NP-hard problem that is difficult for human beings to compute by hand. Furthermore, the capacity request from a service is generally an inflexible set of demand requirements: X cores in cluster Y. The reasons why X cores or Y cluster are needed, and any degrees of freedom around those parameters, are long lost by the time the request reaches a human trying to fit a list of demands into available supply.
+When service owners face the challenges of fitting a series of requests for capacity from various services into the resources available to them, in a manner that meets the various constraints a service may have, additional imprecision ensues. Bin packing is an NP-hard problem that is difficult for human beings to compute by hand. Furthermore, the capacity request from a service is generally an inflexible set of demand requirements: *X* cores in cluster *Y*. The reasons why *X* cores or *Y* cluster are needed, and any degrees of freedom around those parameters, are long lost by the time the request reaches a human trying to fit a list of demands into available supply.
 
 The net result is a massive expenditure of human effort to come up with a bin packing that is approximate, at best. The process is brittle to change, and there are no known bounds on an optimal solution.
 
 #### Our Solution: Intent-Based Capacity Planning
 
-Specify the requirements, not the implementation.
+*Specify the requirements, not the implementation.*
 
-At Google, many teams have moved to an approach we call Intent-based Capacity Planning. The basic premise of this approach is to programmatically encode the dependencies and parameters (intent) of a service’s needs, and use that encoding to autogenerate an allocation plan that details which resources go to which service, in which cluster. If demand, supply, or service requirements change, we can simply autogenerate a new plan in response to the changed parameters, which is now the new best distribution of resources.
+At Google, many teams have moved to an approach we call *Intent-based Capacity Planning*. The basic premise of this approach is to programmatically encode the dependencies and parameters (*intent*) of a service’s needs, and use that encoding to autogenerate an allocation plan that details which resources go to which service, in which cluster. If demand, supply, or service requirements change, we can simply autogenerate a new plan in response to the changed parameters, which is now the new best distribution of resources.
 
 With a service’s true requirements and flexibility captured, the capacity plan is now dramatically more nimble in the face of change, and we can reach an optimal solution that meets as many parameters as possible. With bin packing delegated to computers, human toil is drastically reduced, and service owners can focus on high-order priorities like SLOs, production dependencies, and service infrastructure requirements, as opposed to low-level scrounging for resources.
 
@@ -96,17 +96,17 @@ As an added benefit, using computational optimization to map from intent to impl
 
 ### Intent-Based Capacity Planning
 
-Intent is the rationale for how a service owner wants to run their service. Moving from concrete resource demands to motivating reasons in order to arrive at the true capacity planning intent often requires several layers of abstraction. Consider the following chain of abstraction:
+*Intent* is the rationale for how a service owner wants to run their service. Moving from concrete resource demands to motivating reasons in order to arrive at the true capacity planning intent often requires several layers of abstraction. Consider the following chain of abstraction:
 
-1) “I want 50 cores in clusters X, Y, and Z for service Foo.” This is an explicit resource request. But...why do we need this many resources specifically in these particular clusters?
+*1) “I want 50 cores in clusters X, Y, and Z for service Foo.”* This is an explicit resource request. But...*why do we need this many resources specifically in these particular clusters?*
 
-2) “I want a 50-core footprint in any 3 clusters in geographic region YYY for service Foo.” This request introduces more degrees of freedom and is potentially easier to fulfill, although it doesn’t explain the reasoning behind its requirements. But...why do we need this quantity of resources, and why 3 footprints?
+*2) “I want a 50-core footprint in any 3 clusters in geographic region YYY for service Foo.”* This request introduces more degrees of freedom and is potentially easier to fulfill, although it doesn’t explain the reasoning behind its requirements. But...*why do we need this quantity of resources, and why 3 footprints?*
 
-3) “I want to meet service Foo’s demand in each geographic region, and have N + 2 redundancy.”
+*3) “I want to meet service Foo’s demand in each geographic region, and have N + 2 redundancy.”*
 
-Suddenly greater flexibility is introduced and we can understand at a more “human” level what happens if service Foo does not receive these resources. But...why do we need N + 2 for service Foo?
+Suddenly greater flexibility is introduced and we can understand at a more “human” level what happens if service Foo does not receive these resources. But...*why do we need N + 2 for service Foo?*
 
-4) “I want to run service Foo at 5 nines of reliability.” This is a more abstract requirement, and the ramification if the requirement isn’t met becomes clear: reliability will suffer. And we have even greater flexibility here: perhaps running at N + 2 is not actually sufficient or optimal for this service, and some other deployment plan would be more suitable.
+*4) “I want to run service Foo at 5 nines of reliability.”* This is a more abstract requirement, and the ramification if the requirement isn’t met becomes clear: reliability will suffer. And we have even greater flexibility here: perhaps running at *N* + 2 is not actually sufficient or optimal for this service, and some other deployment plan would be more suitable.
 
 So what level of intent should be used by intent-driven capacity planning? Ideally, all levels of intent should be supported together, with services benefiting the more they shift to specifying intent versus implementation. In Google’s experience, services tend to achieve the best wins as they cross to step 3: good degrees of flexibility are available, and the ramifications of this request are in higher-level and understandable terms. Particularly sophisticated services may aim for step 4.
 
@@ -116,13 +116,13 @@ What information do we need in order to capture a service’s intent? Enter depe
 
 ##### Dependencies
 
-Services at Google depend on many other infrastructure and user-facing services, and these dependencies heavily influence where a service can be placed. For example, imagine user-facing service Foo, which depends upon Bar, an infrastructure storage service. Foo expresses a requirement that Bar must be located within 30 milliseconds of network latency of Foo. This requirement has important repercussions for where we place both Foo and Bar, and intent-driven capacity planning must take these constraints into account.
+Services at Google depend on many other infrastructure and user-facing services, and these dependencies heavily influence where a service can be placed. For example, imagine user-facing service Foo, which depends upon Bar, an infrastructure storage service. Foo expresses a requirement that Bar must be located within 30 milliseconds of network latency of Foo. This requirement has important repercussions for where we place both Foo *and* Bar, and intent-driven capacity planning must take these constraints into account.
 
 Furthermore, production dependencies are nested: to build upon the preceding example, imagine service Bar has its own dependencies on Baz, a lower-level distributed storage service, and Qux, an application management service. Therefore, where we can now place Foo depends on where we can place Bar, Baz, and Qux. A given set of production dependencies can be shared, possibly with different stipulations around intent.
 
 ##### Performance metrics
 
-Demand for one service trickles down to result in demand for one or more other services. Understanding the chain of dependencies helps formulate the general scope of the bin packing problem, but we still need more information about expected resource usage. How many compute resources does service Foo need to serve N user queries? For every N queries of service Foo, how many Mbps of data do we expect for service Bar?
+Demand for one service trickles down to result in demand for one or more other services. Understanding the chain of dependencies helps formulate the general scope of the bin packing problem, but we still need more information about expected resource usage. How many compute resources does service Foo need to serve *N* user queries? For every *N* queries of service Foo, how many Mbps of data do we expect for service Bar?
 
 Performance metrics are the glue between dependencies. They convert from one or more higher-level resource type(s) to one or more lower-level resource type(s). Deriving appropriate performance metrics for a service can involve load testing and resource usage monitoring.
 
@@ -130,7 +130,7 @@ Performance metrics are the glue between dependencies. They convert from one or 
 
 Inevitably, resource constraints result in trade-offs and hard decisions: of the many requirements that all services have, which requirements should be sacrificed in the face of insufficient capacity?
 
-Perhaps N + 2 redundancy for service Foo is more important than N + 1 redundancy for service Bar. Or perhaps the feature launch of X is less important than N + 0 redundancy for service Baz.
+Perhaps *N* + 2 redundancy for service Foo is more important than *N* + 1 redundancy for service Bar. Or perhaps the feature launch of *X* is less important than *N* + 0 redundancy for service Baz.
 
 Intent-driven planning forces these decisions to be made transparently, openly, and consistently. Resource constraints entail the same trade-offs, but all too often, the prioritization can be ad hoc and opaque to service owners. Intent-based planning allows prioritization to be as granular or coarse as needed.
 
@@ -140,30 +140,29 @@ Auxon is Google’s implementation of an intent-based capacity planning and reso
 
 Auxon is actively used to plan the use of many millions of dollars of machine resources at Google. It has become a critical component of capacity planning for several major divisions within Google.
 
-As a product, Auxon provides the means to collect intent-based descriptions of a service’s resource requirements and dependencies. These user intents are expressed as requirements for how the owner would like the service to be provisioned. Requirements might be specified as a request like, “My service must be N + 2 per continent” or “The frontend servers must be no more than 50 ms away from the backend servers.” Auxon collects this information either via a user configuration language or via a programmatic API, thus translating human intent into machine-parseable constraints. Requirements can be prioritized, a feature that’s useful if resources are insufficient to meet all requirements, and therefore trade-offs must be made. These requirements—the intent—are ultimately represented internally as a giant mixed-integer or linear program. Auxon solves the linear program, and uses the resultant bin packing solution to formulate an allocation plan for resources.
+As a product, Auxon provides the means to collect intent-based descriptions of a service’s resource requirements and dependencies. These user intents are expressed as requirements for how the owner would like the service to be provisioned. Requirements might be specified as a request like, “My service must be *N* + 2 per continent” or “The frontend servers must be no more than 50 ms away from the backend servers.” Auxon collects this information either via a user configuration language or via a programmatic API, thus translating human intent into machine-parseable constraints. Requirements can be prioritized, a feature that’s useful if resources are insufficient to meet all requirements, and therefore trade-offs must be made. These requirements—the intent—are ultimately represented internally as a giant mixed-integer or linear program. Auxon solves the linear program, and uses the resultant bin packing solution to formulate an allocation plan for resources.
 
 Figure 18-1 and the explanations that follow it outline Auxon’s major components.
 
-<!-- Source: Site.Reliability.Engineering-2016-18.pdf, PDF page 8. -->
 ![Figure 18-1. The major components of Auxon](/.attachments/18-1-Site.Reliability.Engineering-2016-18.png)
 
 *Figure 18-1. The major components of Auxon*
 
-Performance Data describes how a service scales: for every unit of demand X in cluster Y, how many units of dependency Z are used? This scaling data may be derived in a number of ways depending on the maturity of the service in question. Some services are load tested, while others infer their scaling based upon past performance.
+*Performance Data* describes how a service scales: for every unit of demand *X* in cluster *Y*, how many units of dependency *Z* are used? This scaling data may be derived in a number of ways depending on the maturity of the service in question. Some services are load tested, while others infer their scaling based upon past performance.
 
-Per-Service Demand Forecast Data describes the usage trend for forecasted demand signals. Some services derive their future usage from demand forecasts—a forecast of queries per second broken down by continent. Not all services have a demand forecast: some services (e.g., a storage service like Colossus) derive their demand purely from services that depend upon them.
+*Per-Service Demand Forecast Data* describes the usage trend for forecasted demand signals. Some services derive their future usage from demand forecasts—a forecast of queries per second broken down by continent. Not all services have a demand forecast: some services (e.g., a storage service like Colossus) derive their demand purely from services that depend upon them.
 
-Resource Supply provides data about the availability of base-level, fundamental resources: for example, the number of machines expected to be available for use at a particular point in the future. In linear program terminology, the resource supply acts as an upper bound that limits how services can grow and where services can be placed. Ultimately, we want to make the best use of this resource supply as the intent-based description of the combined group of services allows.
+*Resource Supply* provides data about the availability of base-level, fundamental resources: for example, the number of machines expected to be available for use at a particular point in the future. In linear program terminology, the resource supply acts as an *upper bound* that limits how services can grow and where services can be placed. Ultimately, we want to make the best use of this resource supply as the intent-based description of the combined group of services allows.
 
-Resource Pricing provides data about how much base-level, fundamental resources cost. For instance, the cost of machines may vary globally based upon the space/ power charges of a given facility. In linear program terminology, the prices inform the overall calculated costs, which act as the objective that we want to minimize.
+*Resource Pricing* provides data about how much base-level, fundamental resources cost. For instance, the cost of machines may vary globally based upon the space/ power charges of a given facility. In linear program terminology, the prices inform the overall calculated costs, which act as the *objective* that we want to minimize.
 
-Intent Config is the key to how intent-based information is fed to Auxon. It defines what constitutes a service, and how services relate to one another. The config ultimately acts as a configuration layer that allows all the other components to be wired together. It’s designed to be human-readable and configurable.
+*Intent Config* is the key to how intent-based information is fed to Auxon. It defines what constitutes a service, and how services relate to one another. The config ultimately acts as a configuration layer that allows all the other components to be wired together. It’s designed to be human-readable and configurable.
 
-Auxon Configuration Language Engine acts based upon the information it receives from the Intent Config. This component formulates a machine-readable request (a protocol buffer that can be understood by the Auxon Solver. It applies light sanity checking to the configuration, and is designed to act as the gateway between the human-configurable intent definition and the machine-parseable optimization request.
+*Auxon Configuration Language Engine* acts based upon the information it receives from the Intent Config. This component formulates a machine-readable request (a protocol buffer that can be understood by the Auxon Solver. It applies light sanity checking to the configuration, and is designed to act as the gateway between the human-configurable intent definition and the machine-parseable optimization request.
 
-Auxon Solver is the brain of the tool. It formulates the giant mixed-integer or linear program based upon the optimization request received from the Configuration Language Engine. It is designed to be very scalable, which allows the solver to run in parallel upon hundreds or even thousands of machines running within Google’s clusters. In addition to mixed-integer linear programming toolkits, there are also components within the Auxon Solver that handle tasks such as scheduling, managing a pool of workers, and descending decision trees.
+*Auxon Solver* is the brain of the tool. It formulates the giant mixed-integer or linear program based upon the optimization request received from the Configuration Language Engine. It is designed to be very scalable, which allows the solver to run in parallel upon hundreds or even thousands of machines running within Google’s clusters. In addition to mixed-integer linear programming toolkits, there are also components within the Auxon Solver that handle tasks such as scheduling, managing a pool of workers, and descending decision trees.
 
-Allocation Plan is the output of the Auxon Solver. It prescribes which resources should be allocated to which services in what locations. It is the computed implementation details of the intent-based definition of the capacity planning problem’s requirements. The Allocation Plan also includes information about any requirements that could not be satisfied—for example, if a requirement couldn’t be met due to a lack of resources, or competing requirements that were otherwise too strict.
+*Allocation Plan* is the output of the Auxon Solver. It prescribes which resources should be allocated to which services in what locations. It is the computed implementation details of the intent-based definition of the capacity planning problem’s requirements. The Allocation Plan also includes information about any requirements that could not be satisfied—for example, if a requirement couldn’t be met due to a lack of resources, or competing requirements that were otherwise too strict.
 
 #### Requirements and Implementation: Successes and Lessons Learned
 
@@ -223,7 +222,7 @@ Furthermore, because Google’s SRE teams are distributed across the globe, earl
 
 ##### Designing at the right level
 
-An idea that we’ve termed agnosticism—writing the software to be generalized to allow myriad data sources as input—was a key principle of Auxon’s design. Agnosticism meant that customers weren’t required to commit to any one tool in order to use the Auxon framework. This approach allowed Auxon to remain of sufficient general utility even as teams with divergent use cases began to use it. We approached potential users with the message, “come as you are; we’ll work with what you’ve got.” By avoiding over-customizing for one or two big users, we achieved broader adoption across the organization and lowered the barrier to entry for new services.
+An idea that we’ve termed *agnosticism*—writing the software to be generalized to allow myriad data sources as input—was a key principle of Auxon’s design. Agnosticism meant that customers weren’t required to commit to any one tool in order to use the Auxon framework. This approach allowed Auxon to remain of sufficient general utility even as teams with divergent use cases began to use it. We approached potential users with the message, “come as you are; we’ll work with what you’ve got.” By avoiding over-customizing for one or two big users, we achieved broader adoption across the organization and lowered the barrier to entry for new services.
 
 We’ve also consciously endeavored to avoid the pitfall of defining success as 100% adoption across the organization. In many cases, there are diminishing returns on closing the last mile to enable a feature set that is sufficient for every service in the long tail at Google.
 
@@ -271,7 +270,7 @@ First, recognize that this goal is as much an organizational change as it is a t
 
 Next, think about what you want to achieve by developing software in SRE. Do you just want to foster better software development practices within your team, or are you interested in software development that produces results that can be used across teams, possibly as a standard for the organization? In larger established organizations, the latter change will take time, possibly spanning multiple years. Such a change needs to be tackled on multiple fronts, but has a higher payback. The following are some guidelines from Google’s experience:
 
-Create and communicate a clear message
+*Create and communicate a clear message*
 
 It’s important to define and communicate your strategy, plans, and—most importantly—the benefits SRE gains from this effort. SREs are a skeptical lot (in fact, skepticism is a trait for which we specifically hire); an SRE’s initial response to such an effort will likely be, “that sounds like too much overhead” or “it will never work.” Start by making a compelling case of how this strategy will help SRE; for example:
 
@@ -279,19 +278,19 @@ It’s important to define and communicate your strategy, plans, and—most impo
 
 - Reducing the number of ways to perform the same task allows the entire department to benefit from the skills any single team has developed, thus making knowledge and effort portable across teams.
 
-When SREs start to ask questions about how your strategy will work, rather than if the strategy should be pursued, you know you’ve passed the first hurdle.
+When SREs start to ask questions about *how* your strategy will work, rather than *if* the strategy should be pursued, you know you’ve passed the first hurdle.
 
-Evaluate your organization’s capabilities
+*Evaluate your organization’s capabilities*
 
 SREs have many skills, but it’s relatively common for an SRE to lack experience as part of a team that built and shipped a product to a set of users. In order to develop useful software, you’re effectively creating a product team. That team includes required roles and skills that your SRE organization may not have formerly demanded. Will someone play the role of product manager, acting as the customer advocate? Does your tech lead or project manager have the skills and/or experience to run an agile development process?
 
 Begin filling these gaps by taking advantage of the skills already present in your company. Ask your product development team to help you establish agile practices via training or coaching. Solicit consulting time from a product manager to help you define product requirements and prioritize feature work. Given a large enough software-development opportunity, there may be a case to hire dedicated people for these roles. Making the case to hire for these roles is easier once you have some positive experiment results.
 
-Launch and iterate
+*Launch and iterate*
 
 As you initiate an SRE software development program, your efforts will be followed by many watchful eyes. It’s important to establish credibility by delivering some product of value in a reasonable amount of time. Your first round of products should aim for relatively straightforward and achievable targets—ones without controversy or existing solutions. We also found success in pairing this approach with a six-month rhythm of product update releases that provided additional useful features. This release cycle allowed teams to focus on identifying the right set of features to build, and then building those features while simultaneously learning how to be a productive software development team. After the initial launch, some Google teams moved to a push-on-green model for even faster delivery and feedback.
 
-Don’t lower your standards
+*Don’t lower your standards*
 
 As you start to develop software, you may be tempted to cut corners. Resist this urge by holding yourself to the same standards to which your product development teams are held. For example:
 

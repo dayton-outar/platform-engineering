@@ -4,11 +4,13 @@
 
 Source: [Site.Reliability.Engineering-2016-24.pdf](./Site.Reliability.Engineering-2016-24.pdf), PDF pages 1–12.
 
-Written by Štěpán Davidovič[^p1-1]
+The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
 
-Edited by Kavita Guliani
+***Written by Štěpán Davidovič[^p1-1]***
 
-This chapter describes Google’s implementation of a distributed cron service that serves the vast majority of internal teams that need periodic scheduling of compute jobs. Throughout cron’s existence, we have learned many lessons about how to design and implement what might seem like a basic service. Here, we discuss the problems that distributed crons face and outline some potential solutions.
+***Edited by Kavita Guliani***
+
+This document describes Google’s implementation of a distributed cron service that serves the vast majority of internal teams that need periodic scheduling of compute jobs. Throughout cron’s existence, we have learned many lessons about how to design and implement what might seem like a basic service. Here, we discuss the problems that distributed crons face and outline some potential solutions.
 
 Cron is a common Unix utility designed to periodically launch arbitrary jobs at user-defined times or intervals. We first analyze the base principles of cron and its most common implementations, and then review how an application such as cron can work in a large, distributed environment in order to increase the reliability of the system against single-machine failures. We describe a distributed cron system that is deployed on a small number of machines, but can launch cron jobs across an entire datacenter in conjunction with a datacenter scheduling system like Borg [Ver15].
 
@@ -92,11 +94,10 @@ When designing the distributed cron, we chose the second option. We made this ch
 
 #### The Use of Paxos
 
-We deploy multiple replicas of the cron service and use the Paxos distributed consensus algorithm (see Chapter 23) to ensure they have consistent state. As long as the majority of group members are available, the distributed system as a whole can successfully process new state changes despite the failure of bounded subsets of the infrastructure.
+We deploy multiple replicas of the cron service and use the Paxos distributed consensus algorithm (see [Managing Critical State: Distributed Consensus for Reliability](DISTRIBUTED.CONSENSUS.RELIABILITY.md)) to ensure they have consistent state. As long as the majority of group members are available, the distributed system as a whole can successfully process new state changes despite the failure of bounded subsets of the infrastructure.
 
 As shown in Figure 24-1, the distributed cron uses a single leader job, which is the only replica that can modify the shared state, as well as the only replica that can launch cron jobs. We take advantage of the fact that the variant of Paxos we use, Fast Paxos [Lam06], uses a leader replica internally as an optimization—the Fast Paxos leader replica also acts as the cron service leader.
 
-<!-- Source: Site.Reliability.Engineering-2016-24.pdf, PDF page 6. -->
 ![Figure 24-1. The interactions between distributed cron replicas](/.attachments/24-1-Site.Reliability.Engineering-2016-24.png)
 
 *Figure 24-1. The interactions between distributed cron replicas*
@@ -111,13 +112,12 @@ As just described, our use of Paxos and its deployment in the cron service has t
 
 ##### The leader
 
-The leader replica is the only replica that actively launches cron jobs. The leader has an internal scheduler that, much like the simple crond described at the beginning of this chapter, maintains the list of cron jobs ordered by their scheduled launch time. The leader replica waits until the scheduled launch time of the first job.
+The leader replica is the only replica that actively launches cron jobs. The leader has an internal scheduler that, much like the simple crond described at the beginning of this document, maintains the list of cron jobs ordered by their scheduled launch time. The leader replica waits until the scheduled launch time of the first job.
 
 Upon reaching the scheduled launch time, the leader replica announces that it is about to start this particular cron job’s launch, and calculates the new scheduled launch time, just like a regular crond implementation would. Of course, as with regular crond, a cron job launch specification may have changed since the last execution, and this launch specification must be kept in sync with the followers as well. Simply identifying the cron job is not enough: we should also uniquely identify the particular launch using the start time; otherwise, ambiguity in cron job launch tracking may occur. (Such ambiguity is especially likely in the case of high-frequency cron jobs, such as those running every minute.) As seen in Figure 24-2, this communication is performed over Paxos.
 
 It is important that Paxos communication remain synchronous, and that the actual cron job launch does not proceed until it receives confirmation that the Paxos quorum has received the launch notification. The cron service needs to understand whether each cron job has launched in order to decide the next course of action in case of leader failover. Not performing this task synchronously could mean that the entire cron job launch happens on the leader without informing the follower replicas. In case of failover, the follower replicas might attempt to perform the very same launch again because they aren’t aware that the launch already occurred.
 
-<!-- Source: Site.Reliability.Engineering-2016-24.pdf, PDF page 7. -->
 ![Figure 24-2. Illustration of progress of a cron job launch, from the leader’s perspective](/.attachments/24-2-Site.Reliability.Engineering-2016-24.png)
 
 *Figure 24-2. Illustration of progress of a cron job launch, from the leader’s perspective*
@@ -198,7 +198,6 @@ In the ordinary crontab, users specify the minute, hour, day of the month (or we
 
 Despite this change, the load caused by the cron jobs is still very spiky. The graph in Figure 24-3 illustrates the aggregate global number of launches of cron jobs at Google. This graph highlights the frequent spikes in cron job launches, which is often caused by cron jobs that need to be launched at a specific time—for example, due to temporal dependency on external events.
 
-<!-- Source: Site.Reliability.Engineering-2016-24.pdf, PDF page 12. -->
 ![Figure 24-3. The number of cron jobs launched globally](/.attachments/24-3-Site.Reliability.Engineering-2016-24.png)
 
 *Figure 24-3. The number of cron jobs launched globally*
@@ -211,6 +210,6 @@ We have discussed the new constraints demanded by a distributed-system environme
 
 ### Notes
 
-[^p1-1]: This chapter was previously published in part in ACM Queue (March 2015, vol. 13, issue 3).
+[^p1-1]: This document was previously published in part in *ACM Queue* (March 2015, vol. 13, issue 3).
 
 [^p2-2]: Failure of individual jobs is beyond the scope of this analysis.

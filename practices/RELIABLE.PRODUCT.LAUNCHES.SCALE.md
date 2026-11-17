@@ -4,9 +4,11 @@
 
 Source: [Site.Reliability.Engineering-2016-27.pdf](./Site.Reliability.Engineering-2016-27.pdf), PDF pages 1–19.
 
-Written by Rhandeev Singh and Sebastian Kirsch with Vivek Rau
+The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
 
-Edited by Betsy Beyer
+***Written by Rhandeev Singh and Sebastian Kirsch with Vivek Rau***
+
+***Edited by Betsy Beyer***
 
 Internet companies like Google are able to launch new products and features in far more rapid iterations than traditional companies. Site Reliability’s role in this process is to enable a rapid pace of change without compromising stability of the site. We created a dedicated team of “Launch Coordination Engineers” to consult with engineering teams on the technical aspects of a successful launch.
 
@@ -52,15 +54,15 @@ Our Launch Coordination Engineering team is composed of Launch Coordination Engi
 
 A team dedicated to coordinating launches offers the following advantages:
 
-Breadth of experience
+*Breadth of experience*
 
 As a true cross-product team, the members are active across almost all of Google’s product areas. Extensive cross-product knowledge and relationships with many teams across the company make LCEs excellent vehicles for knowledge transfer.
 
-Cross-functional perspective
+*Cross-functional perspective*
 
 LCEs have a holistic view of the launch, which enables them to coordinate among disparate teams in SRE, development, and product management. This holistic approach is particularly important for complicated launches that can span more than half a dozen teams in multiple time zones.
 
-Objectivity
+*Objectivity*
 
 As a nonpartisan advisor, an LCE plays a balancing and mediating role between stakeholders including SRE, product developers, product managers, and marketing.
 
@@ -70,35 +72,37 @@ Because Launch Coordination Engineer is an SRE role, LCEs are incentivized to pr
 
 Google has honed its launch process over a period of more than 10 years. Over time we have identified a number of criteria that characterize a good launch process:
 
-Lightweight
+*Lightweight*
 
 Easy on developers
 
-Robust
+*Robust*
 
 Catches obvious errors
 
-Thorough
+*Thorough*
 
 Addresses important details consistently and reproducibly
 
-Scalable
+*Scalable*
 
 Accommodates both a large number of simple launches and fewer complex launches
 
-Adaptable
+*Adaptable*
 
-Works well for common types of launches (for example, adding a new UI language to a product) and new types of launches (for example, the initial launch of the Chrome browser or Google Fiber) As you can see, some of these requirements are in obvious conflict. For example, it’s hard to design a process that is simultaneously lightweight and thorough. Balancing these criteria against each other requires continuous work. Google has successfully employed a few tactics to help us achieve these criteria:
+Works well for common types of launches (for example, adding a new UI language to a product) and new types of launches (for example, the initial launch of the Chrome browser or Google Fiber).
 
-Simplicity
+As you can see, some of these requirements are in obvious conflict. For example, it’s hard to design a process that is simultaneously lightweight and thorough. Balancing these criteria against each other requires continuous work. Google has successfully employed a few tactics to help us achieve these criteria:
+
+*Simplicity*
 
 Get the basics right. Don’t plan for every eventuality.
 
-A high touch approach
+*A high touch approach*
 
 Experienced engineers customize the process to suit each launch.
 
-Fast common paths
+*Fast common paths*
 
 Identify classes of launches that always follow a common pattern (such as launching a product in a new country), and provide a simplified launch process for this class.
 
@@ -106,23 +110,23 @@ Experience has demonstrated that engineers are likely to sidestep processes that
 
 #### The Launch Checklist
 
-Checklists are used to reduce failure and ensure consistency and completeness across a variety of disciplines. Common examples include aviation preflight checklists and surgical checklists [Gaw09]. Similarly, LCE employs a launch checklist for launch qualification. The checklist (Appendix E) helps an LCE assess the launch and provides the launching team with action items and pointers to more information. Here are some examples of items a checklist might include:
+Checklists are used to reduce failure and ensure consistency and completeness across a variety of disciplines. Common examples include aviation preflight checklists and surgical checklists [Gaw09]. Similarly, LCE employs a launch checklist for launch qualification. The checklist ([Launch Coordination Checklist](../management/SRE.SUPPLEMENTARY.MATERIAL.md#appendix-e-launch-coordination-checklist)) helps an LCE assess the launch and provides the launching team with action items and pointers to more information. Here are some examples of items a checklist might include:
 
-- Question: Do you need a new domain name?
+- **Question**: Do you need a new domain name?
 
-  - Action item: Coordinate with marketing on your desired domain name, and
+  - **Action item**: Coordinate with marketing on your desired domain name, and
 
 request registration of the domain. Here is a link to the marketing form.
 
-- Question: Are you storing persistent data?
+- **Question**: Are you storing persistent data?
 
-  - Action item: Make sure you implement backups. Here are instructions for
+  - **Action item**: Make sure you implement backups. Here are instructions for
 
 implementing backups.
 
-- Question: Could a user potentially abuse your service?
+- **Question**: Could a user potentially abuse your service?
 
-  - Action item: Implement rate limiting and quotas. Use the following shared
+  - **Action item**: Implement rate limiting and quotas. Use the following shared
 
 service.
 
@@ -148,7 +152,7 @@ LCEs have various ways to streamline the launch experience and act as advocates 
 
 When a project enters into a new product space or vertical, an LCE may need to create an appropriate checklist from scratch. Doing so often involves synthesizing experience from relevant domain experts. When drafting a new checklist, it can be helpful to structure the checklist around broad themes such as reliability, failure modes, and processes.
 
-For example, before launching Android, Google had rarely dealt with mass consumer devices with client-side logic that we didn’t directly control. While we can more or less easily fix a bug in Gmail within hours or days by pushing new versions of JavaScript to browsers, such fixes aren’t an option with mobile devices. Therefore, LCEs working on mobile launches engaged mobile domain experts to determine which sections of existing checklists did or did not apply, and where new checklist questions were needed. In such conversations, it’s important to keep the intent of each question in mind in order to avoid mindlessly applying a concrete question or action item that’s not relevant to the design of the unique product being launched. An LCE facing an unusual launch must return to abstract first principles of how to execute a safe launch, then respecialize to make the checklist concrete and useful to developers.
+For example, before launching Android, Google had rarely dealt with mass consumer devices with client-side logic that we didn’t directly control. While we can more or less easily fix a bug in Gmail within hours or days by pushing new versions of JavaScript to browsers, such fixes aren’t an option with mobile devices. Therefore, LCEs working on mobile launches engaged mobile domain experts to determine which sections of existing checklists did or did not apply, and where new checklist questions were needed. In such conversations, it’s important to keep the *intent* of each question in mind in order to avoid mindlessly applying a concrete question or action item that’s not relevant to the design of the unique product being launched. An LCE facing an unusual launch must return to abstract first principles of how to execute a safe launch, then respecialize to make the checklist concrete and useful to developers.
 
 ### Developing a Launch Checklist
 
@@ -286,13 +290,13 @@ Contingency measures are another part of rollout planning. What if you don’t m
 
 ### Selected Techniques for Reliable Launches
 
-As described in other parts of this book, Google has developed a number of techniques for running reliable systems over the years. Some of these techniques are particularly well suited to launching products safely. They also provide advantages during regular operation of the service, but it’s particularly important to get them right during the launch phase.
+Google has developed a number of techniques for running reliable systems over the years. Some of these techniques are particularly well suited to launching products safely. They also provide advantages during regular operation of the service, but it’s particularly important to get them right during the launch phase.
 
 #### Gradual and Staged Rollouts
 
 One adage of system administration is “never change a running system.” Any change represents risk, and risk should be minimized in order to assure reliability of a system. What’s true for any small system is doubly true for highly replicated, globally distributed systems like those run by Google.
 
-Very few launches at Google are of the “push-button” variety, in which we launch a new product at a specific time for the entire world to use. Over time, Google has developed a number of patterns that allow us to launch products and features gradually and thereby minimize risk; see Appendix B.
+Very few launches at Google are of the “push-button” variety, in which we launch a new product at a specific time for the entire world to use. Over time, Google has developed a number of patterns that allow us to launch products and features gradually and thereby minimize risk; see [A Collection of Best Practices for Production Services](../management/SRE.SUPPLEMENTARY.MATERIAL.md#appendix-b-a-collection-of-best-practices-for-production-services).
 
 Almost all updates to Google’s services proceed gradually, according to a defined process, with appropriate verification steps interspersed. A new server might be installed on a few machines in one datacenter and observed for a defined period of time. If all looks well, the server is installed on all machines in one datacenter, observed again, and then installed on all machines globally. The first stages of a rollout are usually called “canaries”—an allusion to canaries carried by miners into a coal mine to detect dangerous gases. Our canary servers detect dangerous effects from the behavior of the new software under real user traffic.
 
@@ -338,7 +342,7 @@ Stateful services tend to limit feature flags to a subset of unique logged-in us
 
 The simplest example of abusive client behavior is a misjudgment of update rates. A new client that syncs every 60 seconds, as opposed to every 600 seconds, causes 10 times the load on the service. Retry behavior has a number of pitfalls that affect user-initiated requests, as well as client-initiated requests. Take the example of a service that is overloaded and is therefore failing some requests: if the clients retry the failed requests, they add load to an already overloaded service, resulting in more retries and even more requests. Instead, clients need to reduce the frequency of retries, usually by adding exponentially increasing delay between retries, in addition to carefully considering the types of errors that warrant a retry. For example, a network error usually warrants a retry, but a 4xx HTTP error (which indicates an error on the client’s side) usually does not.
 
-Intentional or inadvertent synchronization of automated requests in a thundering herd (much like those described in Chapters 24 and 25) is another common example of abusive client behavior. A phone app developer might decide that 2 a.m. is a good time to download updates, because the user is most likely asleep and won’t be inconvenienced by the download. However, such a design results in a barrage of requests to the download server at 2 a.m. every night, and almost no requests at any other time. Instead, every client should choose the time for this type of request randomly.
+Intentional or inadvertent synchronization of automated requests in a thundering herd (much like those described in [Distributed Periodic Scheduling with Cron](DISTRIBUTED.PERIODIC.SCHEDULING.CRON.md) and [Data Processing Pipelines](DATA.PROCESSING.PIPELINES.md)) is another common example of abusive client behavior. A phone app developer might decide that 2 a.m. is a good time to download updates, because the user is most likely asleep and won’t be inconvenienced by the download. However, such a design results in a barrage of requests to the download server at 2 a.m. every night, and almost no requests at any other time. Instead, every client should choose the time for this type of request randomly.
 
 Randomness also needs to be injected into other periodic processes. To return to the previously mentioned retries: let’s take the example of a client that sends a request, and when it encounters a failure, retries after 1 second, then 2 seconds, then 4 seconds, and so on. Without randomness, a brief request spike that leads to an increased error rate could repeat itself due to retries after 1 second, then 2 seconds, then 4 seconds. In order to even out these synchronized events, each delay needs to be jittered (that is, adjusted by a random amount).
 
@@ -384,7 +388,7 @@ LCEs were responsible for making sure launches were executing quickly without th
 
 #### Evolution of the LCE Checklist
 
-As Google’s environment grew more complex, so did both the Launch Coordination Engineering checklist (see Appendix E) and the volume of launches. In 3.5 years, one LCE ran 350 launches through the LCE Checklist. As the team averaged five engineers during this time period, this translates into a Google launch throughput of over 1,500 launches in 3.5 years!
+As Google’s environment grew more complex, so did both the Launch Coordination Engineering checklist (see [Launch Coordination Checklist](../management/SRE.SUPPLEMENTARY.MATERIAL.md#appendix-e-launch-coordination-checklist)) and the volume of launches. In 3.5 years, one LCE ran 350 launches through the LCE Checklist. As the team averaged five engineers during this time period, this translates into a Google launch throughput of over 1,500 launches in 3.5 years!
 
 While each question on the LCE Checklist is simple, much complexity is built in to what prompted the question and the implications of its answer. In order to fully understand this degree of complexity, a new LCE hire requires about six months of training.
 
@@ -402,16 +406,16 @@ When products are successful far beyond any early estimates, and their usage inc
 
 ##### Growing operational load
 
-When running a service after it launches, operational load, the amount of manual and repetitive engineering needed to keep a system functioning, tends to grow over time unless efforts are made to control such load. Noisiness of automated notifications, complexity of deployment procedures, and the overhead of manual maintenance work tend to increase over time and consume increasing amounts of the service owner’s bandwidth, leaving the team less time for feature development. SRE has an internally advertised goal of keeping operational work below a maximum of 50%; see Chapter 5. Staying below this maximum requires constant tracking of sources of operational work, as well as directed effort to remove these sources.
+When running a service after it launches, operational load, the amount of manual and repetitive engineering needed to keep a system functioning, tends to grow over time unless efforts are made to control such load. Noisiness of automated notifications, complexity of deployment procedures, and the overhead of manual maintenance work tend to increase over time and consume increasing amounts of the service owner’s bandwidth, leaving the team less time for feature development. SRE has an internally advertised goal of keeping operational work below a maximum of 50%; see [Eliminating Toil](../principles/ELIMINATING.TOIL.md). Staying below this maximum requires constant tracking of sources of operational work, as well as directed effort to remove these sources.
 
 ##### Infrastructure churn
 
 If the underlying infrastructure (such as systems for cluster management, storage, monitoring, load balancing, and data transfer) is changing due to active development by infrastructure teams, the owners of services running on the infrastructure must invest large amounts of work to simply keep up with the infrastructure changes. As infrastructure features upon which services rely are deprecated and replaced by new features, service owners must continually modify their configurations and rebuild their executables, consequently “running fast just to stay in the same place.” The solution to this scenario is to enact some type of churn reduction policy that prohibits infrastructure engineers from releasing backward-incompatible features until they also automate the migration of their clients to the new feature. Creating automated migration tools to accompany new features minimizes the work imposed on service owners to keep up with infrastructure churn.
 
-Solving these problems requires company-wide efforts that are far beyond the scope of LCE: a combination of better platform APIs and frameworks (see Chapter 32), continuous build and test automation, and better standardization and automation across Google’s production services.
+Solving these problems requires company-wide efforts that are far beyond the scope of LCE: a combination of better platform APIs and frameworks (see [The Evolving SRE Engagement Model](../management/EVOLVING.SRE.ENGAGEMENT.MODEL.md)), continuous build and test automation, and better standardization and automation across Google’s production services.
 
 ### Conclusion
 
 Companies undergoing rapid growth with a high rate of change to products and services may benefit from the equivalent of a Launch Coordination Engineering role. Such a team is especially valuable if a company plans to double its product developers every one or two years, if it must scale its services to hundreds of millions of users, and if reliability despite a high rate of change is important to its users.
 
-The LCE team was Google’s solution to the problem of achieving safety without impeding change. This chapter introduced some of the experiences accumulated by our unique LCE role over a 10-year period under exactly such circumstances. We hope that our approach will help inspire others facing similar challenges in their respective organizations.
+The LCE team was Google’s solution to the problem of achieving safety without impeding change. This document introduced some of the experiences accumulated by our unique LCE role over a 10-year period under exactly such circumstances. We hope that our approach will help inspire others facing similar challenges in their respective organizations.

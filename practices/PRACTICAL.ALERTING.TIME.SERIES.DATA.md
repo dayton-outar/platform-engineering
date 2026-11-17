@@ -4,15 +4,17 @@
 
 Source: [Site.Reliability.Engineering-2016-10.pdf](./Site.Reliability.Engineering-2016-10.pdf), PDF pages 1–17.
 
-Written by Jamie Wilkinson
+The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
 
-Edited by Kavita Guliani
+***Written by Jamie Wilkinson***
 
-> May the queries flow, and the pager stay silent.
+***Edited by Kavita Guliani***
+
+> *May the queries flow, and the pager stay silent.*
 
 > —Traditional SRE blessing
 
-Monitoring, the bottom layer of the Hierarchy of Production Needs, is fundamental to running a stable service. Monitoring enables service owners to make rational decisions about the impact of changes to the service, apply the scientific method to incident response, and of course ensure their reason for existence: to measure the service’s alignment with business goals (see Chapter 6).
+Monitoring, the bottom layer of the *Hierarchy of Production Needs*, is fundamental to running a stable service. Monitoring enables service owners to make rational decisions about the impact of changes to the service, apply the scientific method to incident response, and of course ensure their reason for existence: to measure the service’s alignment with business goals (see [Monitoring Distributed Systems](../principles/MONITORING.DISTRIBUTED.SYSTEMS.md)).
 
 Regardless of whether or not a service enjoys SRE support, it should be run in a symbiotic relationship with its monitoring. But having been tasked with ultimate responsibility for Google Production, SREs develop a particularly intimate knowledge of the monitoring infrastructure that supports their service.
 
@@ -34,17 +36,17 @@ Shortly after the job scheduling infrastructure Borg [Ver15] was created in 2003
 
 #### Time-Series Monitoring Outside of Google
 
-This chapter describes the architecture and programming interface of an internal monitoring tool that was foundational for the growth and reliability of Google for almost 10 years...but how does that help you, our dear reader?
+This document describes the architecture and programming interface of an internal monitoring tool that was foundational for the growth and reliability of Google for almost 10 years...but how does that help you, our dear reader?
 
-In recent years, monitoring has undergone a Cambrian Explosion: Riemann, Heka, Bosun, and Prometheus have emerged as open source tools that are very similar to Borgmon’s time-series–based alerting. In particular, Prometheus[^p2-1] shares many similarities with Borgmon, especially when you compare the two rule languages. The principles of variable collection and rule evaluation remain the same across all these tools and provide an environment with which you can experiment, and hopefully launch into production, the ideas inspired by this chapter.
+In recent years, monitoring has undergone a Cambrian Explosion: Riemann, Heka, Bosun, and Prometheus have emerged as open source tools that are very similar to Borgmon’s time-series–based alerting. In particular, Prometheus[^p2-1] shares many similarities with Borgmon, especially when you compare the two rule languages. The principles of variable collection and rule evaluation remain the same across all these tools and provide an environment with which you can experiment, and hopefully launch into production, the ideas inspired by this document.
 
-Instead of executing custom scripts to detect system failures, Borgmon relies on a common data exposition format; this enables mass data collection with low overheads and avoids the costs of subprocess execution and network connection setup. We call this white-box monitoring (see Chapter 6 for a comparison of white-box and black-box monitoring).
+Instead of executing custom scripts to detect system failures, Borgmon relies on a common data exposition format; this enables mass data collection with low overheads and avoids the costs of subprocess execution and network connection setup. We call this *white-box monitoring* (see [Monitoring Distributed Systems](../principles/MONITORING.DISTRIBUTED.SYSTEMS.md) for a comparison of white-box and black-box monitoring).
 
 The data is used both for rendering charts and creating alerts, which are accomplished using simple arithmetic. Because collection is no longer in a short-lived process, the history of the collected data can be used for that alert computation as well.
 
-These features help to meet the goal of simplicity described in Chapter 6. They allow the system overhead to be kept low so that the people running the services can remain agile and respond to continuous change in the system as it grows.
+These features help to meet the goal of simplicity described in [Monitoring Distributed Systems](../principles/MONITORING.DISTRIBUTED.SYSTEMS.md). They allow the system overhead to be kept low so that the people running the services can remain agile and respond to continuous change in the system as it grows.
 
-To facilitate mass collection, the metrics format had to be standardized. An older method of exporting the internal state (known as varz)[^p3-2] was formalized to allow the collection of all metrics from a single target in one HTTP fetch. For example, to view a page of metrics manually, you could use the following command:
+To facilitate mass collection, the metrics format had to be standardized. An older method of exporting the internal state (known as *varz*)[^p3-2] was formalized to allow the collection of all metrics from a single target in one HTTP fetch. For example, to view a page of metrics manually, you could use the following command:
 
 ```text
 % curl http://webserver:80/varz
@@ -98,7 +100,6 @@ Borgmon stores all the data in an in-memory database, regularly checkpointed to 
 
 As presented in Figure 10-1, a time-series is conceptually a one-dimensional matrix of numbers, progressing through time. As you add permutations of labels to this time-series, the matrix becomes multidimensional.
 
-<!-- Source: Site.Reliability.Engineering-2016-10.pdf, PDF page 5. -->
 ![Figure 10-1. A time-series for errors labeled by the original host each was collected from](/.attachments/10-1-Site.Reliability.Engineering-2016-10.png)
 
 *Figure 10-1. A time-series for errors labeled by the original host each was collected from*
@@ -111,7 +112,6 @@ Periodically, the in-memory state is archived to an external system known as the
 
 As shown in the example time-series in Figure 10-2, time-series are stored as sequences of numbers and timestamps, which are referred to as vectors. Like vectors in linear algebra, these vectors are slices and cross-sections of the multidimensional matrix of data points in the arena. Conceptually the timestamps can be ignored, because the values are inserted in the vector at regular intervals in time—for example, 1 or 10 seconds or 1 minute apart.
 
-<!-- Source: Site.Reliability.Engineering-2016-10.pdf, PDF page 6. -->
 ![Figure 10-2. An example time-series](/.attachments/10-2-Site.Reliability.Engineering-2016-10.png)
 
 *Figure 10-2. An example time-series*
@@ -188,7 +188,6 @@ Borgmon is really just a programmable calculator, with some syntactic sugar that
 
 > Centralizing the rule evaluation in a monitoring system, rather than delegating it to forked subprocesses, means that computations can run in parallel against many similar targets. This practice keeps the configuration relatively small in size (for example, by removing duplication of code) yet more powerful through its expressiveness.
 
-<!-- Source: Site.Reliability.Engineering-2016-10.pdf, PDF page 8. -->
 ![Figure 10-4. Callout illustration beside time-series rule guidance](/.attachments/10-4-Site.Reliability.Engineering-2016-10.png)
 
 *Figure 10-4. Callout illustration beside time-series rule guidance*
@@ -199,7 +198,6 @@ Rules run in a parallel threadpool where possible, but are dependent on ordering
 
 Aggregation is the cornerstone of rule evaluation in a distributed environment. Aggregation entails taking the sum of a set of time-series from the tasks in a job in order to treat the job as a whole. From those sums, overall rates can be computed. For example, the total queries-per-second rate of a job in a datacenter is the sum of all the rates of change[^p8-11] of all the query counters.[^p8-12]
 
-<!-- Source: Site.Reliability.Engineering-2016-10.pdf, PDF page 9. -->
 ![Figure 10-5. Callout illustration beside temporal aggregation guidance](/.attachments/10-5-Site.Reliability.Engineering-2016-10.png)
 
 *Figure 10-5. Callout illustration beside temporal aggregation guidance*
@@ -255,7 +253,6 @@ because the second rule uses the first one as input.
 
 > The instance label is missing in the output now, discarded by the aggregation rule. If it had remained in the rule, then Borgmon would not have been able to sum the five rows together.
 
-<!-- Source: Site.Reliability.Engineering-2016-10.pdf, PDF page 10. -->
 ![Figure 10-6. Callout illustration beside aggregation rule guidance](/.attachments/10-6-Site.Reliability.Engineering-2016-10.png)
 
 *Figure 10-6. Callout illustration beside aggregation rule guidance*
@@ -264,7 +261,7 @@ In these examples, we use a time window because we’re dealing with discrete po
 
 The example also uses a Google convention that helps readability. Each computed variable name contains a colon-separated triplet indicating the aggregation level, the variable name, and the operation that created that name. In this example, the lefthand variables are “task HTTP requests 10-minute rate” and “datacenter HTTP requests 10-minute rate.”
 
-Now that we know how to create a rate of queries, we can build on that to also compute a rate of errors, and then we can calculate the ratio of responses to requests to understand how much useful work the service is doing. We can compare the ratio rate of errors to our service level objective (see Chapter 4) and alert if this objective is missed or in danger of being missed:
+Now that we know how to create a rate of queries, we can build on that to also compute a rate of errors, and then we can calculate the ratio of responses to requests to understand how much useful work the service is doing. We can compare the ratio rate of errors to our service level objective (see [Service Level Objectives](../principles/SERVICE.LEVEL.OBJECTIVES.md)) and alert if this objective is missed or in danger of being missed:
 
 ```text
 rules <<<
@@ -331,7 +328,6 @@ The output of these rules might look like:[^p11-14]
 
 > The preceding output shows the intermediate query in the dc:http_errors:rate10m rule that filters the non-200 error codes. Though the value of the expressions are the same, observe that the code label is retained in one but removed from the other.
 
-<!-- Source: Site.Reliability.Engineering-2016-10.pdf, PDF page 12. -->
 ![Figure 10-7. Callout illustration beside alerting rule guidance](/.attachments/10-7-Site.Reliability.Engineering-2016-10.png)
 
 *Figure 10-7. Callout illustration beside alerting rule guidance*
@@ -356,7 +352,7 @@ rules <<<
 >>>
 ```
 
-Our example holds the ratio rate at 0.15, which is well over the threshold of 0.01 in the alerting rule. However, the number of errors is not greater than 1 at this moment, so the alert won’t be active. Once the number of errors exceeds 1, the alert will go pending for two minutes to ensure it isn’t a transient state, and only then will it fire.
+Our example holds the ratio rate at 0.15, which is well over the threshold of 0.01 in the alerting rule. However, the number of errors is not greater than 1 at this moment, so the alert won’t be active. Once the number of errors exceeds 1, the alert will go *pending* for two minutes to ensure it isn’t a transient state, and only then will it *fire*.
 
 The alert rule contains a small template for filling out a message containing contextual information: which job the alert is for, the name of the alert, the numerical value of the triggering rule, and so on. The contextual information is filled out by Borgmon when the alert fires and is sent in the Alert RPC.
 
@@ -368,9 +364,9 @@ Borgmon is connected to a centrally run service, known as the Alertmanager, whic
 
 - Fan-in or fan-out alerts based on their labelsets when multiple alerts with similar labelsets fire
 
-As described in Chapter 6, teams send their page-worthy alerts to their on-call rotation and their important but subcritical alerts to their ticket queues. All other alerts should be retained as informational data for status dashboards.
+As described in [Monitoring Distributed Systems](../principles/MONITORING.DISTRIBUTED.SYSTEMS.md), teams send their page-worthy alerts to their on-call rotation and their important but subcritical alerts to their ticket queues. All other alerts should be retained as informational data for status dashboards.
 
-A more comprehensive guide to alert design can be found in Chapter 4.
+A more comprehensive guide to alert design can be found in [Service Level Objectives](../principles/SERVICE.LEVEL.OBJECTIVES.md).
 
 ### Sharding the Monitoring Topology
 
@@ -378,7 +374,6 @@ A Borgmon can import time-series data from other Borgmon, as well. While one cou
 
 As shown in Figure 10-3, more complicated deployments shard the datacenter Borgmon further into a purely scraping-only layer (often due to RAM and CPU constraints in a single Borgmon for very large services) and a DC aggregation layer that performs mostly rule evaluation for aggregation. Sometimes the global layer is split between rule evaluation and dashboarding. Upper-tier Borgmon can filter the data they want to stream from the lower-tier Borgmon, so that the global Borgmon does not fill its arena with all the per-task time-series from the lower tiers. Thus, the aggregation hierarchy builds local caches of relevant time-series that can be drilled down into when required.
 
-<!-- Source: Site.Reliability.Engineering-2016-10.pdf, PDF page 14. -->
 ![Figure 10-3. A data flow model of a hierarchy of Borgmon in three clusters](/.attachments/10-3-Site.Reliability.Engineering-2016-10.png)
 
 *Figure 10-3. A data flow model of a hierarchy of Borgmon in three clusters*
@@ -391,7 +386,7 @@ However, white-box monitoring does not provide a full picture of the system bein
 
 Teams at Google solve this coverage issue with Prober, which runs a protocol check against a target and reports success or failure. The prober can send alerts directly to Alertmanager, or its own varz can be collected by a Borgmon. Prober can validate the response payload of the protocol (e.g., the HTML contents of an HTTP response) and validate that the contents are expected, and even extract and export values as time-series. Teams often use Prober to export histograms of response times by operation type and payload size so that they can slice and dice the user-visible performance. Prober is a hybrid of the check-and-test model with some richer variable extraction to create time-series.
 
-Prober can be pointed at either the frontend domain or behind the load balancer. By using both targets, we can detect localized failures and suppress alerts. For example, we might monitor both the load balanced www.google.com and the web servers in each datacenter behind the load balancer. This setup allows us to either know that traffic is still served when a datacenter fails, or to quickly isolate an edge in the traffic flow graph where a failure has occurred.
+Prober can be pointed at either the frontend domain or behind the load balancer. By using both targets, we can detect localized failures and suppress alerts. For example, we might monitor both the load balanced *www.google.com* and the web servers in each datacenter behind the load balancer. This setup allows us to either know that traffic is still served when a datacenter fails, or to quickly isolate an edge in the traffic flow graph where a failure has occurred.
 
 ### Maintaining the Configuration
 
@@ -433,9 +428,9 @@ Even though Borgmon remains internal to Google, the idea of treating time-series
 
 ### Notes
 
-[^p2-1]: Prometheus is an open source monitoring and time-series database system available at http://prometheus.io.
+[^p2-1]: Prometheus is an open source monitoring and time-series database system available at *http://prometheus.io*.
 
-[^p3-2]: Google was born in the USA, so we pronounce this “var-zee.”
+[^p3-2]: Google was born in the USA, so we pronounce this *“var-zee.”*
 
 [^p3-3]: The plural of Borgmon is Borgmon, like sheep.
 
@@ -443,13 +438,13 @@ Even though Borgmon remains internal to Google, the idea of treating time-series
 
 [^p4-5]: Many other applications use their service protocol to export their internal state, as well. OpenLDAP exports it through the cn=Monitor subtree; MySQL can report state with a SHOW VARIABLES query; Apache has its mod_status handler.
 
-[^p4-6]: https://golang.org/pkg/expvar/
+[^p4-6]: *https://golang.org/pkg/expvar/*
 
-[^p4-7]: The Borg Name System (BNS) is described in Chapter 2.
+[^p4-7]: The Borg Name System (BNS) is described in [The Production Environment at Google, from the Viewpoint of an SRE](../GOOGLE.PRODUCTION.ENVIRONMENT.md).
 
-[^p5-8]: Recall in Chapter 6 the distinction between alerting on symptoms and on causes.
+[^p5-8]: Recall in [Monitoring Distributed Systems](../principles/MONITORING.DISTRIBUTED.SYSTEMS.md) the distinction between alerting on symptoms and on causes.
 
-[^p6-9]: This 12-hour horizon is a magic number that aims to have enough information for debugging an incident in RAM for fast queries without costing too much RAM.
+[^p6-9]: This 12-hour horizon is a magic number that aims to have enough information for debugging an incident in RAM for fast queries without costing *too much* RAM.
 
 [^p7-10]: The service and zone labels are elided here for space, but are present in the returned expression.
 
