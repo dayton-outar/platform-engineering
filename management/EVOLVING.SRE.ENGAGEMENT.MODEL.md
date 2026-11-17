@@ -4,19 +4,21 @@
 
 Source: [Site.Reliability.Engineering-2016-32.pdf](./Site.Reliability.Engineering-2016-32.pdf), PDF pages 1–16.
 
-Written by Acacio Cruz and Ashish Bhambhani
+The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
 
-Edited by Betsy Beyer and Tim Harvey
+***Written by Acacio Cruz and Ashish Bhambhani***
+
+***Edited by Betsy Beyer and Tim Harvey***
 
 ### SRE Engagement: What, How, and Why
 
-We’ve discussed in most of the rest of this book what happens when SRE is already in charge of a service. Few services begin their lifecycle enjoying SRE support, so there needs to be a process for evaluating a service, making sure that it merits SRE support, negotiating how to improve any deficits that bar SRE support, and actually instituting SRE support. We call this process onboarding. If you are in an environment where you are surrounded by a lot of existing services in varying states of perfection, your SRE team will probably be running through a prioritized queue of onboardings for quite a while until the team has finished taking on the highest-value targets.
+Much of the [SRE practices collection](../practices/README.md) concerns what happens when SRE is *already* in charge of a service. Few services begin their lifecycle enjoying SRE support, so there needs to be a process for evaluating a service, making sure that it merits SRE support, negotiating how to improve any deficits that bar SRE support, and actually instituting SRE support. We call this process *onboarding*. If you are in an environment where you are surrounded by a lot of existing services in varying states of perfection, your SRE team will probably be running through a prioritized queue of onboardings for quite a while until the team has finished taking on the highest-value targets.
 
-Although this is very common, and a completely reasonable way of dealing with a fait accompli environment, there are actually at least two better ways of bringing the wisdom of production, and SRE support, to services old and new alike.
+Although this is very common, and a completely reasonable way of dealing with a *fait accompli* environment, there are actually at least two better ways of bringing the wisdom of production, and SRE support, to services old and new alike.
 
-In the first case, just as in software engineering—where the earlier the bug is found, the cheaper it is to fix—the earlier an SRE team consultation happens, the better the service will be and the quicker it will feel the benefit. When SRE is engaged during the earliest stages of design, the time to onboard is lowered and the service is more reliable “out of the gate,” usually because we don’t have to spend the time unwinding suboptimal design or implementation.
+In the first case, just as in software engineering—where the earlier the bug is found, the cheaper it is to fix—the earlier an SRE team consultation happens, the better the service will be and the quicker it will feel the benefit. When SRE is engaged during the earliest stages of *design*, the time to onboard is lowered and the service is more reliable “out of the gate,” usually because we don’t have to spend the time unwinding suboptimal design or implementation.
 
-Another way, perhaps the best, is to short-circuit the process by which specially created systems with lots of individual variations end up “arriving” at SRE’s door. Provide product development with a platform of SRE-validated infrastructure, upon which they can build their systems. This platform will have the double benefit of being both reliable and scalable. This avoids certain classes of cognitive load problems entirely, and by addressing common infrastructure practices, allows product development teams to focus on innovation at the application layer, where it mostly belongs.
+Another way, perhaps the best, is to short-circuit the process by which specially created systems with lots of individual variations end up “arriving” at SRE’s door. Provide product development with a *platform* of SRE-validated infrastructure, upon which they can build their systems. This platform will have the double benefit of being both reliable and scalable. This avoids certain classes of cognitive load problems entirely, and by addressing common infrastructure practices, allows product development teams to focus on innovation at the application layer, where it mostly belongs.
 
 In the following sections, we’ll spend some time looking at each of these models in turn, beginning with the “classic” one, the PRR-driven model.
 
@@ -24,16 +26,15 @@ In the following sections, we’ll spend some time looking at each of these mode
 
 The most typical initial step of SRE engagement is the Production Readiness Review (PRR), a process that identifies the reliability needs of a service based on its specific details. Through a PRR, SREs seek to apply what they’ve learned and experienced to ensure the reliability of a service operating in production. A PRR is considered a prerequisite for an SRE team to accept responsibility for managing the production aspects of a service.
 
-Figure 32-1 illustrates the lifecycle of a typical service. The Production Readiness Review can be started at any point of the service lifecycle, but the stages at which SRE engagement is applied have expanded over time. This chapter describes the Simple PRR Model, then discusses how its modification into the Extended Engagement Model and the Frameworks and SRE Platform structure allowed SRE to scale their engagement process and impact.
+Figure 32-1 illustrates the lifecycle of a typical service. The Production Readiness Review can be started at any point of the service lifecycle, but the stages at which SRE engagement is applied have expanded over time. This document describes the Simple PRR Model, then discusses how its modification into the Extended Engagement Model and the Frameworks and SRE Platform structure allowed SRE to scale their engagement process and impact.
 
-<!-- Source: Site.Reliability.Engineering-2016-32.pdf, PDF page 2. -->
 ![Figure 32-1. A typical service lifecycle](/.attachments/32-1-Site.Reliability.Engineering-2016-32.png)
 
 *Figure 32-1. A typical service lifecycle*
 
 ### The SRE Engagement Model
 
-SRE seeks production responsibility for important services for which it can make concrete contributions to reliability. SRE is concerned with several aspects of a service, which are collectively referred to as production. These aspects include the following:
+SRE seeks production responsibility for important services for which it can make concrete contributions to reliability. SRE is concerned with several aspects of a service, which are collectively referred to as *production*. These aspects include the following:
 
 - System architecture and interservice dependencies
 
@@ -55,7 +56,7 @@ Not all Google services receive close SRE engagement. A couple of factors are at
 
 - Many services don’t need high reliability and availability, so support can be provided by other means.
 
-- By design, the number of development teams that request SRE support exceeds the available bandwidth of SRE teams (see Chapter 1).
+- By design, the number of development teams that request SRE support exceeds the available bandwidth of SRE teams (see [Introduction](../INTRODUCTION.md)).
 
 When SRE can’t provide full-fledged support, it provides other options for making improvements to production, such as documentation and consultation.
 
@@ -65,7 +66,7 @@ Development guides are available for internal technologies and clients of widely
 
 ##### Consultation
 
-Developers may also seek SRE consulting to discuss specific services or problem areas. The Launch Coordination Engineering (LCE) team (see Chapter 27) spends a majority of its time consulting with development teams. SRE teams that aren’t specifically dedicated to launch consultations also engage in consultation with development teams.
+Developers may also seek SRE consulting to discuss specific services or problem areas. The Launch Coordination Engineering (LCE) team (see [Reliable Product Launches at Scale](../practices/RELIABLE.PRODUCT.LAUNCHES.SCALE.md)) spends a majority of its time consulting with development teams. SRE teams that aren’t specifically dedicated to launch consultations also engage in consultation with development teams.
 
 When a new service or a new feature has been implemented, developers usually consult with SRE for advice about preparing for the Launch phase. Launch consultation usually involves one or two SREs spending a few hours studying the design and implementation at a high level. The SRE consultants then meet with the development team to provide advice on risky areas that need attention and to discuss well-known patterns or solutions that can be incorporated to improve the service in production. Some of this advice may come from the Production Guide mentioned earlier.
 
@@ -247,19 +248,19 @@ Finally, the SRE organization is responsible for serving the needs of the large 
 
 To effectively respond to these conditions, it became necessary to develop a model that allowed for the following principles:
 
-Codified best practices
+*Codified best practices*
 
 The ability to commit what works well in production to code, so services can simply use this code and become “production ready” by design.
 
-Reusable solutions
+*Reusable solutions*
 
 Common and easily shareable implementations of techniques used to mitigate scalability and reliability issues.
 
-A common production platform with a common control surface
+*A common production platform with a common control surface*
 
 Uniform sets of interfaces to production facilities, uniform sets of operational controls, and uniform monitoring, logging, and configuration for all services.
 
-Easier automation and smarter systems
+*Easier automation and smarter systems*
 
 A common control surface that enables automation and smart systems at a level not possible before. For example, SREs can readily receive a single view of relevant information for an outage, rather than hand collecting and analyzing mostly raw data from disparate sources (logs, monitoring data, and so on).
 
@@ -341,7 +342,7 @@ All three of the engagement models described are still practiced within Google. 
 
 ### Notes
 
-[^p12-1]: See the Wikipedia page on microservices at http://en.wikipedia.org/wiki/Microservices.
+[^p12-1]: See the Wikipedia page on microservices at *http://en.wikipedia.org/wiki/Microservices*.
 
 [^p15-2]: Occasionally, there were consulting engagements by SRE teams with some non-onboarded services, but consultations were a best-effort approach and limited in number and scope.
 

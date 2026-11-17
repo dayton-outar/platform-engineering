@@ -2,17 +2,18 @@
 
 Source: [Site.Reliability.Engineering-2016-32.pdf](./Site.Reliability.Engineering-2016-32.pdf), PDF pages 17–18, 36–84.
 
+The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
+
 ## PART V Conclusions
 
-Having covered much ground in terms of how SRE works at Google, and how the principles and practices we’ve developed might be applied to other organizations in our field, it now seems appropriate to turn our view to Chapter 33, Lessons Learned from Other Industries, to examine how SRE’s practices compare to other industries where reliability is critically important.
+Having covered much ground in terms of how SRE works at Google, and how the principles and practices we’ve developed might be applied to other organizations in our field, it now seems appropriate to turn our view to *[Lessons Learned from Other Industries](LESSONS.OTHER.INDUSTRIES.md)* to examine how SRE’s practices compare to other industries where reliability is critically important.
 
-Finally, Google’s VP for Site Reliability Engineering, Benjamin Lutch, writes about SRE’s evolution over the course of his career in his conclusion, examining SRE through the lens of some observations on the aviation industry.
+Finally, Google’s VP for Site Reliability Engineering, Benjamin Lutch, writes about SRE’s evolution over the course of his career in his [conclusion](CONCLUSION.md), examining SRE through the lens of some observations on the aviation industry.
 
 ## APPENDIX A Availability Table
 
 Availability is generally calculated based on how long a service was unavailable over some period. Assuming no planned downtime, Table A-1 indicates how much downtime is permitted to reach a given availability level.
 
-<!-- Source: Site.Reliability.Engineering-2016-32.pdf, PDF page 37. -->
 *Table A-1. Availability table*
 
 | Availability level | Allowed unavailability per year | Per quarter | Per month | Per week | Per day | Per hour |
@@ -26,25 +27,25 @@ Availability is generally calculated based on how long a service was unavailable
 | 99.99% | 52.6 minutes | 12.96 minutes | 4.32 minutes | 60.5 seconds | 8.64 seconds | 0.36 seconds |
 | 99.999% | 5.26 minutes | 1.30 minutes | 25.9 seconds | 6.05 seconds | 0.87 seconds | 0.04 seconds |
 
-Using an aggregate unavailability metric (i.e., "X% of all operations failed”) is more useful than focusing on outage lengths for services that may be partially available— for instance, due to having multiple replicas, only some of which are unavailable— and for services whose load varies over the course of a day or week rather than remaining constant.
+Using an aggregate unavailability metric (i.e., "*X*% of all operations failed”) is more useful than focusing on outage lengths for services that may be partially available— for instance, due to having multiple replicas, only some of which are unavailable— and for services whose load varies over the course of a day or week rather than remaining constant.
 
-See Equations 3-1 and 3-2 in Chapter 3 for calculations.
+See Equations 3-1 and 3-2 in [Embracing Risk](../principles/EMBRACING.RISK.md) for calculations.
 
 ## APPENDIX B A Collection of Best Practices for Production Services
 
-Written by Ben Treynor Sloss
+***Written by Ben Treynor Sloss***
 
-Edited by Betsy Beyer
+***Edited by Betsy Beyer***
 
 ### Fail Sanely
 
-Sanitize and validate configuration inputs, and respond to implausible inputs by both continuing to operate in the previous state and alerting to the receipt of bad input. Bad input often falls into one of these categories:
+Sanitize and validate configuration inputs, and respond to implausible inputs by *both* continuing to operate in the previous state *and* alerting to the receipt of bad input. Bad input often falls into one of these categories:
 
-Incorrect data
+*Incorrect data*
 
-Validate both syntax and, if possible, semantics. Watch for empty data and partial or truncated data (e.g., alert if the configuration is N% smaller than the previous version).
+Validate both syntax and, if possible, semantics. Watch for empty data and partial or truncated data (e.g., alert if the configuration is *N*% smaller than the previous version).
 
-Delayed data
+*Delayed data*
 
 This may invalidate current data due to timeouts. Alert well before the data is expected to expire.
 
@@ -52,19 +53,19 @@ Fail in a way that preserves function, possibly at the expense of being overly p
 
 #### Examples
 
-In 2005, Google’s global DNS load- and latency-balancing system received an empty DNS entry file as a result of file permissions. It accepted this empty file and served NXDOMAIN for six minutes for all Google properties. In response, the system now performs a number of sanity checks on new configurations, including confirming the presence of virtual IPs for google.com, and will continue serving the previous DNS entries until it receives a new file that passes its input checks.
+In 2005, Google’s global DNS load- and latency-balancing system received an empty DNS entry file as a result of file permissions. It accepted this empty file and served NXDOMAIN for six minutes for all Google properties. In response, the system now performs a number of sanity checks on new configurations, including confirming the presence of virtual IPs for *google.com*, and will continue serving the previous DNS entries until it receives a new file that passes its input checks.
 
 In 2009, incorrect (but valid) data led to Google marking the entire Web as containing malware [May09]. A configuration file containing the list of suspect URLs was replaced by a single forward slash character (/), which matched all URLs. Checks for dramatic changes in file size and checks to see whether the configuration is matching sites that are believed unlikely to contain malware would have prevented this from reaching production.
 
 ### Progressive Rollouts
 
-Nonemergency rollouts must proceed in stages. Both configuration and binary changes introduce risk, and you mitigate this risk by applying the change to small fractions of traffic and capacity at one time. The size of your service or rollout, as well as your risk profile, will inform the percentages of production capacity to which the rollout is pushed, and the appropriate time frame between stages. It’s also a good idea to perform different stages in different geographies, in order to detect problems related to diurnal traffic cycles and geographical traffic mix differences.
+Nonemergency rollouts *must* proceed in stages. Both configuration and binary changes introduce risk, and you mitigate this risk by applying the change to small fractions of traffic and capacity at one time. The size of your service or rollout, as well as your risk profile, will inform the percentages of production capacity to which the rollout is pushed, and the appropriate time frame between stages. It’s also a good idea to perform different stages in different geographies, in order to detect problems related to diurnal traffic cycles and geographical traffic mix differences.
 
 Rollouts should be supervised. To ensure that nothing unexpected is occurring during the rollout, it must be monitored either by the engineer performing the rollout stage or—preferably—a demonstrably reliable monitoring system. If unexpected behavior is detected, roll back first and diagnose afterward in order to minimize Mean Time to Recovery.
 
 ### Define SLOs Like a User
 
-Measure availability and performance in terms that matter to an end user. See Chapter 4 for more discussion.
+Measure availability and performance in terms that matter to an end user. See [Service Level Objectives](../principles/SERVICE.LEVEL.OBJECTIVES.md) for more discussion.
 
 #### Example
 
@@ -72,7 +73,7 @@ Measuring error rates and latency at the Gmail client, rather than at the server
 
 ### Error Budgets
 
-Balance reliability and the pace of innovation with error budgets (see “Motivation for Error Budgets” on page 33), which define the acceptable level of failure for a service, over some period; we often use a month. A budget is simply 1 minus a service’s SLO; for instance, a service with a 99.99% availability target has a 0.01% “budget” for unavailability. As long as the service hasn’t spent its error budget for the month through the background rate of errors plus any downtime, the development team is free (within reason) to launch new features, updates, and so on.
+Balance reliability and the pace of innovation with error budgets (see [Motivation for Error Budgets](../principles/EMBRACING.RISK.md#motivation-for-error-budgets)), which define the acceptable level of failure for a service, over some period; we often use a month. A budget is simply 1 minus a service’s SLO; for instance, a service with a 99.99% availability target has a 0.01% “budget” for unavailability. As long as the service hasn’t spent its error budget for the month through the background rate of errors plus any downtime, the development team is free (within reason) to launch new features, updates, and so on.
 
 If the error budget is spent, the service freezes changes (except urgent security and bug fixes addressing any cause of the increased errors) until either the service has earned back room in the budget, or the month resets. For mature services with an SLO greater than 99.99%, a quarterly rather than monthly budget reset is appropriate, because the amount of allowable downtime is small.
 
@@ -82,63 +83,65 @@ Error budgets eliminate the structural tension that might otherwise develop betw
 
 Monitoring may have only three output types:
 
-Pages
+*Pages*
 
-A human must do something now
+A human must do something *now*
 
-Tickets
+*Tickets*
 
 A human must do something within a few days
 
-Logging
+*Logging*
 
-No one need look at this output immediately, but it’s available for later analysis if needed If it’s important enough to bother a human, it should either require immediate action (i.e., page) or be treated as a bug and entered into your bug-tracking system. Putting alerts into email and hoping that someone will read all of them and notice the important ones is the moral equivalent of piping them to /dev/null: they will eventually be ignored. History demonstrates this strategy is an attractive nuisance because it can work for a while, but it relies on eternal human vigilance, and the inevitable outage is thus more severe when it happens.
+No one need look at this output immediately, but it’s available for later analysis if needed.
+
+If it’s important enough to bother a human, it should either *require* immediate action (i.e., page) or be treated as a bug and entered into your bug-tracking system. Putting alerts into email and hoping that someone will read all of them and notice the important ones is the moral equivalent of piping them to */dev/null*: they will eventually be ignored. History demonstrates this strategy is an attractive nuisance because it can work for a while, but it relies on eternal human vigilance, and the inevitable outage is thus more severe when it happens.
 
 ### Postmortems
 
-Postmortems (see Chapter 15) should be blameless and focus on process and technology, not people. Assume the people involved in an incident are intelligent, are well intentioned, and were making the best choices they could given the information they had available at the time. It follows that we can’t “fix” the people, but must instead fix their environment: e.g., improving system design to avoid entire classes of problems, making the appropriate information easily available, and automatically validating operational decisions to make it difficult to put systems in dangerous states.
+Postmortems (see [Postmortem Culture: Learning from Failure](../practices/POSTMORTEM.CULTURE.LEARNING.FAILURE.md)) should be blameless and focus on process and technology, not people. Assume the people involved in an incident are intelligent, are well intentioned, and were making the best choices they could given the information they had available at the time. It follows that we can’t “fix” the people, but must instead fix their environment: e.g., improving system design to avoid entire classes of problems, making the appropriate information easily available, and automatically validating operational decisions to make it difficult to put systems in dangerous states.
 
 ### Capacity Planning
 
-Provision to handle a simultaneous planned and unplanned outage, without making the user experience unacceptable; this results in an "N + 2” configuration, where peak traffic can be handled by N instances (possibly in degraded mode) while the largest 2 instances are unavailable:
+Provision to handle a simultaneous planned and unplanned outage, without making the user experience unacceptable; this results in an "*N* + 2” configuration, where peak traffic can be handled by *N* instances (possibly in degraded mode) while the largest 2 instances are unavailable:
 
 - Validate prior demand forecasts against reality until they consistently match. Divergence implies unstable forecasting, inefficient provisioning, and risk of a capacity shortfall.
 
-- Use load testing rather than tradition to establish the resource-to-capacity ratio: a cluster of X machines could handle Y queries per second three months ago, but can it still do so given changes to the system?
+- Use load testing rather than tradition to establish the resource-to-capacity ratio: a cluster of *X* machines could handle *Y* queries per second three months ago, but can it still do so given changes to the system?
 
-- Don’t mistake day-one load for steady-state load. Launches often attract more traffic, while they’re also the time you especially want to put the product’s best foot forward. See Chapter 27 and Appendix E.
+- Don’t mistake day-one load for steady-state load. Launches often attract more traffic, while they’re also the time you especially want to put the product’s best foot forward. See [Reliable Product Launches at Scale](../practices/RELIABLE.PRODUCT.LAUNCHES.SCALE.md) and the [Launch Coordination Checklist](SRE.SUPPLEMENTARY.MATERIAL.md#appendix-e-launch-coordination-checklist).
 
 ### Overloads and Failure
 
 Services should produce reasonable but suboptimal results if overloaded. For example, Google Search will search a smaller fraction of the index, and stop serving features like Instant to continue to provide good quality web search results when overloaded. Search SRE tests web search clusters beyond their rated capacity to ensure they perform acceptably when overloaded with traffic.
 
-For times when load is high enough that even degraded responses are too expensive for all queries, practice graceful load shedding, using well-behaved queuing and dynamic timeouts; see Chapter 21. Other techniques include answering requests after a significant delay (“tarpitting”) and choosing a consistent subset of clients to receive errors, preserving a good user experience for the remainder.
+For times when load is high enough that even degraded responses are too expensive for all queries, practice graceful load shedding, using well-behaved queuing and dynamic timeouts; see [Handling Overload](../practices/HANDLING.OVERLOAD.md). Other techniques include answering requests after a significant delay (“tarpitting”) and choosing a consistent subset of clients to receive errors, preserving a good user experience for the remainder.
 
-Retries can amplify low error rates into higher levels of traffic, leading to cascading failures (see Chapter 22). Respond to cascading failures by dropping a fraction of traffic (including retries!) upstream of the system once total load exceeds total capacity.
+Retries can amplify low error rates into higher levels of traffic, leading to cascading failures (see [Addressing Cascading Failures](../practices/ADDRESSING.CASCADING.FAILURES.md)). Respond to cascading failures by dropping a fraction of traffic (including retries!) upstream of the system once total load exceeds total capacity.
 
 Every client that makes an RPC must implement exponential backoff (with jitter) for retries, to dampen error amplification. Mobile clients are especially troublesome because there may be millions of them and updating their code to fix behavior takes a significant amount of time—possibly weeks—and requires that users install updates.
 
 ### SRE Teams
 
-SRE teams should spend no more than 50% of their time on operational work (see Chapter 5); operational overflow should be directed to the product development team. Many services also include the product developers in the on-call rotation and ticket handling, even if there is currently no overflow. This provides incentives to design systems that minimize or eliminate operational toil, along with ensuring that the product developers are in touch with the operational side of the service. A regular production meeting between SREs and the development team (see Chapter 31) is also helpful.
+SRE teams should spend no more than 50% of their time on operational work (see [Eliminating Toil](../principles/ELIMINATING.TOIL.md)); operational overflow should be directed to the product development team. Many services also include the product developers in the on-call rotation and ticket handling, even if there is currently no overflow. This provides incentives to design systems that minimize or eliminate operational toil, along with ensuring that the product developers are in touch with the operational side of the service. A regular production meeting between SREs and the development team (see [Communication and Collaboration in SRE](COMMUNICATION.COLLABORATION.SRE.md)) is also helpful.
 
 We’ve found that at least eight people need to be part of the on-call team, in order to avoid fatigue and allow sustainable staffing and low turnover. Preferably, those on-call should be in two well-separated geographic locations (e.g., California and Ireland) to provide a better quality of life by avoiding nighttime pages; in this case, six people at each site is the minimum team size.
 
 Expect to handle no more than two events per on-call shift (e.g., per 12 hours): it takes time to respond to and fix outages, start the postmortem, and file the resulting bugs. More frequent events may degrade the quality of response, and suggest that something is wrong with (at least one of) the system’s design, monitoring sensitivity, and response to postmortem bugs.
 
-Ironically, if you implement these best practices, the SRE team may eventually end up out of practice in responding to incidents due to their infrequency, making a long outage out of a short one. Practice handling hypothetical outages (see “Disaster Role Playing” on page 401) routinely and improve your incident-handling documentation in the process.
+Ironically, if you implement these best practices, the SRE team may eventually end up out of practice in responding to incidents due to their infrequency, making a long outage out of a short one. Practice handling hypothetical outages (see [Disaster Role Playing](ACCELERATING.SRES.ON.CALL.md#disaster-role-playing)) routinely and improve your incident-handling documentation in the process.
 
 ## APPENDIX C Example Incident State Document
 
-Shakespeare Sonnet++ Overload: 2015-10-21 Incident management info: http://incident-management-cheat-sheet
+**Shakespeare Sonnet++ Overload: 2015-10-21** Incident management info: *http://incident-management-cheat-sheet*
 
-(Communications lead to keep summary updated.) Summary: Shakespeare search service in cascading failure due to newly discovered sonnet not in search index.
+*(Communications lead to keep summary updated.)* **Summary**: Shakespeare search service in cascading failure due to newly discovered sonnet not in search index.
 
-Status: active, incident #465
+**Status**: active, incident #465
 
-Command Post(s): #shakespeare on IRC
+**Command Post(s)**: #shakespeare on IRC
 
-Command Hierarchy (all responders)
+**Command Hierarchy** *(all responders)*
 
 - Current Incident Commander: jennifer
 
@@ -148,25 +151,25 @@ Command Hierarchy (all responders)
 
 — Communications lead: jennifer
 
-- Next Incident Commander: to be determined
+- Next Incident Commander: *to be determined*
 
-(Update at least every four hours and at handoff of Comms Lead role.) Detailed Status (last updated at 2015-10-21 15:28 UTC by jennifer)
+*(Update at least every four hours and at handoff of Comms Lead role.)* **Detailed Status** (last updated at 2015-10-21 15:28 UTC by jennifer)
 
-Exit Criteria:
+**Exit Criteria:**
 
-- New sonnet added to Shakespeare search corpus TODO
+- New sonnet added to Shakespeare search corpus **TODO**
 
-- Within availability (99.99%) and latency (99%ile < 100 ms) SLOs for 30+ minutes TODO
+- Within availability (99.99%) and latency (99%ile < 100 ms) SLOs for 30+ minutes **TODO**
 
-TODO list and bugs filed:
+**TODO list and bugs filed:**
 
-- Run MapReduce job to reindex Shakespeare corpus DONE
+- Run MapReduce job to reindex Shakespeare corpus **DONE**
 
-- Borrow emergency resources to bring up extra capacity DONE
+- Borrow emergency resources to bring up extra capacity **DONE**
 
-- Enable flux capacitor to balance load between clusters (Bug 5554823) TODO
+- Enable flux capacitor to balance load between clusters (Bug 5554823) **TODO**
 
-Incident timeline (most recent first: times are in UTC)
+**Incident timeline** *(most recent first: times are in UTC)*
 
 - 2015-10-21 15:28 UTC jennifer
 
@@ -186,7 +189,7 @@ clusters so they can recover from cascading failure while spinning up more tasks
 
 - 2015-10-21 15:04 UTC martym
 
-— Obtains text of newly discovered sonnet from shakespeare-discuss@ mailing
+— Obtains text of newly discovered sonnet from *shakespeare-discuss@* mailing
 
 list
 
@@ -204,38 +207,37 @@ Shakespeare Sonnet++ Postmortem (incident #465)
 
 Date: 2015-10-21
 
-Authors: jennifer, martym, agoogler
+**Authors**: jennifer, martym, agoogler
 
-Status: Complete, action items in progress
+**Status**: Complete, action items in progress
 
-Summary: Shakespeare Search down for 66 minutes during period of very high interest in Shakespeare due to discovery of a new sonnet.
+**Summary**: Shakespeare Search down for 66 minutes during period of very high interest in Shakespeare due to discovery of a new sonnet.
 
-Impact:[^p47-1] Estimated 1.21B queries lost, no revenue impact.
+**Impact**:[^p47-1] Estimated 1.21B queries lost, no revenue impact.
 
-Root Causes:[^p47-2] Cascading failure due to combination of exceptionally high load and a resource leak when searches failed due to terms not being in the Shakespeare corpus. The newly discovered sonnet used a word that had never before appeared in one of Shakespeare’s works, which happened to be the term users searched for. Under normal circumstances, the rate of task failures due to resource leaks is low enough to be unnoticed.
+**Root Causes**:[^p47-2] Cascading failure due to combination of exceptionally high load and a resource leak when searches failed due to terms not being in the Shakespeare corpus. The newly discovered sonnet used a word that had never before appeared in one of Shakespeare’s works, which happened to be the term users searched for. Under normal circumstances, the rate of task failures due to resource leaks is low enough to be unnoticed.
 
-Trigger: Latent bug triggered by sudden increase in traffic.
+**Trigger**: Latent bug triggered by sudden increase in traffic.
 
-Resolution: Directed traffic to sacrificial cluster and added 10x capacity to mitigate cascading failure. Updated index deployed, resolving interaction with latent bug. Maintaining extra capacity until surge in public interest in new sonnet passes. Resource leak identified and fix deployed.
+**Resolution**: Directed traffic to sacrificial cluster and added 10x capacity to mitigate cascading failure. Updated index deployed, resolving interaction with latent bug. Maintaining extra capacity until surge in public interest in new sonnet passes. Resource leak identified and fix deployed.
 
-Detection: Borgmon detected high level of HTTP 500s and paged on-call.
+**Detection**: Borgmon detected high level of HTTP 500s and paged on-call.
 
-Action Items:[^p48-3]
+**Action Items**:[^p48-3]
 
-<!-- Source: Site.Reliability.Engineering-2016-32.pdf, PDF page 48. -->
 *Table D-1. Action items (generated table number)*
 
-| Action Item | Type | Owner | Bug |
+| **Action Item** | **Type** | **Owner** | **Bug** |
 | --- | --- | --- | --- |
-| Update playbook with instructions for responding to cascading failure | mitigate | jennifer | n/a DONE |
-| Use flux capacitor to balance load between clusters | prevent | martym | Bug 5554823 TODO |
-| Schedule cascading failure test during next DiRT | process | docbrown | n/a TODO |
-| Investigate running index MR/fusion continuously | prevent | jennifer | Bug 5554824 TODO |
-| Plug file descriptor leak in search ranking subsystem | prevent | agoogler | Bug 5554825 DONE |
-| Add load shedding capabilities to Shakespeare search | prevent | agoogler | Bug 5554826 TODO |
-| Build regression tests to ensure servers respond sanely to queries of death | prevent | clarac | Bug 5554827 TODO |
-| Deploy updated search ranking subsystem to prod | prevent | jennifer | n/a DONE |
-| Freeze production until 2015-11-20 due to error budget exhaustion, or seek exception due to grotesque, unbelievable, bizarre, and unprecedented circumstances | other | docbrown | n/a TODO |
+| Update playbook with instructions for responding to cascading failure | mitigate | jennifer | n/a **DONE** |
+| Use flux capacitor to balance load between clusters | prevent | martym | Bug 5554823 **TODO** |
+| Schedule cascading failure test during next DiRT | process | docbrown | n/a **TODO** |
+| Investigate running index MR/fusion continuously | prevent | jennifer | Bug 5554824 **TODO** |
+| Plug file descriptor leak in search ranking subsystem | prevent | agoogler | Bug 5554825 **DONE** |
+| Add load shedding capabilities to Shakespeare search | prevent | agoogler | Bug 5554826 **TODO** |
+| Build regression tests to ensure servers respond sanely to queries of death | prevent | clarac | Bug 5554827 **TODO** |
+| Deploy updated search ranking subsystem to prod | prevent | jennifer | n/a **DONE** |
+| Freeze production until 2015-11-20 due to error budget exhaustion, or seek exception due to grotesque, unbelievable, bizarre, and unprecedented circumstances | other | docbrown | n/a **TODO** |
 
 #### Lessons Learned
 
@@ -263,25 +265,25 @@ Action Items:[^p48-3]
 
 [^p49-5]
 
-2015-10-21 (all times UTC)
+2015-10-21 *(all times UTC)*
 
 - 14:51 News reports that a new Shakespearean sonnet has been discovered in a Delorean’s glove compartment
 
-- 14:53 Traffic to Shakespeare search increases by 88x after post to /r/shakespeare points to Shakespeare search engine as place to find new sonnet (except we don’t have the sonnet yet)
+- 14:53 Traffic to Shakespeare search increases by 88x after post to */r/shakespeare* points to Shakespeare search engine as place to find new sonnet (except we don’t have the sonnet yet)
 
-- 14:54 OUTAGE BEGINS — Search backends start melting down under load
+- 14:54 **OUTAGE BEGINS** — Search backends start melting down under load
 
 - 14:55 docbrown receives pager storm, ManyHttp500s from all clusters
 
-- 14:57 All traffic to Shakespeare search is failing: see http://monitor/shakespeare? end_time=20151021T145700
+- 14:57 All traffic to Shakespeare search is failing: see *http://monitor/shakespeare? end_time=20151021T145700*
 
 - 14:58 docbrown starts investigating, finds backend crash rate very high
 
-- 15:01 INCIDENT BEGINS docbrown declares incident #465 due to cascading failure, coordination on #shakespeare, names jennifer incident commander
+- 15:01 **INCIDENT BEGINS** docbrown declares incident #465 due to cascading failure, coordination on #shakespeare, names jennifer incident commander
 
-- 15:02 someone coincidentally sends email to shakespeare-discuss@ re sonnet discovery, which happens to be at top of martym’s inbox
+- 15:02 someone coincidentally sends email to *shakespeare-discuss@* re sonnet discovery, which happens to be at top of martym’s inbox
 
-- 15:03 jennifer notifies shakespeare-incidents@ list of the incident
+- 15:03 jennifer notifies *shakespeare-incidents@* list of the incident
 
 - 15:04 martym tracks down text of new sonnet and looks for documentation on corpus update
 
@@ -313,7 +315,7 @@ Action Items:[^p48-3]
 
 - 15:36 jennifer reverts load balancing to resacrifice USA-2 cluster in preparation for additional global 5x instance count increase (to a total of 10x initial capacity)
 
-- 15:36 OUTAGE MITIGATED, updated index replicated to all clusters
+- 15:36 **OUTAGE MITIGATED**, updated index replicated to all clusters
 
 - 15:39 docbrown starts second wave of instance count increase to 10x initial capacity
 
@@ -329,33 +331,33 @@ Action Items:[^p48-3]
 
 - 15:55 50% of traffic balanced across nonsacrificial clusters
 
-- 16:00 OUTAGE ENDS, all traffic balanced across all clusters
+- 16:00 **OUTAGE ENDS**, all traffic balanced across all clusters
 
-- 16:30 INCIDENT ENDS, reached exit criterion of 30 minutes’ nominal performance
+- 16:30 **INCIDENT ENDS**, reached exit criterion of 30 minutes’ nominal performance
 
 #### Supporting information:
 
 [^p51-6]
 
-- Monitoring dashboard, http://monitor/shakespeare?end_time=20151021T160000&duration=7200
+- Monitoring dashboard, *http://monitor/shakespeare?end_time=20151021T160000&duration=7200*
 
 ## APPENDIX E Launch Coordination Checklist
 
 This is Google’s original Launch Coordination Checklist, circa 2005, slightly abridged for brevity:
 
-Architecture
+**Architecture**
 
 - Architecture sketch, types of servers, types of requests from clients
 
 - Programmatic client requests
 
-Machines and datacenters
+**Machines and datacenters**
 
 - Machines and bandwidth, datacenters, N+2 redundancy, network QoS
 
 - New domain names, DNS load balancing
 
-Volume estimates, capacity, and performance
+**Volume estimates, capacity, and performance**
 
 - HTTP traffic and bandwidth estimates, launch “spike,” traffic mix, 6 months out
 
@@ -365,7 +367,7 @@ Volume estimates, capacity, and performance
 
 - Storage capacity
 
-System reliability and failover
+**System reliability and failover**
 
 - What happens when:
 
@@ -383,7 +385,7 @@ System reliability and failover
 
 - Data backup/restore, disaster recovery
 
-Monitoring and server management
+**Monitoring and server management**
 
 - Monitoring internal state, monitoring end-to-end behavior, managing alerts
 
@@ -395,19 +397,19 @@ Monitoring and server management
 
 - Don’t crash mail servers by sending yourself email alerts in your own server code
 
-Security
+**Security**
 
 - Security design review, security code audit, spam risk, authentication, SSL
 
 - Prelaunch visibility/access control, various types of blacklists
 
-Automation and manual tasks
+**Automation and manual tasks**
 
 - Methods and change control to update servers, data, and configs
 
 - Release process, repeatable builds, canaries under live traffic, staged rollouts
 
-Growth issues
+**Growth issues**
 
 - Spare capacity, 10x growth, growth alerts
 
@@ -415,7 +417,7 @@ Growth issues
 
 - Caching, data sharding/resharding
 
-External dependencies
+**External dependencies**
 
 - Third-party systems, monitoring, networking, traffic volume, launch spikes
 
@@ -423,7 +425,7 @@ External dependencies
 
 - Playing nice with syndicated partners, mail systems, services within Google
 
-Schedule and rollout planning
+**Schedule and rollout planning**
 
 - Hard deadlines, external events, Mondays or Fridays
 
@@ -431,15 +433,15 @@ Schedule and rollout planning
 
 ## APPENDIX F Example Production Meeting Minutes
 
-Date: 2015-10-23
+**Date**: 2015-10-23
 
-Attendees: agoogler, clarac, docbrown, jennifer, martym
+**Attendees**: agoogler, clarac, docbrown, jennifer, martym
 
-Announcements:
+**Announcements**:
 
 - Major outage (#465), blew through error budget
 
-Previous Action Item Review
+**Previous Action Item Review**
 
 - Certify Goat Teleporter for use with cattle (bug 1011101)
 
@@ -447,7 +449,7 @@ Previous Action Item Review
 
 accurately in a few days.
 
-Outage Review
+**Outage Review**
 
 - New Sonnet (outage 465)
 
@@ -463,7 +465,7 @@ load shedding (bug 5554826) to prevent recurrence
 
 — Annihilated availability error budget; pushes to prod frozen for 1 month
 
-unless docbrown can obtain exception on grounds that event was bizarre & unforeseeable (but consensus is that exception is unlikely) Paging Events
+unless docbrown can obtain exception on grounds that event was bizarre & unforeseeable (but consensus is that exception is unlikely) **Paging Events**
 
 - AnnotationConsistencyTooEventual: paged 5 times this week, likely due to cross-regional replication delay between Bigtables.
 
@@ -473,15 +475,15 @@ unless docbrown can obtain exception on grounds that event was bizarre & unfores
 
 unactionable alerts
 
-Nonpaging Events
+**Nonpaging Events**
 
 - None
 
-Monitoring Changes and/or Silences
+**Monitoring Changes and/or Silences**
 
 - AnnotationConsistencyTooEventual, acceptable delay threshold raised from 60s to 180s, see bug 4821600; TODO(martym).
 
-Planned Production Changes
+**Planned Production Changes**
 
 - USA-1 cluster going offline for maintenance between 2015-10-29 and 2015-11-02.
 
@@ -489,23 +491,23 @@ Planned Production Changes
 
 region.
 
-Resources
+**Resources**
 
 - Borrowed resources to respond to sonnet++ incident, will spin down additional server instances and return resources next week
 
 - Utilization at 60% of CPU, 75% RAM, 44% disk (up from 40%, 70%, 40% last week)
 
-Key Service Metrics
+**Key Service Metrics**
 
-- OK 99ile latency: 88 ms < 100 ms SLO target [trailing 30 days]
+- **OK** 99ile latency: 88 ms < 100 ms SLO target [trailing 30 days]
 
-- BAD availability: 86.95% < 99.99% SLO target [trailing 30 days]
+- **BAD** availability: 86.95% < 99.99% SLO target [trailing 30 days]
 
-Discussion / Project Updates
+**Discussion / Project Updates**
 
 - Project Molière launching in two weeks.
 
-New Action Items
+**New Action Items**
 
 - TODO(martym): Raise AnnotationConsistencyTooEventual threshold.
 
@@ -513,587 +515,316 @@ New Action Items
 
 ## Bibliography
 
-[Ada15] Bram Adams, Stephany Bellomo, Christian Bird, Tamara Marshall-Keim,
+[Ada15] Bram Adams, Stephany Bellomo, Christian Bird, Tamara Marshall-Keim, Foutse Khomh, and Kim Moir, “The Practice and Future of Release Engineering: A Roundtable with Three Release Engineers”, *IEEE Software*, vol. 32, no. 2 (March/ April 2015), pp. 42–49.
 
-Foutse Khomh, and Kim Moir, “The Practice and Future of Release Engineering: A Roundtable with Three Release Engineers”, IEEE Software, vol. 32, no. 2 (March/ April 2015), pp. 42–49.
+[Agu10] M. K. Aguilera, “Stumbling over Consensus Research: Misunderstandings and Issues”, in *Replication*, Lecture Notes in Computer Science 5959, 2010.
 
-[Agu10] M. K. Aguilera, “Stumbling over Consensus Research: Misunderstandings
-
-and Issues”, in Replication, Lecture Notes in Computer Science 5959, 2010.
-
-[All10] J. Allspaw and J. Robbins, Web Operations: Keeping the Data on Time: O’Reilly,
-
-2010.
+[All10] J. Allspaw and J. Robbins, *Web Operations: Keeping the Data on Time*: O’Reilly, 2010.
 
 [All12] J. Allspaw, “Blameless PostMortems and a Just Culture”, blog post, 2012.
 
-[All15] J. Allspaw, “Trade-Offs Under Pressure: Heuristics and Observations of Teams
+[All15] J. Allspaw, “Trade-Offs Under Pressure: Heuristics and Observations of Teams Resolving Internet Service Outages”, MSc thesis, Lund University, 2015.
 
-Resolving Internet Service Outages”, MSc thesis, Lund University, 2015.
+[Ana07] S. Anantharaju, “Automating web application security testing”, blog post, July 2007.
 
-[Ana07] S. Anantharaju, “Automating web application security testing”, blog post,
+[Ana13] R. Ananatharayan et al., “Photon: Fault-tolerant and Scalable Joining of Continuous Data Streams”, in *SIGMOD ’13*, 2013.
 
-July 2007.
+[And05] A. Andrieux, K. Czajkowski, A. Dan, et al., “Web Services Agreement Specification (WS-Agreement)”, September 2005.
 
-[Ana13] R. Ananatharayan et al., “Photon: Fault-tolerant and Scalable Joining of
+[Bai13] P. Bailis and A. Ghodsi, “Eventual Consistency Today: Limitations, Extensions, and Beyond”, in *ACM Queue*, vol. 11, no. 3, 2013.
 
-Continuous Data Streams”, in SIGMOD ’13, 2013.
+[Bai83] L. Bainbridge, “Ironies of Automation”, in *Automatica*, vol. 19, no. 6, November 1983.
 
-[And05] A. Andrieux, K. Czajkowski, A. Dan, et al., “Web Services Agreement Speci‐
+[Bak11] J. Baker et al., “Megastore: Providing Scalable, Highly Available Storage for Interactive Services”, in *Proceedings of the Conference on Innovative Data System Research*, 2011.
 
-fication (WS-Agreement)”, September 2005.
+[Bar11] L. A. Barroso, “Warehouse-Scale Computing: Entering the Teenage Decade”, talk at 38th Annual Symposium on Computer Architecture, video available online, 2011.
 
-[Bai13] P. Bailis and A. Ghodsi, “Eventual Consistency Today: Limitations, Exten‐
+[Bar13] L. A. Barroso, J. Clidaras, and U. Hölzle, *The Datacenter as a Computer: An Introduction to the Design of Warehouse-Scale Machines, Second Edition*, Morgan & Claypool, 2013.
 
-sions, and Beyond”, in ACM Queue, vol. 11, no. 3, 2013.
+[Ben12] C. Bennett and A. Tseitlin, “Chaos Monkey Released Into The Wild”, blog post, July 2012.
 
-[Bai83] L. Bainbridge, “Ironies of Automation”, in Automatica, vol. 19, no. 6, Novem‐
+[Bla14] M. Bland, “Goto Fail, Heartbleed, and Unit Testing Culture”, blog post, June 2014.
 
-ber 1983.
+[Boc15] L. Bock, *Work Rules!*, Twelve Books, 2015.
 
-[Bak11] J. Baker et al., “Megastore: Providing Scalable, Highly Available Storage for
+[Bol11] W. J. Bolosky, D. Bradshaw, R. B. Haagens, N. P. Kusters, and P. Li, “Paxos Replicated State Machines as the Basis of a High-Performance Data Store”, in *Proc. NSDI 2011*, 2011.
 
-Interactive Services”, in Proceedings of the Conference on Innovative Data System Research, 2011.
+[Boy13] P. G. Boysen, “Just Culture: A Foundation for Balanced Accountability and Patient Safety”, in *The Ochsner Journal*, Fall 2013.
 
-[Bar11] L. A. Barroso, “Warehouse-Scale Computing: Entering the Teenage Decade”,
+[Bra15] VM Brasseur, “Failure: Why it happens & How to benefit from it”, YAPC 2015.
 
-talk at 38th Annual Symposium on Computer Architecture, video available online, 2011.
+[Bre01] E. Brewer, “Lessons From Giant-Scale Services”, in *IEEE Internet Computing*, vol. 5, no. 4, July / August 2001.
 
-[Bar13] L. A. Barroso, J. Clidaras, and U. Hölzle, The Datacenter as a Computer: An
+[Bre12] E. Brewer, “CAP Twelve Years Later: How the “Rules” Have Changed”, in *Computer*, vol. 45, no. 2, February 2012.
 
-Introduction to the Design of Warehouse-Scale Machines, Second Edition, Morgan & Claypool, 2013.
+[Bro15] M. Brooker, “Exponential Backoff and Jitter”, on *AWS Architecture Blog*, March 2015.
 
-[Ben12] C. Bennett and A. Tseitlin, “Chaos Monkey Released Into The Wild”, blog
+[Bro95] F. P. Brooks Jr., “No Silver Bullet—Essence and Accidents of Software Engineering”, in *The Mythical Man-Month*, Boston: Addison-Wesley, 1995, pp. 180–186.
 
-post, July 2012.
+[Bru09] J. Brutlag, “Speed Matters”, on *Google Research Blog*, June 2009.
 
-[Bla14] M. Bland, “Goto Fail, Heartbleed, and Unit Testing Culture”, blog post, June
+[Bul80] G. M. Bull, *The Dartmouth Time-sharing System*: Ellis Horwood, 1980.
 
-2014.
+[Bur99] M. Burgess, *Principles of Network and System Administration*: Wiley, 1999.
 
-[Boc15] L. Bock, Work Rules!, Twelve Books, 2015.
+[Bur06] M. Burrows, “The Chubby Lock Service for Loosely-Coupled Distributed Systems”, in *OSDI ’06: Seventh Symposium on Operating System Design and Implementation*, November 2006.
 
-[Bol11] W. J. Bolosky, D. Bradshaw, R. B. Haagens, N. P. Kusters, and P. Li, “Paxos
+[Bur16] B. Burns, B. Grant, D. Oppenheimer, E. Brewer, and J. Wilkes, “Borg, Omega, and Kubernetes” in *ACM Queue*, vol. 14, no. 1, 2016.
 
-Replicated State Machines as the Basis of a High-Performance Data Store”, in Proc. NSDI 2011, 2011.
+[Cas99] M. Castro and B. Liskov, “Practical Byzantine Fault Tolerance”, in *Proc. OSDI 1999*, 1999.
 
-[Boy13] P. G. Boysen, “Just Culture: A Foundation for Balanced Accountability and
+[Cha10] C. Chambers, A. Raniwala, F. Perry, S. Adams, R. Henry, R. Bradshaw, and N. Weizenbaum, “FlumeJava: Easy, Efficient Data-Parallel Pipelines”, in *ACM SIGPLAN Conference on Programming Language Design and Implementation*, 2010.
 
-Patient Safety”, in The Ochsner Journal, Fall 2013.
+[Cha96] T. D. Chandra and S. Toueg, “Unreliable Failure Detectors for Reliable Distributed Systems”, in *J. ACM*, 1996.
 
-[Bra15] VM Brasseur, “Failure: Why it happens & How to benefit from it”, YAPC
+[Cha07] T. Chandra, R. Griesemer, and J. Redstone, “Paxos Made Live—An Engineering Perspective”, in *PODC ’07: 26th ACM Symposium on Principles of Distributed Computing*, 2007.
 
-2015.
+[Cha06] F. Chang et al., “Bigtable: A Distributed Storage System for Structured Data”, in *OSDI ’06: Seventh Symposium on Operating System Design and Implementation*, November 2006.
 
-[Bre01] E. Brewer, “Lessons From Giant-Scale Services”, in IEEE Internet Computing,
+[Chr09] G. P. Chrousous, “Stress and Disorders of the Stress System”, in *Nature Reviews Endocrinology*, vol 5., no. 7, 2009.
 
-vol. 5, no. 4, July / August 2001.
+[Clos53] C. Clos, “A Study of Non-Blocking Switching Networks”, in *Bell System Technical Journal*, vol. 32, no. 2, 1953.
 
-[Bre12] E. Brewer, “CAP Twelve Years Later: How the “Rules” Have Changed”, in
+[Con15] C. Contavalli, W. van der Gaast, D. Lawrence, and W. Kumari, “Client Subnet in DNS Queries”, *IETF Internet-Draft*, 2015.
 
-Computer, vol. 45, no. 2, February 2012.
+[Con63] M. E. Conway, “Design of a Separable Transition-Diagram Compiler”, in *Commun. ACM* 6, 7 (July 1963), 396–408.
 
-[Bro15] M. Brooker, “Exponential Backoff and Jitter”, on AWS Architecture Blog,
+[Con96] P. Conway, “Preservation in the Digital World”, report published by the Council on Library and Information Resources, 1996.
 
-March 2015.
+[Coo00] R. I. Cook, “How Complex Systems Fail”, in *Web Operations*: O’Reilly, 2010.
 
-[Bro95] F. P. Brooks Jr., “No Silver Bullet—Essence and Accidents of Software Engi‐
-
-neering”, in The Mythical Man-Month, Boston: Addison-Wesley, 1995, pp. 180–186.
-
-[Bru09] J. Brutlag, “Speed Matters”, on Google Research Blog, June 2009.
-
-[Bul80] G. M. Bull, The Dartmouth Time-sharing System: Ellis Horwood, 1980.
-
-[Bur99] M. Burgess, Principles of Network and System Administration: Wiley, 1999.
-
-[Bur06] M. Burrows, “The Chubby Lock Service for Loosely-Coupled Distributed
-
-Systems”, in OSDI ’06: Seventh Symposium on Operating System Design and Implementation, November 2006.
-
-[Bur16] B. Burns, B. Grant, D. Oppenheimer, E. Brewer, and J. Wilkes, “Borg, Omega,
-
-and Kubernetes” in ACM Queue, vol. 14, no. 1, 2016.
-
-[Cas99] M. Castro and B. Liskov, “Practical Byzantine Fault Tolerance”, in Proc. OSDI
-
-1999, 1999.
-
-[Cha10] C. Chambers, A. Raniwala, F. Perry, S. Adams, R. Henry, R. Bradshaw, and
-
-N. Weizenbaum, “FlumeJava: Easy, Efficient Data-Parallel Pipelines”, in ACM SIGPLAN Conference on Programming Language Design and Implementation, 2010.
-
-[Cha96] T. D. Chandra and S. Toueg, “Unreliable Failure Detectors for Reliable Dis‐
-
-tributed Systems”, in J. ACM, 1996.
-
-[Cha07] T. Chandra, R. Griesemer, and J. Redstone, “Paxos Made Live—An Engi‐
-
-neering Perspective”, in PODC ’07: 26th ACM Symposium on Principles of Distributed Computing, 2007.
-
-[Cha06] F. Chang et al., “Bigtable: A Distributed Storage System for Structured Data”,
-
-in OSDI ’06: Seventh Symposium on Operating System Design and Implementation, November 2006.
-
-[Chr09] G. P. Chrousous, “Stress and Disorders of the Stress System”, in Nature
-
-Reviews Endocrinology, vol 5., no. 7, 2009.
-
-[Clos53] C. Clos, “A Study of Non-Blocking Switching Networks”, in Bell System
-
-Technical Journal, vol. 32, no. 2, 1953.
-
-[Con15] C. Contavalli, W. van der Gaast, D. Lawrence, and W. Kumari, “Client Sub‐
-
-net in DNS Queries”, IETF Internet-Draft, 2015.
-
-[Con63] M. E. Conway, “Design of a Separable Transition-Diagram Compiler”, in
-
-Commun. ACM 6, 7 (July 1963), 396–408.
-
-[Con96] P. Conway, “Preservation in the Digital World”, report published by the
-
-Council on Library and Information Resources, 1996.
-
-[Coo00] R. I. Cook, “How Complex Systems Fail”, in Web Operations: O’Reilly, 2010.
-
-[Cor12] J. C. Corbett et al., “Spanner: Google’s Globally-Distributed Database”, in
-
-OSDI ’12: Tenth Symposium on Operating System Design and Implementation, October 2012.
+[Cor12] J. C. Corbett et al., “Spanner: Google’s Globally-Distributed Database”, in *OSDI ’12: Tenth Symposium on Operating System Design and Implementation*, October 2012.
 
 [Cra10] J. Cranmer, “Visualizing code coverage”, blog post, March 2010.
 
-[Dea13] J. Dean and L. A. Barroso, “The Tail at Scale”, in Communications of the
+[Dea13] J. Dean and L. A. Barroso, “The Tail at Scale”, in *Communications of the ACM*, vol. 56, 2013.
 
-ACM, vol. 56, 2013.
+[Dea04] J. Dean and S. Ghemawat, “MapReduce: Simplified Data Processing on Large Clusters”, in *OSDI’04: Sixth Symposium on Operating System Design and Implementation*, December 2004.
 
-[Dea04] J. Dean and S. Ghemawat, “MapReduce: Simplified Data Processing on Large
+[Dea07] J. Dean, “Software Engineering Advice from Building Large-Scale Distributed Systems”, Stanford CS297 class lecture, Spring 2007.
 
-Clusters”, in OSDI’04: Sixth Symposium on Operating System Design and Implementation, December 2004.
+[Dek02] S. Dekker, “Reconstructing human contributions to accidents: the new view on error and performance”, in *Journal of Safety Research*, vol. 33, no. 3, 2002.
 
-[Dea07] J. Dean, “Software Engineering Advice from Building Large-Scale Dis‐
+[Dek14] S. Dekker, *The Field Guide to Understanding “Human Error”*, 3rd edition: Ashgate, 2014.
 
-tributed Systems”, Stanford CS297 class lecture, Spring 2007.
+[Dic14] C. Dickson, “How Embracing Continuous Release Reduced Change Complexity”, presentation at USENIX Release Engineering Summit West 2014, video available online.
 
-[Dek02] S. Dekker, “Reconstructing human contributions to accidents: the new view
+[Dur05] J. Durmer and D. Dinges, “Neurocognitive Consequences of Sleep Deprivation”, in *Seminars in Neurology*, vol. 25, no. 1, 2005.
 
-on error and performance”, in Journal of Safety Research, vol. 33, no. 3, 2002.
+[Eis16] D. E. Eisenbud et al., “Maglev: A Fast and Reliable Software Network Load Balancer”, in NSDI ’16: 13th USENIX Symposium on Networked Systems Design and Implementation, March 2016.
 
-[Dek14] S. Dekker, The Field Guide to Understanding “Human Error”, 3rd edition:
+[Ere03] J. R. Erenkrantz, “Release Management Within Open Source Projects”, in *Proceedings of the 3rd Workshop on Open Source Software Engineering*, Portland, Oregon, May 2003.
 
-Ashgate, 2014.
+[Fis85] M. J. Fischer, N. A. Lynch, and M. S. Paterson, “Impossibility of Distributed Consensus with One Faulty Process”, *J. ACM*, 1985.
 
-[Dic14] C. Dickson, “How Embracing Continuous Release Reduced Change Com‐
+[Fit12] B. W. Fitzpatrick and B. Collins-Sussman, *Team Geek: A Software Developer’s Guide to Working Well with Others*: O’Reilly, 2012.
 
-plexity”, presentation at USENIX Release Engineering Summit West 2014, video available online.
+[Flo94] S. Floyd and V. Jacobson, “The Synchronization of Periodic Routing Messages”, in IEEE/ACM Transactions on Networking, vol. 2, issue 2, April 1994, pp. 122–136.
 
-[Dur05] J. Durmer and D. Dinges, “Neurocognitive Consequences of Sleep Depriva‐
+[For10] D. Ford et al, “Availability in Globally Distributed Storage Systems”, in *Pro‐ ceedings of the 9th USENIX Symposium on Operating Systems Design and Implementation*, 2010.
 
-tion”, in Seminars in Neurology, vol. 25, no. 1, 2005.
-
-[Eis16] D. E. Eisenbud et al., “Maglev: A Fast and Reliable Software Network Load
-
-Balancer”, in NSDI ’16: 13th USENIX Symposium on Networked Systems Design and Implementation, March 2016.
-
-[Ere03] J. R. Erenkrantz, “Release Management Within Open Source Projects”, in
-
-Proceedings of the 3rd Workshop on Open Source Software Engineering, Portland, Oregon, May 2003.
-
-[Fis85] M. J. Fischer, N. A. Lynch, and M. S. Paterson, “Impossibility of Distributed
-
-Consensus with One Faulty Process”, J. ACM, 1985.
-
-[Fit12] B. W. Fitzpatrick and B. Collins-Sussman, Team Geek: A Software Developer’s
-
-Guide to Working Well with Others: O’Reilly, 2012.
-
-[Flo94] S. Floyd and V. Jacobson, “The Synchronization of Periodic Routing Mes‐
-
-sages”, in IEEE/ACM Transactions on Networking, vol. 2, issue 2, April 1994, pp. 122–136.
-
-[For10] D. Ford et al, “Availability in Globally Distributed Storage Systems”, in Pro‐
-
-ceedings of the 9th USENIX Symposium on Operating Systems Design and Implementation, 2010.
-
-[Fox99] A. Fox and E. A. Brewer, “Harvest, Yield, and Scalable Tolerant Systems”, in
-
-Proceedings of the 7th Workshop on Hot Topics in Operating Systems, Rio Rico, Arizona, March 1999.
+[Fox99] A. Fox and E. A. Brewer, “Harvest, Yield, and Scalable Tolerant Systems”, in *Proceedings of the 7th Workshop on Hot Topics in Operating Systems*, Rio Rico, Arizona, March 1999.
 
 [Fow08] M. Fowler, “GUI Architectures”, blog post, 2006.
 
-[Gal78] J. Gall, SYSTEMANTICS: How Systems Really Work and How They Fail, 1st
+[Gal78] J. Gall, *SYSTEMANTICS: How Systems Really Work and How They Fail*, 1st ed., Pocket, 1977.
 
-ed., Pocket, 1977.
+[Gal03] J. Gall, *The Systems Bible: The Beginner’s Guide to Systems Large and Small*, 3rd ed., General Systemantics Press/Liberty, 2003.
 
-[Gal03] J. Gall, The Systems Bible: The Beginner’s Guide to Systems Large and Small,
+[Gaw09] A. Gawande, *The Checklist Manifesto: How to Get Things Right*: Henry Holt and Company, 2009.
 
-3rd ed., General Systemantics Press/Liberty, 2003.
+[Ghe03] S. Ghemawat, H. Gobioff, and S-T. Leung, “The Google File System”, in *19th ACM Symposium on Operating Systems Principles*, October 2003.
 
-[Gaw09] A. Gawande, The Checklist Manifesto: How to Get Things Right: Henry Holt
+[Gil02] S. Gilbert and N. Lynch, “Brewer’s Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services”, in *ACM SIGACT News*, vol. 33, no. 2, 2002.
 
-and Company, 2009.
+[Gla02] R. Glass, *Facts and Fallacies of Software Engineering*, Addison-Wesley Professional, 2002.
 
-[Ghe03] S. Ghemawat, H. Gobioff, and S-T. Leung, “The Google File System”, in 19th
-
-ACM Symposium on Operating Systems Principles, October 2003.
-
-[Gil02] S. Gilbert and N. Lynch, “Brewer’s Conjecture and the Feasibility of Consis‐
-
-tent, Available, Partition-Tolerant Web Services”, in ACM SIGACT News, vol. 33, no. 2, 2002.
-
-[Gla02] R. Glass, Facts and Fallacies of Software Engineering, Addison-Wesley Profes‐
-
-sional, 2002.
-
-[Gol14] W. Golab et al., “Eventually Consistent: Not What You Were Expecting?”, in
-
-ACM Queue, vol. 12, no. 1, 2014.
+[Gol14] W. Golab et al., “Eventually Consistent: Not What You Were Expecting?”, in *ACM Queue*, vol. 12, no. 1, 2014.
 
 [Gra09] P. Graham, “Maker’s Schedule, Manager’s Schedule”, blog post, July 2009.
 
-[Gup15] A. Gupta and J. Shute, “High-Availability at Massive Scale: Building Google’s
+[Gup15] A. Gupta and J. Shute, “High-Availability at Massive Scale: Building Google’s Data Infrastructure for Ads”, in *Workshop on Business Intelligence for the Real Time Enterprise*, 2015.
 
-Data Infrastructure for Ads”, in Workshop on Business Intelligence for the Real Time Enterprise, 2015.
+[Ham07] J. Hamilton, “On Designing and Deploying Internet-Scale Services”, in *Pro‐ ceedings of the 21st Large Installation System Administration Conference*, November 2007.
 
-[Ham07] J. Hamilton, “On Designing and Deploying Internet-Scale Services”, in Pro‐
+[Han94] S. Hanks, T. Li, D. Farinacci, and P. Traina, “Generic Routing Encapsulation over IPv4 networks”, *IETF Informational RFC*, 1994.
 
-ceedings of the 21st Large Installation System Administration Conference, November 2007.
+[Hic11] M. Hickins, “Tape Rescues Google in Lost Email Scare”, in *Digits*, *Wall Street Journal*, 1 March 2011.
 
-[Han94] S. Hanks, T. Li, D. Farinacci, and P. Traina, “Generic Routing Encapsulation
+[Hix15a] D. Hixson, “Capacity Planning”, in *;login:*, vol. 40, no. 1, February 2015.
 
-over IPv4 networks”, IETF Informational RFC, 1994.
+[Hix15b] D. Hixson, “The Systems Engineering Side of Site Reliability Engineering”, in *;login:* vol. 40, no. 3, June 2015.
 
-[Hic11] M. Hickins, “Tape Rescues Google in Lost Email Scare”, in Digits, Wall Street
+[Hod13] J. Hodges, “Notes on Distributed Systems for Young Bloods”, blog post, 14 January 2013.
 
-Journal, 1 March 2011.
+[Hol14] L. Holmwood, “Applying Cardiac Alarm Management Techniques to Your On-Call”, blog post, 26 August 2014.
 
-[Hix15a] D. Hixson, “Capacity Planning”, in ;login:, vol. 40, no. 1, February 2015.
+[Hum06] J. Humble, C. Read, D. North, “The Deployment Production Line”, in *Pro‐ ceedings of the IEEE Agile Conference*, July 2006.
 
-[Hix15b] D. Hixson, “The Systems Engineering Side of Site Reliability Engineering”,
+[Hum10] J. Humble and D. Farley, *Continuous Delivery: Reliable Software Releases through Build, Test, and Deployment Automation*: Addison-Wesley, 2010.
 
-in ;login: vol. 40, no. 3, June 2015.
+[Hun10] P. Hunt, M. Konar, F. P. Junqueira, and B. Reed, “ZooKeeper: Wait-free coordination for Internet-scale systems”, in *USENIX ATC*, 2010.
 
-[Hod13] J. Hodges, “Notes on Distributed Systems for Young Bloods”, blog post, 14
+[IAEA12] International Atomic Energy Agency, “Safety of Nuclear Power Plants: Design, SSR-2/1”, 2012.
 
-January 2013.
+[Jai13] S. Jain et al., “B4: Experience with a Globally-Deployed Software Defined WAN”, in *SIGCOMM ’13*.
 
-[Hol14] L. Holmwood, “Applying Cardiac Alarm Management Techniques to Your
+[Jon15] C. Jones, T. Underwood, and S. Nukala, “Hiring Site Reliability Engineers”, in *;login:*, vol. 40, no. 3, June 2015.
 
-On-Call”, blog post, 26 August 2014.
+[Jun07] F. Junqueira, Y. Mao, and K. Marzullo, “Classic Paxos vs. Fast Paxos: Caveat Emptor”, in *Proc. HotDep ’07*, 2007.
 
-[Hum06] J. Humble, C. Read, D. North, “The Deployment Production Line”, in Pro‐
+[Jun11] F. P. Junqueira, B. C. Reid, and M. Serafini, “Zab: High-performance broadcast for primary-backup systems.”, in *Dependable Systems & Networks (DSN), 2011 IEEE/IFIP 41st International Conference* on 27 Jun 2011: 245–256.
 
-ceedings of the IEEE Agile Conference, July 2006.
+[Kah11] D. Kahneman, *Thinking, Fast and Slow*: Farrar, Straus and Giroux, 2011.
 
-[Hum10] J. Humble and D. Farley, Continuous Delivery: Reliable Software Releases
+[Kar97] D. Karger et al., “Consistent hashing and random trees: distributed caching protocols for relieving hot spots on the World Wide Web”, in *Proc. STOC ’97*, 29th annual ACM symposium on theory of computing, 1997.
 
-through Build, Test, and Deployment Automation: Addison-Wesley, 2010.
+[Kem11] C. Kemper, “Build in the Cloud: How the Build System Works”, *Google Engineering Tools* blog post, August 2011.
 
-[Hun10] P. Hunt, M. Konar, F. P. Junqueira, and B. Reed, “ZooKeeper: Wait-free coor‐
+[Ken12] S. Kendrick, “What Takes Us Down?”, in *;login:*, vol. 37, no. 5, October 2012.
 
-dination for Internet-scale systems”, in USENIX ATC, 2010.
-
-[IAEA12] International Atomic Energy Agency, “Safety of Nuclear Power Plants:
-
-Design, SSR-2/1”, 2012.
-
-[Jai13] S. Jain et al., “B4: Experience with a Globally-Deployed Software Defined
-
-WAN”, in SIGCOMM ’13.
-
-[Jon15] C. Jones, T. Underwood, and S. Nukala, “Hiring Site Reliability Engineers”,
-
-in ;login:, vol. 40, no. 3, June 2015.
-
-[Jun07] F. Junqueira, Y. Mao, and K. Marzullo, “Classic Paxos vs. Fast Paxos: Caveat
-
-Emptor”, in Proc. HotDep ’07, 2007.
-
-[Jun11] F. P. Junqueira, B. C. Reid, and M. Serafini, “Zab: High-performance broad‐
-
-cast for primary-backup systems.”, in Dependable Systems & Networks (DSN), 2011 IEEE/IFIP 41st International Conference on 27 Jun 2011: 245–256.
-
-[Kah11] D. Kahneman, Thinking, Fast and Slow: Farrar, Straus and Giroux, 2011.
-
-[Kar97] D. Karger et al., “Consistent hashing and random trees: distributed caching
-
-protocols for relieving hot spots on the World Wide Web”, in Proc. STOC ’97, 29th annual ACM symposium on theory of computing, 1997.
-
-[Kem11] C. Kemper, “Build in the Cloud: How the Build System Works”, Google
-
-Engineering Tools blog post, August 2011.
-
-[Ken12] S. Kendrick, “What Takes Us Down?”, in ;login:, vol. 37, no. 5, October 2012.
-
-[Kinc09] Kincaid, Jason. “T-Mobile Sidekick Disaster: Danger’s Servers Crashed, And
-
-They Don’t Have A Backup.” Techcrunch. n.p., 10 Oct. 2009. Web. 20 Jan. 2015, http://techcrunch.com/2009/10/10/t-mobile-sidekick-disaster-microsofts-servers-crashed-and-they-dont-have-a-backup.
+[Kinc09] Kincaid, Jason. “T-Mobile Sidekick Disaster: Danger’s Servers Crashed, And They Don’t Have A Backup.” *Techcrunch*. n.p., 10 Oct. 2009. Web. 20 Jan. 2015, *http://techcrunch.com/2009/10/10/t-mobile-sidekick-disaster-microsofts-servers-crashed-and-they-dont-have-a-backup*.
 
 [Kin15] K. Kingsbury, “The trouble with timestamps”, blog post, 2013.
 
-[Kir08] J. Kirsch and Y. Amir, “Paxos for System Builders: An Overview”, in Proc.
-
-LADIS ’08, 2008.
+[Kir08] J. Kirsch and Y. Amir, “Paxos for System Builders: An Overview”, in *Proc. LADIS ’08*, 2008.
 
 [Kla12] R. Klau, “How Google Sets Goals: OKRs”, blog post, October 2012.
 
-[Kle06] D. V. Klein, “A Forensic Analysis of a Distributed Two-Stage Web-Based
+[Kle06] D. V. Klein, “A Forensic Analysis of a Distributed Two-Stage Web-Based Spam Attack”, in *Proceedings of the 20th Large Installation System Administration Conference*, December 2006.
 
-Spam Attack”, in Proceedings of the 20th Large Installation System Administration Conference, December 2006.
+[Kle14] D. V. Klein, D. M. Betser, and M. G. Monroe, “Making *Push On Green* a Reality”, in *;login:*, vol. 39, no. 5, October 2014.
 
-[Kle14] D. V. Klein, D. M. Betser, and M. G. Monroe, “Making Push On Green a Real‐
+[Kra08] T. Krattenmaker, “Make Every Meeting Matter”, in *Harvard Business Review*, February 27, 2008.
 
-ity”, in ;login:, vol. 39, no. 5, October 2014.
+[Kre12] J. Kreps, “Getting Real About Distributed System Reliability”, blog post, 19 March 2012.
 
-[Kra08] T. Krattenmaker, “Make Every Meeting Matter”, in Harvard Business Review,
+[Kri12] K. Krishan, “Weathering The Unexpected”, in *Communications of the ACM*, vol. 55, no. 11, November 2012.
 
-February 27, 2008.
+[Kum15] A. Kumar et al., “BwE: Flexible, Hierarchical Bandwidth Allocation for WAN Distributed Computing”, in *SIGCOMM ’15*.
 
-[Kre12] J. Kreps, “Getting Real About Distributed System Reliability”, blog post, 19
+[Lam98] L. Lamport, “The Part-Time Parliament”, in *ACM Transactions on Computer Systems 16, 2*, May 1998.
 
-March 2012.
+[Lam01] L. Lamport, “Paxos Made Simple”, in *ACM SIGACT News* 121, December 2001.
 
-[Kri12] K. Krishan, “Weathering The Unexpected”, in Communications of the ACM,
+[Lam06] L. Lamport, “Fast Paxos”, in *Distributed Computing* 19.2, October 2006.
 
-vol. 55, no. 11, November 2012.
+[Lim14] T. A. Limoncelli, S. R. Chalup, and C. J. Hogan, *The Practice of Cloud System Administration: Designing and Operating Large Distributed Systems, Volume 2*: Addison-Wesley, 2014.
 
-[Kum15] A. Kumar et al., “BwE: Flexible, Hierarchical Bandwidth Allocation for
+[Loo10] J. Loomis, “How to Make Failure Beautiful: The Art and Science of Postmortems”, in *Web Operations*: O’Reilly, 2010.
 
-WAN Distributed Computing”, in SIGCOMM ’15.
+[Lu15] H. Lu et al, “Existential Consistency: Measuring and Understanding Consistency at Facebook”, in *SOSP* ’15, 2015.
 
-[Lam98] L. Lamport, “The Part-Time Parliament”, in ACM Transactions on Computer
+[Mao08] Y. Mao, F. P. Junqueira, and K. Marzullo, “Mencius: Building Efficient Replicated State Machines for WANs”, in *OSDI ’08*, 2008.
 
-Systems 16, 2, May 1998.
+[Mas43] A. H. Maslow, “A Theory of Human Motivation”, in *Psychological Review* 50(4), 1943.
 
-[Lam01] L. Lamport, “Paxos Made Simple”, in ACM SIGACT News 121, December
+[Mau15] B. Maurer, “Fail at Scale”, in *ACM Queue*, vol. 13, no. 12, 2015.
 
-2001.
+[May09] M. Mayer, "*This site may harm your computer* on every search result?!?!”, blog post, January 2009.
 
-[Lam06] L. Lamport, “Fast Paxos”, in Distributed Computing 19.2, October 2006.
+[McI86] M. D. McIlroy, “A Research Unix Reader: Annotated Excerpts from the Programmer’s Manual, 1971–1986”.
 
-[Lim14] T. A. Limoncelli, S. R. Chalup, and C. J. Hogan, The Practice of Cloud System
+[McN13] D. McNutt, “Maintaining Consistency in a Massively Parallel Environment”, presentation at USENIX Configuration Management Summit 2013, video available online.
 
-Administration: Designing and Operating Large Distributed Systems, Volume 2: Addison-Wesley, 2014.
+[McN14a] D. McNutt, “Accelerating the Path from Dev to DevOps”, in *;login:*, vol. 39, no. 2, April 2014.
 
-[Loo10] J. Loomis, “How to Make Failure Beautiful: The Art and Science of Postmor‐
+[McN14b] D. McNutt, “The 10 Commandments of Release Engineering”, presentation at 2nd International Workshop on Release Engineering 2014, April 2014.
 
-tems”, in Web Operations: O’Reilly, 2010.
+[McN14c] D. McNutt, “Distributing Software in a Massively Parallel Environment”, presentation at USENIX LISA 2014, video available online.
 
-[Lu15] H. Lu et al, “Existential Consistency: Measuring and Understanding Consis‐
+[Mic03] Microsoft TechNet, “What is SNMP?”, last modified March 28, 2003, *https:// technet.microsoft.com/en-us/library/cc776379%28v=ws.10%29.aspx*.
 
-tency at Facebook”, in SOSP ’15, 2015.
+[Mea08] D. Meadows, *Thinking in Systems*: Chelsea Green, 2008.
 
-[Mao08] Y. Mao, F. P. Junqueira, and K. Marzullo, “Mencius: Building Efficient Repli‐
+[Men07] P. Menage, “Adding Generic Process Containers to the Linux Kernel”, in *Proc. of Ottawa Linux Symposium*, 2007.
 
-cated State Machines for WANs”, in OSDI ’08, 2008.
+[Mer11] N. Merchant, “Culture Trumps Strategy, Every Time”, in *Harvard Business Review*, March 22, 2011.
 
-[Mas43] A. H. Maslow, “A Theory of Human Motivation”, in Psychological Review
+[Moc87] P. Mockapetris, “Domain Names - Implementation and Specification”, *IETF Internet Standard*, 1987.
 
-50(4), 1943.
+[Mol86] C. Moler, “Matrix Computation on Distributed Memory Multiprocessors”, in *Hypercube Multiprocessors 1986*, 1987.
 
-[Mau15] B. Maurer, “Fail at Scale”, in ACM Queue, vol. 13, no. 12, 2015.
+[Mor12a] I. Moraru, D. G. Andersen, and M. Kaminsky, “Egalitarian Paxos”, *Carnegie Mellon University Parallel Data Lab Technical Report CMU-PDL-12-108*, 2012.
 
-[May09] M. Mayer, "This site may harm your computer on every search result?!?!”,
+[Mor14] I. Moraru, D. G. Andersen, and M. Kaminsky, “Paxos Quorum Leases: Fast Reads Without Sacrificing Writes”, in *Proc. SOCC ’14*, 2014.
 
-blog post, January 2009.
-
-[McI86] M. D. McIlroy, “A Research Unix Reader: Annotated Excerpts from the Pro‐
-
-grammer’s Manual, 1971–1986”.
-
-[McN13] D. McNutt, “Maintaining Consistency in a Massively Parallel Environ‐
-
-ment”, presentation at USENIX Configuration Management Summit 2013, video available online.
-
-[McN14a] D. McNutt, “Accelerating the Path from Dev to DevOps”, in ;login:, vol. 39,
-
-no. 2, April 2014.
-
-[McN14b] D. McNutt, “The 10 Commandments of Release Engineering”, presenta‐
-
-tion at 2nd International Workshop on Release Engineering 2014, April 2014.
-
-[McN14c] D. McNutt, “Distributing Software in a Massively Parallel Environment”,
-
-presentation at USENIX LISA 2014, video available online.
-
-[Mic03] Microsoft TechNet, “What is SNMP?”, last modified March 28, 2003, https://
-
-technet.microsoft.com/en-us/library/cc776379%28v=ws.10%29.aspx.
-
-[Mea08] D. Meadows, Thinking in Systems: Chelsea Green, 2008.
-
-[Men07] P. Menage, “Adding Generic Process Containers to the Linux Kernel”, in
-
-Proc. of Ottawa Linux Symposium, 2007.
-
-[Mer11] N. Merchant, “Culture Trumps Strategy, Every Time”, in Harvard Business
-
-Review, March 22, 2011.
-
-[Moc87] P. Mockapetris, “Domain Names - Implementation and Specification”, IETF
-
-Internet Standard, 1987.
-
-[Mol86] C. Moler, “Matrix Computation on Distributed Memory Multiprocessors”, in
-
-Hypercube Multiprocessors 1986, 1987.
-
-[Mor12a] I. Moraru, D. G. Andersen, and M. Kaminsky, “Egalitarian Paxos”, Carnegie
-
-Mellon University Parallel Data Lab Technical Report CMU-PDL-12-108, 2012.
-
-[Mor14] I. Moraru, D. G. Andersen, and M. Kaminsky, “Paxos Quorum Leases: Fast
-
-Reads Without Sacrificing Writes”, in Proc. SOCC ’14, 2014.
-
-[Mor12b] J. D. Morgenthaler, M. Gridnev, R. Sauciuc, and S. Bhansali, “Searching for
-
-Build Debt: Experiences Managing Technical Debt at Google”, in Proceedings of the 3rd Int’l Workshop on Managing Technical Debt, 2012.
+[Mor12b] J. D. Morgenthaler, M. Gridnev, R. Sauciuc, and S. Bhansali, “Searching for Build Debt: Experiences Managing Technical Debt at Google”, in *Proceedings of the 3rd Int’l Workshop on Managing Technical Debt*, 2012.
 
 [Nar12] C. Narla and D. Salas, “Hermetic Servers”, blog post, 2012.
 
-[Nel14] B. Nelson, “The Data on Diversity”, in Communications of the ACM, vol. 57,
+[Nel14] B. Nelson, “The Data on Diversity”, in *Communications of the ACM*, vol. 57, 2014.
 
-2014.
+[Nic12] K. Nichols and V. Jacobson, “Controlling Queue Delay”, in *ACM Queue*, vol. 10, no. 5, 2012.
 
-[Nic12] K. Nichols and V. Jacobson, “Controlling Queue Delay”, in ACM Queue, vol.
+[Oco12] P. O’Connor and A. Kleyner, *Practical Reliability Engineering*, 5th edition: Wiley, 2012.
 
-10, no. 5, 2012.
+[Ohn88] T. Ohno, *Toyota Production System: Beyond Large-Scale Production*: Productivity Press, 1988.
 
-[Oco12] P. O’Connor and A. Kleyner, Practical Reliability Engineering, 5th edition:
+[Ong14] D. Ongaro and J. Ousterhout, “In Search of an Understandable Consensus Algorithm (Extended Version)”.
 
-Wiley, 2012.
+[Pen10] D. Peng and F. Dabek, “Large-scale Incremental Processing Using Distributed Transactions and Notifications”, in *Proc. of the 9th USENIX Symposium on Operating System Design and Implementation*, November 2010.
 
-[Ohn88] T. Ohno, Toyota Production System: Beyond Large-Scale Production: Produc‐
+[Per99] C. Perrow, *Normal Accidents: Living with High-Risk Technologies*, Princeton University Press, 1999.
 
-tivity Press, 1988.
+[Per07] A. R. Perry, “Engineering Reliability into Web Sites: Google SRE”, in *Proc. of LinuxWorld 2007*, 2007.
 
-[Ong14] D. Ongaro and J. Ousterhout, “In Search of an Understandable Consensus
+[Pik05] R. Pike, S. Dorward, R. Griesemer, S. Quinlan, “Interpreting the Data: Parallel Analysis with Sawzall”, in *Scientific Programming Journal* vol. 13, no. 4, 2005.
 
-Algorithm (Extended Version)”.
+[Pot16] R. Potvin and J. Levenberg, “The Motivation for a Monolithic Codebase: Why Google stores billions of lines of code in a single repository”, in *Communications of the ACM*, forthcoming July 2016. Video available on YouTube.
 
-[Pen10] D. Peng and F. Dabek, “Large-scale Incremental Processing Using Dis‐
+[Roo04] J. J. Rooney and L. N. Vanden Heuvel, “Root Cause Analysis for Beginners”, in *Quality Progress*, July 2004.
 
-tributed Transactions and Notifications”, in Proc. of the 9th USENIX Symposium on Operating System Design and Implementation, November 2010.
+[Sai39] A. de Saint Exupéry, *Terre des Hommes* (Paris: Le Livre de Poche, 1939, in translation by Lewis Galantière as *Wind, Sand and Stars*.
 
-[Per99] C. Perrow, Normal Accidents: Living with High-Risk Technologies, Princeton
+[Sam14] R. R. Sambasivan, R. Fonseca, I. Shafer, and G. R. Ganger, “So, You Want To Trace Your Distributed System? Key Design Insights from Years of Practical Experience”, Carnegie Mellon University Parallel Data Lab Technical Report CMU-PDL-14-102, 2014.
 
-University Press, 1999.
+[San11] N. Santos and A. Schiper, “Tuning Paxos for High-Throughput with Batching and Pipelining”, in *13th Int’l Conf. on Distributed Computing and Networking*, 2012.
 
-[Per07] A. R. Perry, “Engineering Reliability into Web Sites: Google SRE”, in Proc. of
+[Sar97] N. B. Sarter, D. D. Woods, and C. E. Billings, “Automation Surprises”, in *Handbook of Human Factors & Ergonomics*, 2nd edition, G. Salvendy (ed.), Wiley, 1997.
 
-LinuxWorld 2007, 2007.
+[Sch14] E. Schmidt, J. Rosenberg, and A. Eagle, *How Google Works*: Grand Central Publishing, 2014.
 
-[Pik05] R. Pike, S. Dorward, R. Griesemer, S. Quinlan, “Interpreting the Data: Parallel
+[Sch15] B. Schwartz, “The Factors That Impact Availability, Visualized”, blog post, 21 December 2015.
 
-Analysis with Sawzall”, in Scientific Programming Journal vol. 13, no. 4, 2005.
+[Sch90] F. B. Schneider, “Implementing Fault-Tolerant Services Using the State Machine Approach: A Tutorial”, in *ACM Computing Surveys*, vol. 22, no. 4, 1990.
 
-[Pot16] R. Potvin and J. Levenberg, “The Motivation for a Monolithic Codebase: Why
+[Sec13] Securities and Exchange Commission, “Order In the Matter of Knight Capital Americas LLC”, file 3-15570, 2013.
 
-Google stores billions of lines of code in a single repository”, in Communications of the ACM, forthcoming July 2016. Video available on YouTube.
+[Sha00] G. Shao, F. Berman, and R. Wolski, “Master/Slave Computing on the Grid”, in *Heterogeneous Computing Workshop*, 2000.
 
-[Roo04] J. J. Rooney and L. N. Vanden Heuvel, “Root Cause Analysis for Beginners”,
+[Shu13] J. Shute et al., “F1: A Distributed SQL Database That Scales”, in *Proc. VLDB 2013*, 2013.
 
-in Quality Progress, July 2004.
+[Sig10] B. H. Sigelman et al., “Dapper, a Large-Scale Distributed Systems Tracing Infrastructure”, Google Technical Report, 2010.
 
-[Sai39] A. de Saint Exupéry, Terre des Hommes (Paris: Le Livre de Poche, 1939, in
+[Sin15] A. Singh et al., “Jupiter Rising: A Decade of Clos Topologies and Centralized Control in Google’s Datacenter Network”, in *SIGCOMM ’15*.
 
-translation by Lewis Galantière as Wind, Sand and Stars.
+[Skel13] M. Skelton, “Operability can Improve if Developers Write a Draft Run Book”, blog post, 16 October 2013.
 
-[Sam14] R. R. Sambasivan, R. Fonseca, I. Shafer, and G. R. Ganger, “So, You Want To
-
-Trace Your Distributed System? Key Design Insights from Years of Practical Experience”, Carnegie Mellon University Parallel Data Lab Technical Report CMU-PDL-14-102, 2014.
-
-[San11] N. Santos and A. Schiper, “Tuning Paxos for High-Throughput with Batching
-
-and Pipelining”, in 13th Int’l Conf. on Distributed Computing and Networking, 2012.
-
-[Sar97] N. B. Sarter, D. D. Woods, and C. E. Billings, “Automation Surprises”, in
-
-Handbook of Human Factors & Ergonomics, 2nd edition, G. Salvendy (ed.), Wiley, 1997.
-
-[Sch14] E. Schmidt, J. Rosenberg, and A. Eagle, How Google Works: Grand Central
-
-Publishing, 2014.
-
-[Sch15] B. Schwartz, “The Factors That Impact Availability, Visualized”, blog post, 21
-
-December 2015.
-
-[Sch90] F. B. Schneider, “Implementing Fault-Tolerant Services Using the State
-
-Machine Approach: A Tutorial”, in ACM Computing Surveys, vol. 22, no. 4, 1990.
-
-[Sec13] Securities and Exchange Commission, “Order In the Matter of Knight Capital
-
-Americas LLC”, file 3-15570, 2013.
-
-[Sha00] G. Shao, F. Berman, and R. Wolski, “Master/Slave Computing on the Grid”,
-
-in Heterogeneous Computing Workshop, 2000.
-
-[Shu13] J. Shute et al., “F1: A Distributed SQL Database That Scales”, in Proc. VLDB
-
-2013, 2013.
-
-[Sig10] B. H. Sigelman et al., “Dapper, a Large-Scale Distributed Systems Tracing
-
-Infrastructure”, Google Technical Report, 2010.
-
-[Sin15] A. Singh et al., “Jupiter Rising: A Decade of Clos Topologies and Centralized
-
-Control in Google’s Datacenter Network”, in SIGCOMM ’15.
-
-[Skel13] M. Skelton, “Operability can Improve if Developers Write a Draft Run
-
-Book”, blog post, 16 October 2013.
-
-[Slo11] B. Treynor Sloss, “Gmail back soon for everyone”, blog post, 28 February
-
-2011.
+[Slo11] B. Treynor Sloss, “Gmail back soon for everyone”, blog post, 28 February 2011.
 
 [Tat99] S. Tatham, “How to Report Bugs Effectively”, 1999.
 
-[Ver15] A. Verma, L. Pedrosa, M. R. Korupolu, D. Oppenheimer, E. Tune, and J.
+[Ver15] A. Verma, L. Pedrosa, M. R. Korupolu, D. Oppenheimer, E. Tune, and J. Wilkes, “Large-scale cluster management at Google with Borg”, in *Proceedings of the European Conference on Computer Systems*, 2015.
 
-Wilkes, “Large-scale cluster management at Google with Borg”, in Proceedings of the European Conference on Computer Systems, 2015.
+[Wal89] D. R. Wallace and R. U. Fujii, “Software Verification and Validation: An Overview”, *IEEE Software*, vol. 6, no. 3 (May 1989), pp. 10, 17.
 
-[Wal89] D. R. Wallace and R. U. Fujii, “Software Verification and Validation: An
+[War14] R. Ward and B. Beyer, “BeyondCorp: A New Approach to Enterprise Security”, in *;login:*, vol. 39, no. 6, December 2014.
 
-Overview”, IEEE Software, vol. 6, no. 3 (May 1989), pp. 10, 17.
+[Whi12] J. A. Whittaker, J. Arbon, and J. Carollo, *How Google Tests Software*: Addison-Wesley, 2012.
 
-[War14] R. Ward and B. Beyer, “BeyondCorp: A New Approach to Enterprise Secu‐
+[Woo96] A. Wood, “Predicting Software Reliability”, in *Computer*, vol. 29, no. 11, 1996.
 
-rity”, in ;login:, vol. 39, no. 6, December 2014.
+[Wri12a] H. K. Wright, “Release Engineering Processes, Their Faults and Failures”, (section 7.2.2.2) PhD Thesis, University of Texas at Austin, 2012.
 
-[Whi12] J. A. Whittaker, J. Arbon, and J. Carollo, How Google Tests Software:
+[Wri12b] H. K. Wright and D. E. Perry, “Release Engineering Practices and Pitfalls”, in *Proceedings of the 34th International Conference on Software Engineering (ICSE ’12)*. (IEEE, 2012), pp. 1281–1284.
 
-Addison-Wesley, 2012.
+[Wri13] H. K. Wright, D. Jasper, M. Klimek, C. Carruth, Z. Wan, “Large-Scale Automated Refactoring Using ClangMR”, in *Proceedings of the 29th International Conference on Software Maintenance (ICSM ’13)*, (IEEE, 2013), pp. 548–551.
 
-[Woo96] A. Wood, “Predicting Software Reliability”, in Computer, vol. 29, no. 11,
-
-1996.
-
-[Wri12a] H. K. Wright, “Release Engineering Processes, Their Faults and Failures”,
-
-(section 7.2.2.2) PhD Thesis, University of Texas at Austin, 2012.
-
-[Wri12b] H. K. Wright and D. E. Perry, “Release Engineering Practices and Pitfalls”,
-
-in Proceedings of the 34th International Conference on Software Engineering (ICSE ’12). (IEEE, 2012), pp. 1281–1284.
-
-[Wri13] H. K. Wright, D. Jasper, M. Klimek, C. Carruth, Z. Wan, “Large-Scale Auto‐
-
-mated Refactoring Using ClangMR”, in Proceedings of the 29th International Conference on Software Maintenance (ICSM ’13), (IEEE, 2013), pp. 548–551.
-
-[Zoo14] ZooKeeper Project (Apache Foundation), “ZooKeeper Recipes and Solu‐
-
-tions”, in ZooKeeper 3.4 documentation, 2014.
+[Zoo14] ZooKeeper Project (Apache Foundation), “ZooKeeper Recipes and Solutions”, in ZooKeeper 3.4 documentation, 2014.
 
 ## Index
 
-<!-- Source: Site.Reliability.Engineering-2016-32.pdf, PDF page 71. -->
 ```text
 Symbols
 /varz HTTP handler, 109
@@ -1163,7 +894,6 @@ best practices
   for incident management, 166
 ```
 
-<!-- Source: Site.Reliability.Engineering-2016-32.pdf, PDF page 72. -->
 ```text
   monitoring, 481
   overloads and failure, 483
@@ -1264,7 +994,6 @@ communication and collaboration
      ings)
 ```
 
-<!-- Source: Site.Reliability.Engineering-2016-32.pdf, PDF page 73. -->
 ```text
   within SRE team, 430
 company-wide resilience testing, 106
@@ -1365,7 +1094,6 @@ data processing pipelines
   drawbacks of periodic, 329-332
 ```
 
-<!-- Source: Site.Reliability.Engineering-2016-32.pdf, PDF page 74. -->
 ```text
   effect of big data on, 328
   monitoring problems, 331-332
@@ -1465,7 +1193,6 @@ fake backends, 204
 false-positive alerts, 180
 ```
 
-<!-- Source: Site.Reliability.Engineering-2016-32.pdf, PDF page 75. -->
 ```text
 feature flag frameworks, 381
 file descriptors, 263
@@ -1563,7 +1290,6 @@ jobs, 16
 Jupiter network fabric, 14
 ```
 
-<!-- Source: Site.Reliability.Engineering-2016-32.pdf, PDF page 76. -->
 ```text
 L
 labelsets, 112
@@ -1663,7 +1389,6 @@ Network Address Translation, 228
 network latency, 300
 ```
 
-<!-- Source: Site.Reliability.Engineering-2016-32.pdf, PDF page 77. -->
 ```text
 network load balancer, 227
 network partitions, 287
@@ -1763,7 +1488,6 @@ policies and procedures, enforcing, 89
 post hoc analysis, 58
 ```
 
-<!-- Source: Site.Reliability.Engineering-2016-32.pdf, PDF page 78. -->
 ```text
 postmortems
   benefits of, 169
@@ -1863,7 +1587,6 @@ reliability testing
   canary tests, 189
 ```
 
-<!-- Source: Site.Reliability.Engineering-2016-32.pdf, PDF page 79. -->
 ```text
   configuration tests, 188
   coordination of, 197
@@ -1964,7 +1687,6 @@ separation of responsibilities, 163
 servers
 ```
 
-<!-- Source: Site.Reliability.Engineering-2016-32.pdf, PDF page 80. -->
 ```text
   vs. clients, 19
   defined, 13
@@ -2066,7 +1788,6 @@ software engineering in SRE
 software fault tolerance, 34
 ```
 
-<!-- Source: Site.Reliability.Engineering-2016-32.pdf, PDF page 81. -->
 ```text
 software simplicity
   avoiding bloat, 99
@@ -2166,7 +1887,6 @@ time-series monitoring
   Borgmon monitoring system, 108
 ```
 
-<!-- Source: Site.Reliability.Engineering-2016-32.pdf, PDF page 82. -->
 ```text
   collection of exported data, 110
   instrumentation of applications, 109
@@ -2247,25 +1967,25 @@ Zookeeper, 291
 
 #### About the Authors
 
-Betsy Beyer is a Technical Writer for Google in New York City specializing in Site Reliability Engineering. She has previously written documentation for Google’s Data Center and Hardware Operations Teams in Mountain View and across its globally distributed datacenters. Before moving to New York, Betsy was a lecturer on technical writing at Stanford University. En route to her current career, Betsy studied International Relations and English Literature, and holds degrees from Stanford and Tulane.
+**Betsy Beyer** is a Technical Writer for Google in New York City specializing in Site Reliability Engineering. She has previously written documentation for Google’s Data Center and Hardware Operations Teams in Mountain View and across its globally distributed datacenters. Before moving to New York, Betsy was a lecturer on technical writing at Stanford University. En route to her current career, Betsy studied International Relations and English Literature, and holds degrees from Stanford and Tulane.
 
-Chris Jones is a Site Reliability Engineer for Google App Engine, a cloud platform-as-a-service product serving over 28 billion requests per day. Based in San Francisco, he has previously been responsible for the care and feeding of Google’s advertising statistics, data warehousing, and customer support systems. In other lives, Chris has worked in academic IT, analyzed data for political campaigns, and engaged in some light BSD kernel hacking, picking up degrees in Computer Engineering, Economics, and Technology Policy along the way. He’s also a licensed professional engineer.
+**Chris Jones** is a Site Reliability Engineer for Google App Engine, a cloud platform-as-a-service product serving over 28 billion requests per day. Based in San Francisco, he has previously been responsible for the care and feeding of Google’s advertising statistics, data warehousing, and customer support systems. In other lives, Chris has worked in academic IT, analyzed data for political campaigns, and engaged in some light BSD kernel hacking, picking up degrees in Computer Engineering, Economics, and Technology Policy along the way. He’s also a licensed professional engineer.
 
-Jennifer Petoff is a Program Manager for Google’s Site Reliability Engineering team and based in Dublin, Ireland. She has managed large global projects across wide-ranging domains including scientific research, engineering, human resources, and advertising operations. Jennifer joined Google after spending eight years in the chemical industry. She holds a PhD in Chemistry from Stanford University and a BS in Chemistry and a BA in Psychology from the University of Rochester.
+**Jennifer Petoff** is a Program Manager for Google’s Site Reliability Engineering team and based in Dublin, Ireland. She has managed large global projects across wide-ranging domains including scientific research, engineering, human resources, and advertising operations. Jennifer joined Google after spending eight years in the chemical industry. She holds a PhD in Chemistry from Stanford University and a BS in Chemistry and a BA in Psychology from the University of Rochester.
 
-Niall Murphy leads the Ads Site Reliability Engineering team at Google Ireland. He has been involved in the Internet industry for about 20 years, and is currently chairperson of INEX, Ireland’s peering hub. He is the author or coauthor of a number of technical papers and/or books, including IPv6 Network Administration for O’Reilly, and a number of RFCs. He is currently cowriting a history of the Internet in Ireland, and is the holder of degrees in Computer Science, Mathematics, and Poetry Studies, which is surely some kind of mistake. He lives in Dublin with his wife and two sons.
+**Niall Murphy** leads the Ads Site Reliability Engineering team at Google Ireland. He has been involved in the Internet industry for about 20 years, and is currently chairperson of INEX, Ireland’s peering hub. He is the author or coauthor of a number of technical papers and/or books, including *IPv6 Network Administration* for O’Reilly, and a number of RFCs. He is currently cowriting a history of the Internet in Ireland, and is the holder of degrees in Computer Science, Mathematics, and Poetry Studies, which is surely some kind of mistake. He lives in Dublin with his wife and two sons.
 
 #### Colophon
 
-The animal on the cover of Site Reliability Engineering is the ornate monitor lizard, a reptile native to West and Middle Africa. Until 1997, it was considered a subspecies of the Nile monitor lizard (Varanus niloticus), but is now classified as a polymorph of both Varanus stellatus and Varanus niloticus due to its different skin patterns. It also has a smaller range than the Nile monitor, preferring a habitat of lowland rainforest.
+The animal on the cover of *Site Reliability Engineering* is the ornate monitor lizard, a reptile native to West and Middle Africa. Until 1997, it was considered a subspecies of the Nile monitor lizard (*Varanus niloticus*), but is now classified as a polymorph of both *Varanus stellatus* and *Varanus niloticus* due to its different skin patterns. It also has a smaller range than the Nile monitor, preferring a habitat of lowland rainforest.
 
 Ornate monitors are large lizards, able to grow up to 6–7 feet long. They are more brightly colored than Nile monitors, with darker olive skin and fewer bands of bright yellow spots running from the shoulder to the tail. Like all monitor lizards, this animal has a muscular stout body, sharp claws, and an elongated head. Their nostrils are placed high on their snout, permitting them to spend time in the water. They are excellent swimmers and climbers, which allows them to sustain a diet of fish, frogs, eggs, insects, and small mammals.
 
 Monitor lizards are often kept as pets, though they require a lot of care and are not suitable for beginners. They can be dangerous when they feel threatened (lashing their powerful tails, scratching, or biting), but it is possible to tame them somewhat with regular handling and teaching them to associate their keeper’s presence with the delivery of food.
 
-Many of the animals on O’Reilly covers are endangered; all of them are important to the world. To learn more about how you can help, go to animals.oreilly.com.
+Many of the animals on O’Reilly covers are endangered; all of them are important to the world. To learn more about how you can help, go to *animals.oreilly.com*.
 
-The cover image is from Brockhaus Lexicon. The cover fonts are URW Typewriter and Guardian Sans. The text font is Adobe Minion Pro; the heading font is Adobe Myriad Condensed; and the code font is Dalton Maag’s Ubuntu Mono.
+The cover image is from *Brockhaus Lexicon*. The cover fonts are URW Typewriter and Guardian Sans. The text font is Adobe Minion Pro; the heading font is Adobe Myriad Condensed; and the code font is Dalton Maag’s Ubuntu Mono.
 
 ### Notes
 

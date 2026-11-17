@@ -4,15 +4,15 @@
 
 Source: [Site.Reliability.Engineering-2016-31.pdf](./Site.Reliability.Engineering-2016-31.pdf), PDF pages 1–10.
 
-Written by Niall Murphy with Alex Rodriguez, Carl Crous, Dario
+The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
 
-Freni, Dylan Curley, Lorenzo Blanco, and Todd Underwood
+***Written by Niall Murphy with Alex Rodriguez, Carl Crous, Dario Freni, Dylan Curley, Lorenzo Blanco, and Todd Underwood***
 
-Edited by Betsy Beyer
+***Edited by Betsy Beyer***
 
 The organizational position of SRE in Google is interesting, and has effects on how we communicate and collaborate.
 
-To begin with, there is a tremendous diversity in what SRE does, and how we do it. We have infrastructural teams, service teams, and horizontal product teams. We have relationships with product development teams ranging from teams that are many times our size, to teams roughly the same size as their counterparts, and situations in which we are the product development team. SRE teams are made up of people with systems engineering or architectural skills (see [Hix15b]), software engineering skills, project management skills, leadership instincts, backgrounds in all kinds of industries (see Chapter 33), and so on. We don’t have just one model, and we have found a variety of configurations that work; this flexibility suits our ultimately pragmatic nature.
+To begin with, there is a tremendous diversity in what SRE does, and how we do it. We have infrastructural teams, service teams, and horizontal product teams. We have relationships with product development teams ranging from teams that are many times our size, to teams roughly the same size as their counterparts, and situations in which we *are* the product development team. SRE teams are made up of people with systems engineering or architectural skills (see [Hix15b]), software engineering skills, project management skills, leadership instincts, backgrounds in all kinds of industries (see [Lessons Learned from Other Industries](LESSONS.OTHER.INDUSTRIES.md)), and so on. We don’t have just one model, and we have found a variety of configurations that work; this flexibility suits our ultimately pragmatic nature.
 
 It’s also true that SRE is not a command-and-control organization. Generally, we owe allegiance to at least two masters: for service or infrastructure SRE teams, we work closely with the corresponding product development teams that work on those services or that infrastructure; we also obviously work in the context of SRE generally. The service relationship is very strong, since we are held accountable for the performance of those systems, but despite that relationship, our actual reporting lines are through SRE as a whole. Today, we spend more time supporting our individual services than on cross-production work, but our culture and our shared values produce strongly homogeneous approaches to problems. This is by design.[^p1-1] The two preceding facts have steered the SRE organization in certain directions when it comes to two crucial dimensions of how our teams operate—communications and collaboration. Data flow would be an apt computing metaphor for our communications: just like data must flow around production, data also has to flow around an SRE team—data about projects, the state of the services, production, and the state of the individuals. For maximum effectiveness of a team, the data has to flow in reliable ways from one interested party to another. One way to think of this flow is to think of the interface that an SRE team must present to other teams, such as an API. Just like an API, a good design is crucial for effective operation, and if the API is wrong, it can be painful to correct later on.
 
@@ -20,51 +20,51 @@ The API-as-contract metaphor is also relevant for collaboration, both among SRE 
 
 ### Communications: Production Meetings
 
-Although literature about running effective meetings abounds [Kra08], it’s difficult to find someone who’s lucky enough to only have useful, effective meetings. This is equally true for SRE.
+Although literature about running effective meetings abounds [Kra08], it’s difficult to find someone who’s lucky enough to *only* have useful, effective meetings. This is equally true for SRE.
 
-However, there’s one kind of meeting that we have that is more useful than the average, called a production meeting. Production meetings are a special kind of meeting where an SRE team carefully articulates to itself—and to its invitees—the state of the service(s) in their charge, so as to increase general awareness among everyone who cares, and to improve the operation of the service(s). In general, these meetings are service-oriented; they are not directly about the status updates of individuals. The goal is for everyone to leave the meeting with an idea of what’s going on—the same idea. The other major goal of production meetings is to improve our services by bringing the wisdom of production to bear on our services. That means we talk in detail about the operational performance of the service, and relate that operational performance to design, configuration, or implementation, and make recommendations for how to fix the problems. Connecting the performance of the service with design decisions in a regular meeting is an immensely powerful feedback loop.
+However, there’s one kind of meeting that we have that is more useful than the average, called a *production meeting*. Production meetings are a special kind of meeting where an SRE team carefully articulates to itself—and to its invitees—the state of the service(s) in their charge, so as to increase general awareness among everyone who cares, and to improve the operation of the service(s). In general, these meetings are *service-oriented*; they are not directly about the status updates of individuals. The goal is for everyone to leave the meeting with an idea of what’s going on—the *same* idea. The other major goal of production meetings is to improve our services by bringing the wisdom of production to bear on our services. That means we talk in detail about the operational performance of the service, and relate that operational performance to design, configuration, or implementation, and make recommendations for how to fix the problems. Connecting the performance of the service with design decisions in a regular meeting is an immensely powerful feedback loop.
 
 Our production meetings usually happen weekly; given SRE’s antipathy to pointless meetings, this frequency seems to be just about right: time to allow enough relevant material to accumulate to make the meeting worthwhile, while not so frequent that people find excuses to not attend. They usually last somewhere between 30 and 60 minutes. Any less and you’re probably cutting something unnecessarily short, or you should probably be growing your service portfolio. Any more and you’re probably getting mired in the detail, or you’ve got too much to talk about and you should shard the team or service set.
 
 Just like any other meeting, the production meeting should have a chair. Many SRE teams rotate the chair through various team members, which has the advantage of making everyone feel they have a stake in the service and some notional ownership of the issues. It’s true that not everyone has equal levels of chairing skill, but the value of group ownership is so large that the trade-off of temporary suboptimality is worthwhile. Furthermore, this is a chance to instill chairing skills, which are very useful in the kind of incident coordination situations commonly faced by SRE.
 
-In cases where two SRE teams are meeting by video, and one of the teams is much larger than the other, we have noticed an interesting dynamic at play. We recommend placing your chair on the smaller side of the call by default. The larger side naturally tends to quiet down and some of the bad effects of imbalanced team sizes (made worse by the delays inherent in video conferencing) will improve.[^p3-2] We have no idea if this technique has any scientific basis, but it does tend to work.
+In cases where two SRE teams are meeting by video, and one of the teams is much larger than the other, we have noticed an interesting dynamic at play. We recommend placing your chair on the *smaller* side of the call by default. The larger side naturally tends to quiet down and some of the bad effects of imbalanced team sizes (made worse by the delays inherent in video conferencing) will improve.[^p3-2] We have no idea if this technique has any scientific basis, but it does tend to work.
 
 #### Agenda
 
-There are many ways to run a production meeting, attesting to the diversity of what SRE looks after and how we do it. To that extent, it’s not appropriate to be prescriptive on how to run one of these meetings. However, a default agenda (see Appendix F for an example) might look something like the following:
+There are many ways to run a production meeting, attesting to the diversity of what SRE looks after and how we do it. To that extent, it’s not appropriate to be prescriptive on how to run one of these meetings. However, a default agenda (see [Example Production Meeting Minutes](SRE.SUPPLEMENTARY.MATERIAL.md#appendix-f-example-production-meeting-minutes)) might look something like the following:
 
-Upcoming production changes
+*Upcoming production changes*
 
 Change-tracking meetings are well known throughout the industry, and indeed whole meetings have often been devoted to stopping change. However, in our production environment, we usually default to enabling change, which requires tracking the useful set of properties of that change: start time, duration, expected effect, and so on. This is near-term horizon visibility.
 
-Metrics
+*Metrics*
 
-One of the major ways we conduct a service-oriented discussion is by talking about the core metrics of the systems in question; see Chapter 4. Even if the systems didn’t dramatically fail that week, it’s very common to be in a position where you’re looking at gradually (or sharply!) increasing load throughout the year. Keeping track of how your latency figures, CPU utilization figures, etc., change over time is incredibly valuable for developing a feeling for the performance envelope of a system.
+One of the major ways we conduct a service-oriented discussion is by talking about the core metrics of the systems in question; see [Service Level Objectives](../principles/SERVICE.LEVEL.OBJECTIVES.md). Even if the systems didn’t dramatically fail that week, it’s very common to be in a position where you’re looking at gradually (or sharply!) increasing load throughout the year. Keeping track of how your latency figures, CPU utilization figures, etc., change over time is incredibly valuable for developing a feeling for the performance envelope of a system.
 
 Some teams track resource usage and efficiency, which is also a useful indicator of slower, perhaps more insidious system changes.
 
-Outages
+*Outages*
 
-This item addresses problems of approximately postmortem size, and is an indispensable opportunity for learning. A good postmortem analysis, as discussed in Chapter 15, should always set the juices flowing.
+This item addresses problems of approximately postmortem size, and is an indispensable opportunity for learning. A good postmortem analysis, as discussed in [Postmortem Culture: Learning from Failure](../practices/POSTMORTEM.CULTURE.LEARNING.FAILURE.md), should always set the juices flowing.
 
-Paging events
+*Paging events*
 
-These are pages from your monitoring system, relating to problems that can be postmortem worthy, but often aren’t. In any event, while the Outages portion looks at the larger picture of an outage, this section looks at the tactical view: the list of pages, who was paged, what happened then, and so on. There are two implicit questions for this section: should that alert have paged in the way it did, and should it have paged at all? If the answer to the last question is no, remove those unactionable pages.
+These are pages from your monitoring system, relating to problems that *can* be postmortem worthy, but often aren’t. In any event, while the Outages portion looks at the larger picture of an outage, this section looks at the tactical view: the list of pages, who was paged, what happened then, and so on. There are two implicit questions for this section: should that alert have paged in the way it did, and should it have paged at all? If the answer to the last question is no, remove those unactionable pages.
 
-Nonpaging events
+*Nonpaging events*
 
 This bucket contains three items:
 
-- An issue that probably should have paged, but didn’t. In these cases, you should probably fix the monitoring so that such events do trigger a page. Often you encounter the issue while you’re trying to fix something else, or it’s related to a metric you’re tracking but for which you haven’t got an alert.
+- *An issue that probably should have paged, but didn’t*. In these cases, you should probably fix the monitoring so that such events do trigger a page. Often you encounter the issue while you’re trying to fix something else, or it’s related to a metric you’re tracking but for which you haven’t got an alert.
 
-- An issue that is not pageable but requires attention, such as low-impact data corruption or slowness in some non-user-facing dimension of the system. Tracking reactive operational work is also appropriate here.
+- *An issue that is not pageable but requires attention*, such as low-impact data corruption or slowness in some non-user-facing dimension of the system. Tracking reactive operational work is also appropriate here.
 
-- An issue that is not pageable and does not require attention. These alerts should be removed, because they create extra noise that distracts engineers from issues that do merit attention.
+- *An issue that is not pageable and does not require attention*. These alerts should be removed, because they create extra noise that distracts engineers from issues that do merit attention.
 
-Prior action items
+*Prior action items*
 
-The preceding detailed discussions often lead to actions that SRE needs to take— fix this, monitor that, develop a subsystem to do the other. Track these improvements just as they would be tracked in any other meeting: assign action items to people and track their progress. It’s a good idea to have an explicit agenda item that acts as a catchall, if nothing else. Consistent delivery is also a wonderful credibility and trust builder. It doesn’t matter how such delivery is done, just that it is done.
+The preceding detailed discussions often lead to actions that SRE needs to take— fix this, monitor that, develop a subsystem to do the other. Track these improvements just as they would be tracked in any other meeting: assign action items to people and track their progress. It’s a good idea to have an explicit agenda item that acts as a catchall, if nothing else. Consistent delivery is also a wonderful credibility and trust builder. It doesn’t matter how such delivery is done, just that it *is* done.
 
 #### Attendance
 
@@ -80,11 +80,11 @@ Occasionally you’ll have too many teams or busy-yet-crucial attendees to invit
 
 - Busy-yet-crucial attendees can provide feedback and/or steering in advance to individuals, or using the prefilled agenda technique (described next).
 
-Most of the meeting strategies we’ve discussed are common sense, with a service-oriented twist. One unique spin on making meetings more efficient and more inclusive is to use the real-time collaborative features of Google Docs. Many SRE teams have such a doc, with a well-known address that anyone in engineering can access. Having such a doc enables two great practices:
+Most of the meeting strategies we’ve discussed are common sense, with a service-oriented twist. One unique spin on making meetings more efficient *and* more inclusive is to use the real-time collaborative features of Google Docs. Many SRE teams have such a doc, with a well-known address that anyone in engineering can access. Having such a doc enables two great practices:
 
 - Pre-populating the agenda with “bottom up” ideas, comments, and information.
 
-- Preparing the agenda in parallel and in advance is really efficient.
+- Preparing the agenda in parallel *and* in advance is really efficient.
 
 Fully use the multiple-person collaboration features enabled by the product. There’s nothing quite like seeing a meeting chair type in a sentence, then seeing someone else supply a link to the source material in brackets after they have finished typing, and then seeing yet another person tidy up the spelling and grammar in the original sentence. Such collaboration gets stuff done faster, and makes more people feel like they own a slice of what the team does.
 
@@ -92,7 +92,7 @@ Fully use the multiple-person collaboration features enabled by the product. The
 
 Obviously, Google is a multinational organization. Because of the emergency response and pager rotation component of our role, we have very good business reasons to be a distributed organization, separated by at least a few time zones. The practical impact of this distribution is that we have very fluid definitions for “team” compared to, for example, the average product development team. We have local teams, the team on the site, the cross-continental team, virtual teams of various sizes and coherence, and everything in between. This creates a cheerfully chaotic mix of responsibilities, skills, and opportunities. Much of the same dynamics could be expected to pertain to any sufficiently large company (although they might be particularly intense for tech companies). Given that most local collaboration faces no particular obstacle, the interesting case collaboration-wise is cross-team, cross-site, across a virtual team, and similar.
 
-This pattern of distribution also informs how SRE teams tend to be organized. Because our raison d’être is bringing value through technical mastery, and technical mastery tends to be hard, we therefore try to find a way to have mastery over some related subset of systems or infrastructures, in order to decrease cognitive load. Specialization is one way of accomplishing this objective; i.e., team X works only on product Y. Specialization is good, because it leads to higher chances of improved technical mastery, but it’s also bad, because it leads to siloization and ignorance of the broader picture. We try to have a crisp team charter to define what a team will—and more importantly, won’t—support, but we don’t always succeed.
+This pattern of distribution also informs how SRE teams tend to be organized. Because our *raison d’être* is bringing value through technical mastery, and technical mastery tends to be hard, we therefore try to find a way to have mastery over some related subset of systems or infrastructures, in order to decrease cognitive load. Specialization is one way of accomplishing this objective; i.e., team X works only on product Y. Specialization is good, because it leads to higher chances of improved technical mastery, but it’s also bad, because it leads to siloization and ignorance of the broader picture. We try to have a crisp team charter to define what a team will—and more importantly, won’t—support, but we don’t always succeed.
 
 #### Team Composition
 
@@ -118,7 +118,7 @@ The incentives that led to the serious litter problem of many smoldering, abando
 
 #### The Coming of the Viceroy
 
-Viceroy was different. It began in 2012 when a number of teams were considering how to move to Monarch, the new monitoring system at Google. SRE is deeply conservative with respect to monitoring systems, so Monarch somewhat ironically took a longer while to get traction within SRE than within non-SRE teams. But no one could argue that our legacy monitoring system, Borgmon (see Chapter 10), had no room for improvement. For example, our consoles were cumbersome because they used a custom HTML templating system that was special-cased, full of funky edge cases, and difficult to test. At that time, Monarch had matured enough to be accepted in principle as the replacement for the legacy system and was therefore being adopted by more and more teams across Google, but it turned out we still had a problem with consoles.
+Viceroy was different. It began in 2012 when a number of teams were considering how to move to Monarch, the new monitoring system at Google. SRE is deeply conservative with respect to monitoring systems, so Monarch somewhat ironically took a longer while to get traction within SRE than within non-SRE teams. But no one could argue that our legacy monitoring system, Borgmon (see [Practical Alerting from Time-Series Data](../practices/PRACTICAL.ALERTING.TIME.SERIES.DATA.md)), had no room for improvement. For example, our consoles were cumbersome because they used a custom HTML templating system that was special-cased, full of funky edge cases, and difficult to test. At that time, Monarch had matured enough to be accepted in principle as the replacement for the legacy system and was therefore being adopted by more and more teams across Google, but it turned out we still had a problem with consoles.
 
 Those of us who tried using Monarch for our services soon found that it fell short in its console support for two main reasons:
 
@@ -134,7 +134,7 @@ By the beginning of 2013, Viceroy had started to gather interest from teams who 
 
 - Support both Monarch and the legacy monitoring system
 
-Each project also had its own set of technical requirements, which depended on the author’s preference or experience. For example:
+Each project *also* had its own set of technical requirements, which depended on the author’s preference or experience. For example:
 
 - Multiple data sources outside the core monitoring systems
 
@@ -160,7 +160,7 @@ Joining forces reaped huge benefits:
 
 - Consoles++ benefited from the many improvements actively being made to Viceroy, such as the addition of its cache and background data pipeline.
 
-- Overall, the development velocity on one solution was much larger than the sum of all the development velocity of the duplicative projects.
+- Overall, the development velocity on *one* solution was much larger than the sum of all the development velocity of the duplicative projects.
 
 Ultimately, the common future vision was the key factor in combining the projects. Both teams found value in expanding their development team and benefited from each other’s contributions. The momentum was such that, by the end of 2014, Viceroy was officially declared the general monitoring solution for all of SRE. Perhaps characteristically for Google, this declaration didn’t require that teams adopt Viceroy: rather, it recommended that teams should use Viceroy instead of writing another monitoring console.
 

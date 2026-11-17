@@ -4,17 +4,19 @@
 
 Source: [The.Practice.of.System.and.Network.Administration-Vol.I-2017-21.pdf](./The.Practice.of.System.and.Network.Administration-Vol.I-2017-21.pdf), PDF pages 1–13.
 
+The case studies and first-person accounts below reflect the source authors’ experience, as published in 2017.
+
 Sometimes, you need to convert your customer base from an existing service to a new replacement service. The existing system may not be able to scale or may have been declared to be at “end of life” by the vendor, requiring you to evaluate new systems. Or, your company may have merged with a company that uses different products, and both parts of the new company need to integrate their services with each other. Perhaps your company is spinning off a division into a new, separate company, and you need to replicate and split the services and networks so that each part is fully self-sufficient. Whatever the reason, converting customers from one service to another is a task that SAs often face.
 
-As with many things in system and network administration, your goal should be for the conversion to go smoothly and be completely invisible to your customers. To achieve or even approach that goal, you need to plan the project very carefully. This chapter describes some of the areas to consider in that planning process.
+As with many things in system and network administration, your goal should be for the conversion to go smoothly and be completely invisible to your customers. To achieve or even approach that goal, you need to plan the project very carefully. This document describes some of the areas to consider in that planning process.
 
 As with many high-level system administration tasks, a successful conversion depends on having a solid infrastructure in place. Rolling out a change to the whole company can be a very visible project, particularly if there are problems. You can decrease the risk and visibility of problems by rolling out the change slowly, starting with the SAs and then the most suitable customers. With any change you make, be sure that you have a backout plan and can revert quickly and easily to the pre-conversion state, if necessary.
 
-We have seen how an automated patching system can be used to roll out software updates (Chapter 7, “Workstation Software Life Cycle”), and we’ve seen how to build a service, including some of the ways to make it easier to upgrade and maintain (Chapter 20, “Service Launch: DevOps”). These techniques can be instrumental parts of your roll-out plan.
+We have seen how an automated patching system can be used to roll out software updates, and we’ve seen how to build a service, including some of the ways to make it easier to upgrade and maintain ([Service Launch: DevOps](SERVICE.LAUNCH.DEVOPS.md)). These techniques can be instrumental parts of your roll-out plan.
 
 Communication plays a key role in performing a successful conversion. It is never wise to change something without making sure that your customers know what is happening and have told you of their concerns and timing constraints.
 
-This chapter touches on each of those areas, along with two general approaches to conversions. You need to plan every step of a conversion well in advance to pull it off successfully with minimum impact on your customers. This chapter should shape your thinking in that planning process.
+This document touches on each of those areas, along with two general approaches to conversions. You need to plan every step of a conversion well in advance to pull it off successfully with minimum impact on your customers. This document should shape your thinking in that planning process.
 
 ##### An Invisible Change
 
@@ -28,7 +30,7 @@ Does the conversion require a service interruption? If so, how can you minimize 
 
 Does the conversion require changes on each customer’s workstation? If so, how many changes will there be, how long will they take to implement, and can you organize the conversion so that the customer is disturbed only once?
 
-Does the conversion require that the customers change their work methods in any way? For example, will they have to use new client software? Can you avoid changing the client software? If not, do the customers need training? Sometimes training is a larger project than the conversion itself. Are the customers comfortable with the new software? Are their SAs and the helpdesk familiar enough with the new and the old software that they can help with any questions the customers might have? Have the helpdesk scripts (Section 27.7) been updated?
+Does the conversion require that the customers change their work methods in any way? For example, will they have to use new client software? Can you avoid changing the client software? If not, do the customers need training? Sometimes training is a larger project than the conversion itself. Are the customers comfortable with the new software? Are their SAs and the helpdesk familiar enough with the new and the old software that they can help with any questions the customers might have? Have the helpdesk scripts ([Defining Processes for Staff](CUSTOMER.SUPPORT.md#277-defining-processes-for-staff)) been updated?
 
 Look for ways to perform the change without interrupting the service, without visiting each customer, and without changing the workflow or user interface. Make sure that the support organization is ready to provide full support for the new product or service before you roll it out. Remember, your goal is for the conversion to be so smooth that your customers may not even realize that it has happened. If you can’t minimize intrusiveness, at least you can make the intrusion fast and well organized.
 
@@ -50,8 +52,8 @@ The complete story is documented in Limoncelli, Reingold, Narayan & Loura (1997)
 
 A conversion project, like any project, is divided into discrete tasks, some of which have to be performed for every customer. For example, with a conversion to new calendar software, the new client software must be rolled out to all the desktops, accounts need to be created on the server, and existing schedules must be converted to the new system. As part of the project planning for the conversion, you need to decide whether to perform these tasks in layers or in pillars.
 
-- With the layers approach, you perform one task for all the customers before moving on to the next task and doing that for all of the customers.
-- With the pillars approach, you perform all the required tasks for each customer at once, before moving on to the next customer.
+- With the *layers* approach, you perform one task for all the customers before moving on to the next task and doing that for all of the customers.
+- With the *pillars* approach, you perform all the required tasks for each customer at once, before moving on to the next customer.
 
 Think of baking a large cake for a dozen people versus baking 12 cupcakes, one at a time. You’d want to bake one big cake (the layers approach). But suppose instead you were making omelets. People would want different things in their omelets—it wouldn’t make sense to make just one big one (the pillars approach).
 
@@ -85,7 +87,7 @@ By communicating with the customers about the conversion, you will find people w
 
 Customers need to know what is taking place and how the change is going to affect them. They need to be able to ask questions about how they will perform their tasks in the new system and they need to have all their concerns addressed. Customers need to know in advance whether the conversion will require service outages, changes to their machines, or visits to their offices.
 
-Even if you expect the conversion to go seamlessly, with no interruption or visible change for the customers, they still need to know that it is happening. Use the information you’ve gained to schedule it for minimum impact, just in case something goes wrong. If everything goes smoothly, the pre- and post-conversion communication helps to improve the customers’ perception and visibility of the SA team. If you don’t communicate the change, they will just assume that you are not doing anything. If you communicate the change and something fails, at least the customers know what, when, and why you were doing something, and they will be more tolerant of the resulting disruption. See Chapter 49, “Perception and Visibility,” for more about managing the rest of the company’s view of the SAs.
+Even if you expect the conversion to go seamlessly, with no interruption or visible change for the customers, they still need to know that it is happening. Use the information you’ve gained to schedule it for minimum impact, just in case something goes wrong. If everything goes smoothly, the pre- and post-conversion communication helps to improve the customers’ perception and visibility of the SA team. If you don’t communicate the change, they will just assume that you are not doing anything. If you communicate the change and something fails, at least the customers know what, when, and why you were doing something, and they will be more tolerant of the resulting disruption.
 
 Have the high-level goals for the conversion planned and written out in advance; it is common for customers to try to add new functionality or new services as requirements during an upgrade planning process. Adding new items increases the complexity of the conversion. Strike a balance between the need to maintain functionality and the desire to improve services.
 
@@ -101,7 +103,7 @@ Creating and providing the actual training is usually out of scope for the SA te
 
 When performing a roll-out, whether it is a conversion, a new service, or an update to an existing service, you should do so gradually to minimize the potential impact of any failures.
 
-Using the “one, some, many” technique discussed in Section 7.5, you would start by converting your own system to the new service. Test and perfect the conversion process, and test and perfect the new service before converting any other systems. When you cannot find any more problems, convert a few of your coworkers’ desktops; debug and fix any problems that arise from that process and have them test the new system. Expand the test group to cover all the SAs before starting on your customers. When you have successfully converted the SAs, start with small groups of customers and increase the group size over time.
+Using the “one, some, many” technique, you would start by converting your own system to the new service. Test and perfect the conversion process, and test and perfect the new service before converting any other systems. When you cannot find any more problems, convert a few of your coworkers’ desktops; debug and fix any problems that arise from that process and have them test the new system. Expand the test group to cover all the SAs before starting on your customers. When you have successfully converted the SAs, start with small groups of customers and increase the group size over time.
 
 There are a few strategies for picking groups of customers. Random selection is one method. However, when possible be selective: start with customers who are the least risk averse, most technical, or most able to give high-quality feedback. At Bell Labs one team requested to be the first group on roll-outs. They had a particularly good relationship with the IT team. They accepted the risks because they prided themselves on being so cutting edge. They were also highly technical and diligently submitted bug reports. A school district rolling out a new student information system rolled out the grade-tracking subsystem to the high school a year before rolling it out to the rest of the district; the lesson planning subsystem was enabled for the science department a year before anyone else saw it because its members were more tech-savvy than the other departments and could support themselves during the buggy first few rounds.
 
@@ -145,7 +147,7 @@ Performing a successful flash-cut requires a lot of careful planning and some co
 
 For a flash-cut, two-way communication is particularly critical. Make sure that all your customers know what is happening and when, and that you know and have addressed their concerns in advance of the cutover.
 
-If a flash-cut is truly unavoidable, find ways to do testing without a launch. As described in Chapter 20, “Service Launch: DevOps,” set up a lab environment and practice, practice, practice.
+If a flash-cut is truly unavoidable, find ways to do testing without a launch. As described in [Service Launch: DevOps](SERVICE.LAUNCH.DEVOPS.md), set up a lab environment and practice, practice, practice.
 
 ##### Phone Number Conversion
 
@@ -155,7 +157,7 @@ However, local calls to London numbers beginning with a 7 or an 8 went from seve
 
 ### 21.8 Backout Plan
 
-When rolling out a conversion, it is critical to have a backout plan. A conversion, by definition, means removing one service and replacing it with another. If the new service does not work correctly, the customer has been deprived of one of the tools that he or she uses to perform work, which may seriously affect the person’s productivity.
+When rolling out a conversion, it is critical to have a backout plan. A *conversion,* by definition, means removing one service and replacing it with another. If the new service does not work correctly, the customer has been deprived of one of the tools that he or she uses to perform work, which may seriously affect the person’s productivity.
 
 If a conversion fails, you need to be able to restore the customer’s service quickly to the state it was in before you made any changes and then go away, figure out why it failed, and fix it. In practical terms, this means that you should leave both services running simultaneously, if possible, and have a simple, automated way of switching someone between the two services.
 

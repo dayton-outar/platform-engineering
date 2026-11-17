@@ -4,7 +4,9 @@
 
 Source: [The.Practice.of.System.and.Network.Administration-Vol.I-2017-16.pdf](./The.Practice.of.System.and.Network.Administration-Vol.I-2017-16.pdf), PDF pages 1–21.
 
-Services are the applications that customers need and use. For the purpose of this book, the term service means all the parts that make an application work: the software, the hardware, and the operations that bring it all together. A service may be a single piece of software on a single machine, or many different software components across many machines that work in cooperation to provide a service, or something in between. A service may have direct customers, such as a web-based application, or it may be invisible to most people, such as a database that is used by other services.
+The case studies and first-person accounts below reflect the source authors’ experience, as published in 2017.
+
+Services are the applications that customers need and use. In this repository, the term **service** means all the parts that make an application work: the software, the hardware, and the operations that bring it all together. A service may be a single piece of software on a single machine, or many different software components across many machines that work in cooperation to provide a service, or something in between. A service may have direct customers, such as a web-based application, or it may be invisible to most people, such as a database that is used by other services.
 
 Fundamentally, system administration is about providing services. Computers and software are useful only when they are actively providing a service, not sitting in a box. Services do not run themselves; it is a human process to create a service as well as to maintain it. A good service meets customer requirements, is reliable, and is maintainable.
 
@@ -16,9 +18,9 @@ A running service requires maintenance and upkeep. As demand grows it is scaled 
 
 Services need to be supported. They must be monitored, so that problems are detected and fixed. There needs to be a team that handles alerts from the monitoring system as well as end-user reports of problems. For many services, the customers can request moves, adds, changes, and deletes. There needs to be a mechanism for them to do so, and a team that is responsible for handling those requests.
 
-In general, this book treats this subject from the perspective of an organization that buys third-party software. Volume 2 of this book series focuses on services where software is developed in-house. These approaches require very different strategies and techniques.
+In general, this document treats this subject from the perspective of an organization that buys third-party software. The companion volume, *The Practice of Cloud System Administration*, focuses on services where software is developed in-house. These approaches require very different strategies and techniques.
 
-We will discuss services in four parts. This chapter is an overview of services and service requirements. The next chapter covers engineering the solution once the product is selected. The subsequent chapters in this sequence are a deep dive into the service launch process. The issues related to actually running and supporting the service are covered in the remaining chapters of this book.
+We will discuss services in four parts. This document is an overview of services and service requirements. [Service Planning and Engineering](SERVICE.PLANNING.ENGINEERING.md) covers engineering the solution once the product is selected. [Service Launch: Fundamentals](SERVICE.LAUNCH.FUNDAMENTALS.md) and [Service Launch: DevOps](SERVICE.LAUNCH.DEVOPS.md) examine the service launch process. [Customer Support](CUSTOMER.SUPPORT.md) and [Handling an Incident Report](HANDLING.INCIDENT.REPORT.md) cover ongoing support.
 
 ### 16.1 Services Make the Environment
 
@@ -26,11 +28,11 @@ The richness and utility of the environment we provide to our users depends on t
 
 Services are what distinguish a structured computing environment that is managed by SAs from an environment in which there are one or more stand-alone computers. Homes and very small offices typically have a few services; often they simply rely on their ISP for foundational services. Larger organizations have a rich environment of services: from the applications that run the company, to the foundational services and infrastructure on which they depend. A large organization’s fundamental services are run like an in-house ISP.
 
-Foundational services create the platform that other services rely on. Examples include DNS, DHCP, directory services, network access (WAN and LAN), and Internet gateways. While they are generally invisible to users, failures are highly visible because they affect many services.
+**Foundational services** create the platform that other services rely on. Examples include DNS, DHCP, directory services, network access (WAN and LAN), and Internet gateways. While they are generally invisible to users, failures are highly visible because they affect many services.
 
-Basic services are user-visible applications that most people have come to expect in an organization. Examples include printing, email, file storage, chat/IM, and VoIP/phone service. Because of their visibility and pervasiveness, people have developed expectations that these services will be reliable and always available.
+**Basic services** are user-visible applications that most people have come to expect in an organization. Examples include printing, email, file storage, chat/IM, and VoIP/phone service. Because of their visibility and pervasiveness, people have developed expectations that these services will be reliable and always available.
 
-Lastly, there are primary applications and the back-office systems that support them. Applications generally drive business functions such as payroll, inventory management, enterprise resource planning (ERP), supply chain management, and so on. Back-office services include the databases and other behind-the-scenes services that support applications. Together they form the company’s critical path: The company cannot function without them.
+Lastly, there are **primary applications** and the **back-office systems** that support them. Applications generally drive business functions such as payroll, inventory management, enterprise resource planning (ERP), supply chain management, and so on. Back-office services include the databases and other behind-the-scenes services that support applications. Together they form the company’s critical path: The company cannot function without them.
 
 ##### Companies No Longer Sell Atoms, They Manage Bits
 
@@ -48,7 +50,7 @@ Creating and launching a new service is difficult. It cannot be done alone or in
 
 Most of the requirements gathering and project management are done via email, IM, teleconference, and video chat. Nevertheless, it is critical to start out with a face-to-face meeting—the kick-off meeting.
 
-A kick-off meeting should have all the stakeholders present. Stakeholders are all the key people affected by or involved in the project. Use this meeting to get agreement on the goal of the new service (i.e., which problem is being solved), a timeline for completion, and an approximate budget. You won’t be able to resolve all these issues, but you can bring them out into the open. Delegate each unresolved issue to a participant who will be accountable for its resolution.
+A kick-off meeting should have all the stakeholders present. **Stakeholders** are all the key people affected by or involved in the project. Use this meeting to get agreement on the goal of the new service (i.e., which problem is being solved), a timeline for completion, and an approximate budget. You won’t be able to resolve all these issues, but you can bring them out into the open. Delegate each unresolved issue to a participant who will be accountable for its resolution.
 
 Having all the stakeholders see one another’s faces and learn one another’s names has a bonding effect that improves collaboration in the future. Taking the time to do this is an investment in the success of the project. Everyone should introduce themselves and explain their role in the project.
 
@@ -66,20 +68,20 @@ When defining the requirements, don’t try to boil the ocean. Some requested fe
 
 Some requirements may have external dependencies on other groups, projects, or services. Make sure to flag each of these external dependencies, and have a plan for what to do if the external dependency is not delivered on time.
 
-There are different kinds of requirements. Customer requirements describe the features and functionality of the service to be built. Operational requirements describe what is needed to make the system work in the organization’s IT infrastructure and be maintainable. Management may have budget requirements, security may have access requirements, and so on.
+There are different kinds of requirements. **Customer requirements** describe the features and functionality of the service to be built. **Operational requirements** describe what is needed to make the system work in the organization’s IT infrastructure and be maintainable. Management may have budget requirements, security may have access requirements, and so on.
 
 Requirements are written down. They are not simply agreed to in a verbal discussion, tracked on a dry-erase board in your office, or kept in your head. Writing them down in a shared requirements document has many benefits:
 
-- Transparency: Unlike your brain or the dry-erase board in your office, everyone can read the requirements document.
-- Fewer gaps: Writing down requirements reduces errors caused by a request being misheard or forgotten. People can verify that their request was recorded properly.
-- Fewer misunderstandings: Two people often think they have verbal agreement when they do not. Seeing the decision in writing verifies that everyone is agreeing to the same thing.
-- Buy-in and approval: Written requirements provide the ability to get buy-in and management approval in an accountable way. People know what they are agreeing to. People can’t claim they didn’t sign off on the requirements if they’ve literally signed their name on a printout. They may claim they didn’t understand the document or that circumstances and budgets have changed, but at least you have baseline agreement.
-- Fixed scope: A formal requirements document provides a mechanism for handling additional feature requests that arrive after the agreement has been reached, preventing feature-creep. New requirements need to be formally agreed to, documented as a scope change, and subjected to buy-in and management approval before they can be added to the scope.
-- Accountability: Accountability is a two-way street. Customers can point to the document when a requirement you’ve agreed to turns out to be missing or incomplete. Documentation of requirements also helps delineate features versus bugs. A bug is a requirement that is incorrectly implemented. A feature request is a new requirement that wasn’t previously agreed to. While a bug should be fixed, a feature request requires approval, resource allocation, and possibly budget approval.
+- **Transparency**: Unlike your brain or the dry-erase board in your office, everyone can read the requirements document.
+- **Fewer gaps**: Writing down requirements reduces errors caused by a request being misheard or forgotten. People can verify that their request was recorded properly.
+- **Fewer misunderstandings**: Two people often think they have verbal agreement when they do not. Seeing the decision in writing verifies that everyone is agreeing to the same thing.
+- **Buy-in and approval**: Written requirements provide the ability to get buy-in and management approval in an accountable way. People know what they are agreeing to. People can’t claim they didn’t sign off on the requirements if they’ve literally signed their name on a printout. They may claim they didn’t understand the document or that circumstances and budgets have changed, but at least you have baseline agreement.
+- **Fixed scope**: A formal requirements document provides a mechanism for handling additional feature requests that arrive after the agreement has been reached, preventing feature-creep. New requirements need to be formally agreed to, documented as a scope change, and subjected to buy-in and management approval before they can be added to the scope.
+- **Accountability**: Accountability is a two-way street. Customers can point to the document when a requirement you’ve agreed to turns out to be missing or incomplete. Documentation of requirements also helps delineate features versus bugs. A bug is a requirement that is incorrectly implemented. A feature request is a new requirement that wasn’t previously agreed to. While a bug should be fixed, a feature request requires approval, resource allocation, and possibly budget approval.
 
 A requirements document does not need to be hundreds of pages long. A bullet list may be sufficient for small projects. The essence of business writing is brevity. A short, concise document is easier to read and understand.
 
-Define terminology early in the document. Getting agreement to the ontology that will be used is very important. Ontology is the system of terms and definitions that define the system and its parts. Often during a heated debate one realizes that everyone is using the same words but meaning different things. Pausing to get agreement on terminology helps everyone see eye-to-eye. At that point we often realize we were closer to agreement than we had previously realized.
+Define terminology early in the document. Getting agreement to the ontology that will be used is very important. **Ontology** is the system of terms and definitions that define the system and its parts. Often during a heated debate one realizes that everyone is using the same words but meaning different things. Pausing to get agreement on terminology helps everyone see eye-to-eye. At that point we often realize we were closer to agreement than we had previously realized.
 
 Annotate the importance of each requirement. Marking each as “must have,” “desired,” or “optional/nice to have” communicates intent, gives the system designers flexibility, and helps implementors prioritize work when deadlines are looming and features must be cut.
 
@@ -95,7 +97,7 @@ Ontology resolves confusion regarding many things, including the names of variou
 
 ### 16.4 Customer Requirements
 
-Services are built for the customers. If a service does not meet the customers’ needs, building the service was a wasted effort. If we don’t gather customer requirements, we don’t know our customers’ needs. We may think we know their needs, but the ESP skills of most system administrators are surprisingly overrated.
+Services are built for the customers. If a service does not meet the customers’ needs, building the service was a wasted effort. If we don’t gather customer requirements, we don’t know our customers’ needs. We may *think* we know their needs, but the ESP skills of most system administrators are surprisingly overrated.
 
 Gathering customer requirements is an art and a skill. It requires patience and listening, and many iterations going back and forth until the list is complete.
 
@@ -175,7 +177,7 @@ If the only thing that can be monitored is whether the system is up or down, the
 
 The new system should integrate into existing monitoring systems, dashboards, trouble-ticket systems, and other appropriate visibility tools.
 
-Monitoring is discussed in greater detail in Chapter 38, “Service Monitoring.”
+See [Monitoring Distributed Systems](../principles/MONITORING.DISTRIBUTED.SYSTEMS.md) for monitoring practices.
 
 #### 16.6.2 Remote and Central Management
 
@@ -195,9 +197,9 @@ When Tom complained to Dell that iDRAC’s web-based user interface ran unaccept
 
 If a service is successful, more people will want to use it. Over time it will need to scale to handle more users, more transactions, or more capacity. Services generally scale in one of two ways: up or out.
 
-Scale-up means getting a bigger system. To process more requests, more users, or more disk space, the main system is replaced with one that is bigger and faster. For example, to scale up a web server so that it can process more requests per second, you might replace the computer with one that has a faster CPU and I/O system.
+**Scale-up** means getting a bigger system. To process more requests, more users, or more disk space, the main system is replaced with one that is bigger and faster. For example, to scale up a web server so that it can process more requests per second, you might replace the computer with one that has a faster CPU and I/O system.
 
-Scale-out means the system is expanded by adding more replicas. For example, a web-based service is often made up of web servers behind a load balancer. Scaling out means adding more redundant web servers (replicas). Each web server scales out the system to handle more requests per second.
+**Scale-out** means the system is expanded by adding more replicas. For example, a web-based service is often made up of web servers behind a load balancer. Scaling out means adding more redundant web servers (replicas). Each web server scales out the system to handle more requests per second.
 
 #### 16.6.4 Software Upgrades
 
@@ -215,7 +217,7 @@ Upgrade processes should exist and be automatable. The upgrade process should in
 
 The more people depend on a service, the more visible a failed upgrade will be. It should be an operational requirement that the service is designed in a way such that it is possible to deploy the service to a test environment for the purpose of both testing the upgrade process and testing the new release itself.
 
-A production assurance test (PAT) or user acceptance test (UAT) environment can be a good option for preproduction testing. PAT and UAT environments are run at production standard, but upgraded ahead of the main production environment. Some sites select volunteers who use the PAT or UAT environment, rather than the production environment, at all times, to ensure that when an upgrade is rolled out in that environment, it is really used and production tested.
+A **production assurance test (PAT)** or **user acceptance test (UAT)** environment can be a good option for preproduction testing. PAT and UAT environments are run at production standard, but upgraded ahead of the main production environment. Some sites select volunteers who use the PAT or UAT environment, rather than the production environment, at all times, to ensure that when an upgrade is rolled out in that environment, it is really used and production tested.
 
 #### 16.6.5 Environment Fit
 
@@ -281,13 +283,13 @@ The most common data restore requirement is for something that was deleted by ac
 
 It can be useful to be able to separately back up the system configuration and the user data. Configuration files that are human-readable are preferable to large binary blobs. Being human-readable makes these files easy to store in source code repositories, makes it easy to produce historical diff listings, and so on.
 
-As discussed in Chapter 14, “Server Hardware Features,” enterprise applications tend to assume data integrity and resiliency issues are handled at the hardware layer. In other words, working around hardware faults is your problem. Therefore, operational requirements should be specified to meet your needs. For example, you may require that the service run from multiple datacenters, assuming that at least one will be up at any time. If the service will be single-homed, the service can be only as reliable as the datacenter it is in. That may be sufficient for some services.
+Enterprise applications tend to assume data integrity and resiliency issues are handled at the hardware layer. In other words, working around hardware faults is your problem. Therefore, operational requirements should be specified to meet your needs. For example, you may require that the service run from multiple datacenters, assuming that at least one will be up at any time. If the service will be single-homed, the service can be only as reliable as the datacenter it is in. That may be sufficient for some services.
 
 ### 16.7 Open Architecture
 
-Wherever possible, a new service should be built around an architecture that uses open standards and open protocols. This means protocols, file formats, and APIs that are publicly documented so that others can write to those standards and make interoperable products without having to worry about royalties or patent restrictions. Any service with an open architecture can be more easily integrated with other services that follow the same standards.
+Wherever possible, a new service should be built around an architecture that uses **open standards** and open protocols. This means protocols, file formats, and APIs that are publicly documented so that others can write to those standards and make interoperable products without having to worry about royalties or patent restrictions. Any service with an open architecture can be more easily integrated with other services that follow the same standards.
 
-By contrast, a closed service uses standards, protocols, APIs, and file formats that are owned by one company, are controlled by that one company, and do not interoperate with other products. Other products are prevented from using the standard because the standard is not publicly documented, because it requires licensing, or because the vendor forbids it. Vendors use proprietary protocols when they are covering new territory or are attempting to maintain market share by preventing the creation of a level playing field. In the former scenario, the vendor should then work with the appropriate standards bodies to define and document open standards, and many vendors do so.
+By contrast, a **closed service** uses standards, protocols, APIs, and file formats that are owned by one company, are controlled by that one company, and do not interoperate with other products. Other products are prevented from using the standard because the standard is not publicly documented, because it requires licensing, or because the vendor forbids it. Vendors use proprietary protocols when they are covering new territory or are attempting to maintain market share by preventing the creation of a level playing field. In the former scenario, the vendor should then work with the appropriate standards bodies to define and document open standards, and many vendors do so.
 
 ##### The Protocol Versus the Product
 
@@ -299,7 +301,7 @@ The source of this confusion is understandable. Before the late 1990s, when “t
 
 Although the Internet has made more people aware of the difference between protocols and products, many vendors still take advantage of customers who lack awareness of open protocols. Such vendors fear the potential for competition and would rather eliminate competition by locking people into systems that make migration to other vendors difficult. These vendors make a concerted effort to blur the difference between the protocol and the product.
 
-Beware of vendors that embrace and extend a standard in an attempt to prevent interoperability with competitors. Such vendors do this so they can claim to support a standard without giving their customers the benefits of interoperability. That’s not very customer oriented. A famous case of this occurred when Microsoft adopted the Kerberos authentication system as part of ActiveDirectory. This was a good technical decision, as Kerberos is exceptionally secure and robust. However, Microsoft made a gratuitous change to the protocol that Windows clients depended on. Non-Windows clients could talk to any server, but Windows clients could interoperate with only those servers that included the change. Microsoft would not reveal the technical details of the change, so if you had a single Windows client you had to buy all your servers from Microsoft. Microsoft’s decision successfully forced sites to uproot their security infrastructures and replace them with Microsoft products. Thus it enabled Microsoft to claim support for an open protocol but robbed customers of the freedom of choice.
+Beware of vendors that *embrace and extend* a standard in an attempt to prevent interoperability with competitors. Such vendors do this so they can claim to support a standard without giving their customers the benefits of interoperability. That’s not very *customer oriented*. A famous case of this occurred when Microsoft adopted the Kerberos authentication system as part of ActiveDirectory. This was a good technical decision, as Kerberos is exceptionally secure and robust. However, Microsoft made a gratuitous change to the protocol that Windows clients depended on. Non-Windows clients could talk to any server, but Windows clients could interoperate with only those servers that included the change. Microsoft would not reveal the technical details of the change, so if you had a single Windows client you had to buy all your servers from Microsoft. Microsoft’s decision successfully forced sites to uproot their security infrastructures and replace them with Microsoft products. Thus it enabled Microsoft to claim support for an open protocol but robbed customers of the freedom of choice.
 
 The business case for using open protocols is simple: It creates competition that results in better products for you. By unbundling the client from the server, you can mix any client product with any server product. We have more choices. Vendors now can compete separately at the client level and the server level. We can pick the best of class product in each category.
 
@@ -323,7 +325,7 @@ This situation has improved over time, since most applications have migrated to 
 
 Open protocols and file formats typically change only in upwardly compatible ways and are widely supported, giving you the maximum product choices and maximum chance of obtaining reliable, interoperable products.
 
-Another benefit from using open systems is that they don’t require gateways to the rest of the world. Gateways are the “glue” that translate between different systems. Although a gateway is a lifesaver when you need to bridge the gap between two incompatible systems, not needing a gateway is even better. Gateways are an additional service that adds to the administrative workload, requiring capacity planning, engineering, monitoring, and, well, everything else in this book. Reducing the number of services is a good thing.
+Another benefit from using open systems is that they don’t require gateways to the rest of the world. Gateways are the “glue” that translate between different systems. Although a gateway is a lifesaver when you need to bridge the gap between two incompatible systems, not needing a gateway is even better. Gateways are an additional service that adds to the administrative workload, requiring capacity planning, engineering, monitoring, and ongoing operational support. Reducing the number of services is a good thing.
 
 ##### Protocol Gateways and Reliability Reduction
 
@@ -341,7 +343,7 @@ These examples might seem outdated, since today no one now would sell an email s
 
 ### 16.8 Summary
 
-A fundamental role of system administration is to provide services to users. In this book we use the term “service” to mean all the parts that make the application work: the software, the hardware, and the operations that bring it all together. In some organizations the IT department provides a rich set of services; in others, very few. Some SA teams are responsible for all services; others are responsible for one of many. Some services form the foundation of all other services, others are basic infrastructure that users require to work and communicate, and still others are applications that drive the company.
+A fundamental role of system administration is to provide services to users. Here, we use the term “service” to mean all the parts that make the application work: the software, the hardware, and the operations that bring it all together. In some organizations the IT department provides a rich set of services; in others, very few. Some SA teams are responsible for all services; others are responsible for one of many. Some services form the foundation of all other services, others are basic infrastructure that users require to work and communicate, and still others are applications that drive the company.
 
 When creating a new service, begin by getting agreement from all involved about the end goal, timeline, and approximate budget. Gather requirements. Customer requirements are the attributes and features that provide value to the company. Operational requirements are the features that make it possible to run the service. Requirements should be written down to provide transparency and to assure accountability in agreements and approvals. When gathering customer requirements, specify end results, rather than the technologies or details used to get there. Ask open-ended questions. Define an SLA. Be prepared for impossible-sounding requests that will require you to investigate the need behind the request.
 

@@ -4,11 +4,13 @@
 
 Source: [The.Practice.of.System.and.Network.Administration-Vol.I-2017-17.pdf](./The.Practice.of.System.and.Network.Administration-Vol.I-2017-17.pdf), PDF pages 1–15.
 
+The case studies and first-person accounts below reflect the source authors’ experience, as published in 2017.
+
 After a product has been selected we need to engineer how it will be configured and operated in our environment. For example, engineering a Microsoft Exchange service involves determining which hardware will be used, how the software will be installed and configured, how users will access and authenticate to the service, and how various operational tasks such as backups, monitoring, archiving, and account management will be done.
 
-This chapter focuses on third-party products. How do we design a service around them? One might think this is a matter of following the installation instructions, but many of the decisions are actually left to the individual system administrator.
+This document focuses on third-party products. How do we design a service around them? One might think this is a matter of following the installation instructions, but many of the decisions are actually left to the individual system administrator.
 
-Both the service architecture and the local engineering plans need to be defined and documented. The service architecture is the high-level description and the local engineering plan is the specifics for a particular machine or site.
+Both the **service architecture** and the **local engineering plans** need to be defined and documented. The service architecture is the high-level description and the local engineering plan is the specifics for a particular machine or site.
 
 For example, a service architecture for an email system might describe that there will be three regional clusters, each with the capacity to serve the number of users in that region. The plan would describe, generically, the clusters in terms of types of machines, storage, and networking technologies. These details would include which brands and products would be used.
 
@@ -18,21 +20,21 @@ Typically the service architecture is developed, and then the local engineering 
 
 At the same time the operational model or support model needs to be defined. The support model defines the operational level agreement (OLA) and the service level agreement (SLA) for the service, as well as who supports the various components of the service.
 
-The remainder of this chapter discusses some general engineering basics and philosophy and then ways to optimize such plans.
+The remainder of this document discusses some general engineering basics and philosophy and then ways to optimize such plans.
 
-This chapter focuses on designing a generic service. Part VIII, “Service Recommendations,” provides specific recommendations for particular types of applications and services.
+This document focuses on designing a generic service.
 
 ### 17.1 General Engineering Basics
 
-Before this chapter goes into the more sophisticated aspects of service engineering, there are some basic issues that you should be aware of. Much of this includes the kind of engineering decisions that “go without saying,” yet are so crucial that we need to include them. Consider the following to be rules of thumb, often learned the hard way in real-world environments:
+Before this document goes into the more sophisticated aspects of service engineering, there are some basic issues that you should be aware of. Much of this includes the kind of engineering decisions that “go without saying,” yet are so crucial that we need to include them. Consider the following to be rules of thumb, often learned the hard way in real-world environments:
 
-- Follow vendor recommendations. Determine how many machines are needed, and which type of CPU horsepower, disk space, RAM, network bandwidth, and so on is required. Most of these decisions have already been discussed in Chapter 14, “Server Hardware Features,” and Chapter 15, “Server Hardware Specifications.”
-- Mirror your boot disk. Disks fail. Often the most difficult disk to replace is the boot disk; it requires reinstalling all the software. Mirror the boot disk (RAID 1) so that when (not if) a disk fails, the system will keep running and give you time to replace the failed disk. The only exception to this is when the machine can be rebuilt from scratch in an automated fashion and the machine stores no state, as discussed in Chapter 3, “Pets and Cattle.”
-- Run services on servers, not workstations. It is bad practice to run a service on a workstation under your desk. There’s nothing more permanent than a temporary solution.
-- Run services from computer rooms, not offices. Computer rooms also provide physical security, high-speed networks, reliable power, and cooling that is not available in the typical office.
-- Restrict console access. The general public should not be able to log into the console of a server.
+- **Follow vendor recommendations.** Determine how many machines are needed, and which type of CPU horsepower, disk space, RAM, network bandwidth, and so on is required.
+- **Mirror your boot disk.** Disks fail. Often the most difficult disk to replace is the boot disk; it requires reinstalling all the software. Mirror the boot disk (RAID 1) so that when (not if) a disk fails, the system will keep running and give you time to replace the failed disk. The only exception to this is when the machine can be rebuilt from scratch in an automated fashion and the machine stores no state.
+- **Run services on servers, not workstations.** It is bad practice to run a service on a workstation under your desk. There’s nothing more permanent than a temporary solution.
+- **Run services from computer rooms, not offices.** Computer rooms also provide physical security, high-speed networks, reliable power, and cooling that is not available in the typical office.
+- **Restrict console access.** The general public should not be able to log into the console of a server.
 
-- Leverage the existing infrastructure. As much as possible, new services should be integrated into existing systems and processes. The existing monitoring, alerting, and service request systems should be used, as well as backup systems, and configuration and patch management systems.
+- **Leverage the existing infrastructure.** As much as possible, new services should be integrated into existing systems and processes. The existing monitoring, alerting, and service request systems should be used, as well as backup systems, and configuration and patch management systems.
 
 ### 17.2 Simplicity
 
@@ -64,9 +66,9 @@ Each simplification made the systems easier to understand and manage.
 
 ### 17.3 Vendor-Certified Designs
 
-Often third-party products have the engineering dictated to you. The vendor proscribes minimum CPU, RAM, and disk requirements. Often vendors publish certified engineering designs or vendor best practices. There may be multiple recommendations—for example, separate engineering recommendations for use with up to one dozen, one hundred, or one thousand users.
+Often third-party products have the engineering dictated to you. The vendor proscribes minimum CPU, RAM, and disk requirements. Often vendors publish **certified engineering designs** or **vendor best practices**. There may be multiple recommendations—for example, separate engineering recommendations for use with up to one dozen, one hundred, or one thousand users.
 
-Even if one uses the certified engineering design exactly, some local decisions always need to be made: hardware vendor, model number, specific configurations, IP addresses, network switch connections, deployment racks, optional configuration parameters, and so on. This is the local engineering design.
+Even if one uses the certified engineering design exactly, some local decisions always need to be made: hardware vendor, model number, specific configurations, IP addresses, network switch connections, deployment racks, optional configuration parameters, and so on. This is the **local engineering design**.
 
 We like when vendors provide best practice engineering designs because they’ve done much of the hard work for us. The designs are usually based on realworld experience. They have been tested in labs and the real world. The vendor has performed load testing to determine the maximum number of users or other capacity. It is best to test these assertions in a lab environment. The best approach is to trust the vendor recommendations, but verify them. Often, however, only larger companies have the resources to do so. Smaller companies just have to trust the vendors.
 
@@ -84,21 +86,21 @@ The larger and more complex a system becomes, the more dependencies it has. We c
 
 Primary reliability refers to the core system reliability excluding any external dependencies. As system administrators, we often do not have much control over the reliability of the software itself, especially for third-party products.
 
-What we can control are our decisions about the hardware it runs on. As discussed in Chapter 13, “Server Hardware Strategies,” enterprise software tends to be written assuming the hardware will never fail. In turn, we choose reliability features such as mirrored boot disks, ECC RAM, dual NICs, and so on. These issues have already been discussed in previous chapters and Section 17.1.
+What we can control are our decisions about the hardware it runs on. Enterprise software tends to be written assuming the hardware will never fail. In turn, we choose reliability features such as mirrored boot disks, ECC RAM, dual NICs, and so on. These issues are discussed in [General Engineering Basics](SERVICE.PLANNING.ENGINEERING.md#171-general-engineering-basics).
 
 #### 17.4.2 External Dependencies
 
 We can control many of the external dependencies that influence a service’s reliability.
 
-First we need to know what those dependencies are. A dependency matrix is a list of which subsystems depend on other subsystems. Usually the dependency matrix resembles a tree diagram, with each level relying on services in the levels below, and no cross-dependencies. When engineering a new service, you should create a dependency matrix to document the dependencies so that everyone reviewing the plan understands them. Such a matrix can be used to find high-risk dependencies and mitigate them. Once the service is launched, this matrix is useful for operational tasks such as basic debugging as well as disaster planning.
+First we need to know what those dependencies are. A **dependency matrix** is a list of which subsystems depend on other subsystems. Usually the dependency matrix resembles a tree diagram, with each level relying on services in the levels below, and no cross-dependencies. When engineering a new service, you should create a dependency matrix to document the dependencies so that everyone reviewing the plan understands them. Such a matrix can be used to find high-risk dependencies and mitigate them. Once the service is launched, this matrix is useful for operational tasks such as basic debugging as well as disaster planning.
 
-All dependencies are not the same. A hard dependency means the dependent service will fail if the other service fails or is unavailable. A soft dependency is one that does not directly cause a failure, though it may reduce performance.
+All dependencies are not the same. A **hard dependency** means the dependent service will fail if the other service fails or is unavailable. A **soft dependency** is one that does not directly cause a failure, though it may reduce performance.
 
 For example, an application may have have a hard dependency on an external storage server or SAN. If the SAN dies, the application dies with it.
 
-In contrast, a DNS server is usually a soft dependency. Systems are configured to depend on multiple DNS servers. As long as at least one is reachable, the client is able to perform DNS lookups. There may be a performance penalty, but the client is able to operate. Note that the DNS service is usually a hard dependency, but a single DNS server is usually a soft dependency.
+In contrast, a DNS server is usually a soft dependency. Systems are configured to depend on multiple DNS servers. As long as at least one is reachable, the client is able to perform DNS lookups. There may be a performance penalty, but the client is able to operate. Note that the DNS *service* is usually a hard dependency, but a single DNS *server* is usually a soft dependency.
 
-Applications often have soft dependencies on other applications. An accounting application may depend on another server to provide foreign currency exchange rate information. However, if that server is unavailable, the application may work around it by using cached data, disabling a specific feature, or requiring the data to be manually entered. This kind of soft dependency is called graceful degradation.
+Applications often have soft dependencies on other applications. An accounting application may depend on another server to provide foreign currency exchange rate information. However, if that server is unavailable, the application may work around it by using cached data, disabling a specific feature, or requiring the data to be manually entered. This kind of soft dependency is called **graceful degradation**.
 
 As we engineer a system and review the dependency matrix, we can improve the reliability by identifying hard dependencies and either eliminate them or reengineer them to be soft dependencies. For example, earlier we mentioned a service that was only as reliable as its least reliable network connection. That network connection could be reengineered to be a dual-connected connection, thereby ensuring the system can survive one network failure at any time.
 
@@ -114,7 +116,7 @@ In hindsight, the servers should have been configured to mount NFS volumes only 
 
 #### 17.4.3 Dependency Alignment
 
-Another engineering trick is to realign dependencies into smaller failure domains. A failure domain is all the services, locations, and users that are adversely affected when a particular component fails or is taken out of service.
+Another engineering trick is to realign dependencies into smaller failure domains. A **failure domain** is all the services, locations, and users that are adversely affected when a particular component fails or is taken out of service.
 
 Good engineering requires taking the time to think through how we can shrink failure domains, or divide large failure domains into smaller, isolated failure domains.
 
@@ -132,7 +134,7 @@ This pattern is repeated in other places. Consider a server farm that hosts many
 
 Such alignments do not require tracing every cable and power cord. We can make matters easier by simply planning ahead. First we engineer each rack to be independent—self-sufficient in its networking and power by having its own network switch and power distribution units.
 
-Now we make sure that all servers for a given service that have hard dependencies on each other are rack aligned or located in the same rack. Doing so limits the number of external hard dependencies that the service has and reduces the failure domain of the rack, because there are fewer services in any given rack.
+Now we make sure that all servers for a given service that have hard dependencies on each other are **rack aligned** or located in the same rack. Doing so limits the number of external hard dependencies that the service has and reduces the failure domain of the rack, because there are fewer services in any given rack.
 
 If a service has components that are replicas or are in a master/slave configuration, we make sure that the replicas are in different racks, and that the master and slave are not in the same rack. Doing so means that the service has a soft dependency on any given rack, rather than a hard dependency.
 
@@ -192,9 +194,9 @@ You need to know when there are problems with the service and when you should be
 
 #### 17.6.1 Monitoring
 
-It isn’t a service if it isn’t monitored. If there is no monitoring, then you’re just running software. A service should be monitored for availability, problems, performance, and capacity-planning. Monitoring is covered in more detail in Chapter 38, “Service Monitoring.”
+It isn’t a service if it isn’t monitored. If there is no monitoring, then you’re just running software. A service should be monitored for availability, problems, performance, and capacity-planning. See [Monitoring Distributed Systems](../principles/MONITORING.DISTRIBUTED.SYSTEMS.md) for monitoring practices.
 
-The helpdesk, or front-line support group, must be automatically alerted to problems with the service so that they can start fixing them before too many people are affected. A customer who notices a major problem with a service and has to call in to report it before the service provider discovers and begins to fix the problem is getting a very low standard of service. Customers do not like to feel that they are the only ones paying attention to problems in the system. Conversely, problems you can detect and fix before they are noticed are like trees that fall in the forest with no one around to hear them. For example, if an outage happens over the weekend and you are alerted in time to fix it before Monday morning, your customers don’t even need to know that anything went wrong. (In this case, you should announce by email that the problem has been resolved, so that you receive credit. See Section 49.2.)
+The helpdesk, or front-line support group, must be automatically alerted to problems with the service so that they can start fixing them before too many people are affected. A customer who notices a major problem with a service and has to call in to report it before the service provider discovers and begins to fix the problem is getting a very low standard of service. Customers do not like to feel that they are the only ones paying attention to problems in the system. Conversely, problems you can detect and fix before they are noticed are like trees that fall in the forest with no one around to hear them. For example, if an outage happens over the weekend and you are alerted in time to fix it before Monday morning, your customers don’t even need to know that anything went wrong. (In this case, you should announce by email that the problem has been resolved, so that you receive credit.)
 
 Likewise, the SA group should monitor the service on an ongoing basis from a capacity-planning standpoint. Depending on the service, capacity planning can include network bandwidth, server performance, transaction rates, licenses, and physical-device availability. As part of any service, SAs can reasonably be expected to anticipate and plan for growth. To do so effectively, usage monitoring needs to be built in as a part of the service.
 
@@ -224,7 +226,7 @@ As part of support planning, operational procedures must be defined. These are d
 
 For each routine task, there must be a runbook that details how the task should be performed. Define the runbooks by performing each task in a test environment. What is learned through this process may lead to changes in the architecture or local engineering plan. For example, you might discover that backup and restore procedures were not considered until after the architecture was defined. This may require changes to the architecture. Alternatively, what is learned may be a minor point, but one that requires changes in the local engineering plan—for example, to define that each machine must have an additional fiber interface on a dedicated backups network. This is an iterative process.
 
-The documentation must also include the steps to take when debugging the service. This documentation should cover which data needs to be gathered, and how, as well as steps to examine that data and use it to debug the problem. There should be documentation for the helpdesk telling these personnel how to perform basic health checks on the service, verify problems that might be reported by end users or the monitoring system, and debug and resolve the most common problems. Chapter 29, “Debugging,” describes the steps involved in debugging problems. The documentation should describe how to follow those steps for this service.
+The documentation must also include the steps to take when debugging the service. This documentation should cover which data needs to be gathered, and how, as well as steps to examine that data and use it to debug the problem. There should be documentation for the helpdesk telling these personnel how to perform basic health checks on the service, verify problems that might be reported by end users or the monitoring system, and debug and resolve the most common problems. [Effective Troubleshooting](../practices/EFFECTIVE.TROUBLESHOOTING.md) describes a systematic approach to investigating problems. The documentation should describe how to follow those steps for this service.
 
 The helpdesk documentation should also specify which information needs to be gathered and passed on to the next support level if the issue remains unresolved and needs to be escalated. The documentation for the more senior SA team must include the vendor’s contact information and support contract number, all the components that the service depends on, and contact information for all the other teams that support those components. The contact information for other teams should be provided through a link to a well-known team support page that each team maintains itself, rather than duplicating information that may get stale into many different support documents.
 

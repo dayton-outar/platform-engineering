@@ -4,11 +4,13 @@
 
 Source: [The.Practice.of.System.and.Network.Administration-Vol.I-2017-27.pdf](./The.Practice.of.System.and.Network.Administration-Vol.I-2017-27.pdf), PDF pages 1–19.
 
-This chapter is a macro view of customer support and helpdesks: what they are, how to organize them, how to manage them, and so on. The details of how to handle a call to the helpdesk are covered in the next chapter.
+The case studies and first-person accounts below reflect the source authors’ experience, as published in 2017.
+
+This document is a macro view of customer support and helpdesks: what they are, how to organize them, how to manage them, and so on. [Handling an Incident Report](HANDLING.INCIDENT.REPORT.md) covers individual helpdesk calls.
 
 A helpdesk is a place, real or virtual, where people can get answers to their computing questions, report problems, and request new services. It may be a physical desk that people walk to, or it may be a virtual helpdesk that people access electronically. The helpdesk is the primary mechanism for providing customer support.
 
-Nothing is more important than an IT organization’s helpdesk. It is the face of your organization. The helpdesk staff make the first impression on your customers and maintain your relationship, good or bad, with them. The helpdesk staff fix the daily problems that are part of living with modern computers and are the heroes who are called when customers have an emergency. A good helpdesk reflects well on your organization. The typical customer sees only the customer support portion of your organization and often assumes that this is your entire organization. Customers have no idea which back-office operations and infrastructure duties are also performed. In short, a helpdesk is for helping the customers. Don’t forget the help in helpdesk.
+Nothing is more important than an IT organization’s helpdesk. It is the face of your organization. The helpdesk staff make the first impression on your customers and maintain your relationship, good or bad, with them. The helpdesk staff fix the daily problems that are part of living with modern computers and are the heroes who are called when customers have an emergency. A good helpdesk reflects well on your organization. The typical customer sees only the customer support portion of your organization and often assumes that this is your entire organization. Customers have no idea which back-office operations and infrastructure duties are also performed. In short, a helpdesk is for helping the customers. Don’t forget the *help* in helpdesk.
 
 The basics of running a helpdesk are first to simply have one and to ensure that it has a friendly face. The customer support center should have enough staff to support the traffic, a defined scope of coverage, processes for staff, an escalation process for when things go badly, and call-tracking software.
 
@@ -62,7 +64,7 @@ Sizing a helpdesk staff is very difficult because it changes from situation to s
 
 Ratios are a no-win situation. Management will always push to have a higher ratio; customers will always demand a lower ratio. You can always increase the ratio by providing less service to the customers, which usually costs the organization more because the customers spend time doing their own SA work inefficiently.
 
-Rather than focus on customer-to-attendant ratios, it is better to focus on callvolume ratios and time-to-call completion. For example, you can monitor the rate at which customers receive busy signals or how long they wait to receive a response to their email or the number of minutes issues take to be resolved—minus, of course, time spent in “customer wait,” as described in Section 28.6.
+Rather than focus on customer-to-attendant ratios, it is better to focus on callvolume ratios and time-to-call completion. For example, you can monitor the rate at which customers receive busy signals or how long they wait to receive a response to their email or the number of minutes issues take to be resolved—minus, of course, time spent in “customer wait,” as described in [Perils of Skipping a Step](HANDLING.INCIDENT.REPORT.md#286-perils-of-skipping-a-step).
 
 These metrics focus on issues that are more important to the customer. Customer-to-attendant ratios are an indirect measurement of benefit to the customers. In metric-based management, direct metrics are better.
 
@@ -78,15 +80,15 @@ Investigation showed that people had returned to calling the helpdesk and that t
 
 ### 27.5 Defining Scope of Support
 
-A helpdesk should have a policy defining the scope of support. This document explains what an SA group is and isn’t responsible for. The components of scope are what, who, where, when, and how long:
+A helpdesk should have a policy defining the scope of support. This document explains what an SA group is and isn’t responsible for. The components of scope are *what*, *who*, *where*, *when*, and *how long*:
 
-- What is being supported? Only the PCs or the LAN itself? Are all PCs supported, no matter which OS is being used, or only certain OSs and certain revisions? Which applications are being supported? How are unsupported platforms handled?
-- Who will be supported? A particular department, building, division, enterprise, university? What if a person has offices in multiple buildings, each with its own helpdesk? Are only people who pay supported? Are only people of a certain management level and higher (or lower) supported?
-- Where are the customers? This question is similar to who if one is supporting, for example, everyone in a particular building or location. However, where also includes support of traveling customers, customers visiting third-party sites, customers performing demos at trade shows, and people working from home.
-- When is support provided? Are the hours of operation 8 AM to 6 PM, Monday through Friday? How are things handled outside of these hours? Do people have to wait until the helpdesk reopens, or is there a mechanism to reach SAs at home? If there is no support in the off-hours, what should facilities management do if environmental alarms sound or if a fire occurs?
-- How long should the average request take to complete? Certain categories of requests should be instant; others will take longer. Establishing these goals sets expectations for the staff and customers. Customers expect everything to be immediate if they aren’t told that certain tasks should be expected to
+- **What is being supported?** Only the PCs or the LAN itself? Are all PCs supported, no matter which OS is being used, or only certain OSs and certain revisions? Which applications are being supported? How are unsupported platforms handled?
+- **Who will be supported?** A particular department, building, division, enterprise, university? What if a person has offices in multiple buildings, each with its own helpdesk? Are only people who pay supported? Are only people of a certain management level and higher (or lower) supported?
+- **Where are the customers?** This question is similar to *who* if one is supporting, for example, everyone in a particular building or location. However, *where* also includes support of traveling customers, customers visiting third-party sites, customers performing demos at trade shows, and people working from home.
+- **When is support provided?** Are the hours of operation 8 AM to 6 PM, Monday through Friday? How are things handled outside of these hours? Do people have to wait until the helpdesk reopens, or is there a mechanism to reach SAs at home? If there is no support in the off-hours, what should facilities management do if environmental alarms sound or if a fire occurs?
+- **How long should the average request take to complete?** Certain categories of requests should be instant; others will take longer. Establishing these goals sets expectations for the staff and customers. Customers expect everything to be immediate if they aren’t told that certain tasks should be expected to
 
-take longer (see Section 49.1.3). A tiered structure might list certain things that are to be fast (5 minutes), slow (1 hour), and multiple days (requests for new service creation).
+take longer. A tiered structure might list certain things that are to be fast (5 minutes), slow (1 hour), and multiple days (requests for new service creation).
 
 Having a written scope-of-support policy is one of the best gifts management can give to an SA group. Without it, the group either will become overworked from trying to do everything for customers, or will infuriate customers by not having time to help. If you are a manager, it is your responsibility to clearly communicate when it is okay to decline to help and when it isn’t. This should be done in writing, with this policy then being communicated to all people who work for you. The same policy should also be publicly accessible on the internal IT web site to set expectations with customers.
 
@@ -130,9 +132,9 @@ This is one of the most important things IT management can do to help the staff 
 
 Helpdesk staff should have well-defined processes to follow. In a smaller environment, this is not as important, because the processes are more ad hoc or are undocumented because they are being used by the people who built them. However, for a large organization, the processes must be well documented.
 
-Very large helpdesks use scripts as part of their training. Every service supported has an associated flow of dialogue to follow to support that service. For example, the script for someone calling to request remote access service captures the appropriate information and tells the operator what to do, be it enable remote access directly or forward the request to the appropriate service organization. The script for a request to reset a password would, for security reasons, require callers to prove who they are, possibly by knowing a unique piece of personal information, before a new password would be set.
+Very large helpdesks use *scripts* as part of their training. Every service supported has an associated flow of dialogue to follow to support that service. For example, the script for someone calling to request remote access service captures the appropriate information and tells the operator what to do, be it enable remote access directly or forward the request to the appropriate service organization. The script for a request to reset a password would, for security reasons, require callers to prove who they are, possibly by knowing a unique piece of personal information, before a new password would be set.
 
-Chapter 28, “Handling an Incident Report,” discusses a formal process that helpdesk attendants can use to process individual trouble reports.
+[Handling an Incident Report](HANDLING.INCIDENT.REPORT.md), discusses a formal process that helpdesk attendants can use to process individual trouble reports.
 
 ### 27.8 Establishing an Escalation Process
 
@@ -162,7 +164,7 @@ When Tom was in college, the business office put up a poster that said, “Bad p
 
 ### 27.10 Supplying Request-Tracking Software
 
-Every helpdesk needs some kind of software to help it manage requests. The alternative is a collection of notes written on scraps of paper. Although it is simple in the beginning and sufficient for environments with one or two SAs, a system based on notes on paper doesn’t scale. Requests get lost, and management has no ability to oversee the process to better allocate resources. Those are the first qualities that you need in helpdesk software. As a helpdesk grows, software can help in other areas. The scripts mentioned in Section 27.7 can be displayed automatically and can be made “smart” by being part of the information-gathering process rather than simply a static screen.
+Every helpdesk needs some kind of software to help it manage requests. The alternative is a collection of notes written on scraps of paper. Although it is simple in the beginning and sufficient for environments with one or two SAs, a system based on notes on paper doesn’t scale. Requests get lost, and management has no ability to oversee the process to better allocate resources. Those are the first qualities that you need in helpdesk software. As a helpdesk grows, software can help in other areas. The scripts mentioned in [Defining Processes for Staff](CUSTOMER.SUPPORT.md#277-defining-processes-for-staff) can be displayed automatically and can be made “smart” by being part of the information-gathering process rather than simply a static screen.
 
 Helpdesk software should permit some kind of priority to be assigned to tickets. This not only helps meet customer expectations but also helps SAs manage their time. An SA should be able to easily list the top-priority issues that have been assigned to him or her.
 
@@ -254,13 +256,13 @@ You do not need to create an entirely new software system to support this kind o
 
 For many customers, the helpdesk is the only way they interact with the IT organization. There may be dozens of subteams behind it, but the helpdesk is the only part that people see. Often they assume it is the entire organization.
 
-The helpdesk is the “face” of the IT organization, so make it a happy, friendly one, no matter whether it is physical or virtual. Properly sizing the helpdesk is important and affects not only your budget but also customer satisfaction. In planning your helpdesk, you must define what is supported, who is supported, where the helpdesk is located, when you provide support, and how long customers should expect an average call to last. Constructing accurate budget and staffing plans is made easier by collecting the statistics mentioned in Section 27.10.
+The helpdesk is the “face” of the IT organization, so make it a happy, friendly one, no matter whether it is physical or virtual. Properly sizing the helpdesk is important and affects not only your budget but also customer satisfaction. In planning your helpdesk, you must define what is supported, who is supported, where the helpdesk is located, when you provide support, and how long customers should expect an average call to last. Constructing accurate budget and staffing plans is made easier by collecting the statistics mentioned in [Supplying Request-Tracking Software](CUSTOMER.SUPPORT.md#2710-supplying-request-tracking-software).
 
 Processes should be defined for staff to follow regarding how they provide support for various services and how issues are escalated. Software must be used to collect statistics on all calls and to track issues that last longer than a single call.
 
 Once those functions are established, a helpdesk can grow in other areas. After-hours coverage can be instituted; policies can be better advertised; and, with high growth, the helpdesk can be split into separate groups for new-service provisioning and trouble reporting.
 
-We discussed a lot of topics in this chapter, and every issue in some way touched on communication. The helpdesk is how customers communicate with your organization, yet it is often the role of the helpdesk to communicate to customers how, when, and why things are done. Such communication can determine whether IT personnel are perceived as friendly or unfriendly. The statistics that are collected help communicate to management the needs of the organization during planning cycles. Escalation procedures keep the communication flowing when things stall. Having a written after-hours support policy sets expectations with customers and prevents the frustration of unexpected calls late at night.
+We discussed a lot of topics in this document, and every issue in some way touched on communication. The helpdesk is how customers communicate with your organization, yet it is often the role of the helpdesk to communicate to customers how, when, and why things are done. Such communication can determine whether IT personnel are perceived as friendly or unfriendly. The statistics that are collected help communicate to management the needs of the organization during planning cycles. Escalation procedures keep the communication flowing when things stall. Having a written after-hours support policy sets expectations with customers and prevents the frustration of unexpected calls late at night.
 
 ### Exercises
 

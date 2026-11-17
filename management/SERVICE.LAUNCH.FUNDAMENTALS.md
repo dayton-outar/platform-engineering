@@ -4,17 +4,19 @@
 
 Source: [The.Practice.of.System.and.Network.Administration-Vol.I-2017-19.pdf](./The.Practice.of.System.and.Network.Administration-Vol.I-2017-19.pdf), PDF pages 1–17.
 
-This chapter is about launching a new service such as an email system, a VPN server, an OS installer, or a web-based application. The way that a new service is launched is every bit as important as the way that it is designed. The customers’ first experiences with the service will color the way that they view the service in the future. First impressions last, especially bad ones.
+The case studies and first-person accounts below reflect the source authors’ experience, as published in 2017.
+
+This document is about launching a new service such as an email system, a VPN server, an OS installer, or a web-based application. The way that a new service is launched is every bit as important as the way that it is designed. The customers’ first experiences with the service will color the way that they view the service in the future. First impressions last, especially bad ones.
 
 Launching a new service can be the most exciting part of a job. It is the culmination of intense work by many people. Once launched, the service is something you point at and are proud of. While running the service will fill more calendar months, the launch itself is more intense and requires sustained focus.
 
-This chapter focuses on the initial launch of a service, using our recommended six-step process. Chapter 20, “Service Launch: DevOps,” also deals with launches but covers more advanced techniques. Chapter 21, “Service Conversions,” covers the special case where a launch requires users to be migrated from an old service to the new service. Volume 2 of this book series covers related topics such as techniques for upgrading live services.
+This document focuses on the initial launch of a service, using our recommended six-step process. [Service Launch: DevOps](SERVICE.LAUNCH.DEVOPS.md), also deals with launches but covers more advanced techniques. [Service Conversions](SERVICE.CONVERSIONS.md), covers the special case where a launch requires users to be migrated from an old service to the new service. The companion volume, *The Practice of Cloud System Administration*, covers related topics such as techniques for upgrading live services.
 
 ### 19.1 Planning for Problems
 
 While a service launch is exciting and fulfilling, the problem with launching a new service is that something always goes wrong. The road to launching a service is full of tricks and traps that catch us in the most non-obvious ways: Users with a particular web browser can’t access it, the service doesn’t work for remote users, the production environment doesn’t have enough space, the documentation is confusing, and so on.
 
-We should be optimistic that a newly launched service will be a success. However, it is irrational to expect a flawless launch. That said, we tend to be surprised when there are problems, and we don’t plan countermeasures for common problems. This chapter is about the work (and it is work) we must do to make the reality match our optimism.
+We should be optimistic that a newly launched service will be a success. However, it is irrational to expect a flawless launch. That said, we tend to be surprised when there are problems, and we don’t plan countermeasures for common problems. This document is about the work (and it *is* work) we must do to make the reality match our optimism.
 
 Luckily, the more we launch services, the more skilled we become. We accumulate knowledge that helps us anticipate and overcome obstacles. We look for potential problems when the system is being designed rather than after it is built. We improve our ability to test edge cases. We find better ways to communicate, delegate, and collaborate. Every problem has a solution. The more we plan, the better the outcome. The more we launch, the easier it gets.
 
@@ -26,22 +28,22 @@ As we gain experience we become better at foreseeing potential problems. We keep
 
 ### 19.2 The Six-Step Launch Process
 
-The general launch process relies on two major concepts: the ready list and iterations of launches and learning.
+The general launch process relies on two major concepts: the **ready list** and iterations of launches and learning.
 
 The ready list defines what it means to be ready to launch. We work on these items either directly or via delegation. The list is dynamic, with new items being added as bugs or regressions are found. Once all the items on the ready list are satisfied, we can attempt to launch the service.
 
 The launch itself is a loop whereby we do a small launch, learn from it, then repeat. For example, the initial launch may be a beta release rather than an actual launch that is visible to customers. Each iteration may result in adding more items to the ready list based on what we learned.
 
-After the system is launched and fully in production, there is more learning to do. We pause to perform a retrospective where we look back and reflect on the entire process to see what we learned and how we can improve future launches.
+After the system is launched and fully in production, there is more learning to do. We pause to perform a **retrospective** where we look back and reflect on the entire process to see what we learned and how we can improve future launches.
 
 The entire process can be summarized as follows:
 
-- Step 1: Define the ready list. Define a list of tasks that must be complete before the launch may proceed.
-- Step 2: Work the list. Schedule, work on, and mark as complete each item in the list.
-- Step 3: Launch the beta service. Launch to one of many test areas where the assembled pieces are verified.
-- Step 4: Launch the production service. Launch the service into production.
-- Step 5: Capture the lessons learned. Capture the lessons learned for posterity and to educate the organization.
-- Step 6: Repeat. Begin the process again.
+- **Step 1: Define the ready list.** Define a list of tasks that must be complete before the launch may proceed.
+- **Step 2: Work the list.** Schedule, work on, and mark as complete each item in the list.
+- **Step 3: Launch the beta service.** Launch to one of many test areas where the assembled pieces are verified.
+- **Step 4: Launch the production service.** Launch the service into production.
+- **Step 5: Capture the lessons learned.** Capture the lessons learned for posterity and to educate the organization.
+- **Step 6: Repeat.** Begin the process again.
 
 #### 19.2.1 Step 1: Define the Ready List
 
@@ -51,11 +53,11 @@ Maintaining this list helps team members keep focus and avoid work that is unrel
 
 ##### What to List Items on the ready list generally fall into four categories:
 
-- “Must have” feature set: There may be other features requested, but the launch cannot happen without these features. This part of the list serves as a contract between the customer and the provider. Setting expectations in this way prevents the problem where, after launch, stakeholders are surprised that certain features are missing.
-- “Would be nice” feature set: All features that are not must-haves fit in this category.
-- Bugs to be fixed: Testing will reveal bugs that must be tracked. If not tracked, they will not be fixed, or there will be a duplication of effort as multiple people try to fix the same issues.
+- **“Must have” feature set:** There may be other features requested, but the launch cannot happen without these features. This part of the list serves as a contract between the customer and the provider. Setting expectations in this way prevents the problem where, after launch, stakeholders are surprised that certain features are missing.
+- **“Would be nice” feature set:** All features that are not must-haves fit in this category.
+- **Bugs to be fixed:** Testing will reveal bugs that must be tracked. If not tracked, they will not be fixed, or there will be a duplication of effort as multiple people try to fix the same issues.
 
-- Assertions and approvals: This is the list of things that must be true before launch. For example, the legal department has approved the trademark, security audits are complete, the CEO and head of product management have signed off, and so on. This checklist contains technical items such as verifying disk capacity or confirming that a particular ISP connection is up.
+- **Assertions and approvals:** This is the list of things that must be true before launch. For example, the legal department has approved the trademark, security audits are complete, the CEO and head of product management have signed off, and so on. This checklist contains technical items such as verifying disk capacity or confirming that a particular ISP connection is up.
 
 ##### List Attributes At a minimum each item in the list should have a brief title, a priority, the name of who is responsible for completing the task, a link to the history of the task, and a status.
 
@@ -69,11 +71,11 @@ If your organization has a standardized priority scheme for bugs, adopt it for u
 
 The description of an item should be measurable. “Make things better” is ambiguous. “Improve sort performance by 20 percent” and “System enables RAID controller” are better. One way to make sure goals are well written is to follow George T. Doran’s advice in his 1981 article, “There’s a S.M.A.R.T. Way to Write Management’s Goals and Objectives.” One is in a better position when goals are specific, measurable, achievable, relevant, and time-bound:
 
-- Specific: The goal addresses a specific area for improvement.
-- Measurable: The goal’s success (or progress) can be quantified.
-- Achievable: It can be realistically achieved given available resources.
-- Relevant: It is worthwhile, and in line with broader goals.
-- Time-bound: The goal has a deadline.
+- **Specific:** The goal addresses a specific area for improvement.
+- **Measurable:** The goal’s success (or progress) can be quantified.
+- **Achievable:** It can be realistically achieved given available resources.
+- **Relevant:** It is worthwhile, and in line with broader goals.
+- **Time-bound:** The goal has a deadline.
 
 Doran’s article discourages us from trying to achieve all five qualities for every item. For example, listing a deadline is overkill for simple bug reports.
 
@@ -81,12 +83,12 @@ Doran’s article discourages us from trying to achieve all five qualities for e
 
 Following are the most common places to store and maintain the list. Pick whatever fits your team and corporate culture the best.
 
-- Bug or ticket system with tags: One method is to assign a bug ID or ticket to each item in the list and label the items in a way that one can easily query for all the items. For example, some systems permit tagging. One assigns a tag to all items in the ready list. For example, if the project is called “email2017,” each item is tagged as tag:email2017launch01. Publish a launch status page URL that queries for items with that tag, sorted first by priority and then by status.
-- Bug or ticket system with watchlists: Some issue tracking systems permit one to create a “watchlist” or “hotlist” of items, which provides similar functionality to tagging. Issues are added to the watchlist. People who are subscribed to that watchlist can treat the list as a unit, with the ability to sort and filter the items within it.
-- Kanban board: Kanban boards can be either index cards on a wall or electronic equivalents such as LeanKit or Trello. Cards are placed in columns: a “backlog” column for issues that aren’t being worked on yet, an “active” column for issues that are in progress, and a “completed” column for items that are finished. The history of the item is stored on each card, and may include a URL to a bug or ticket if needed.
-- Online or shared spreadsheet: One can list each item in a row of a spreadsheet, using columns for title, priority, and so on. Web-based spreadsheets can be viewed by anyone at any time, and with the right permission system can be updated by anyone on the team. For simple items, you can keep the history in the spreadsheet; for more complex items, you can list a URL of the related bug or ticket.
+- **Bug or ticket system with tags:** One method is to assign a bug ID or ticket to each item in the list and label the items in a way that one can easily query for all the items. For example, some systems permit tagging. One assigns a tag to all items in the ready list. For example, if the project is called “email2017,” each item is tagged as tag:email2017launch01. Publish a launch status page URL that queries for items with that tag, sorted first by priority and then by status.
+- **Bug or ticket system with watchlists:** Some issue tracking systems permit one to create a “watchlist” or “hotlist” of items, which provides similar functionality to tagging. Issues are added to the watchlist. People who are subscribed to that watchlist can treat the list as a unit, with the ability to sort and filter the items within it.
+- **Kanban board:** Kanban boards can be either index cards on a wall or electronic equivalents such as LeanKit or Trello. Cards are placed in columns: a “backlog” column for issues that aren’t being worked on yet, an “active” column for issues that are in progress, and a “completed” column for items that are finished. The history of the item is stored on each card, and may include a URL to a bug or ticket if needed.
+- **Online or shared spreadsheet:** One can list each item in a row of a spreadsheet, using columns for title, priority, and so on. Web-based spreadsheets can be viewed by anyone at any time, and with the right permission system can be updated by anyone on the team. For simple items, you can keep the history in the spreadsheet; for more complex items, you can list a URL of the related bug or ticket.
 
-- Offline status spreadsheet coordinator: With this option, a designated coordinator maintains a spreadsheet listing the items and their statuses. All updates go through this person, and he or she emails the updated spreadsheet to all team members periodically. For example, if you have completed an item, you would email the good news to the coordinator, who then updates the spreadsheet. Once a week the coordinator emails the latest spreadsheet file as an attachment to everyone involved. We recommend against using this technique, for several reasons. People will always be working from outdated information. Having a third party update the spreadsheet can be a source of errors. The coordinator becomes an information bottleneck. Transparency is reduced. This method may have made sense before the web, but now sharing information is easy and convenient. We list this technique here only so you can recognize it when you see it.
+- **Offline status spreadsheet coordinator:** With this option, a designated coordinator maintains a spreadsheet listing the items and their statuses. All updates go through this person, and he or she emails the updated spreadsheet to all team members periodically. For example, if you have completed an item, you would email the good news to the coordinator, who then updates the spreadsheet. Once a week the coordinator emails the latest spreadsheet file as an attachment to everyone involved. We recommend against using this technique, for several reasons. People will always be working from outdated information. Having a third party update the spreadsheet can be a source of errors. The coordinator becomes an information bottleneck. Transparency is reduced. This method may have made sense before the web, but now sharing information is easy and convenient. We list this technique here only so you can recognize it when you see it.
 
 The benefit of tagging or using a watchlist is that it keeps both the items and their history in one place. The Kanban system is growing in popularity as new online tools are making it easier to use. It provides transparency and a more modern way to set the cadence of the process.
 
@@ -120,19 +122,19 @@ You might not think you need to maintain a ready list if you are a solo SA or th
 
 #### 19.2.3 Step 3: Launch the Beta Service
 
-Before launching to real customers, the service should be launched to an isolated environment for testing. The isolated environment is called a staging area. The bugs and issues found there should be added to the ready list.
+Before launching to real customers, the service should be launched to an isolated environment for testing. The isolated environment is called a **staging area**. The bugs and issues found there should be added to the ready list.
 
 The concept of staging areas usually applies to software releases, but you can actually apply it to any service launch. You may be introducing a new OS release to your automated OS installation system; a beta test would involve testing it with friendly users. You may have a process for onboarding customers that is being reengineered; a beta test would involve walking through the new process with a person who pretends to be a newly hired employee.
 
 There are many different types of staging areas. Each has a different name and a very specific purpose.
 
-- Dev: The Dev environment is the Wild West of staging areas. It is where developers can deploy to at any time for whatever testing purposes they have. There are no gates.
-- Quality Assurance: The QA area receives a release candidate from the developers. The QA process tests the release and either accepts or rejects it, and provides a list of bugs found. New releases enter this stage based on QA process schedules.
-- User Acceptance Testing: The UAT area is a sandbox for external customers to test a release. They bring real-world data to the system and verify their procedures work, or learn how to adapt them to the new release.
-- Beta or Early-Access: The Beta area is where approved customers have early access to a release so that they may provide feedback or report bugs.
-- Production: This is where live users use the service.
+- **Dev:** The Dev environment is the Wild West of staging areas. It is where developers can deploy to at any time for whatever testing purposes they have. There are no gates.
+- **Quality Assurance:** The QA area receives a release candidate from the developers. The QA process tests the release and either accepts or rejects it, and provides a list of bugs found. New releases enter this stage based on QA process schedules.
+- **User Acceptance Testing:** The UAT area is a sandbox for external customers to test a release. They bring real-world data to the system and verify their procedures work, or learn how to adapt them to the new release.
+- **Beta or Early-Access:** The Beta area is where approved customers have early access to a release so that they may provide feedback or report bugs.
+- **Production:** This is where live users use the service.
 
-Each stage has entry and exit criteria. The entry criteria determine when the testing starts. For example, the QA stage receives a release candidate from development, whose intention is to deliver a software package that the developers believe is ready for use. The exit criteria restrict or gate whether the release passes or fails. For example, the gate to successfully leave QA may be that all automated and manual tests pass. The gate to successfully leave UAT may be zero P0 bugs and no more than three P1 bugs. The larger the project, the more important it is that these exit and entry criteria be explicit and written.
+Each stage has entry and exit criteria. The entry criteria determine when the testing starts. For example, the QA stage receives a release candidate from development, whose intention is to deliver a software package that the developers believe is ready for use. The exit criteria restrict or **gate** whether the release passes or fails. For example, the gate to successfully leave QA may be that all automated and manual tests pass. The gate to successfully leave UAT may be zero P0 bugs and no more than three P1 bugs. The larger the project, the more important it is that these exit and entry criteria be explicit and written.
 
 #### 19.2.4 Step 4: Launch the Production Service
 
@@ -144,7 +146,7 @@ The launch may require some kind of final approval. This often takes the form of
 
 Communication is equally important. We need to communicate that the launch is happening, what is new since the last release, and most importantly whether any items are incomplete (these need to be clearly enumerated).
 
-You should never launch to all users at once. That is too risky. Launch to a few users and expand. Go beyond a simple beta user process. Release to waves of users, such as different departments or teams, starting with the most risk tolerant and ending with the most risk averse. Performing gradual rollouts is a theme you will see throughout this book.
+You should never launch to all users at once. That is too risky. Launch to a few users and expand. Go beyond a simple beta user process. Release to waves of users, such as different departments or teams, starting with the most risk tolerant and ending with the most risk averse. Gradual rollouts are also discussed in [Service Conversions](SERVICE.CONVERSIONS.md#216-gradual-roll-outs).
 
 #### 19.2.5 Step 5: Capture the Lessons Learned
 
@@ -157,12 +159,12 @@ Congratulations on the launch! The next step is to learn from this experience. A
 
 It is best to do a retrospective in a live meeting with all the stakeholders and team members in one room, or in a video conference. Use this meeting to build a document collaboratively. This document should then be disseminated to all involved, and placed on a wiki so it can be reviewed. A retrospective document should have sections including an executive summary, a timeline, successes and failures, and short- and long-term changes that should be made.
 
-- Executive Summary: What happened, when, and briefly what went well and what should be improved in the future. This section should be written in nontechnical, business language that any executive could understand.
-- Timeline: A high-level summary of when the project started, when it ended, and major milestones in between.
-- Successes: What went well. Celebrate what you did right.
-- Failures: What didn’t go well. Be honest about areas of improvement. Do not phrase them in terms of blaming individuals, but describe the facts of what happened and how it affected the project.
-- Short-Term Changes: What should be done differently; the low-hanging fruit that can be achieved simply.
-- Long-Term Changes: What should be done differently; changes that are large enough that making the change may require the creation of a project, assigned resources, budget approval, and so on.
+- **Executive Summary:** What happened, when, and briefly what went well and what should be improved in the future. This section should be written in nontechnical, business language that any executive could understand.
+- **Timeline:** A high-level summary of when the project started, when it ended, and major milestones in between.
+- **Successes:** What went well. Celebrate what you did right.
+- **Failures:** What didn’t go well. Be honest about areas of improvement. Do not phrase them in terms of blaming individuals, but describe the facts of what happened and how it affected the project.
+- **Short-Term Changes:** What should be done differently; the low-hanging fruit that can be achieved simply.
+- **Long-Term Changes:** What should be done differently; changes that are large enough that making the change may require the creation of a project, assigned resources, budget approval, and so on.
 
 Once a retrospective document is complete, each of the short-term and long-term changes should be entered into the bug tracking system so they can be triaged along with other kinds of requests. This is how we make sure that operational concerns are not forgotten.
 
@@ -180,7 +182,7 @@ There’s no such thing as a final launch. There will be new releases with new f
 
 Each launch should have its own ready list and use a similar process, though future launches tend to be smaller and do not require as much bureaucracy.
 
-As discussed in Section 16.6.4, software requires upgrades. Even if you do not add features or find bugs to be fixed, the underlying libraries and frameworks will need to be upgraded as security holes are discovered in them. They start out fresh but they go bad. Joshua Corman (2015) explained it this way: “Software ages like milk.”
+As discussed in [Software Upgrades](SERVICE.REQUIREMENTS.md#1664-software-upgrades), software requires upgrades. Even if you do not add features or find bugs to be fixed, the underlying libraries and frameworks will need to be upgraded as security holes are discovered in them. They start out fresh but they go bad. Joshua Corman (2015) explained it this way: “Software ages like milk.”
 
 ### 19.3 Launch Readiness Review
 
@@ -188,7 +190,7 @@ A launch readiness review (LRR) is a process created to assure successful launch
 
 ##### Google’s Production Readiness Reviews
 
-The term LRR comes from Google SRE culture, which is described in the book Site Reliability Engineering: How Google Runs Production Systems (Beyer, Jones, Petoff & Murphy 2016).
+The term LRR comes from Google SRE culture, which is described in the book *Site Reliability Engineering: How Google Runs Production Systems* (Beyer, Jones, Petoff & Murphy 2016).
 
 #### 19.3.1 Launch Readiness Criteria
 
@@ -206,18 +208,18 @@ When all the criteria are met, we are ready to launch. Management should be stri
 
 Here are some sample items that might appear on launch review criteria lists:
 
-- Service is monitored. Service is monitored both for uptime and performance. Internal systems are measured for resource utilization, access counts, and error counts.
-- Monitoring alerts are configured. Alerts trigger for SLA violations, and for situations that would lead to SLA violations.
-- Backups and restores are tested and working. Data storage has a backup mechanism, and restores have been tested.
-- Standard authentication, authorization, and access control have been tested and are working. The service uses the company’s standard AAA service, and access has been successfully tested.
-- SLA is defined. The service SLA is defined in writing.
-- Service request model is in place. Customers will be able to submit service requests using the standard tools, and these requests will be properly handled.
-- User documentation is complete. The documentation required by users is complete and verified.
-- Operational documentation is complete. The documentation required by operations to run the service is complete, and there exists a written procedure for what to do for each exceptional situation (alerts).
-- User training is complete. Users have received training. If training cannot begin until the system is launched, how will people be trained before their need for the service is critical?
+- **Service is monitored.** Service is monitored both for uptime and performance. Internal systems are measured for resource utilization, access counts, and error counts.
+- **Monitoring alerts are configured.** Alerts trigger for SLA violations, and for situations that would lead to SLA violations.
+- **Backups and restores are tested and working.** Data storage has a backup mechanism, and restores have been tested.
+- **Standard authentication, authorization, and access control have been tested and are working.** The service uses the company’s standard AAA service, and access has been successfully tested.
+- **SLA is defined.** The service SLA is defined in writing.
+- **Service request model is in place.** Customers will be able to submit service requests using the standard tools, and these requests will be properly handled.
+- **User documentation is complete.** The documentation required by users is complete and verified.
+- **Operational documentation is complete.** The documentation required by operations to run the service is complete, and there exists a written procedure for what to do for each exceptional situation (alerts).
+- **User training is complete.** Users have received training. If training cannot begin until the system is launched, how will people be trained before their need for the service is critical?
 
-- Load testing is complete. The system has been load-tested using simulations of the expected and optimistic traffic levels.
-- Ten-times response plan is developed and tested. If on the first day the service receives ten times as many users as expected, which steps will be taken? This plan must be written and tested.
+- **Load testing is complete.** The system has been load-tested using simulations of the expected and optimistic traffic levels.
+- **Ten-times response plan is developed and tested.** If on the first day the service receives ten times as many users as expected, which steps will be taken? This plan must be written and tested.
 
 #### 19.3.3 Organizational Learning
 

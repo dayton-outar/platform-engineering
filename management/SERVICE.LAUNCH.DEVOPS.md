@@ -4,15 +4,17 @@
 
 Source: [The.Practice.of.System.and.Network.Administration-Vol.I-2017-20.pdf](./The.Practice.of.System.and.Network.Administration-Vol.I-2017-20.pdf), PDF pages 1–19.
 
+The case studies and first-person accounts below reflect the source authors’ experience, as published in 2017.
+
 Now that we understand the fundamentals of launching a new service, how can we optimize the process?
 
 The DevOps movement has a number of principles that we can adopt to improve any operational process. DevOps is a way to improve IT that involves developers and operations working in an integrated fashion. Yet, DevOps practices apply to any operational situation. You don’t need developers to benefit from the DevOps principles!
 
-This chapter focuses on two ways of replacing a risky big launch with many smaller launches. By doing so, we enable the benefits described in Chapter 2, “The Small Batches Principle.” The first way is to use continuous integration and deployment techniques, which create the ability to rapidly and confidently launch new releases into production. The second way is to first develop a minimum viable product (MVP) and then enhance it with many small improvements over time.
+This document focuses on two ways of replacing a risky big launch with many smaller launches. Smaller batches reduce the scope and risk of each change. The first way is to use continuous integration and deployment techniques, which create the ability to rapidly and confidently launch new releases into production. The second way is to first develop a minimum viable product (MVP) and then enhance it with many small improvements over time.
 
 ##### DevOps or Rapid Release
 
-The IT department of one Fortune 100 company started a project to adopt DevOps practices but found huge resistance at every level. People had many preconceived notions of what DevOps was. The myths and misconceptions held by employees confused the issue and derailed the entire project.
+The IT department of one *Fortune* 100 company started a project to adopt DevOps practices but found huge resistance at every level. People had many preconceived notions of what DevOps was. The myths and misconceptions held by employees confused the issue and derailed the entire project.
 
 The team took a step back to analyze their situation. They realized what was important to them wasn’t DevOps per se, but rather that the company was being killed by the fact that it was so damn difficult to deploy new software releases. If software was never improved, the company couldn’t improve. It was being beaten by its competitors, which were able to rapidly improve everything from their web site’s shopping cart, to how price tags were printed, to how products were shipping to their stores, to making sure their snack shops didn’t run out of hotdogs. All of these things were driven by software.
 
@@ -22,7 +24,7 @@ Other teams accepted the concept now that the focus was on a benefit they could 
 
 ### 20.1 Continuous Integration and Deployment
 
-The six-phase launch process discussed in Chapter 19, “Service Launch: Fundamentals,” included various staging areas that a software release flows through: development, testing, beta, and production. Each stage reduces the risk of surprises and failures at the production launch. We can think of those stages as practice for the actual launch. If practice makes perfect, shouldn’t we practice a lot?
+The six-phase launch process discussed in [Service Launch: Fundamentals](SERVICE.LAUNCH.FUNDAMENTALS.md), included various staging areas that a software release flows through: development, testing, beta, and production. Each stage reduces the risk of surprises and failures at the production launch. We can think of those stages as practice for the actual launch. If practice makes perfect, shouldn’t we practice a lot?
 
 While the staccato movement from one staging area to another is commonly used throughout the industry, it is non-optimal and possibly toxic. It is very labor intensive. Each stage has a team of people associated with it who must be available or the process halts. It keeps each team in a silo, optimizing for their own needs instead of the greater good. It encourages people to game the system, because the focus becomes getting work past the gate rather than creating good output. It also encourages large batches. If QA receives a new release every quarter, the number of changes since the last release will be complex enough that this team must test everything from scratch. As an optimization it is tempting to send a new release to QA less frequently, but this simply creates a bigger testing burden. If a bug is found, the developers need to isolate it to one of the changes, which is now an even larger list.
 
@@ -40,12 +42,12 @@ Sites with fully automated testing can achieve truly continuous integration and 
 
 We classify the way organizations perform launches into four general categories: chaotic, periodic, continuous, and push-on-green.
 
-- Chaotic: Releases are brought into testing at random times. The building, deployment, and testing of a release are not automated and may be ad hoc. Therefore testing may be done differently depending on who does it.
-- Periodic: Releases are done on a schedule such as daily, weekly, or monthly. Usually the entire build and deployment processes are fully automated. Testing is generally automated or mostly automated with a few exceptions that are done manually if all automated tests succeed.
-- Continuous: Each change to the source material triggers an automatic creation of the next release, build deployment, and testing. Because these steps happen so frequently, they must be automated. The actual release to the production stage requires human approval.
-- Push-on-green: Here the decision to launch to production is automated. In other words, the push to production is approved when the status of all tests is green (success). This is extremely rare and requires extraordinary measures.
+- **Chaotic:** Releases are brought into testing at random times. The building, deployment, and testing of a release are not automated and may be ad hoc. Therefore testing may be done differently depending on who does it.
+- **Periodic:** Releases are done on a schedule such as daily, weekly, or monthly. Usually the entire build and deployment processes are fully automated. Testing is generally automated or mostly automated with a few exceptions that are done manually if all automated tests succeed.
+- **Continuous:** Each change to the source material triggers an automatic creation of the next release, build deployment, and testing. Because these steps happen so frequently, they must be automated. The actual release to the production stage requires human approval.
+- **Push-on-green:** Here the decision to launch to production is automated. In other words, the push to production is approved when the status of all tests is green (success). This is extremely rare and requires extraordinary measures.
 
-The latter categories permit faster iterations and achieve better confidence through more complete automated testing. They benefit from the small batches principle. Features get to production sooner, and the improved confidence they instill makes it easier for the organization to experiment and try new things. The ability to do rapid releases is a major goal of the DevOps philosophy. Volume 2 of this book series has more examples of this kind of methodology.
+The latter categories permit faster iterations and achieve better confidence through more complete automated testing. They benefit from the small batches principle. Features get to production sooner, and the improved confidence they instill makes it easier for the organization to experiment and try new things. The ability to do rapid releases is a major goal of the DevOps philosophy. The companion volume, *The Practice of Cloud System Administration*, has more examples of this kind of methodology.
 
 It is difficult for a chaotic project to jump all the way to push-on-green. Instead, one generally seeks to improve a project one level at a time. In fact, a reasonable goal is for all projects to aspire to periodic or continuous launches. The extra investment required to get to push-on-green should be reserved for only the most important projects. Making all projects push-on-green is a waste of resources; your time is better spent elsewhere. Push-on-green requires an extremely high level of confidence in your automated testing procedure that can be achieved only by involving everyone from product management to developers to operations.
 
@@ -53,9 +55,9 @@ The best way to achieve a specific level for all projects is to create a develop
 
 Etsy’s development platform starts new projects at or near push-on-green. Every individual change triggers the full testing and deployment suite. As a result, Etsy launched 6,000 times in 2015. Such a large number of launches demonstrates impressively high confidence in the company’s testing and deployment automation. This confidence enables team members to move faster and be bolder about launching new features.
 
-Klein, Betser & Monroe (2014b) provide a good overview of the rigorous methodology required to make push-on-green possible at Google. The book Continuous Delivery: Reliable Software Releases Through Build, Test, and Deployment Automation by Humble & Farley (2010) is a deep dive into the topic.
+Klein, Betser & Monroe (2014b) provide a good overview of the rigorous methodology required to make push-on-green possible at Google. The book *Continuous Delivery: Reliable Software Releases Through Build, Test, and Deployment Automation* by Humble & Farley (2010) is a deep dive into the topic.
 
-Later in this chapter we’ll discuss how these techniques can be applied to third-party software, which is commonly used in most enterprise environments.
+Later in this document we’ll discuss how these techniques can be applied to third-party software, which is commonly used in most enterprise environments.
 
 ##### Eliminating the Approval Committees at Google
 
@@ -69,7 +71,7 @@ It is not simply a matter of automating the checks done by the approval committe
 
 ### 20.2 Minimum Viable Product
 
-The six-step launch process described in the previous chapter is very common— but also extremely risky. It puts all our eggs in one basket. If we aren’t ready by the launch date, we are doomed.
+The six-step launch process described in [Service Launch: Fundamentals](SERVICE.LAUNCH.FUNDAMENTALS.md) is very common— but also extremely risky. It puts all our eggs in one basket. If we aren’t ready by the launch date, we are doomed.
 
 A better method is to first launch early with the absolute minimum number of features, then add features through a series of subsequent launches. As the number of features grows, we can decide if it is time to expose the service to real users. If the deadline arrives, we can launch with what we have, even if the lower-priority features have not yet been added.
 
@@ -77,7 +79,7 @@ Let’s return to our example of launching an automated OS installation system f
 
 One way to organize this project is to add all those features to the ready list and then start working on the items. Sadly, by the time the deadline arrives, we aren’t quite done. Worst of all, we’re 80 percent done on all items, which means we’re zero percent able to launch.
 
-A better way to organize our work is to first build a beta system with the absolute minimum features to be a viable OS installation system. This is the minimum viable product (MVP). We launch the MVP into the beta staging area. Then we add new features one at a time. Whenever we complete a feature, we launch the new release to the beta area. When the deadline arrives, we launch with the features that are working in beta.
+A better way to organize our work is to first build a beta system with the absolute minimum features to be a viable OS installation system. This is the **minimum viable product** (MVP). We launch the MVP into the beta staging area. Then we add new features one at a time. Whenever we complete a feature, we launch the new release to the beta area. When the deadline arrives, we launch with the features that are working in beta.
 
 Because we will be launching to beta so many times, it is important that the end-to-end system from building the pieces from the source files, to testing, to deployment is fully automated. Otherwise, the labor involved will be a burden and will steal time away from feature development.
 
@@ -93,16 +95,16 @@ When the deadline arrives, we launch the most recent working version in beta to 
 
 While we borrow some techniques from the six-step launch process, the MVP approach gives us a different paradigm for launching services:
 
-- Features drive the launch. We launch when the features are ready, not when a deadline on a calendar says we must launch. In fact, we can launch early if we choose. If we carefully choose the order in which we add features, we could launch earlier for certain segments of our target population. Perhaps we might focus on desktop features first and launch for laptops later.
-- We are always ready to launch. Instead of fearing that we won’t be done on time, we are always ready to launch. What gets launched may not have every feature, but a system like this is never actually done. There is always another feature that could be added, configured, or improved. If the project is an ongoing concern with no hard definition of “done,” why use a paradigm that assumes there is a hard-and-fast endpoint?
-- Launching is low risk. Because we’ve launched to beta so many times, we get very good at it. The process is automated. We’ve seen plenty of edge cases and added code to detect them, work around errors, and so on. The process gets smoother the more we use it. There is no big, scary “launch day.”
-- The difference between beta and production stays small. Since we are adding one or two features at a time, the delta between the beta and production versions stays small. When we do launch, we understand which new feature is being launched. This is less risky, easier to comprehend, and easier to explain than mega-launches with hundreds or thousands of new features being introduced at once. We can concisely communicate what is in each release, which makes our customers better informed and better able to understand our work.
+- **Features drive the launch.** We launch when the features are ready, not when a deadline on a calendar says we must launch. In fact, we can launch early if we choose. If we carefully choose the order in which we add features, we could launch earlier for certain segments of our target population. Perhaps we might focus on desktop features first and launch for laptops later.
+- **We are always ready to launch.** Instead of fearing that we won’t be done on time, we are always ready to launch. What gets launched may not have every feature, but a system like this is never actually done. There is always another feature that could be added, configured, or improved. If the project is an ongoing concern with no hard definition of “done,” why use a paradigm that assumes there is a hard-and-fast endpoint?
+- **Launching is low risk.** Because we’ve launched to beta so many times, we get very good at it. The process is automated. We’ve seen plenty of edge cases and added code to detect them, work around errors, and so on. The process gets smoother the more we use it. There is no big, scary “launch day.”
+- **The difference between beta and production stays small.** Since we are adding one or two features at a time, the delta between the beta and production versions stays small. When we do launch, we understand which new feature is being launched. This is less risky, easier to comprehend, and easier to explain than mega-launches with hundreds or thousands of new features being introduced at once. We can concisely communicate what is in each release, which makes our customers better informed and better able to understand our work.
 
 ##### Case Study: MVP Applied to Writing Books
 
-This launch methodology works for many kinds of projects, not just IT services. In fact, it is how we developed the third edition of this book. We determined a minimum viable product and worked toward that goal using a ready list. We also had a prioritized list of chapters we wanted to add or rewrite. Once the minimum viable product was complete, we were always in a state where we could hand the manuscript to the publisher for editing, production, and printing.
+This launch methodology works for many kinds of projects, not just IT services. In fact, the source authors used it to develop the third edition of *The Practice of System and Network Administration*. They determined a minimum viable product and worked toward that goal using a ready list. They also had a prioritized list of chapters they wanted to add or rewrite. Once the minimum viable product was complete, they were always in a state where they could hand the manuscript to the publisher for editing, production, and printing.
 
-We wouldn’t want to ship the book in that initial state, as it was largely unchanged from the second edition. However, we could if we were called to do so. From then on we worked on the new features we wanted to see in the new edition. The ones we completed by our publisher’s deadline got included. The ones we didn’t finish . . . well, you’ll never know if there were any, will you?
+They wouldn’t want to ship the book in that initial state, as it was largely unchanged from the second edition. However, they could if they were called to do so. From then on they worked on the new features they wanted to see in the new edition. The ones they completed by their publisher’s deadline got included. The ones they didn’t finish . . . well, you’ll never know if there were any, will you?
 
 ### 20.3 Rapid Release with Packaged Software
 
@@ -122,7 +124,7 @@ Testing requires building an environment that replicates the existing system, th
 
 This is all very much the same as the testing process for home-grown software. The difference is that often organizations do not perform such rigorous testing, or if they do it is not automated. People tend to make rationalizations: We don’t have a lab environment to conduct the tests. Building a lab environment would be too expensive. We don’t have the labor resources to build and rebuild the environment, or to conduct the tests. We deploy to live users and have an excellent backout plan if something goes wrong.
 
-If we do have a testing process, it may be so labor intensive that we might skip occasional releases to reduce our labor cost. While this decision saves labor, it makes the upgrade more risky, as the jump from version n to n + 2 may not be as well tested by the provider. Many organizations do no testing at all and simply assume that the vendor’s testing is sufficient. This is not only risky but also misses the fact that the vendor’s environment cannot possibly include the infrastructure we have built around the vendor’s product.
+If we do have a testing process, it may be so labor intensive that we might skip occasional releases to reduce our labor cost. While this decision saves labor, it makes the upgrade more risky, as the jump from version *n* to *n* + 2 may not be as well tested by the provider. Many organizations do no testing at all and simply assume that the vendor’s testing is sufficient. This is not only risky but also misses the fact that the vendor’s environment cannot possibly include the infrastructure we have built around the vendor’s product.
 
 These excuses and rationalizations are widespread in our industry. Some are justified by the fact that a small shop may not have the budget to do such testing, or that the risk is small enough that a backout plan is sufficient, or that the return on investment (ROI) for automating an infrequent task makes it difficult to justify. But suppose that the company then grows and grows and grows, and we have developed bad habits. At what point in our growth should we change our ways?
 
@@ -150,13 +152,13 @@ Whether your goal is to have new updates deployed as soon as possible, or as soo
 
 ##### Better Software Upgrades
 
-Upgrading software in large complex systems can be difficult. The book Ship It! A Practical Guide to Successful Software Projects by Richardson, J. R. & Gwaltney, Jr., W. A. (2005) includes many upgrade techniques and software design patterns that can make future upgrades easier.
+Upgrading software in large complex systems can be difficult. The book *Ship It! A Practical Guide to Successful Software Projects* by Richardson, J. R. & Gwaltney, Jr., W. A. (2005) includes many upgrade techniques and software design patterns that can make future upgrades easier.
 
 ### 20.4 Cloning the Production Environment
 
 One technique for upgrading a service is to take an ordinary upgrade process and engineer a way to do it frequently.
 
-As will be discussed in Chapter 33, “Server Upgrades,” a common upgrade technique is to clone the hard drive of a system and upgrade the copy. This permits us to revert to the original system if the upgrade process is a failure.
+A common upgrade technique is to clone the hard drive of a system and upgrade the copy. This permits us to revert to the original system if the upgrade process is a failure.
 
 Initially we do this process manually. First the machine is cloned. The clone may require some reconfiguration to be able to run alongside the production environment. We run the tests on the original clone to verify it works. Next we run the upgrade procedure. The tests are now repeated to verify the results are the same.
 
@@ -304,7 +306,7 @@ Who would want to work anywhere else?
 
 ### 20.8 Summary
 
-In this chapter we discussed many ways to turn a big, risky launch process into many small iterations. With small iterations we benefit from the small batches principle introduced in Chapter 2, “The Small Batches Principle.”
+In this document we discussed many ways to turn a big, risky launch process into many small iterations. Small iterations reduce the scope and risk of each change.
 
 Launching a new service is both risky and important. A service that is created but unlaunched isn’t very useful. A failed or mismanaged launch is an embarrassment that harms a team’s reputation, which robs it of momentum.
 
@@ -322,4 +324,4 @@ Launching in small iterations makes the process more likely to succeed, less ris
 
 ### Exercises
 
-1. Describe the rapid release strategy for launching a new service. 2. What is continuous integration and deployment? 3. Why is it important to perform the most expensive tests last? 4. What is the MVP methodology, and what are its benefits? 5. Pick a project in your environment and determine which of the four launch categorizations it falls into. Which steps would raise it to the next level? 6. Why is it unreasonable to try to achieve push-on-green for all projects? 7. Which would benefit a company most: taking a chaotic launch process and making it periodic, or taking a continuous launch process and making it pushon-green? 8. Pick a project you are involved with and describe how it could be organized using the rapid release/DevOps methodology. 9. Pick a project you are involved with and describe how it could be organized using the MVP methodology. 10. This chapter suggested permitting people to have access to an old email server to access their old messages. If you plan to keep the system running for a month, how long should you announce it will be available?
+1. Describe the rapid release strategy for launching a new service. 2. What is continuous integration and deployment? 3. Why is it important to perform the most expensive tests last? 4. What is the MVP methodology, and what are its benefits? 5. Pick a project in your environment and determine which of the four launch categorizations it falls into. Which steps would raise it to the next level? 6. Why is it unreasonable to try to achieve push-on-green for all projects? 7. Which would benefit a company most: taking a chaotic launch process and making it periodic, or taking a continuous launch process and making it pushon-green? 8. Pick a project you are involved with and describe how it could be organized using the rapid release/DevOps methodology. 9. Pick a project you are involved with and describe how it could be organized using the MVP methodology. 10. This document suggested permitting people to have access to an old email server to access their old messages. If you plan to keep the system running for a month, how long should you announce it will be available?

@@ -4,7 +4,9 @@
 
 Source: [The.Practice.of.System.and.Network.Administration-Vol.I-2017-28.pdf](./The.Practice.of.System.and.Network.Administration-Vol.I-2017-28.pdf), PDF pages 1–23.
 
-This chapter is about handling incident reports. In a broad sense, requests from customers are either a service request, an incident report, or a complaint. We can further explain this distinction by way of examples: A service request is someone requesting a new PC. An incident report is when someone reports that his or her PC isn’t working and needs to be fixed. A complaint is when someone reports that he or she is unhappy waiting so long for the PC to be fixed.
+The case studies and first-person accounts below reflect the source authors’ experience, as published in 2017.
+
+This document is about handling incident reports. In a broad sense, requests from customers are either a service request, an incident report, or a complaint. We can further explain this distinction by way of examples: A service request is someone requesting a new PC. An incident report is when someone reports that his or her PC isn’t working and needs to be fixed. A complaint is when someone reports that he or she is unhappy waiting so long for the PC to be fixed.
 
 Handling an incident report can be difficult. We must interview the person to understand the problem, identify the issue, and follow through until the issue is resolved.
 
@@ -12,7 +14,7 @@ It may surprise you to learn that this process is similar to the sales process. 
 
 At the close of World War II, the United States found itself with a huge excess of manufacturing capacity. As a result, companies started producing hundreds of new products, giving households and businesses unprecedented choices. Thousands of returning service people found jobs selling these new products. All these factors combined to produce a new era for the U.S. economy.
 
-Along with the new choices came greater competition. Companies found that it was no longer sufficient merely to have a large sales force; a good sales force was needed. They started to ask what makes high-performing salespeople different from the others.
+Along with the new choices came greater competition. Companies found that it was no longer sufficient merely to have a large sales force; a *good* sales force was needed. They started to ask what makes high-performing salespeople different from the others.
 
 Industry encouraged business schools to increase their study of the sales process. Research showed that the better salespeople—whether or not they realized it—used a specific, structured method involving specific phases or steps. Mediocre salespeople deviated from these phases in varying ways or performed certain phases badly. The low performers had little or no consistency in their methods.
 
@@ -24,11 +26,11 @@ More than likely, if anyone explained the structured process to the highperformi
 
 In the 1990s, system administration began a similar journey. Previously, it was a craft or an art practiced by few people. With the explosive growth of corporate computing and intranet/Internet applications, the demand for SAs similarly skyrocketed. A flood of new SAs arrived to meet this need. The quality of their work varied. Training often took the form of teaching particular product features. Other training methods included exploring manuals and documentation, trial by fire, and training by social and professional institutions.
 
-System administration needed to mature in ways similar to how the sales process matured. The late 1990s saw an increase in the academic study of system administration (Burgess 2000). In fact, this book’s inspiration comes from that same need to provide training founded on non-platform-specific themes, principles, and theoretical models rather than on specific details about particular technologies, vendors, and products (Limoncelli, Hogan & Chalup 2017).
+System administration needed to mature in ways similar to how the sales process matured. The late 1990s saw an increase in the academic study of system administration (Burgess 2000). In fact, the source authors drew inspiration from that same need to provide training founded on non-platform-specific themes, principles, and theoretical models rather than on specific details about particular technologies, vendors, and products (Limoncelli, Hogan & Chalup 2017).
 
 ### 28.1 Process Overview
 
-SAs spend much of their time responding to support requests from customers. In this chapter, we present a structured process defining how customer requests are gathered, evaluated, fixed, and verified. This process is based on a paper by Tom (Limoncelli 1999). Responding to customer requests is a more specific task than the general issues that surround running a helpdesk.
+SAs spend much of their time responding to support requests from customers. In this document, we present a structured process defining how customer requests are gathered, evaluated, fixed, and verified. This process is based on a paper by Tom (Limoncelli 1999). Responding to customer requests is a more specific task than the general issues that surround running a helpdesk.
 
 Customer requests are the trouble tickets, calls, problem reports, or whatever your site calls them. These requests may take the form “I can’t print,” “The network is slow,” or “A program that compiled yesterday won’t compile anymore.”
 
@@ -60,7 +62,6 @@ A. Reporting the problem
 
 B. Identifying the problem C. Planning and executing a solution D. Verifying that the problem resolution is complete
 
-<!-- Source: The.Practice.of.System.and.Network.Administration-Vol.I-2017-28.pdf, PDF page 3. -->
 ![Figure 28.1: General flow of problem solving](/.attachments/28-1-The.Practice.of.System.and.Network.Administration-Vol.I-2017-28.png)
 
 *Figure 28.1: General flow of problem solving*
@@ -75,11 +76,10 @@ We cannot overemphasize the importance of using a software package to track prob
 
 Phase A has only one deceptively simple step: Issues are solicited from the customers (Figure 28.2). This step includes everything related to how the customer’s request is solicited—from someone saying, “How may I help you?” on the phone to a web site that collects problem reports. Step 1 should welcome the customer to the system and start the process on a positive, friendly, helpful note.
 
-The person or system that responds to the requests is called a greeter. Greeters may be people in a physical helpdesk, on the phone, or accessible via email or other instant technology; a phone-response system; or even a web form that takes the data. Multiple ways to collect reports are needed for easy and reliable access, ensuring that the customer can report the problem.
+The person or system that responds to the requests is called a **greeter.** Greeters may be people in a physical helpdesk, on the phone, or accessible via email or other instant technology; a phone-response system; or even a web form that takes the data. Multiple ways to collect reports are needed for easy and reliable access, ensuring that the customer can report the problem.
 
 Sometimes, problems are reported by automated means rather than by humans. For example, network-monitoring tools, such as Nagios, Big Brother,
 
-<!-- Source: The.Practice.of.System.and.Network.Administration-Vol.I-2017-28.pdf, PDF page 4. -->
 ![Figure 28.2: Phase A: Hello!](/.attachments/28-2-The.Practice.of.System.and.Network.Administration-Vol.I-2017-28.png)
 
 *Figure 28.2: Phase A: Hello!*
@@ -98,14 +98,13 @@ Although this list certainly isn’t complete, greeters typically include email,
 
 Phase B is focused on classifying the problem and recording and verifying it (Figure 28.3).
 
-<!-- Source: The.Practice.of.System.and.Network.Administration-Vol.I-2017-28.pdf, PDF page 5. -->
 ![Figure 28.3: Phase B: What’s wrong?](/.attachments/28-3-The.Practice.of.System.and.Network.Administration-Vol.I-2017-28.png)
 
 *Figure 28.3: Phase B: What’s wrong?*
 
 #### 28.3.1 Step 2: Problem Classification
 
-In step 2, the request is classified to determine who should handle it. This classifier role may be performed by a human or may be automated. For example, at a walk-up helpdesk, staff might listen to the problem description to determine its classification. A phone-response system might ask the user to press 1 for PC problems, 2 for network problems, and so on. If certain SAs help certain customer groups, their requests may be automatically forwarded, based on the requester’s email address, a manually entered employee ID number, or the phone caller’s caller ID information.
+In step 2, the request is classified to determine who should handle it. This **classifier** role may be performed by a human or may be automated. For example, at a walk-up helpdesk, staff might listen to the problem description to determine its classification. A phone-response system might ask the user to press 1 for PC problems, 2 for network problems, and so on. If certain SAs help certain customer groups, their requests may be automatically forwarded, based on the requester’s email address, a manually entered employee ID number, or the phone caller’s caller ID information.
 
 When the process is manual, a human must be responsible for classifying the problem from the description or asking the customer more questions. A formal decision tree may be used to determine the right classification. Formal processes and decision trees are used to improve results in other fields. For example, a hospital found that a patient’s odds of surviving a heart attack improved when guesswork was eliminated by giving the doctors a formal process to follow (Gladwell 2007).
 
@@ -127,7 +126,7 @@ Classifying problems can get complex. At very large sites, you are more likely t
 
 #### 28.3.2 Step 3: Problem Statement
 
-In step 3, the customer states the problem in full detail, and the recorder takes this information down. Often, the recorder is also the classifier. The skill required by the recorder in this step is the ability to listen and to ask the right questions to draw out the necessary information from the customer. The recorder extracts the relevant details and records them.
+In step 3, the customer states the problem in full detail, and the **recorder** takes this information down. Often, the recorder is also the classifier. The skill required by the recorder in this step is the ability to listen and to ask the right questions to draw out the necessary information from the customer. The recorder extracts the relevant details and records them.
 
 A problem statement describes the problem being reported and records enough clues to reproduce and fix the problem. A bad problem statement is vague or incomplete. A good problem statement is complete and identifies all hardware and software involved, as well as their locations, the last time they worked, and so on. Sometimes, not all that information is appropriate or available.
 
@@ -161,7 +160,7 @@ It can be useful if your trouble-ticket software records different information, 
 
 #### 28.3.3 Step 4: Problem Verification
 
-In step 4, the SA takes on the reproducer role and tries to duplicate the problem. If the problem cannot be reproduced, perhaps it is not being properly communicated, and the SA must return to step 3. If the problem is intermittent, this process becomes more complicated but not impossible to follow.
+In step 4, the SA takes on the **reproducer** role and tries to duplicate the problem. If the problem cannot be reproduced, perhaps it is not being properly communicated, and the SA must return to step 3. If the problem is intermittent, this process becomes more complicated but not impossible to follow.
 
 Nothing gives you a better understanding of the problem than seeing it in action. This is the single most important reason for doing problem verification, yet naive SAs skip it all the time. If you do not verify the problem, you may work on it for hours before realizing that you aren’t even working on the right issue. Often, the customer’s description is misleading. A customer who doesn’t have the technical knowledge to accurately describe the problem can send you on a wild goose chase. Just think about all the times you’ve tried to help someone over the phone, failed, and then visited the person. One look at the person’s screen and you say, “Oh! That’s a totally different problem!” And a few keystrokes later, the problem is fixed. What happened was that you weren’t able to reproduce the problem locally, so you couldn’t see the whole problem and therefore couldn’t figure out the real solution.
 
@@ -173,7 +172,7 @@ It is possible that the focus is misdirected. Another, unrelated problem in the 
 
 Sometimes, direct verification is not possible or even required. If a customer reports that a printer is broken, the verifier may not have to reproduce the problem by attempting to print something. It may be good enough to verify that new print jobs are queuing and not being printed. Such superficial verification is fine in that situation.
 
-At other times, exact duplication is required. The verifier might fail to reproduce the problem on his or her own desktop PC and may need to duplicate the problem on the customer’s PC. Once the problem is reproduced in the customer’s environment, it can be useful to try to duplicate it elsewhere to determine whether the problem is local or global. When supporting a complicated product, you must have a lab of equipment ready to reproduce reported problems.
+At other times, exact duplication *is* required. The verifier might fail to reproduce the problem on his or her own desktop PC and may need to duplicate the problem on the customer’s PC. Once the problem is reproduced in the customer’s environment, it can be useful to try to duplicate it elsewhere to determine whether the problem is local or global. When supporting a complicated product, you must have a lab of equipment ready to reproduce reported problems.
 
 ##### Verification at E-commerce Sites
 
@@ -191,7 +190,6 @@ Step 5 is the point at which the subject-matter expert (SME) enumerates possible
 
 The “best” solution varies, depending on the context. At a financial institution, the helpdesk’s solution to a client-side NFS problem might be to reboot. That step could be faster than trying to fix the problem, and it gets the customer up and running quickly. In contrast, in a research environment, it would make sense to try to find the source of the problem, perhaps by unmounting and remounting the NFS mount that reported the problem.
 
-<!-- Source: The.Practice.of.System.and.Network.Administration-Vol.I-2017-28.pdf, PDF page 11. -->
 ![Figure 28.4: Phase C: Fix it.](/.attachments/28-4-The.Practice.of.System.and.Network.Administration-Vol.I-2017-28.png)
 
 *Figure 28.4: Phase C: Fix it.*
@@ -220,7 +218,7 @@ Even though customers may be inexperienced, they should be encouraged to partici
 
 The solution is attempted in step 7. The skill, accuracy, and speed at which this step is completed depend on the skill and experience of the person executing the solution.
 
-The term craft worker refers to the SA, operator, or laborer who performs the technical tasks involved. This term comes from other industries, such as telecommunications, in which one person may receive the order and plan the provisioning of the service, but the craft workers run the cables, connect circuits, and so on, to provide the service. In a computer network environment, the network architect might be responsible for planning the products and procedures used to give service to customers, but when a new Ethernet interface needs to be added to a router, the craft worker installs the card and configures it.
+The term **craft worker** refers to the SA, operator, or laborer who performs the technical tasks involved. This term comes from other industries, such as telecommunications, in which one person may receive the order and plan the provisioning of the service, but the craft workers run the cables, connect circuits, and so on, to provide the service. In a computer network environment, the network architect might be responsible for planning the products and procedures used to give service to customers, but when a new Ethernet interface needs to be added to a router, the craft worker installs the card and configures it.
 
 Sometimes, the customer becomes the craft worker. This scenario is particularly common when the customer is remote and using a system with little or no remote control. In that case, the success or failure of this step is shared with the customer. A dialogue is required between the SA and the customer to make the solution work. Has the customer executed the solution properly? If not, is the customer causing more harm than good?
 
@@ -232,9 +230,8 @@ At this point, it is tempting to think that we have finished. However, we haven�
 
 ### 28.5 Phase D: Verification
 
-At this point, the problem should have been remedied, but we need to verify that. Phase D isn’t over until the customer agrees that the problem has been fixed (Figure 28.5).
+At this point, the problem *should* have been remedied, but we need to verify that. Phase D isn’t over until the customer agrees that the problem has been fixed (Figure 28.5).
 
-<!-- Source: The.Practice.of.System.and.Network.Administration-Vol.I-2017-28.pdf, PDF page 14. -->
 ![Figure 28.5: Phase D: Verify it.](/.attachments/28-5-The.Practice.of.System.and.Network.Administration-Vol.I-2017-28.png)
 
 *Figure 28.5: Phase D: Verify it.*
@@ -265,15 +262,15 @@ Once customer verification is complete, the issue is closed.
 
 Each step is important. If any step in this process is performed badly, the process can break down. Many SAs skip a step, either because of lack of training or because of an honest mistake. Many stereotypes about bad SAs are the result of SAs skipping a particular step. We’ve assigned Seinfeldesque names to each of these stereotypes and list possible ways of improving the SAs process:
 
-- The Ogre: Grumpy, caustic SAs are trying to scare customers away from step 1 and are preventing the greeting from happening. Suggestion: Management must set expectations for friendliness. The scope of responsibility must be a written policy communicated to both SAs and customers.
-- The Mis-delegator: If you’ve called a large company’s technical support line and the person who answered the phone refused to direct your call to the proper department (step 2), you know what it’s like to deal with a misdelegator. Suggestion: Design a formal decision tree indicating which issues are delegated where.
-- The Assumer: SAs who skip step 3 simply assume that they understand what the problem is when they really don’t. Suggestion: Coach the person on active listening; if that fails, send the person to a class on the topic.
-- The Non-verifier: An SA who skips problem verification (step 4) is usually busy fixing the wrong problem. One day, Tom was panicked by the news that “the network is down.” In reality, a nontechnical customer couldn’t read his email and reported the potential problem. This claim hadn’t been verified by the newly hired SA, who hadn’t yet learned that certain novice customers report all problems that way. The customer’s email client was misconfigured. Suggestion: Teach SAs to replicate problems, especially before escalating them. Remind them that it isn’t nice to panic Tom.
-- The Wrong Fixer: Inexperienced SAs sometimes are not creative or are too creative in proposing and selecting solutions (steps 5 and 6). But skipping these steps entirely results in a different issue. After being taught how to use an Ethernet monitor (a network sniffer), an inexperienced but enthusiastic SA was found dragging out the sniffer no matter which problem was being reported. He was a Wrong Fixer. Suggestion: Provide mentoring or training. Increase the breadth of solutions with which the SA is familiar.
-- The Executioner: Incompetent SAs sometimes cause more harm than good when they execute solutions incorrectly. It is quite embarrassing to apply a fix to the wrong machine; however, it happens. Suggestion: Train the SA to check what has been typed before pressing ENTER or clicking OK. It can be vital to include the hostname in your shell prompt.
-- The Hit-and-Run SA: This SA walks into a customer’s office, types a couple of keystrokes, and waves goodbye while walking out the door and saying, “That should fix it.” The customers are frustrated to discover that the problem was not fixed. In all fairness, what was typed really should have fixed the problem, but it didn’t. Suggestion: Management needs to set expectations on verification.
+- **The Ogre:** Grumpy, caustic SAs are trying to scare customers away from step 1 and are preventing the greeting from happening. *Suggestion*: Management must set expectations for friendliness. The scope of responsibility must be a written policy communicated to both SAs and customers.
+- **The Mis-delegator:** If you’ve called a large company’s technical support line and the person who answered the phone refused to direct your call to the proper department (step 2), you know what it’s like to deal with a misdelegator. *Suggestion*: Design a formal decision tree indicating which issues are delegated where.
+- **The Assumer:** SAs who skip step 3 simply assume that they understand what the problem is when they really don’t. *Suggestion*: Coach the person on active listening; if that fails, send the person to a class on the topic.
+- **The Non-verifier:** An SA who skips problem verification (step 4) is usually busy fixing the wrong problem. One day, Tom was panicked by the news that “the network is down.” In reality, a nontechnical customer couldn’t read his email and reported the potential problem. This claim hadn’t been verified by the newly hired SA, who hadn’t yet learned that certain novice customers report all problems that way. The customer’s email client was misconfigured. *Suggestion*: Teach SAs to replicate problems, especially before escalating them. Remind them that it isn’t nice to panic Tom.
+- **The Wrong Fixer:** Inexperienced SAs sometimes are not creative or are too creative in proposing and selecting solutions (steps 5 and 6). But skipping these steps entirely results in a different issue. After being taught how to use an Ethernet monitor (a network sniffer), an inexperienced but enthusiastic SA was found dragging out the sniffer no matter which problem was being reported. He was a Wrong Fixer. *Suggestion*: Provide mentoring or training. Increase the breadth of solutions with which the SA is familiar.
+- **The Executioner:** Incompetent SAs sometimes cause more harm than good when they execute solutions incorrectly. It is quite embarrassing to apply a fix to the wrong machine; however, it happens. *Suggestion*: Train the SA to check what has been typed before pressing ENTER or clicking OK. It can be vital to include the hostname in your shell prompt.
+- **The Hit-and-Run SA:** This SA walks into a customer’s office, types a couple of keystrokes, and waves goodbye while walking out the door and saying, “That should fix it.” The customers are frustrated to discover that the problem was not fixed. In all fairness, what was typed really should have fixed the problem, but it didn’t. *Suggestion*: Management needs to set expectations on verification.
 
-- The Closer: Some SAs are obsessed with “closing the ticket.” Often, however, SAs are judged on how quickly they close tickets. In that case, the SAs are pressured to skip the final step. We borrow this name from the term used to describe high-pressure salespeople focused on “closing the deal.” Suggestion: Management should not measure performance based on how quickly issues are resolved but on a mixture of metrics that drive the preferred behavior. Metrics should not include time waiting for customers when calculating how long it took to complete the request. Tracking systems should permit a request to be put into a customer wait state while customers complete actions, and that time should be subtracted from the time-to-completion metrics.
+- **The Closer:** Some SAs are obsessed with “closing the ticket.” Often, however, SAs are judged on how quickly they close tickets. In that case, the SAs are pressured to skip the final step. We borrow this name from the term used to describe high-pressure salespeople focused on “closing the deal.” *Suggestion*: Management should not measure performance based on how quickly issues are resolved but on a mixture of metrics that drive the preferred behavior. Metrics should not include time waiting for customers when calculating how long it took to complete the request. Tracking systems should permit a request to be put into a customer wait state while customers complete actions, and that time should be subtracted from the time-to-completion metrics.
 
 ##### Team of One
 
@@ -313,14 +310,14 @@ Hearing the announcement reassures the customer that SAs are aware of the proble
 
 Spend some time each month looking for trends, and take action based on them. Here are some trends to look for:
 
-- Does a customer report the same issue over and over? Why is it recurring? Does the customer need training, or is that system really so badly broken?
-- Are there many issues in a particular category? Is that system difficult to use? Could it be redesigned or replaced, or could the documentation be improved?
-- Are many customers reporting the same issue? Can they all be notified at once? Should such problems receive higher priority?
-- Can some categories of requests become self-service? Often, a customer request states that an SA is needed because something requires privileged access, such as superuser or administrator access. Look for ways to empower customers to help themselves. Many of these requests can become self-service with a little bit of web programming.
-- Who are your most frequent customers? Calculate which department generates the most tickets or who has the highest average tickets per member. Calculate which customers make up your top 20 percent of requests. Do these ratios match your funding model, or are certain customer groups more “expensive” than others?
-- Is a particular time-consuming request one of your frequent requests? If customers often accidentally delete files and you waste a lot of time each week restoring files from tape, you can invest time in helping the users learn about rm -i or how to use other safe-delete programs. Alternatively, maybe it would be appropriate to advocate for the purchase of a system that supports snapshots or lets users do their own restores. If you can generate a report of the number and frequency of restore requests, management can make a more informed decision or decide to talk to certain users about being more careful.
+- **Does a customer report the same issue over and over?** Why is it recurring? Does the customer need training, or is that system really so badly broken?
+- **Are there many issues in a particular category?** Is that system difficult to use? Could it be redesigned or replaced, or could the documentation be improved?
+- **Are many customers reporting the same issue?** Can they all be notified at once? Should such problems receive higher priority?
+- **Can some categories of requests become self-service?** Often, a customer request states that an SA is needed because something requires privileged access, such as superuser or administrator access. Look for ways to empower customers to help themselves. Many of these requests can become self-service with a little bit of web programming.
+- **Who are your most frequent customers?** Calculate which department generates the most tickets or who has the highest average tickets per member. Calculate which customers make up your top 20 percent of requests. Do these ratios match your funding model, or are certain customer groups more “expensive” than others?
+- **Is a particular time-consuming request one of your frequent requests?** If customers often accidentally delete files and you waste a lot of time each week restoring files from tape, you can invest time in helping the users learn about rm -i or how to use other safe-delete programs. Alternatively, maybe it would be appropriate to advocate for the purchase of a system that supports snapshots or lets users do their own restores. If you can generate a report of the number and frequency of restore requests, management can make a more informed decision or decide to talk to certain users about being more careful.
 
-This chapter does not discuss metrics, but a system of metrics grounded in this model might be the best way to detect areas needing improvement. The nine-step process can be instrumented easily to collect metrics. Developing metrics that drive the right behaviors is difficult. For example, if SAs are rated based on how quickly they close tickets, one might accidentally encourage the Closer behavior described earlier. As SAs proactively prevent problems, reported problems will become more serious and time-consuming. If average time to completion grows, does that mean that minor problems were eliminated or that SAs are slower at fixing all problems? SA-generated tickets for proactive fixes and planned projects make the SA contributions clearer.
+This document does not discuss metrics, but a system of metrics grounded in this model might be the best way to detect areas needing improvement. The nine-step process can be instrumented easily to collect metrics. Developing metrics that drive the right behaviors is difficult. For example, if SAs are rated based on how quickly they close tickets, one might accidentally encourage the Closer behavior described earlier. As SAs proactively prevent problems, reported problems will become more serious and time-consuming. If average time to completion grows, does that mean that minor problems were eliminated or that SAs are slower at fixing all problems? SA-generated tickets for proactive fixes and planned projects make the SA contributions clearer.
 
 ##### Case Study: Who Generates the Most Requests?
 
@@ -352,14 +349,13 @@ You should keep in mind how a product will be supported when you are designing a
 
 ### 28.8 Summary
 
-This chapter is about communication. The process recommended in this chapter helps us think about how we communicate with customers, and it gives us a base of terminology to use when discussing our work. All professionals have a base of terminology to use to effectively communicate with one another.
+This document is about communication. The process recommended in this document helps us think about how we communicate with customers, and it gives us a base of terminology to use when discussing our work. All professionals have a base of terminology to use to effectively communicate with one another.
 
-This chapter presents a formal, structured model for handling requests from customers. The process has four phases: greeting, problem identification, planning and execution, and fixing and verifying. Each phase has distinct steps, summarized in Table 28.1.
+This document presents a formal, structured model for handling requests from customers. The process has four phases: greeting, problem identification, planning and execution, and fixing and verifying. Each phase has distinct steps, summarized in Table 28.1.
 
-<!-- Source: The.Practice.of.System.and.Network.Administration-Vol.I-2017-28.pdf, PDF page 22. -->
 *Table 28.1: Overview of Phases for Problem Solution*
 
-| Phase | Step | Role |
+| **Phase** | **Step** | **Role** |
 | --- | --- | --- |
 | Phase A: “Hello!” | 1. The Greeting | Greeter |
 | Phase B: “What’s wrong?” | 2. Problem Classification | Classifier |
@@ -375,7 +371,7 @@ Following this model makes the incident-reporting process more structured and fo
 
 It is critical that you use helpdesk issue-tracking software rather than trying to remember the requests in your head, using scraps of paper, or relying on email boxes. Automation reduces the tedium of managing incoming requests and collecting statistics. Software that tracks tickets for you saves time in real ways. Tom once measured that a group of three SAs was spending an hour a day per person to track issues. That is a loss of two staff days per week!
 
-The process described in this chapter brings clarity to the issue of customer support by defining which steps must be followed for a single successful call for help. We showed why these steps are to be followed and how each step prepares you for future steps.
+The process described in this document brings clarity to the issue of customer support by defining which steps must be followed for a single successful call for help. We showed why these steps are to be followed and how each step prepares you for future steps.
 
 Although knowledge of this model can improve an SA’s effectiveness by leveling the playing field, it is not a panacea—nor is it a replacement for creativity, experience, or having the right resources. The model does not replace the right training, the right tools, and the right support from management, but it must be part of a well-constructed helpdesk.
 
@@ -383,4 +379,4 @@ Many SAs are naturally good at customer care and react negatively to structured 
 
 ### Exercises
 
-1. Are there times when you should not use the nine-step model? 2. What are the tools used in your environment for processing customer requests, and how do they fit into the nine-step model? Are there ways they could fit better? 3. What are all the ways to greet customers in your environment? Which ways could you use but don’t? Why? 4. In your environment, you greet customers by various methods. How do the methods compare in terms of cost, speed (faster completion), and customers’ preference? Is the most expensive method the one that customers prefer the most? 5. Some problem statements can be stated concisely, such as the routing problem example in step 3. Dig into your trouble-tracking system to find five typically reported problems. What is the shortest problem statement that completely describes the issue? 6. Query your ticket-tracking software and determine who were your top 10 ticket creators overall in the last 12 months; then sort them by customer group or department. Next, determine which customer groups have the highest percustomer ticket count. Which customers make up your top 20 percent? Now that you have this knowledge, what will you do? Examine other queries from Section 28.7.5. 7. Which is the most important of the nine steps? Justify your answer.
+1. Are there times when you should not use the nine-step model? 2. What are the tools used in your environment for processing customer requests, and how do they fit into the nine-step model? Are there ways they could fit better? 3. What are all the ways to greet customers in your environment? Which ways could you use but don’t? Why? 4. In your environment, you greet customers by various methods. How do the methods compare in terms of cost, speed (faster completion), and customers’ preference? Is the most expensive method the one that customers prefer the most? 5. Some problem statements can be stated concisely, such as the routing problem example in step 3. Dig into your trouble-tracking system to find five typically reported problems. What is the shortest problem statement that completely describes the issue? 6. Query your ticket-tracking software and determine who were your top 10 ticket creators overall in the last 12 months; then sort them by customer group or department. Next, determine which customer groups have the highest percustomer ticket count. Which customers make up your top 20 percent? Now that you have this knowledge, what will you do? Examine other queries from [Trend Analysis](HANDLING.INCIDENT.REPORT.md#2875-trend-analysis). 7. Which is the most important of the nine steps? Justify your answer.
