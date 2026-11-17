@@ -42,3 +42,16 @@ In summary, DevOps is about improving speed, quality, and efficiency in software
 1. [Linux Directory Structure - Hierarchy](https://eng.libretexts.org/Bookshelves/Computer_Science/Operating_Systems/Linux_-_The_Penguin_Marches_On_(McClanahan)/04%3A_Managing_Linux_Storage/5.12%3A_Linux_Directory_Structure/5.12.01%3A_Linux_Directory_Structure_-_Hierarchy)
 2. [Linux Directory Structure (File System Structure)](https://www.thegeekstuff.com/2010/09/linux-file-system-structure/)
 3. [How to use GitHub Personal Access Token (PAT) in VSCode](https://linuxpip.org/use-github-personal-access-token-in-vscode/)
+
+## Site Reliability Engineering Foundations
+
+These chapters introduce the SRE approach to service management and explain the production environment behind it. Begin with the responsibilities and engineering principles of SRE, then explore Google’s datacenters, resource management, storage, networking, and the path of a user request.
+
+## Table of Contents
+
+1. [Introduction](./INTRODUCTION.md)
+2. [The Production Environment at Google, from the Viewpoint of an SRE](./GOOGLE.PRODUCTION.ENVIRONMENT.md)
+
+## References
+
+Beyer, Betsy, Chris Jones, Jennifer Petoff, and Niall Richard Murphy, editors. *[Site Reliability Engineering: How Google Runs Production Systems](https://www.oreilly.com/library/view/site-reliability-engineering/9781491929117/)*. 1st ed. O’Reilly Media, 2016. ISBN 9781491929117 (electronic edition).
