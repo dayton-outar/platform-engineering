@@ -30,7 +30,7 @@ Services are what distinguish a structured computing environment that is managed
 
 Lastly, there are **primary applications** and the **back-office systems** that support them. Applications generally drive business functions such as payroll, inventory management, enterprise resource planning (ERP), supply chain management, and so on. Back-office services include the databases and other behind-the-scenes services that support applications. Together they form the company’s critical path: The company cannot function without them.
 
-#### Companies No Longer Sell Atoms, They Manage Bits
+### Companies No Longer Sell Atoms, They Manage Bits
 
 In the old days computers were not in the critical path to accomplish the business’s objectives. Rather, the computer was viewed as an ancillary device. You could sell a car or perform surgery on a sick patient even if the computer was down. The computer was required after the fact for billing, inventory, and other things after the primary task was complete.
 
@@ -81,7 +81,7 @@ Define terminology early in the document. Getting agreement to the ontology that
 
 Annotate the importance of each requirement. Marking each as “must have,” “desired,” or “optional/nice to have” communicates intent, gives the system designers flexibility, and helps implementors prioritize work when deadlines are looming and features must be cut.
 
-#### Applied Ontology: Clarifying Definitions
+### Applied Ontology: Clarifying Definitions
 
 A very inefficient and contentious requirements-gathering process was improved when someone pointed out that everyone had a different definition of a computer. Is a computer the virtual machine, the machine that the virtual machine runs on, or the entity in a IPAM database, which might be out-of-date and describe a machine that used to exist or will exist in the future?
 
@@ -185,7 +185,7 @@ Services that are replicated in many places must be manageable in a centralized 
 
 Remote management systems should work well over long-distance (highlatency) connections. For example, some remote management utilities fail to work if the management client is in California and the service itself is in Europe. In this situation each network packet takes more than 100 ms to reach its destination. Protocols may time out. User interfaces may work but can be unusably slow. This is not a limit of the technology, but rather bad software engineering. Plenty of APIs and user interfaces work well over high-latency links—and so should management tools.
 
-#### Management Over High-Latency Links
+### Management Over High-Latency Links
 
 When Tom complained to Dell that iDRAC’s web-based user interface ran unacceptably slowly from as little as 12 miles away, he was told that iDRAC wasn’t designed to work at long distances. We’ll assume the representative misspoke, since it would be hilarious if a remote management system wasn’t designed to work well remotely.
 
@@ -205,7 +205,7 @@ Software is never done. There will always be the need for new software releases,
 
 More importantly, software is malleable and vendors should be providing new features and improvements over time. There’s always room for improvement.
 
-#### Software Is Not a Hammer
+### Software Is Not a Hammer
 
 A hammer is manufactured and is ready to be sold to the customer. At that point the product is complete. Software is never complete. Anyone who disagrees should leave the software business and go back to making hammers. Be wary of vendors that provide upgrades rarely, sparingly, or only begrudgingly. If a security hole is discovered, the vendor should be able to provide a software patch within hours or days, not leaving you to wait for the annual software release. If software releases aren’t frequent, periodic, and scheduled, then this is a sign that the vendor’s management thinks their company is making hammers. Such companies should not receive our support because they fail to support us.
 
@@ -287,7 +287,7 @@ Wherever possible, a new service should be built around an architecture that use
 
 By contrast, a **closed service** uses standards, protocols, APIs, and file formats that are owned by one company, are controlled by that one company, and do not interoperate with other products. Other products are prevented from using the standard because the standard is not publicly documented, because it requires licensing, or because the vendor forbids it. Vendors use proprietary protocols when they are covering new territory or are attempting to maintain market share by preventing the creation of a level playing field. In the former scenario, the vendor should then work with the appropriate standards bodies to define and document open standards, and many vendors do so.
 
-#### The Protocol Versus the Product
+### The Protocol Versus the Product
 
 SAs should understand the difference between the protocol and the product. For example, there is a difference between the IMAP protocol and the software that implement it. IMAP is not a product but rather a document, written in plain English, that explains how bits are to be transmitted over the wire. This is different from a product that uses IMAP to permit clients to access email. The confusion manifests itself frequently by SAs who conflate the protocol and the software that implements the protocol.
 
@@ -307,7 +307,7 @@ A better way is to select protocols based on open standards, permitting users an
 
 For comparison, the next anecdote illustrates what can happen when customers select a proprietary email system that does not use open protocols but fits their client-side needs.
 
-#### Hazards of Proprietary Email Software
+### Hazards of Proprietary Email Software
 
 A pharmaceutical company based in New Jersey selected a particular proprietary email package for its PC user base after a long evaluation. The selection was based on user interface and features, with little concern for ease of server management, reliability, or scalability.
 
@@ -323,7 +323,7 @@ Open protocols and file formats typically change only in upwardly compatible way
 
 Another benefit from using open systems is that they don’t require gateways to the rest of the world. Gateways are the “glue” that translate between different systems. Although a gateway is a lifesaver when you need to bridge the gap between two incompatible systems, not needing a gateway is even better. Gateways are an additional service that adds to the administrative workload, requiring capacity planning, engineering, monitoring, and ongoing operational support. Reducing the number of services is a good thing.
 
-#### Protocol Gateways and Reliability Reduction
+### Protocol Gateways and Reliability Reduction
 
 In college, Tom’s email system was a proprietary system that was not based on Internet standard protocols, such as SMTP. Instead, the system was sold with a separate service that used a gateway to send email to and from the Internet. The gateway used its proprietary protocol to communicate with the mail server and SMTP to communicate with the rest of the world, and vice versa. The gateway added to the administrative burden of running the system: It was yet another thing to manage, debug, do capacity planning for, and so on.
 

@@ -1,8 +1,4 @@
-# Chapter 22
-
-## Disaster Recovery and Data Integrity
-
-Source: [The.Practice.of.System.and.Network.Administration-Vol.I-2017-22.pdf](./The.Practice.of.System.and.Network.Administration-Vol.I-2017-22.pdf), PDF pages 1–9.
+# Disaster Recovery and Data Integrity
 
 The case studies and first-person accounts below reflect the source authors’ experience, as published in 2017.
 
@@ -20,13 +16,13 @@ Building a disaster-recovery plan involves understanding both the risks that you
 
 As with any project, building a disaster-recovery plan starts with understanding the requirements: determining which disasters could afflict your site, the likelihood that those disasters will strike, the cost to your company if they do strike, and how quickly the various parts of your business need to be revived. Once you and your management understand what can happen, you can get a budget allocated for the project and start looking at how to meet and, preferably, beat those requirements.
 
-### 22.1 Risk Analysis
+## Risk Analysis
 
 The first step in building a disaster-recovery plan is to perform a risk analysis. A risk analysis involves determining which disasters the company is at risk of experiencing and what the chances are of those disasters occurring. The analyst also determines the likely cost to the company for each disaster should it occur. The company then uses this information to decide approximately how much money it is reasonable to spend on trying to mitigate the effects of each type of disaster.
 
 Since risk management involves specialized skills that most employees don’t use daily, it can be wise to hire external consultants to perform the risk analysis. A large company may hire specialists to produce a risk report, while having an in-house person be responsible for risk management.
 
-##### Lack of Planning Can Cause Risk Taking
+### Lack of Planning Can Cause Risk Taking
 
 A computer equipment manufacturer had a fire in its facility in the west of Ireland. Knowing that the building’s fire protection system was inadequate, several staff members went to the datacenter and started throwing equipment out the window because the equipment had a better chance of surviving the fall than the fire. Other staff members then carried the equipment up the hill to their neighboring building. The staff members in the burning building left when they judged that the fire hazard was too great.
 
@@ -40,13 +36,13 @@ A simpler, smaller-scale example is a large site that has a single point of fail
 
 This example is somewhat simplified. Each disaster can occur to different degrees with different likelihoods and have a wide range of cost implications. Damage prevention for one level of a particular disaster will probably have mitigating effects on the amount of damage sustained at a higher level of the same disaster. All this complexity is taken into account by a professional risk analyst when he or she recommends a budget for the various types of disaster preparedness.
 
-### 22.2 Legal Obligations
+## Legal Obligations
 
 Beyond the basic cost to the company, additional considerations need to be taken into account as part of the DR planning process. Commercial companies have legal obligations to their vendors, customers, and shareholders in terms of meeting contract demands. Public companies have to abide by the laws of the stock markets on which they are traded. Some industries, such as banking, are governed by local laws relating to business continuity. Universities have contractual obligations to their students. Building codes and work-safety regulations also must be followed.
 
 The legal department should be able to elaborate on these obligations. Typically, they are of the form “The company must be able to resume shipping product within one week” or “The company can delay reporting quarterly results by at most three days under these circumstances.” Those obligations translate into requirements for the DR plan. They define how quickly various pieces of the physical and electronic infrastructure must be restored to working order. Restoring individual parts of the company to working order before the entire infrastructure is operational requires an in-depth understanding of which pieces of infrastructure those parts rely on and a detailed plan of how to get them working. Meeting the time commitments also requires an understanding of how long restoring those components will take. We look at that issue further later in this document.
 
-### 22.3 Damage Limitation
+## Damage Limitation
 
 Damage limitation is about reducing the cost of the disasters. Most damagelimitation efforts involve additional cost to the company and are subject to the cost/benefit analysis that is performed by the risk analysts. Some damage limitation can come at little or no cost to the company through advance planning and good processes.
 
@@ -58,7 +54,7 @@ Most damage-limitation mechanisms fall somewhere between almost free and outland
 
 Another area that often merits attention is loss of power. Short power outages, spikes, or brownouts can be handled by a UPS; longer interruptions will require a generator. The more equipment on protected power and the longer you need to be able to run that equipment, the more it will cost. Typically the most essential equipment should be protected against power loss—for example, freezers at a biotech company and call centers at a customer service company.
 
-### 22.4 Preparation
+## Preparation
 
 Even with a reasonable amount of damage control in place, your organization may still experience a disaster. Part of your disaster planning must include preparation for this eventuality. Being prepared for a disaster means being able to restore the essential systems to working order in a timely manner, as defined by your legal, ethical, and fiduciary obligations.
 
@@ -70,7 +66,7 @@ A site usually will need to have important documents archived at a document repo
 
 Remember that you may need power, telephone, and network connectivity as part of restoring services. Work with the facilities group on these aspects of DR planning. It may be advisable to arrange for an emergency office location to house critical functions as part of the disaster plan.
 
-##### Good Preparation for an Emergency Facility
+### Good Preparation for an Emergency Facility
 
 A company in California provided call center services for its clients, which were predominantly large financial institutions. The company had a wellrehearsed procedure to execute in case of a disaster that affected the call center building. The company had external outlets for providing power and call center phone services, spare cables and equipment were maintained in reserve, and items such as tents, and folding tables and chairs, were kept in case they were needed.
 
@@ -78,7 +74,7 @@ When a strong earthquake struck in 1991, the call center was rapidly relocated o
 
 The plan to relocate the call center outside in the case of emergency worked well because in California the most likely emergency was an earthquake and the weather was likely to be dry, at least long enough for the tents to be put up. The company had prepared well for its most likely disaster scenario.
 
-### 22.5 Data Integrity
+## Data Integrity
 
 **Data integrity** means ensuring that data is not altered by external sources. Data can be corrupted maliciously by viruses or individuals. It can also be corrupted inadvertently by individuals, bugs in programs, and undetected hardware malfunctions. For important data, consider ways to ensure integrity as part of day-today operations or the backup or archival process. For example, data that should not change can be checked against a read-only checksum of the data. Databases that should experience small changes or have only data added should be checked for unexpectedly large changes or deletions. Examples include source code control systems and databases of gene sequences. Exploit your knowledge of the data on your systems to automate integrity checking.
 
@@ -88,7 +84,7 @@ Industrial espionage and theft of intellectual property are not uncommon, and a 
 
 It is important to make sure that the implementers put in place the dataintegrity mechanisms that the system designers recommend. It is inadvisable to wait for corruption to occur before recognizing the value of these systems.
 
-### 22.6 Redundant Sites
+## Redundant Sites
 
 The ultimate preparation for a disaster is to have fully redundant versions of everything that can take over when the primary version fails. In other words, an organization may have a redundant site with redundant systems at a location that will not be affected by the same disaster.
 
@@ -98,7 +94,7 @@ There are a few different design patterns for this sort of redundancy. Moreover,
 
 To reduce expense, some companies may decide to use a second site as an alternative location for rebuilding services, rather than maintaining live redundant equipment at site. If the company has a contract for an emergency supply of equipment, that equipment could be sent to the alternative datacenter site. If the site that was affected by the disaster is badly damaged, this may be the fastest way to have the services up and running. Another option is to designate some services as less critical and to use the equipment from those services to rebuild the critical services. Sometimes, you are lucky enough to have a design that compartmentalizes various pieces, making it easy to design a redundant site.
 
-### 22.7 Security Disasters
+## Security Disasters
 
 A growing concern is security disasters. Someone breaks into the corporate web site and changes the logo to something obscene. Someone steals the database of credit card numbers from an e-commerce site. A virus deletes all the files it can access. Unlike with natural disasters, no physical harm occurs with a security disaster, and the attack may not be from a physically local phenomenon.
 
@@ -106,7 +102,7 @@ A similar risk analysis can be performed to determine the kinds of measures requ
 
 Sites often purchase large, canned systems without asking for an explanation of the security risks of such systems. Although no system is perfectly secure, a vendor should be able to explain the product’s security structure, the risk factors, and how recovery would occur in the event of data loss.
 
-### 22.8 Media Relations
+## Media Relations
 
 When a disaster occurs, the media will probably want to know what happened, what effect it is having on the company, and when services will be restored. Sadly, the answer to all three questions is usually “We aren’t sure.” This can be the worst answer you can give a reporter. Handling the media badly during a disaster can cause bigger problems than the original disaster.
 
@@ -114,7 +110,7 @@ We have two simple recommendations on this topic. First, have a public relations
 
 Note that these recommendations all have one thing in common: They require planning ahead of time. Never be in a disaster without a media plan. Don’t try to write one during a disaster.
 
-### 22.9 Summary
+## Summary
 
 The most important aspect of disaster planning is understanding which services are the most critical to the business and what the time constraints are for restoring those services. You must know which disasters are likely to happen and how costly they would be before you can complete a risk analysis and determine the company’s budget for limiting the damage.
 
@@ -123,7 +119,3 @@ A disaster plan should be built with consideration of those criteria. It should 
 Look for simple ways to limit damage, as well as more complex and expensive ways. Preparations that are automatic and become part of the infrastructure are most effective. Fire containment, water detection, earthquake bracing, and proper rack-mount equipment fall into this category. You also must prepare a plan for a team of people to execute in case of emergency. Simple plans are often the most effective. The team members must be familiar with their individual roles and should practice disaster recovery a few times a year.
 
 Full redundancy, including a redundant site, is beyond the budget of most companies. If a company has a second datacenter site, however, there are ways to incorporate it into the disaster plan at reasonable expense.
-
-### Exercises
-
-1. What is disaster-recovery planning? 2. What are the key elements of a disaster-recovery plan? 3. How much should be spent to mitigate a potential disaster? 4. Which business units in your company would need to be up and running first after a disaster, and how quickly would they need to be operational? 5. Which commitments does your company have to its customers, and how do those commitments influence your disaster planning? 6. Which disasters are most likely to hit each of your sites? How big an area might each disaster affect, and how many of your company’s buildings could be affected? 7. What would the cost be to your company if a moderate disaster hit one of its locations? 8. Which forms of disaster limitation do you have in place now? 9. Which forms of disaster limitation would you like to implement? How much would each of them cost?

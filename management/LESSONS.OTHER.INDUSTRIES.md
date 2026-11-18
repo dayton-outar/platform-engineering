@@ -1,8 +1,4 @@
-# Chapter 33
-
-## Lessons Learned from Other Industries
-
-Source: [Site.Reliability.Engineering-2016-32.pdf](./Site.Reliability.Engineering-2016-32.pdf), PDF pages 19–32.
+# Lessons Learned from Other Industries
 
 The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
 
@@ -36,7 +32,7 @@ A number of principles fundamental to Site Reliability Engineering at Google are
 
 This document introduces the industries profiled and the industry veterans interviewed by the source author. We define key SRE themes, discuss how these themes are implemented at Google, and give examples of how these principles reveal themselves in other industries for comparative purposes. We conclude with some insights and discussion on the patterns and anti-patterns we discovered.
 
-### Meet Our Industry Veterans
+## Meet Our Industry Veterans
 
 **Peter Dahl** is a Principal Engineer at Google. Previously, he worked as a defense contractor on several high-reliability systems including many airborne and wheeled vehicle GPS and inertial guidance systems. Consequences of a lapse in reliability in such systems include vehicle malfunction or loss, and the financial consequences associated with that failure.
 
@@ -62,7 +58,7 @@ This document introduces the industries profiled and the industry veterans inter
 
 Now that you’ve met our experts and gained a high-level understanding of why reliability is important in their respective former fields, we’ll delve into the four key themes of reliability.
 
-### Preparedness and Disaster Testing
+## Preparedness and Disaster Testing
 
 “Hope is not a strategy.” This rallying cry of the SRE team at Google sums up what we mean by preparedness and disaster testing. The SRE culture is forever vigilant and constantly questioning: What could go wrong? What action can we take to address those issues before they lead to an outage or data loss? Our annual Disaster and Recovery Testing (DiRT) drills seek to address these questions head-on [Kri12]. In DiRT exercises, SREs push production systems to the limit and inflict actual outages in order to:
 
@@ -88,19 +84,19 @@ Several strategies for testing disaster readiness and ensuring preparedness in o
 
 - Defense in depth
 
-#### Relentless Organizational Focus on Safety
+### Relentless Organizational Focus on Safety
 
 This principle is particularly important in an industrial engineering context. According to Eddie Kennedy, who worked on a manufacturing floor where workers faced safety hazards, “every management meeting started with a discussion of safety.” The manufacturing industry prepares itself for the unexpected by establishing highly defined processes that are strictly followed at every level of the organization. It is critical that all employees take safety seriously, and that workers feel empowered to speak up if and when anything seems amiss. In the case of nuclear power, military aircraft, and railway signaling industries, safety standards for software are well detailed (e.g., UK Defence Standard 00-56, IEC 61508, IEC513, US DO-178B/C, and DO-254) and levels of reliability for such systems are clearly identified (e.g., Safety Integrity Level (SIL) 1–4),[^p23-3] with the aim of specifying acceptable approaches to delivering a product.
 
-#### Attention to Detail
+### Attention to Detail
 
 From his time spent in the US Navy, Jeff Stevenson recalls an acute awareness of how a lack of diligence in executing small tasks (for example, lube oil maintenance) could lead to major submarine failure. A very small oversight or mistake can have big effects. Systems are highly interconnected, so an accident in one area can impact multiple related components. The nuclear Navy focuses on routine maintenance to ensure that small issues don’t snowball.
 
-#### Swing Capacity
+### Swing Capacity
 
 System utilization in the telecom industry can be highly unpredictable. Absolute capacity can be strained by unforeseeable events such as natural disasters, as well as large, predictable events like the Olympics. According to Gus Hartmann, the industry deals with these incidents by deploying swing capacity in the form of a SOW (switch on wheels), a mobile telco office. This excess capacity can be rolled out in an emergency or in anticipation of a known event that is likely to overload the system. Capacity issues veer into the unexpected in matters unrelated to absolute capacity, as well. For example, when a celebrity’s private phone number was leaked in 2005 and thousands of fans simultaneously attempted to call her, the telecom system exhibited symptoms similar to a DDoS or massive routing error.
 
-#### Simulations and Live Drills
+### Simulations and Live Drills
 
 Google’s Disaster Recovery tests have a lot in common with the simulations and live drills that are a key focus of many of the established industries we researched. The potential consequences of a system outage determine whether using a simulation or a live drill is appropriate. For example, Matthew Toia points out that the aviation industry can’t perform a live test “in production” without putting equipment and passengers at risk. Instead, they employ extremely realistic simulators with live data feeds, in which the control rooms and equipment are modeled down to the tiniest details to ensure a realistic experience without putting real people at risk. Gus Hartmann reports that the telecom industry typically focuses on live drills centered on surviving hurricanes and other weather emergencies. Such modeling led to the creation of weatherproof facilities with generators inside the building capable of outlasting a storm.
 
@@ -108,21 +104,21 @@ The US nuclear Navy uses a mixture of “what if” thought exercises and live d
 
 According to Mike Doherty, lifeguards face disaster testing exercises more akin to a “mystery shopper” experience. Typically, a facility manager works with a child or an incognito lifeguard in training to stage a mock drowning. These scenarios are conducted to be as realistic as possible so that lifeguards aren’t able to differentiate between real and staged emergencies.
 
-#### Training and Certification
+### Training and Certification
 
 Our interviews suggest that training and certification are particularly important when lives are at stake. For example, Mike Doherty described how lifeguards complete a rigorous training certification, in addition to a periodic recertification process. Courses include fitness components (e.g., a lifeguard must be able to hold someone heavier than themselves with shoulders out of the water), technical components like first aid and CPR, and operational elements (e.g., if a lifeguard enters the water, how do other team members respond?). Every facility also has site-specific training, because lifeguarding in a pool is markedly different from lifeguarding on a lakeside beach or on the ocean.
 
-#### Focus on Detailed Requirements Gathering and Design
+### Focus on Detailed Requirements Gathering and Design
 
 Some of the engineers we interviewed discussed the importance of detailed requirements gathering and design docs. This practice was particularly important when working with medical devices. In many of these cases, actual use or maintenance of the equipment doesn’t fall within the purview of product designers. Thus, usage and maintenance requirements must be gathered from other sources.
 
 For example, according to Erik Gross, laser eye surgery machines are designed to be as foolproof as possible. Thus, soliciting requirements from the surgeons who actually use these machines and the technicians responsible for maintaining them is particularly important. In another example, former defense contractor Peter Dahl described a very detailed design culture in which creating a new defense system commonly entailed an entire year of design, followed by just three weeks of writing the code to actualize the design. Both of these examples are markedly different from Google’s launch and iterate culture, which promotes a much faster rate of change at a calculated risk. Other industries (e.g., the medical industry and the military, as previously discussed) have very different pressures, risk appetites, and requirements, and their processes are very much informed by these circumstances.
 
-#### Defense in Depth and Breadth
+### Defense in Depth and Breadth
 
 In the nuclear power industry, defense in depth is a key element to preparedness [IAEA12]. Nuclear reactors feature redundancy on all systems and implement a design methodology that mandates fallback systems behind primary systems in case of failure. The system is designed with multiple layers of protection, including a final physical barrier to radioactive release around the plant itself. Defense in depth is particularly important in the nuclear industry due to the zero tolerance for failures and incidents.
 
-### Postmortem Culture
+## Postmortem Culture
 
 Corrective and preventative action (CAPA)[^p25-4] is a well-known concept for improving reliability that focuses on the systematic investigation of root causes of identified issues or risks in order to prevent recurrence. This principle is embodied by SRE’s strong culture of blameless postmortems. When something goes wrong (and given the scale, complexity, and rapid rate of change at Google, something inevitably *will* go wrong), it’s important to evaluate all of the following:
 
@@ -146,7 +142,7 @@ The stakes are so high in the manufacturing and chemical industries that even �
 
 Lifeguarding has a deeply embedded culture of post-incident analysis and action planning. Mike Doherty quips, “If a lifeguard’s feet go in the water, there will be paperwork!” A detailed write-up is required after any incident at the pool or on the beach. In the case of serious incidents, the team collectively examines the incident end to end, discussing what went right and what went wrong. Operational changes are then made based on these findings, and training is often scheduled to help people build confidence around their ability to handle a similar incident in the future. In cases of particularly shocking or traumatic incidents, a counselor is brought on site to help staff cope with the psychological aftermath. The lifeguards may have been well prepared for what happened in practice, but might *feel* like they haven’t done an adequate job. Similar to Google, lifeguarding embraces a culture of blameless incident analysis. Incidents are chaotic, and many factors contribute to any given incident. In this field, it’s not helpful to place blame on a single individual.
 
-### Automating Away Repetitive Work and Operational Overhead
+## Automating Away Repetitive Work and Operational Overhead
 
 At their core, Google’s Site Reliability Engineers are software engineers with a low tolerance for repetitive reactive work. It is strongly ingrained in our culture to avoid repeating an operation that doesn’t add value to a service. If a task can be automated away, why would you run a system on repetitive work that is of low value? Automation lowers operational overhead and frees up time for our engineers to proactively assess and improve the services they support.
 
@@ -162,7 +158,7 @@ According to Erik Gross, automation has been quite effective in reducing user er
 
 Automation now greatly lessens the chance that humans make a mistake that impacts someone’s vision. A computerized sanity check of manually entered data was the first major automated improvement: if a human operator inputs measurements outside an expected range, automation promptly and prominently flags this case as unusual. Other automated improvements followed this development: now the iris is photographed during the preliminary refractive eye test. When it’s time to perform the surgery, the iris of the patient is automatically matched to the iris in the photo, thus eliminating the possibility of mixing up patient data. When this automated solution was implemented, an entire class of medical errors disappeared.
 
-### Structured and Rational Decision Making
+## Structured and Rational Decision Making
 
 At Google in general, and in Site Reliability Engineering in particular, data is critical. The team aspires to make decisions in a structured and rational way by ensuring that:
 
@@ -190,7 +186,7 @@ Other industries also take a clear, data-driven approach to decision making. In 
 
 Finally, some industries, like proprietary trading, divide decision making to better manage risk. According to John Li, this industry features an enforcement team separate from the traders to ensure that undue risks aren’t taken in pursuit of achieving a profit. The enforcement team is responsible for monitoring events on the floor and halting trading if events spin out of hand. If a system abnormality occurs, the enforcement team’s first response is to shut down the system. As put by John Li, “If we aren’t trading, we aren’t losing money. We aren’t making money either, but at least we aren’t losing money.” Only the enforcement team can bring the system back up, despite how excruciating a delay might seem to traders who are missing a potentially profitable opportunity.
 
-### Conclusions
+## Conclusions
 
 Many of the principles that are core to Site Reliability Engineering at Google are evident across a wide range of industries. The lessons already learned by well-established industries likely inspired some of the practices in use at Google today.
 
@@ -200,7 +196,7 @@ At Google, we constantly walk a tightrope between user expectations for high rel
 
 Google has that flexibility in most of our software products and services, which operate in an environment in which lives are not directly at risk if something goes wrong. Therefore, we’re able to use tools such as error budgets ([Motivation for Error Budgets](../principles/EMBRACING.RISK.md#motivation-for-error-budgets)) as a means to “fund” a culture of innovation and calculated risk taking. In essence, Google has adapted known reliability principles that were in many cases developed and honed in other industries to create its own unique reliability culture, one that addresses a complicated equation that balances scale, complexity, and velocity with high reliability.
 
-### Notes
+## Notes
 
 [^p20-1]: E911 (Enhanced 911): Emergency response line in the US that leverages location data.
 

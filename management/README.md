@@ -24,8 +24,7 @@ These readings cover the service lifecycle, from gathering requirements and plan
 4. [Communication and Collaboration in SRE](./COMMUNICATION.COLLABORATION.SRE.md)
 5. [The Evolving SRE Engagement Model](./EVOLVING.SRE.ENGAGEMENT.MODEL.md)
 6. [Lessons Learned from Other Industries](./LESSONS.OTHER.INDUSTRIES.md)
-7. [Conclusion](./CONCLUSION.md)
-8. [SRE Supplementary Material](./SRE.SUPPLEMENTARY.MATERIAL.md)
+7. [SRE Supplementary Material](./SRE.SUPPLEMENTARY.MATERIAL.md)
 
 ## References
 

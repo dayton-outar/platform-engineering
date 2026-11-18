@@ -1,8 +1,4 @@
-# Chapter 20
-
-## Service Launch: DevOps
-
-Source: [The.Practice.of.System.and.Network.Administration-Vol.I-2017-20.pdf](./The.Practice.of.System.and.Network.Administration-Vol.I-2017-20.pdf), PDF pages 1–19.
+# Service Launch: DevOps
 
 The case studies and first-person accounts below reflect the source authors’ experience, as published in 2017.
 
@@ -12,7 +8,7 @@ The DevOps movement has a number of principles that we can adopt to improve any 
 
 This document focuses on two ways of replacing a risky big launch with many smaller launches. Smaller batches reduce the scope and risk of each change. The first way is to use continuous integration and deployment techniques, which create the ability to rapidly and confidently launch new releases into production. The second way is to first develop a minimum viable product (MVP) and then enhance it with many small improvements over time.
 
-##### DevOps or Rapid Release
+### DevOps or Rapid Release
 
 The IT department of one *Fortune* 100 company started a project to adopt DevOps practices but found huge resistance at every level. People had many preconceived notions of what DevOps was. The myths and misconceptions held by employees confused the issue and derailed the entire project.
 
@@ -22,7 +18,7 @@ Members of the IT department went back and rewrote all their presentations. They
 
 Other teams accepted the concept now that the focus was on a benefit they could appreciate. Soon this Rapid Release Initiative was transforming the company.
 
-### 20.1 Continuous Integration and Deployment
+## Continuous Integration and Deployment
 
 The six-phase launch process discussed in [Service Launch: Fundamentals](SERVICE.LAUNCH.FUNDAMENTALS.md), included various staging areas that a software release flows through: development, testing, beta, and production. Each stage reduces the risk of surprises and failures at the production launch. We can think of those stages as practice for the actual launch. If practice makes perfect, shouldn’t we practice a lot?
 
@@ -30,7 +26,7 @@ While the staccato movement from one staging area to another is commonly used th
 
 A more modern technique is called continuous integration and continuous delivery (CI/CD). This practice automates software building, packaging, and testing so that it can be done frequently. In fact, the cycle is repeated for each change to the source code. Thus, instead of disconnected tests done periodically, it is a continuous process. Each release is automatically installed in a stage and put through a testing process. If all the tests pass, the release is installed in the beta staging area, where more tests run automatically. In some environments these tests gate automatic deployment to the production environment.
 
-#### 20.1.1 Test Ordering
+### Test Ordering
 
 The order in which tests run is important. The most expensive tests should be placed at the end of the testing pipeline. A less expensive test failing early prevents us from having wasted resources on a more expensive test. For example, if there are manual tests, do them at the end. These tests need to be done only if all the automated, and therefore less expensive, tests are successful. Imagine spending a morning running manual tests and then running the automated tests, only to find one failed. You just wasted your morning.
 
@@ -38,7 +34,7 @@ If there are manual tests, you may choose to run them only occasionally. In fact
 
 Sites with fully automated testing can achieve truly continuous integration and delivery. That is, each change triggers a release that is built and tested. This way, if there is a failure, team members know exactly which change introduced the problem—the most recent change! Batching up tests in a daily, weekly, or monthly release means a failure could be present in any of a large batch of changes and is more time-consuming to debug.
 
-#### 20.1.2 Launch Categorizations
+### Launch Categorizations
 
 We classify the way organizations perform launches into four general categories: chaotic, periodic, continuous, and push-on-green.
 
@@ -59,7 +55,7 @@ Klein, Betser & Monroe (2014b) provide a good overview of the rigorous methodolo
 
 Later in this document we’ll discuss how these techniques can be applied to third-party software, which is commonly used in most enterprise environments.
 
-##### Eliminating the Approval Committees at Google
+### Eliminating the Approval Committees at Google
 
 In some organizations, there is an approval committee that signs off on a release before it is launched to production. The committee has access to the beta or UAT environment and blesses the release.
 
@@ -69,7 +65,7 @@ Daniel V. Klein gave a talk at LISA 2014 describing how Google is able to launch
 
 It is not simply a matter of automating the checks done by the approval committee. Klein recommends a higher level of quality and testing at every step of the process, starting with the methods and behaviors of the developers, all the way through to how the releases are pushed into production.
 
-### 20.2 Minimum Viable Product
+## Minimum Viable Product
 
 The six-step launch process described in [Service Launch: Fundamentals](SERVICE.LAUNCH.FUNDAMENTALS.md) is very common— but also extremely risky. It puts all our eggs in one basket. If we aren’t ready by the launch date, we are doomed.
 
@@ -100,13 +96,13 @@ While we borrow some techniques from the six-step launch process, the MVP approa
 - **Launching is low risk.** Because we’ve launched to beta so many times, we get very good at it. The process is automated. We’ve seen plenty of edge cases and added code to detect them, work around errors, and so on. The process gets smoother the more we use it. There is no big, scary “launch day.”
 - **The difference between beta and production stays small.** Since we are adding one or two features at a time, the delta between the beta and production versions stays small. When we do launch, we understand which new feature is being launched. This is less risky, easier to comprehend, and easier to explain than mega-launches with hundreds or thousands of new features being introduced at once. We can concisely communicate what is in each release, which makes our customers better informed and better able to understand our work.
 
-##### Case Study: MVP Applied to Writing Books
+### Case Study: MVP Applied to Writing Books
 
 This launch methodology works for many kinds of projects, not just IT services. In fact, the source authors used it to develop the third edition of *The Practice of System and Network Administration*. They determined a minimum viable product and worked toward that goal using a ready list. They also had a prioritized list of chapters they wanted to add or rewrite. Once the minimum viable product was complete, they were always in a state where they could hand the manuscript to the publisher for editing, production, and printing.
 
 They wouldn’t want to ship the book in that initial state, as it was largely unchanged from the second edition. However, they could if they were called to do so. From then on they worked on the new features they wanted to see in the new edition. The ones they completed by their publisher’s deadline got included. The ones they didn’t finish . . . well, you’ll never know if there were any, will you?
 
-### 20.3 Rapid Release with Packaged Software
+## Rapid Release with Packaged Software
 
 This section deals with applying the rapid release methods with externally produced software—in other words, doing DevOps with shrink-wrapped software.
 
@@ -116,7 +112,7 @@ Also note that the industry trend is toward more frequent releases. Microsoft Of
 
 For all these reasons the rapid release techniques are becoming more relevant.
 
-#### 20.3.1 Testing Before Deployment
+### Testing Before Deployment
 
 If we treat packaged software as we did in the rapid release method, each release would be put through a battery of tests before it is deployed.
 
@@ -132,7 +128,7 @@ As a professional system administrator, it is your responsibility to use resourc
 
 A written checklist of tests performed manually is better than no tests. A few scripts that make it easier or less error-prone to execute some of those tests is even better. Full automation on the most basic tests, leaving a few manual tests at the end, is an improvement. It is natural for a testing regimen to start out ad hoc, solidify as a checklist, and evolve to be increasingly automated over time. We create an MVP of testing and grow it over time.
 
-##### Case Study: Evolving Email Server Tests
+### Case Study: Evolving Email Server Tests
 
 In one case, the system being developed was an email server. The tests that we ran included sending email to test complex email routing rules that were set up. Email was sent inside-to-inside, inside-to-outside, outside-to-inside, to an internal user with an automatic vacation message reply, to mailing lists, and so on.
 
@@ -142,7 +138,7 @@ Sending the messages was easy to automate. Testing that they reached their desti
 
 Eventually the delivery verification was also automated.
 
-#### 20.3.2 Time to Deployment Metrics
+### Time to Deployment Metrics
 
 A key metric to track is the amount of time between when an update is available and when it is in use in production. The longer this time span, the more we are vulnerable to security holes, the longer our customers are exposed to bugs, and the longer the delay for the productivity enhancements that new features bring. If we installed every update immediately, however, we would be the first to discover problems.
 
@@ -150,11 +146,11 @@ We can seek a happy medium between those two extremes. For example, riskaverse o
 
 Whether your goal is to have new updates deployed as soon as possible, or as soon as possible after a waiting period, recording a history of this gap between availability and use in production is useful so that we know if we are doing better over time.
 
-##### Better Software Upgrades
+### Better Software Upgrades
 
 Upgrading software in large complex systems can be difficult. The book *Ship It! A Practical Guide to Successful Software Projects* by Richardson, J. R. & Gwaltney, Jr., W. A. (2005) includes many upgrade techniques and software design patterns that can make future upgrades easier.
 
-### 20.4 Cloning the Production Environment
+## Cloning the Production Environment
 
 One technique for upgrading a service is to take an ordinary upgrade process and engineer a way to do it frequently.
 
@@ -168,13 +164,13 @@ In another situation the service was on a physical machine. This made cloning mo
 
 In both of these situations, the process was very manual but evolved to be more automated over time. The breakthrough was always the point when the clone– modify–startup process was automated and ran in a loop. This automated process left out installing the upgrade, running the tests, and verifying the test results. However, because we had the process running in a loop without manual intervention, we could add these other elements one by one and enhance the system over time. Getting the minimal loop running was the hard part. After that, a wider group of team members could get involved by adding tests and other improvements.
 
-##### Legacy Systems
+### Legacy Systems
 
 A legacy system is any system that cannot be upgraded, fixed, or improved because the only way to test such changes is to try them in production. In other words, it is any system with no continuous test and deployment infrastructure. The oldest mainframe application is not a legacy system if we can test changes to it and confidently launch new releases without fear. The hottest new technology is a legacy system if we are stuck with the existing version, unable to confidently upgrade it.
 
 Organizations should seek to eliminate all legacy systems either by literal replacement or by retrofitting them with rapid release techniques.
 
-### 20.5 Example: DNS/DHCP Infrastructure Software
+## Example: DNS/DHCP Infrastructure Software
 
 In this example we examine a complex system that already has a long manual testing regimen and evolve it to be automated to gain confidence and agility.
 
@@ -182,7 +178,7 @@ The product is DNS/DHCP appliances with a central management station deployed in
 
 The vendor produces new software releases frequently, but the organization deploys only one release per year.
 
-#### 20.5.1 The Problem
+### The Problem
 
 The policy of upgrading only once per year came about for many reasons:
 
@@ -202,7 +198,7 @@ Sadly, the yearly update cycle creates many problems:
 - Yearly deployments mean the engineers doing the upgrade are less experienced. They haven’t done the process for a year; newer members are usually doing the process for their first time.
 - The Change Review Board has a certain amount of turnover each year. Yearly upgrades mean that each change requires re-educating the CRB about the upgrade process and risks from scratch. People are more nervous about a change the first time they see it. Each year half the committee is seeing changes for the first time. Being new, they try to review the entire proposal, which is a lot of work and difficult to do well. Meanwhile, the few who remember the process from the previous year could do a better job of focusing on what’s new.
 
-#### 20.5.2 Desired End-State
+### Desired End-State
 
 The organization would be in a better place if it could benefit from new releases sooner. Incentives should encourage more testing and more frequent upgrades.
 
@@ -210,7 +206,7 @@ The skills of both the CRB members and the engineers should stay fresh through p
 
 The ultimate goal is to have high confidence in a release. The company should be able to confidently say, “Yes, this release is ready to be deployed and the deployment will go smoothly.” All employees should know this because of the thorough testing process they’re using.
 
-#### 20.5.3 First Milestone
+### First Milestone
 
 While this organization would benefit from a fully automated release process, we begin with a few baby steps.
 
@@ -230,7 +226,7 @@ When customers report bugs, each bug is not only fixed, but the customer is also
 
 Soon all testing and deployment processes are automated. The beta environment is upgraded with every new release. The engineers dream of a day when customers will participate in this process with enthusiasm by not simply submitting a bug report, but also offering a VM snapshot to be part of the regression test.
 
-#### 20.5.4 Second Milestone
+### Second Milestone
 
 The next milestone is to convince the CRB and other stakeholders to permit more frequent updates outside of the beta area. A number of strategies are employed.
 
@@ -242,7 +238,7 @@ Confidence in the deployment process improves as it is exercised many times. Soo
 
 In the end new releases are reaching users faster and with better results than before.
 
-### 20.6 Launch with Data Migration
+## Launch with Data Migration
 
 Often a launch involves migrating data from the old system to the new system. This may be a traditional SQL database, data files, or application-specific data. If you are launching a new email service, for example, there may be millions of email messages to migrate.
 
@@ -257,7 +253,7 @@ In summary, most of these problems were related to insufficient resources, proce
 
 One way to fix such problems is to migrate individual users one at a time. However, this requires that the old and new systems can run in parallel. This approach is recommended for the email migration example but won’t work for the other cases described previously. That said, it does have the advantage that it permits a slow migration. Beta users can test the system first, and the most risk-averse users can be migrated last.
 
-##### Email Migration Hacks
+### Email Migration Hacks
 
 Another way to speed up an email migration is to not migrate the messages. Here are some alternatives:
 
@@ -276,7 +272,7 @@ If the process is automated, you can run it a lot. You can, for example, run it 
 
 We teach our children that practice makes perfect. Basically that’s what we’re doing here. We practice every day, learning as we go, until we are ready for showtime.
 
-### 20.7 Controlling Self-Updating Software
+## Controlling Self-Updating Software
 
 Many software packages automatically update themselves. Examples include web browsers such as Mozilla’s Firefox and Google Chrome, applications such as Google Earth, most smartphone apps, and many others.
 
@@ -292,7 +288,7 @@ If no bugs were reported by the early users, the early repository was copied to 
 
 Over time, the system became more fully automated. As confidence in the system grew, the lag time was reduced.
 
-##### An Honest Job Advertisement
+### An Honest Job Advertisement
 
 Imagine if job advertisements were completely honest. Most companies advertising for IT workers would state that the job is mostly great except for twice a year when “Hell Month” arrives and everyone scrambles to deploy the new release of some major software system. This month is so full of stress, fear, and blame that it makes you hate your employer, your job, and your life. Oh, and by the way, the software releases are often late, so you can’t predict which month will be Hell Month. As a result, you can’t schedule any kind of vacation. Without time off to relax, stress builds and makes your life even worse.
 
@@ -304,7 +300,7 @@ Adopting DevOps techniques is not just better for the company, it is better for 
 
 Who would want to work anywhere else?
 
-### 20.8 Summary
+## Summary
 
 In this document we discussed many ways to turn a big, risky launch process into many small iterations. Small iterations reduce the scope and risk of each change.
 
@@ -321,7 +317,3 @@ These techniques work with third-party software as well. A test environment is c
 Similar techniques work when converting users to a new service. Rather than converting all users at once, we can convert a certain number of people per day, increasing our velocity as we develop confidence with the process.
 
 Launching in small iterations makes the process more likely to succeed, less risky for the business, and less stressful for the people involved. Who would want to work in an environment that works any other way?
-
-### Exercises
-
-1. Describe the rapid release strategy for launching a new service. 2. What is continuous integration and deployment? 3. Why is it important to perform the most expensive tests last? 4. What is the MVP methodology, and what are its benefits? 5. Pick a project in your environment and determine which of the four launch categorizations it falls into. Which steps would raise it to the next level? 6. Why is it unreasonable to try to achieve push-on-green for all projects? 7. Which would benefit a company most: taking a chaotic launch process and making it periodic, or taking a continuous launch process and making it pushon-green? 8. Pick a project you are involved with and describe how it could be organized using the rapid release/DevOps methodology. 9. Pick a project you are involved with and describe how it could be organized using the MVP methodology. 10. This document suggested permitting people to have access to an old email server to access their old messages. If you plan to keep the system running for a month, how long should you announce it will be available?

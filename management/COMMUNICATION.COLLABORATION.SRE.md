@@ -1,9 +1,4 @@
-# Chapter 31
-
-## Communication and Collaboration in SRE
-
-Source: [Site.Reliability.Engineering-2016-31.pdf](./Site.Reliability.Engineering-2016-31.pdf), PDF pages 1–10.
-
+# Communication and Collaboration in SRE
 The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
 
 ***Written by Niall Murphy with Alex Rodriguez, Carl Crous, Dario Freni, Dylan Curley, Lorenzo Blanco, and Todd Underwood***
@@ -18,7 +13,7 @@ It’s also true that SRE is not a command-and-control organization. Generally, 
 
 The API-as-contract metaphor is also relevant for collaboration, both among SRE teams, and between SRE and product development teams—all have to make progress in an environment of unrelenting change. To that extent, our collaboration looks quite like collaboration in any other fast-moving company. The difference is the mix of software engineering skills, systems engineering expertise, and the wisdom of production experience that SRE brings to bear on that collaboration. The best designs and the best implementations result from the joint concerns of production and the product being met in an atmosphere of mutual respect. This is the promise of SRE: an organization charged with reliability, with the same skills as the product development teams, will improve things measurably. Our experience suggests that simply having someone in charge of reliability, without also having the complete skill set, is not enough.
 
-### Communications: Production Meetings
+## Communications: Production Meetings
 
 Although literature about running effective meetings abounds [Kra08], it’s difficult to find someone who’s lucky enough to *only* have useful, effective meetings. This is equally true for SRE.
 
@@ -30,7 +25,7 @@ Just like any other meeting, the production meeting should have a chair. Many SR
 
 In cases where two SRE teams are meeting by video, and one of the teams is much larger than the other, we have noticed an interesting dynamic at play. We recommend placing your chair on the *smaller* side of the call by default. The larger side naturally tends to quiet down and some of the bad effects of imbalanced team sizes (made worse by the delays inherent in video conferencing) will improve.[^p3-2] We have no idea if this technique has any scientific basis, but it does tend to work.
 
-#### Agenda
+### Agenda
 
 There are many ways to run a production meeting, attesting to the diversity of what SRE looks after and how we do it. To that extent, it’s not appropriate to be prescriptive on how to run one of these meetings. However, a default agenda (see [Example Production Meeting Minutes](SRE.SUPPLEMENTARY.MATERIAL.md#appendix-f-example-production-meeting-minutes)) might look something like the following:
 
@@ -66,7 +61,7 @@ This bucket contains three items:
 
 The preceding detailed discussions often lead to actions that SRE needs to take— fix this, monitor that, develop a subsystem to do the other. Track these improvements just as they would be tracked in any other meeting: assign action items to people and track their progress. It’s a good idea to have an explicit agenda item that acts as a catchall, if nothing else. Consistent delivery is also a wonderful credibility and trust builder. It doesn’t matter how such delivery is done, just that it *is* done.
 
-#### Attendance
+### Attendance
 
 Attendance is compulsory for all the members of the SRE team in question. This is particularly true if your team is spread across multiple countries and/or time zones, because this is your major opportunity to interact as a group.
 
@@ -88,13 +83,13 @@ Most of the meeting strategies we’ve discussed are common sense, with a servic
 
 Fully use the multiple-person collaboration features enabled by the product. There’s nothing quite like seeing a meeting chair type in a sentence, then seeing someone else supply a link to the source material in brackets after they have finished typing, and then seeing yet another person tidy up the spelling and grammar in the original sentence. Such collaboration gets stuff done faster, and makes more people feel like they own a slice of what the team does.
 
-### Collaboration within SRE
+## Collaboration within SRE
 
 Obviously, Google is a multinational organization. Because of the emergency response and pager rotation component of our role, we have very good business reasons to be a distributed organization, separated by at least a few time zones. The practical impact of this distribution is that we have very fluid definitions for “team” compared to, for example, the average product development team. We have local teams, the team on the site, the cross-continental team, virtual teams of various sizes and coherence, and everything in between. This creates a cheerfully chaotic mix of responsibilities, skills, and opportunities. Much of the same dynamics could be expected to pertain to any sufficiently large company (although they might be particularly intense for tech companies). Given that most local collaboration faces no particular obstacle, the interesting case collaboration-wise is cross-team, cross-site, across a virtual team, and similar.
 
 This pattern of distribution also informs how SRE teams tend to be organized. Because our *raison d’être* is bringing value through technical mastery, and technical mastery tends to be hard, we therefore try to find a way to have mastery over some related subset of systems or infrastructures, in order to decrease cognitive load. Specialization is one way of accomplishing this objective; i.e., team X works only on product Y. Specialization is good, because it leads to higher chances of improved technical mastery, but it’s also bad, because it leads to siloization and ignorance of the broader picture. We try to have a crisp team charter to define what a team will—and more importantly, won’t—support, but we don’t always succeed.
 
-#### Team Composition
+### Team Composition
 
 We have a wide array of skill sets in SRE, ranging from systems engineering through software engineering, and into organization and management. The one thing we can say about collaboration is that your chances of successful collaboration—and indeed just about anything else—are improved by having more diversity in your team. There’s a lot of evidence suggesting that diverse teams are simply better teams [Nel14]. Running a diverse team implies particular attention to communication, cognitive biases, and so on, which we can’t cover in detail here.
 
@@ -102,7 +97,7 @@ Formally, SRE teams have the roles of “tech lead” (TL), “manager” (SRM),
 
 Regardless of how well these roles are defined, at a base level the tech lead is responsible for technical direction in the team, and can lead in a variety of ways—everything from carefully commenting on everyone’s code, to holding quarterly direction presentations, to building consensus in the team. In Google, TLs can do almost all of a manager’s job, because our managers are highly technical, but the manager has two special responsibilities that a TL doesn’t have: the performance management function, and being a general catchall for everything that isn’t handled by someone else. Great TLs, SRMs, and TPMs have a complete set of skills and can cheerfully turn their hand to organizing a project, commenting on a design doc, or writing code as necessary.
 
-#### Techniques for Working Effectively
+### Techniques for Working Effectively
 
 There are a number of ways to engineer effectively in SRE.
 
@@ -110,13 +105,13 @@ In general, singleton projects fail unless the person is particularly gifted or 
 
 In general, good SRE work calls for excellent communication skills when you’re working outside the boundary of your purely local team. For collaborations outside the building, effectively working across time zones implies either great written communication, or lots of travel to supply the in-person experience that is deferrable but ultimately necessary for a high-quality relationship. Even if you’re a great writer, over time you decay into just being an email address until you turn up in the flesh again.
 
-### Case Study of Collaboration in SRE: Viceroy
+## Case Study of Collaboration in SRE: Viceroy
 
 One example of a successful cross-SRE collaboration is a project called Viceroy, which is a monitoring dashboard framework and service. The current organizational architecture of SRE can end up with teams producing multiple, slightly different copies of the same piece of work; for various reasons, monitoring dashboard frameworks were a particularly fertile ground for duplication of work.[^p8-3]
 
 The incentives that led to the serious litter problem of many smoldering, abandoned hulks of monitoring frameworks lying around were pretty simple: each team was rewarded for developing its own solution, working outside of the team boundary was hard, and the infrastructure that tended to be provided SRE-wide was typically closer to a toolkit than a product. This environment encouraged individual engineers to use the toolkit to make another burning wreck rather than fix the problem for the largest number of people possible (an effort that would therefore take much longer).
 
-#### The Coming of the Viceroy
+### The Coming of the Viceroy
 
 Viceroy was different. It began in 2012 when a number of teams were considering how to move to Monarch, the new monitoring system at Google. SRE is deeply conservative with respect to monitoring systems, so Monarch somewhat ironically took a longer while to get traction within SRE than within non-SRE teams. But no one could argue that our legacy monitoring system, Borgmon (see [Practical Alerting from Time-Series Data](../practices/PRACTICAL.ALERTING.TIME.SERIES.DATA.md)), had no room for improvement. For example, our consoles were cumbersome because they used a custom HTML templating system that was special-cased, full of funky edge cases, and difficult to test. At that time, Monarch had matured enough to be accepted in principle as the replacement for the legacy system and was therefore being adopted by more and more teams across Google, but it turned out we still had a problem with consoles.
 
@@ -164,11 +159,11 @@ Joining forces reaped huge benefits:
 
 Ultimately, the common future vision was the key factor in combining the projects. Both teams found value in expanding their development team and benefited from each other’s contributions. The momentum was such that, by the end of 2014, Viceroy was officially declared the general monitoring solution for all of SRE. Perhaps characteristically for Google, this declaration didn’t require that teams adopt Viceroy: rather, it recommended that teams should use Viceroy instead of writing another monitoring console.
 
-#### Challenges
+### Challenges
 
 While ultimately a success, Viceroy was not without difficulties, and many of those arose due to the cross-site nature of the project.
 
-### Notes
+## Notes
 
 [^p1-1]: And, as we all know, culture beats strategy every time: [Mer11].
 

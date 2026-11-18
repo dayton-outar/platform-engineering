@@ -1,8 +1,4 @@
-# Chapter 18
-
-## Service Resiliency and Performance Patterns
-
-Source: [The.Practice.of.System.and.Network.Administration-Vol.I-2017-18.pdf](./The.Practice.of.System.and.Network.Administration-Vol.I-2017-18.pdf), PDF pages 1–14.
+# Service Resiliency and Performance Patterns
 
 The case studies and first-person accounts below reflect the source authors’ experience, as published in 2017.
 
@@ -20,11 +16,11 @@ Lastly, no one likes a slow service. This document ends with advice about making
 
 This document introduces performance engineering and scaling rather than covering them exhaustively. The companion volume, *The Practice of Cloud System Administration*, includes a broad overview of techniques. *The Art of Scalability: Scalable Web Architecture, Processes, and Organizations for the Modern Enterprise* by Abbott and Fisher (2010) contains in-depth explanations and techniques.
 
-### 18.1 Redundancy Design Patterns
+## Redundancy Design Patterns
 
 Redundancy can provide greater performance or better reliability. Sometimes it can provide both. This section discusses common redundancy patterns. Then it covers how they can be used to provide either more performance or better reliability.
 
-#### 18.1.1 Masters and Slaves
+### Masters and Slaves
 
 The first category of patterns involves two equivalent sets of hardware. One is called the master and the other is called the spare or slave. The master provides services and the slave is, in general, idle but ready to take over if needed.
 
@@ -40,7 +36,7 @@ address so that clients see no outage, or simply retry a request and continue. W
 - **Master/read-only slave:** In this configuration the slave can handle some requests but not others. Typically it handles read requests—that is, requests that do not change the stored data or state. For example, an application would send database updates (writes) to the master but database reads to either the master or the slave. This improves performance since it reduces the amount of work being done by the master. The disadvantage of this pattern is that the slave may have data that is slightly out-of-date. An application may become confused if it performs an update and immediately sends a read request to the slave.
 - **Master/master:** In this case both sets of hardware are able to perform both read and write operations. This is also known as a **load sharing** configuration. If either master fails, the other runs as normal. When the broken machine returns to life, it must sync up with the existing master before it begins providing service again. Coordinating such activity is very difficult. For example, if the failure occurs on the network between the two masters, both masters will think the other died and accept updates. As a consequence, their databases will diverge. When the network connection returns, both masters will be confused to find a master that already exists, with very different data. This is known as a **split brain** situation. Often the only way to resolve this conflict is for a human to pick one master and force the other one down. Because of the complexity of a master/master system, such software tends to be very expensive.
 
-#### 18.1.2 Load Balancers Plus Replicas
+### Load Balancers Plus Replicas
 
 Another way of providing redundancy is to use a **load balancer plus replica** configuration. In this pattern, all clients send their requests to the load balancer. The load balancer is a host that simply forwards the request to one of many replicas. Each replica is configured with the same software and provides the same service. Thus, the workload is distributed over the many replicas. Each replica processes a fraction of the workload. If a replica dies, the load balancer stops forwarding requests to it. If a new replica is added, the load balancer adds it to the mix.
 
@@ -48,7 +44,7 @@ A typical example is a web server. Each replica has the same set of web pages an
 
 Another benefit of such redundancy is that it makes upgrades easier. You can perform a **rolling upgrade**. One at a time, each replica is disconnected, upgraded, tested, and brought back into service. The outage of the single host does not stop the entire service, but just reduces the total capacity of the system.
 
-#### 18.1.3 Replicas and Shared State
+### Replicas and Shared State
 
 Since each replica needs to act the same way, the replicas cannot store any information that would make them unique. For example, if the service permits someone to upload a photo for his or her profile page, the photo cannot simply be stored on that replica. If it did, future requests that go to other replicas would not have that photo or be able to display it.
 
@@ -58,7 +54,7 @@ Many applications require a small amount of state to be shared. This is often sh
 
 The companion volume, *The Practice of Cloud System Administration*, goes into greater detail about load balancers and replicas.
 
-##### HTTP Cookies Are Web State
+#### HTTP Cookies Are Web State
 
 When logging into a web site, a user enters a username and password. After that, how does the web site know it is the same user? Does the web browser send that username and password with all future HTTP requests? Not at all.
 
@@ -72,7 +68,7 @@ When the cookie is initially created, it must be stored on the server so that la
 
 The solution is to store the cookie list somewhere that all replicas can access, as depicted in Figure 18.1. Initially sites used SQL databases since they were what was available. However, SQL databases can be slow. Since nearly every web page requires a cookie lookup, this slowed down the entire site, and put a huge burden on the SQL servers. Eventually sites switched to in-memory databases such as Memcached or Redis.
 
-#### 18.1.4 Performance or Resilience?
+### Performance or Resilience?
 
 Performance is about making the system process work faster, or scaling to process more work. Resilience is about improving the system’s ability to work around failures. It is also called survivability.
 
@@ -90,7 +86,7 @@ Any design with redundancy should indicate whether the redundancy is used to inc
 
 If we know that the redundancy is intended to improve survivability, then the system should be monitored to detect whether the system is *N* + 1 or better, and alert us if the system has become (or will soon become) *N* + 0. With a master/slave system this is easy to monitor. If one component goes down, we know we are at *N* + 0 and should work to rectify the problem. This is more difficult with *N* + *M* systems, because to know the value of *M*, we must know how much capacity each machine adds to the system. This is usually determined by load testing. That said, you should at least monitor how many replicas are down so that they can be repaired before the system is less than *N* + 0.
 
-### 18.2 Performance and Scaling
+## Performance and Scaling
 
 No one likes a slow service, even if it has every imaginable feature. From a customer’s perspective, two things are important in any service: Does it work, and is it fast? *Work* covers such areas as reliability, functionality, and the user interface. When designing a service, you also need to pay attention to its performance characteristics, even though many other difficult technical challenges need to be overcome. If you solve all those difficult problems but the service is slow, the people using it will not consider it to be a success.
 
@@ -102,7 +98,7 @@ With **load testing**, you generate an artificial load on a service and see how 
 
 Your testing may show that the system runs well with a few simultaneous users, but how many resources—RAM, I/O, and so on—will be consumed when the service goes into production and is being used by hundreds or thousands of users simultaneously? Your vendor should be able to help with these estimates, but conduct your own tests, if possible. Don’t expect perfect accuracy from a vendor’s predictions of how your organization will use its product.
 
-##### Bad Capacity Planning, Bad First Impression
+#### Bad Capacity Planning, Bad First Impression
 
 Always purchase servers with enough extra capacity to handle peak utilization, as well as a growing number of customers. A new electronic voucher system deployed at one site was immediately overwhelmed by the number of users accessing it simultaneously. Customers trying to use the system found it impossibly slow and unreliable and soon switched back to the old paper-based method. This situation gave a bad first impression of the service. A memo was sent out stating that a root-cause analysis was being performed and that the system needed more RAM, which would arrive shortly. Even when the new RAM arrived, however, uptake was slow due to the bad first impression. Users preferred to stick with what they knew worked.
 
@@ -114,7 +110,7 @@ The finance group learned a lot about introducing new electronic services from t
 
 Performance of the service for remote sites may also be an issue because of low-bandwidth and high-latency connections (we give advice about latency later in this document). Some applications enable you to place servers in different locations, and to use a global load balancer to direct traffic to the closest instance. For applications that are not designed that way, you may need to become very creative in providing reasonable remote performance if the service has a lot of network traffic. In some cases, quality of service (QoS) or intelligent queuing mechanisms can be sufficient to make the performance acceptable. In others, you may need to look at ways of reducing the network traffic.
 
-#### 18.2.1 Dataflow Analysis for Scaling
+### Dataflow Analysis for Scaling
 
 If you understand the individual components of a typical transaction in a service, you can scale the service with much greater precision and efficiency. Strata’s experiences building scalable Internet services for ISPs and ASPs led her to create a dataflow model for individual transactions and combine them into spreadsheets to get an overall dataflow picture.
 
@@ -134,13 +130,13 @@ Finally, step back and do this kind of analysis for all the steps in the dataflo
 
 Dataflow modeling works at all levels of scale. You can successfully design a server upgrade for a 30-person department or a multimedia services cluster for 3 million simultaneous users. It might take some traffic analysis on a sample setup, as well as vendor information, system traces, and so on, to get exact figures of the type you’d want for the huge-scale planning.
 
-##### An Example of Dataflow Analysis
+#### An Example of Dataflow Analysis
 
 Strata once managed a large number of desktops accessing a set of file servers on a network. A complaint about files being slow to open was investigated, but the network was not clogged, nor were there unusual numbers of retransmits or lags in the file server statistics on the hosts serving files. Further investigation revealed that all the desktops were using the same directory server to get the server-to-file mapping when opening a file and that the directory server itself was overloaded.
 
 No one had realized that although the directory server could easily handle the number of users whose desktops mapped to it, each user was generating dozens, if not hundreds, of file-open requests to compile large jobs. When the requests per user figures were calculated and the number of simultaneous users estimated, it was then easy to see that an additional directory server was required for good performance.
 
-#### 18.2.2 Bandwidth Versus Latency
+### Bandwidth Versus Latency
 
 The term **bandwidth** refers to how much data can be transmitted in a second; **latency** is the delay before the data is received by the other end. A high-latency link, no matter what the bandwidth, will have a long round-trip time: the time for a packet to travel and the reply to return. Some applications, such as non-interactive (streaming) video, are unaffected by high latency. Others are affected greatly by this factor.
 
@@ -169,13 +165,13 @@ Applications such as streaming video and audio are not as concerned with latency
 
 Even if an algorithm sends only one request and waits for one reply, how those messages are sent can make all the difference.
 
-##### Case Study: Minimizing Packets in High-Latency Networks
+#### Case Study: Minimizing Packets in High-Latency Networks
 
 A global pharmaceutical company based in New Jersey had a terrible performance problem with a database application. Analysis found that a single 4,000-byte SQL request sent over a transatlantic link was being sent in 50 individual 80-byte packets. Each packet was sent only when the previous one was acknowledged. It took 5 minutes for someone to log in.
 
 The developers had been demanding additional transatlantic bandwidth, which would have taken months to order, been very expensive, and proved disappointing when it didn’t solve the problem. When the system administrators reconfigured the database connector to send fewer larger packets, the performance problem went away.
 
-### 18.3 Summary
+## Summary
 
 This document introduced a number of design patterns and scaling techniques with which all SAs should be familiar. You will see them when evaluating products, designing services, and administering services.
 
@@ -188,7 +184,3 @@ Sharing state between replicas is difficult. In a web-based service, if a user l
 An overloaded system can be slow or fail. Determining how much load a system can handle while still providing an acceptable response time can be done a few different ways. Dataflow analysis involves modeling the system to understand how many transactions subsystems will perform for each transaction. Load testing involves sending requests and measuring the resulting response time.
 
 Latency, or the time information takes to travel, is often an issue when a system that talks to a subsystem at great distance, or a web browser talks to a distant server. Some designs tolerate high latency better than others.
-
-### Exercises
-
-1. When would two systems be configured as a master/slave pair? 2. In your environment, what are some examples of master/slave, master/master, and load balancing? 3. What is a load balancer? When do replicas need to share state? 4. Compare load testing to dataflow analysis. 5. How would you load test a service you run? 6. What is the difference between latency and bandwidth? If a system is slow because of a high-latency link, why can’t a faster network connection improve the situation? 7. Measure the latency between your home computer and various work servers. 8. Explain to a non-SA the difference between latency and bandwidth. 9. How can you mitigate a performance problem caused by high latency? 10. Log into a web site and view the cookies stored in your web browser as a result. On another computer, verify that you are not logged into that web site, and then copy those cookies to this other computer. Are you logged in? Why or why not? What does this mean about how cookies should be stored and transmitted? 11. Suppose we save money by having the slave in a master/slave pattern be a slower, less expensive machine. When the failed master came back to life, we could switch back to it instead of letting the slower machine remain as the master. What would be the benefits and disadvantages of this?

@@ -1,8 +1,4 @@
-# Chapter 21
-
-## Service Conversions
-
-Source: [The.Practice.of.System.and.Network.Administration-Vol.I-2017-21.pdf](./The.Practice.of.System.and.Network.Administration-Vol.I-2017-21.pdf), PDF pages 1–13.
+# Service Conversions
 
 The case studies and first-person accounts below reflect the source authors’ experience, as published in 2017.
 
@@ -18,11 +14,11 @@ Communication plays a key role in performing a successful conversion. It is neve
 
 This document touches on each of those areas, along with two general approaches to conversions. You need to plan every step of a conversion well in advance to pull it off successfully with minimum impact on your customers. This document should shape your thinking in that planning process.
 
-##### An Invisible Change
+### An Invisible Change
 
 When AT&T split off Lucent Technologies, the Bell Labs research division was split in two. The SAs who looked after that division had to split the Bell Labs network so that the people who were to be part of Lucent would not be able to access any AT&T services, and vice versa. Some time after the split had been completed, one of the researchers asked when it was going to happen. He was very surprised when he was told that it had been completed already, because he had not noticed that anything had changed. The SAs considered this the best indicator of their success.
 
-### 21.1 Minimizing Intrusiveness
+## Minimizing Intrusiveness
 
 When planning the conversion roll-out, pay close attention to how the conversion impacts the customer. Aim for the conversion process to disrupt the customer as little as possible. Try to make it seamless.
 
@@ -34,7 +30,7 @@ Does the conversion require that the customers change their work methods in any 
 
 Look for ways to perform the change without interrupting the service, without visiting each customer, and without changing the workflow or user interface. Make sure that the support organization is ready to provide full support for the new product or service before you roll it out. Remember, your goal is for the conversion to be so smooth that your customers may not even realize that it has happened. If you can’t minimize intrusiveness, at least you can make the intrusion fast and well organized.
 
-##### The Rioting Mob Technique
+### The Rioting Mob Technique
 
 When AT&T was splitting into AT&T, Lucent, and NCR, Tom’s SA team was responsible for splitting the Bell Labs networks in Holmdel, New Jersey. At one point, every host needed to be visited to perform several changes, including changing its IP address. A schedule was announced that listed which hallways of offices would be converted on which day. Mondays and Wednesdays were used for conversions; Tuesdays and Thursdays were for fixing problems that arose; Fridays were unscheduled, in the hope that the changes wouldn’t cause any problems that would make the SAs lose sleep on the weekends.
 
@@ -48,7 +44,7 @@ Consolidating all of an individual customer’s disruption to a single day was a
 
 The complete story is documented in Limoncelli, Reingold, Narayan & Loura (1997).
 
-### 21.2 Layers Versus Pillars
+## Layers Versus Pillars
 
 A conversion project, like any project, is divided into discrete tasks, some of which have to be performed for every customer. For example, with a conversion to new calendar software, the new client software must be rolled out to all the desktops, accounts need to be created on the server, and existing schedules must be converted to the new system. As part of the project planning for the conversion, you need to decide whether to perform these tasks in layers or in pillars.
 
@@ -63,7 +59,7 @@ With the pillars approach, you need to schedule one appointment with the custome
 
 A hybrid approach achieves the best of both worlds: Group all the customervisible interruptions into as few periods as possible. Make all other changes silently.
 
-##### Case Study: Pillars Versus Layers at Bell Labs
+### Case Study: Pillars Versus Layers at Bell Labs
 
 When AT&T split off Lucent Technologies and Bell Labs was divided in two, many changes needed to be made to each desktop to convert it from a Bell Labs machine to either a Lucent Bell Labs machine or an AT&T Labs machine. Very early on, the SA team responsible for implementing the split realized that a pillars approach would be used for most changes, but that sometimes the layers approach would be best. For example, the layers approach was used when building a new web proxy. The new web proxies were constructed and tested, and then customers were switched to their new proxies. However, more than 30 changes had to be made to every Unix desktop, and it was determined that they should all be made in one visit, with one reboot, to minimize the disruption to the customer.
 
@@ -73,13 +69,13 @@ Some customers were particularly fearful because they lacked confidence in the S
 
 E-commerce sites, while looking monolithic from the outside, can also think about their conversions in terms of layers and pillars. A small change or even a new software release can be rolled out in pillars, one host at a time, if the change interoperates with the older systems. Changes that are easy to do in batches, such as imports of customer data, can be implemented in layers. This is especially true of nondestructive changes, such as copying data to new servers.
 
-### 21.3 Vendor Support
+## Vendor Support
 
 When doing large conversions, make sure that you have vendor support. Contact the vendor to find out if there are any pitfalls. This can prevent major problems. If you have a good relationship with a vendor, that vendor should be willing to be involved in the planning process, sometimes even lending personnel. If not, the vendor may be willing to make sure that its technical support hotline is properly staffed on your conversion day or that someone particularly knowledgeable about your environment is available.
 
 Don’t be afraid to reveal your plans to a vendor. There is rarely a reason to keep such plans secret. Don’t be afraid to ask the vendor to suggest which days of the week are best for receiving support. It can’t hurt to ask the vendor to assign a particular person from its support desk to review the plans as they are being made so that the vendor will be better prepared if you do call during the upgrade with a problem. Good vendors would rather review your plans early than discover that a customer has a problem halfway through an upgrade that involves unsupported practices.
 
-### 21.4 Communication
+## Communication
 
 Although the guiding principle for a conversion is that it be invisible to the customer, you still have to communicate the conversion plan to your customers. Indeed, communicating a conversion far in advance is critical.
 
@@ -91,7 +87,7 @@ Even if you expect the conversion to go seamlessly, with no interruption or visi
 
 Have the high-level goals for the conversion planned and written out in advance; it is common for customers to try to add new functionality or new services as requirements during an upgrade planning process. Adding new items increases the complexity of the conversion. Strike a balance between the need to maintain functionality and the desire to improve services.
 
-### 21.5 Training
+## Training
 
 Related to communication is training. If any aspect of the user experience is going to change, training should be provided. This is true whether the menus are going to be slightly different or entirely new workflows will be required.
 
@@ -99,7 +95,7 @@ Most changes are small and can be brought to people’s attention via email. How
 
 Creating and providing the actual training is usually out of scope for the SA team doing the service conversion, but SAs may need to support training efforts. Work closely with the customers and management driving the conversion to discover any plans for training support well in advance. Nontechnical customers may not realize the level of effort required by SAs to set up a training room with 5 to 15 workstations, special demo machines and services, or special firewall rules.
 
-### 21.6 Gradual Roll-Outs
+## Gradual Roll-Outs
 
 When performing a roll-out, whether it is a conversion, a new service, or an update to an existing service, you should do so gradually to minimize the potential impact of any failures.
 
@@ -109,11 +105,11 @@ There are a few strategies for picking groups of customers. Random selection is 
 
 Likewise, reserve the most risk-averse users for the end of the roll-out process. Some teams may be more risk averse due to business requirements or their temperament. The CEO and anyone involved in approving your budget should be last so that they see systems only after the bugs have been worked out.
 
-##### Upgrading Google Servers
+### Upgrading Google Servers
 
 Google’s server farm includes thousands of computers; the precise number is an industry secret. When upgrading thousands of redundant servers, Google has massive amounts of automation that first upgrades a single host, then 1 percent of the hosts, and finally batches of hosts, until all are upgraded. Between each set of upgrades, testing is performed, and an operator has the opportunity to halt and revert the changes if problems are found. Sometimes, the gap of time between batches is hours; at other times, days.
 
-### 21.7 Flash-Cuts: Doing It All at Once
+## Flash-Cuts: Doing It All at Once
 
 In a flash-cut, all users are moved to a new service at the same time. You should never do this.
 
@@ -129,7 +125,7 @@ All of these problems would have been prevented if they had converted small grou
 
 While flash-cuts seem like a way to reduce complexity, the truth is that they increase the risk of failure. Flash-cuts should be avoided at all costs, even if this means going back to the drawing board and reengineering the design to let it permit gradual conversions.
 
-##### Physical Network Conversion
+### Physical Network Conversion
 
 When a midsize company converted its network wiring from thin Ethernet to 10Base-T, it divided the problem into two main preparatory components and had a different group attack each part of the project planning. The first group had to get the new physical wiring layer installed in the wiring closets and cubicles. The second group had to make sure that every machine in the building was capable of supporting 10Base-T, by adding a card or adapter.
 
@@ -149,13 +145,13 @@ For a flash-cut, two-way communication is particularly critical. Make sure that 
 
 If a flash-cut is truly unavoidable, find ways to do testing without a launch. As described in [Service Launch: DevOps](SERVICE.LAUNCH.DEVOPS.md), set up a lab environment and practice, practice, practice.
 
-##### Phone Number Conversion
+### Phone Number Conversion
 
 In 2000, British Telecom converted the city of London from two area codes to one and lengthened the phone numbers from seven digits to eight, in one large number change. Numbers that were of the form (171) xxx-xxxx became (20) 7xxx-xxxx, and numbers that were of the form (181) xxx-xxxx became (20) 8xxx-xxxx. More than six months before the designated cutover date, the company started advertising the change; also, the new area code and new phone number combination started working. For a few months after the designated cutover date, the old area codes in combination with the old phone numbers continued to work, as is usual with telephone number changes.
 
 However, local calls to London numbers beginning with a 7 or an 8 went from seven to eight digits overnight. Because this sudden change was certain to cause confusion, British Telecom telephoned every single customer who would be affected by the change to explain, person to person, what the change meant and to answer any questions that their customers might have. Now that’s customer service!
 
-### 21.8 Backout Plan
+## Backout Plan
 
 When rolling out a conversion, it is critical to have a backout plan. A *conversion,* by definition, means removing one service and replacing it with another. If the new service does not work correctly, the customer has been deprived of one of the tools that he or she uses to perform work, which may seriously affect the person’s productivity.
 
@@ -163,7 +159,7 @@ If a conversion fails, you need to be able to restore the customer’s service q
 
 Bear in mind that the failure may not be instantaneous or may not be discovered for a while. It could be a result of reliability problems in the software, it could be caused by capacity limitations, or it may be a feature that the customer uses infrequently or only at certain times of the year or month. So you should leave your backout mechanism in place for a while, until you are certain that the conversion has been completed successfully. How long? For critical services, one significant reckoning period is a good idea, such as a fiscal quarter for a company, or a semester for a university.
 
-#### 21.8.1 Instant Roll-Back
+### Instant Roll-Back
 
 When performing a conversion, it is nice if your backout plan enables you to instantly roll everything back to a known working state if a problem is discovered. That way, any customer disruption resulting from a problem with the new system can be minimized.
 
@@ -175,7 +171,7 @@ For services that are behind a load balancer, you may be able to bring up one or
 
 Sometimes, the change being made is an upgrade of a software package to a newer release. If the old software is retained in a dormant state on the server while the new software is in use, you can instantly perform a roll-back by switching to the old software. Vendors can do a lot to make this difficult, but some are very good about making it easy. For example, if versions 1.2 and 1.3 of a server get installed in /opt/example-1.2 and /opt/example-1.3, respectively, but a symbolic link /opt/example points to the version that is in use, you can roll back the change by simply repointing the single symbolic link.
 
-#### 21.8.2 Decision Point
+### Decision Point
 
 A major difficulty with backout plans is deciding when to execute them. When a conversion goes wrong, the technicians tend to promise that things will work with “one more change,” but management tends to push toward starting the backout plan. It is essential to have decided in advance the point at which the backout plan will be put into use. For example, one might decide ahead of time that if the conversion isn’t completed within 2 hours of the start of the next business day, then the backout plan must be executed. Obviously, if in the first minutes of the conversion one meets insurmountable problems, it can be better to back out of what’s been done so far and reschedule the conversion. However, getting a second opinion can be useful. What is insurmountable to you may be an easy task for someone else on your team.
 
@@ -183,14 +179,10 @@ When an upgrade has failed, there is a big temptation to keep trying more and mo
 
 Revert. There will be more time to try again later.
 
-### 21.9 Summary
+## Summary
 
 A successful conversion project requires lots of advance planning and a solid infrastructure. Customers will judge the conversion by how organized you were, how well you were able to minimize adverse impact to them, and whether the new system “just works.”
 
 A conversion requires many individual steps. With the layers approach, you perform one step for all the customers before moving on to the next step. With the pillars approach, you perform all the required tasks for a particular customer before moving on to the next customer. Ideally a hybrid approach can be used where all the intrusive steps are grouped together (pillars) so customers receive one big intrusive service interruption, and the remaining steps are layered.
 
 The principles for roll-outs of any kind, updates, new services, or conversions are the same. Test changes before they are deployed. Deploy slowly to small groups, then to larger groups. Use vendor support when needed. Have a backout plan, and decide ahead of time the criteria by which the backout plan will be activated. Avoid flash-cuts at all costs.
-
-### Exercises
-
-1. Explain the pillars versus layers metaphor and how you can use it to minimize the adverse impacts of service conversions on customers. 2. Which conversions can you foresee in your network’s future? Choose one, and build a plan for performing it with minimum customer impact. 3. Try to add an instant roll-back option to the plan you developed in Exercise 2.

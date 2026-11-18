@@ -1,8 +1,4 @@
-# Chapter 30
-
-## Embedding an SRE to Recover from Operational Overload
-
-Source: [Site.Reliability.Engineering-2016-30.pdf](./Site.Reliability.Engineering-2016-30.pdf), PDF pages 1–8.
+# Embedding an SRE to Recover from Operational Overload
 
 The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
 
@@ -20,11 +16,11 @@ If you are starting your first SRE team, the approach outlined in this document 
 
 The following sections provide guidance to the SRE who will be embedded on a team.
 
-### Phase 1: Learn the Service and Get Context
+## Phase 1: Learn the Service and Get Context
 
 Your job while embedded with the team is to articulate why processes and habits contribute to, or detract from, the service’s scalability. Remind the team that more tickets should not require more SREs: the goal of the SRE model is to only introduce more humans as more complexity is added to the system. Instead, try to draw attention to how healthy work habits reduce the time spent on tickets. Doing so is as important as pointing out missed opportunities for automation or simplification of the service.
 
-#### Ops Mode Versus Nonlinear Scaling
+### Ops Mode Versus Nonlinear Scaling
 
 The term *ops mode* refers to a certain method of keeping a service running. Various work items increase with the size of the service. For example, a service needs a way to increase the number of configured virtual machines (VMs) as it grows. A team in ops mode responds by having a greater number of administrators managing those VMs. SRE instead focuses on writing software or eliminating scalability concerns so that the number of people required to run a service doesn’t increase as a function of load on the service.
 
@@ -34,11 +30,11 @@ If the primary service is important to the business but actually is tiny (entail
 
 On the other hand, if the service is just getting started, focus on ways to prepare the team for explosive growth. A 100 request/second service can turn into a 10k request/ second service in a year.
 
-#### Identify the Largest Sources of Stress
+### Identify the Largest Sources of Stress
 
 SRE teams sometimes fall into ops mode because they focus on how to quickly address emergencies instead of how to reduce the number of emergencies. A default to ops mode usually happens in response to an overwhelming pressure, real *or imagined*. After you’ve learned enough about the service to ask hard questions about its design and deployment, spend some time prioritizing various service outages according to their impact on the team’s stress levels. Keep in mind that, due to the team’s perspective and history, some very small problems or outages may produce an inordinate amount of stress.
 
-#### Identify Kindling
+### Identify Kindling
 
 Once you identify a team’s largest existing problems, move on to emergencies waiting to happen. Sometimes impending emergencies come in the form of a new subsystem that isn’t designed to be self-managing. Other sources include:
 
@@ -74,11 +70,11 @@ For example, “Change the streaming timeout back to 60 seconds,” instead of �
 
 To give acceptable on-call support for a component, you should at least know the consequences when it breaks and the urgency needed to fix problems.
 
-### Phase 2: Sharing Context
+## Phase 2: Sharing Context
 
 After scoping the dynamics and pain points of the team, lay the groundwork for improvement through best practices like postmortems and by identifying sources of toil and how to best address them.
 
-#### Write a Good Postmortem for the Team
+### Write a Good Postmortem for the Team
 
 Postmortems offer much insight into a team’s collective reasoning. Postmortems conducted by unhealthy teams are often ineffectual. Some team members might consider postmortems punitive, or even useless. While you might be tempted to review the postmortem archives and leave comments for improvement, doing so doesn’t help the team. Instead, the exercise might put the team on the defensive.
 
@@ -86,7 +82,7 @@ Instead of trying to correct previous mistakes, take ownership of the next postm
 
 As mentioned, you might encounter responses such as “Why me?” This response is especially likely when a team believes that the postmortem process is retaliatory. This attitude comes from subscribing to the Bad Apple Theory: the system is working fine, and if we get rid of all the bad apples and their mistakes, the system will continue to be fine. The Bad Apple Theory is demonstrably false, as shown by evidence [Dek14] from several disciplines, including airline safety. You should point out this falsity. The most effective phrasing for a postmortem is to say, “Mistakes are inevitable in any system with multiple subtle interactions. You were on-call, and I trust you to make the right decisions with the right information. I’d like you to write down what you were thinking at each point in time, so that we can find out where the system misled you, and where the cognitive demands were too high.”
 
-#### Sort Fires According to Type
+### Sort Fires According to Type
 
 There are two types of fires in this simplified-for-convenience model:
 
@@ -96,7 +92,7 @@ There are two types of fires in this simplified-for-convenience model:
 
 Sort the team fires into toil and not-toil. When you’re finished, present the list to the team and clearly explain why each fire is either work that should be automated or acceptable overhead for running the service.
 
-### Phase 3: Driving Change
+## Phase 3: Driving Change
 
 Team health is a process. As such, it’s not something that you can solve with heroic effort. To ensure that the team can self-regulate, you can help them build a good mental model for an ideal SRE engagement.
 
@@ -106,13 +102,13 @@ Team health is a process. As such, it’s not something that you can solve with 
 
 *Figure 30-1. Callout illustration beside advice on restoring team health*
 
-#### Start with the Basics
+### Start with the Basics
 
 Teams struggling with the distinction between the SRE and traditional ops model are generally unable to articulate *why* certain aspects of the team’s code, processes, or culture bother them. Rather than trying to address each of these issues point-by-point, work forward from the principles outlined in [Introduction](../INTRODUCTION.md) and [Monitoring Distributed Systems](../principles/MONITORING.DISTRIBUTED.SYSTEMS.md).
 
 Your first goal for the team should be writing a service level objective (SLO), if one doesn’t already exist. The SLO is important because it provides a quantitative measure of the impact of outages, in addition to how important a process change could be. An SLO is probably the single most important lever for moving a team from reactive ops work to a healthy, long-term SRE focus. If this agreement is missing, no other advice in this document will be helpful. *If you find yourself on a team without SLOs, first read [Service Level Objectives](../principles/SERVICE.LEVEL.OBJECTIVES.md), then get the tech leads and management in a room and start arbitrating.*
 
-#### Get Help Clearing Kindling
+### Get Help Clearing Kindling
 
 You may have a strong urge to simply fix the issues you identify. Please resist the urge to fix these issues yourself, because doing so bolsters the idea that “making changes is for other people.” Instead, take the following steps:
 
@@ -126,7 +122,7 @@ You may have a strong urge to simply fix the issues you identify. Please resist 
 
 When you identify an additional issue, put it in a bug report or a doc for the team to consult. Doing so serves the dual purposes of distributing information and encouraging team members to write docs (which are often the first victim of deadline pressure). Always explain your reasoning, and emphasize that good documentation ensures that the team doesn’t repeat old mistakes in a slightly new context.
 
-#### Explain Your Reasoning
+### Explain Your Reasoning
 
 As the team recovers its momentum and grasps the basics of your suggested changes, move on to tackle the quotidian decisions that originally led to ops overload. Prepare for this undertaking to be challenged. If you’re lucky, the challenge will be along the lines of, “Explain why. Right now. In the middle of the weekly production meeting.”
 
@@ -148,7 +144,7 @@ This decision is probably correct, but the reasoning is poor (or poorly explaine
 
 Like the previous example, this explanation is probably correct, but insufficient. Instead, try “[...] because we’re making the simplifying assumption that all changes pass through the automation, and something has clearly violated that rule. If this happens often, we should identify and remove sources of unorganized change.”
 
-#### Ask Leading Questions
+### Ask Leading Questions
 
 Leading questions are not loaded questions. When talking with the SRE team, try to ask questions in a way that encourages people to think about the basic principles. It’s particularly valuable for *you* to model this behavior because, by definition, a team in ops mode rejects this sort of reasoning from its own constituents. Once you’ve spent some time explaining your reasoning for various policy questions, this practice reinforces the team’s understanding of SRE philosophy.
 
@@ -164,7 +160,7 @@ Counterexamples of leading questions:
 
 - “Why does the Frobnitzer do so many things?”
 
-### Conclusion
+## Conclusion
 
 Following the tenets outlined in this document provides an SRE team with the following:
 
@@ -180,6 +176,6 @@ Your final task is to write an after-action report. This report should reiterate
 
 The bulk of the engagement is now complete. Once your embedded assignment concludes, you should remain available for design and code reviews. Keep an eye on the team for the next few months to confirm that they’re slowly improving their capacity planning, emergency response, and rollout processes.
 
-### Notes
+## Notes
 
 [^p7-1]: In contrast to a postmortem.

@@ -1,8 +1,4 @@
-# Chapter 17
-
-## Service Planning and Engineering
-
-Source: [The.Practice.of.System.and.Network.Administration-Vol.I-2017-17.pdf](./The.Practice.of.System.and.Network.Administration-Vol.I-2017-17.pdf), PDF pages 1–15.
+# Service Planning and Engineering
 
 The case studies and first-person accounts below reflect the source authors’ experience, as published in 2017.
 
@@ -24,7 +20,7 @@ The remainder of this document discusses some general engineering basics and phi
 
 This document focuses on designing a generic service.
 
-### 17.1 General Engineering Basics
+## General Engineering Basics
 
 Before this document goes into the more sophisticated aspects of service engineering, there are some basic issues that you should be aware of. Much of this includes the kind of engineering decisions that “go without saying,” yet are so crucial that we need to include them. Consider the following to be rules of thumb, often learned the hard way in real-world environments:
 
@@ -36,13 +32,13 @@ Before this document goes into the more sophisticated aspects of service enginee
 
 - **Leverage the existing infrastructure.** As much as possible, new services should be integrated into existing systems and processes. The existing monitoring, alerting, and service request systems should be used, as well as backup systems, and configuration and patch management systems.
 
-### 17.2 Simplicity
+## Simplicity
 
 When engineering a service, your foremost consideration should be simplicity. Strive to create the simplest solution that satisfies all the requirements. A simple service will be the easiest to maintain, easiest to expand, and easiest to integrate with other systems. Undue complexity leads to confusion, mistakes, and potential difficulty of use and may well make everything slower. Complex systems are also more expensive in setup cost and maintenance costs.
 
 Computer scientist Brian Kernighan famously stated that debugging is, by definition, more difficult than creating a system. Therefore, when you create a system that is the pinnacle of your engineering abilities, you have, by definition, created a system that you cannot debug.
 
-##### Case Study: Cornered by Complexity
+### Case Study: Cornered by Complexity
 
 A small Pennsylvania-based social network web site had an extremely complicated network designed by the company’s lead technical person. It used complex routing protocols in unusual ways to achieve load balancing and rapid failover in case of failure. The system practically ran itself, except when it didn’t. Only its designer understood how it worked and could debug it. This led to a number of problems when this person became overloaded and was pulled in many directions.
 
@@ -54,7 +50,7 @@ During the engineering phase, create multiple design proposals. Consider each of
 
 Good engineering is not about having the ability to create perfection in the first draft, but rather about being able to iterate over many revisions, improving each one until we have the design we want.
 
-##### Case Study: Branch Office Prototypes
+### Case Study: Branch Office Prototypes
 
 The network group at a company with many buildings around the world found it difficult to maintain the ad hoc network solutions that had been deployed at each building. They decided to standardize.
 
@@ -64,7 +60,7 @@ In the prototyping stage, the team members kept asking themselves how things cou
 
 Each simplification made the systems easier to understand and manage.
 
-### 17.3 Vendor-Certified Designs
+## Vendor-Certified Designs
 
 Often third-party products have the engineering dictated to you. The vendor proscribes minimum CPU, RAM, and disk requirements. Often vendors publish **certified engineering designs** or **vendor best practices**. There may be multiple recommendations—for example, separate engineering recommendations for use with up to one dozen, one hundred, or one thousand users.
 
@@ -76,19 +72,19 @@ Straying too far from the vendor’s recommendations will result in the loss of 
 
 Usually we must engineer how the system will be installed ourselves. Vendorcertified designs are relatively rare. Even when a vendor design exists, creating the local engineering design requires a lot of expertise and effort.
 
-### 17.4 Dependency Engineering
+## Dependency Engineering
 
 The reliability of a service is greatly influenced by its dependencies. A system is never more reliable than the most unreliable system it has a hard dependency on. For example, if an application server can be accessed only via an unreliable network, the application will never be more reliable than that network.
 
 The larger and more complex a system becomes, the more dependencies it has. We can manage these dependencies during the engineering process in ways that greatly improve the resulting system’s reliability.
 
-#### 17.4.1 Primary Dependencies
+### Primary Dependencies
 
 Primary reliability refers to the core system reliability excluding any external dependencies. As system administrators, we often do not have much control over the reliability of the software itself, especially for third-party products.
 
 What we can control are our decisions about the hardware it runs on. Enterprise software tends to be written assuming the hardware will never fail. In turn, we choose reliability features such as mirrored boot disks, ECC RAM, dual NICs, and so on. These issues are discussed in [General Engineering Basics](SERVICE.PLANNING.ENGINEERING.md#171-general-engineering-basics).
 
-#### 17.4.2 External Dependencies
+### External Dependencies
 
 We can control many of the external dependencies that influence a service’s reliability.
 
@@ -104,7 +100,7 @@ Applications often have soft dependencies on other applications. An accounting a
 
 As we engineer a system and review the dependency matrix, we can improve the reliability by identifying hard dependencies and either eliminate them or reengineer them to be soft dependencies. For example, earlier we mentioned a service that was only as reliable as its least reliable network connection. That network connection could be reengineered to be a dual-connected connection, thereby ensuring the system can survive one network failure at any time.
 
-##### NFS Dependencies Outside the Datacenter
+### NFS Dependencies Outside the Datacenter
 
 The network file system protocol commonly used on Unix systems is called NFS. It has a feature whereby if the server goes down, the clients will freeze until it comes back up. This feature is useful in situations in which one would rather wait than have the client software lose data because a file system magically disappeared. Under this arrangement, an NFS server is a hard dependency for any client.
 
@@ -114,17 +110,17 @@ Then the customer powered off his desktop machine and left on vacation. All the 
 
 In hindsight, the servers should have been configured to mount NFS volumes only from machines directly managed by the SA team, or possibly just configured not to mount from other NFS servers at all.
 
-#### 17.4.3 Dependency Alignment
+### Dependency Alignment
 
 Another engineering trick is to realign dependencies into smaller failure domains. A **failure domain** is all the services, locations, and users that are adversely affected when a particular component fails or is taken out of service.
 
 Good engineering requires taking the time to think through how we can shrink failure domains, or divide large failure domains into smaller, isolated failure domains.
 
-##### Hardware Failure Domains Suppose three servers were being set up. Each server was made up of the CPU chassis, an external disk chassis, and its monitor. The original plan was to have one power strip for all the CPUs, one for all the disk chassis, and one for all the monitors. This made for a very uniform and elegant wiring diagram. However, it also meant that if, for example, the power strip for the disks died, all three servers would die. A better design was to divide the system into three smaller failure domains: Each power strip would connect to the CPU, disk, and monitor of a particular server. Each combination of power strip, CPU, disk, and monitor would be an isolated failure domain. In the original design the entire lot was one big failure domain.
+### Hardware Failure Domains Suppose three servers were being set up. Each server was made up of the CPU chassis, an external disk chassis, and its monitor. The original plan was to have one power strip for all the CPUs, one for all the disk chassis, and one for all the monitors. This made for a very uniform and elegant wiring diagram. However, it also meant that if, for example, the power strip for the disks died, all three servers would die. A better design was to divide the system into three smaller failure domains: Each power strip would connect to the CPU, disk, and monitor of a particular server. Each combination of power strip, CPU, disk, and monitor would be an isolated failure domain. In the original design the entire lot was one big failure domain.
 
 A similar situation often happens in network engineering. Often a network team sets up VPN servers in locations around the world. At each location there is a redundant pair of VPN servers along with supporting devices such as network switches, power strips, and so on. The engineers configure each half of the pair to be an independent failure domain: one VPN device, power strip, UPS, and switch. A careless design or installer can create cross-dependencies that widen the failure domain to the size of the entire installation.
 
-##### Service Failure Domains The next example involves a common best practice used by Microsoft Windows administrators. When a user logs into an ActiveDirectory domain, an MS Windows login script runs that sets up the user’s environment, configuring printers and other needed resources. The best practice is to have this login script download from the same server as the user’s home directory. This aligns the dependency on
+### Service Failure Domains The next example involves a common best practice used by Microsoft Windows administrators. When a user logs into an ActiveDirectory domain, an MS Windows login script runs that sets up the user’s environment, configuring printers and other needed resources. The best practice is to have this login script download from the same server as the user’s home directory. This aligns the dependency on
 
 the file server with the dependency on that startup script. In fact, everything the script depends on should also be replicated to that server.
 
@@ -138,7 +134,7 @@ Now we make sure that all servers for a given service that have hard dependencie
 
 If a service has components that are replicas or are in a master/slave configuration, we make sure that the replicas are in different racks, and that the master and slave are not in the same rack. Doing so means that the service has a soft dependency on any given rack, rather than a hard dependency.
 
-##### Location Failure Domains A common design pattern is to make each office self-sufficient for a limited and specific set of services. For example, one might define that if an office loses connectivity to the rest of the company, the following services should still work: DNS, DHCP, ActiveDirectory, home directories, email, and printing. Service would degrade in predictable ways in this scenario: Email sent outside of the office would queue up until connectivity was repaired, and so on.
+### Location Failure Domains A common design pattern is to make each office self-sufficient for a limited and specific set of services. For example, one might define that if an office loses connectivity to the rest of the company, the following services should still work: DNS, DHCP, ActiveDirectory, home directories, email, and printing. Service would degrade in predictable ways in this scenario: Email sent outside of the office would queue up until connectivity was repaired, and so on.
 
 Once these requirements are defined, we can engineer those services to depend on only local services. All other services can rely on services outside of the office.
 
@@ -148,11 +144,11 @@ The same applies to applications. A new accounting-related service would be engi
 
 Sometimes, however, self-sufficient sites might not be economical. For example, some companies might set up hundreds of tiny sales offices, often with fewer than a dozen people in each. It would be cost-prohibitive to have each office set up with its own local services. Instead each office may be designed with no servers at all, relying on regional hub datacenters to provide DNS, DHCP, and all other services. With this approach, the amount of server equipment needed in each office is eliminated. If the office would be dead in the water when its WAN connection is down, having services working may be unimportant.
 
-##### Catch-22 Dependencies
+### Catch-22 Dependencies
 
 A startup web company found itself short of disk space and, to save money, exported some free disk space from a Unix desktop via NFS. This disk ended up being mounted on all the servers, since it provided a common component. After a block-wide power failure that outlasted the UPS, the company’s network would not come up. The workstation couldn’t finish booting without the DNS server running, and the DNS server required the NFS partition to be available to complete its own boot process. Shortly afterward, the company hired an SA.
 
-### 17.5 Decoupling Hostname from Service Name
+## Decoupling Hostname from Service Name
 
 Picking the names for machines often becomes a hotly contested debate rivaling the controversies over topics such as Apple versus Microsoft, Vim versus Emacs versus Sublime, and whether sandwiches should be cut lengthwise or diagonally.
 
@@ -166,7 +162,7 @@ In DNS, aliases are configured using their CNAME record, which lists the actual 
 
 Very old software packages might not support the use of aliases. We consider this to be a bug. Also note that SSL certificates are based on the hostname that appears in the URL, not the hostname. Therefore web-based services that use HTTPS need additional planning.
 
-##### Case Study: Splitting the Central Machine
+### Case Study: Splitting the Central Machine
 
 As a small company, Synopsys started with the typical configuration of one central administrative machine. It was the Network Information Service (NIS) master, DNS master, time server, print server, console server, email server, SOCKS relay, token-card authentication server, boot server, NetApp admin host, file server, Columbia Appletalk Protocol (CAP) server, and more. It was also the only head—keyboard and monitor—in the machine room, so it was the machine used to remotely access all other machines. Plus SAs used it to check their email rather than run back to their desks.
 
@@ -180,19 +176,19 @@ Likewise, do not hardcode services to particular IP addresses. Listing an IP add
 
 There are some exceptions to this rule. First, DNS clients must be configured using IP addresses, due to the Catch-22 that would happen if DNS clients needed to use DNS to find the IP address of a DNS server. NICs and network equipment are another exception for similar reasons. However, there are still a couple of ways that you mitigate against an eventual need to change IP addresses. Look for mechanisms that allow you to use a different service-based IP address in the configuration files, rather than the primary IP address of the machine itself.
 
-##### Using IP Aliases
+### Using IP Aliases
 
 There are some other cases where IP addresses are commonly hardcoded into configurations. For example, IP addresses are often used in firewall rules. Likewise, the IP addresses of DHCP servers are often found in the router configurations. Routers are configured to relay broadcast DHCP requests from a particular network to a specified set of DHCP servers. This is called a DHCP relay or IP helper configuration.
 
 DHCP servers can usually be configured with a second IP address (often known as a secondary IP address or an IP alias) that is used for the service, and can be easily moved to another machine. A similar approach can often be used for other services that require firewall rules, with the secondary IP address being used for the service and in the firewall rules, making it much easier to move the service to another machine, along with the IP alias. When this secondary IP address is a loopback address that is advertised onto the network as host route, then it is truly independent of the VLAN, and can be easily moved, even to a completely different datacenter.
 
-### 17.6 Support
+## Support
 
 During the planning and engineering phase, consider how the service will be supported during its lifetime. Support includes technical aspects such as detecting problems, patching, upgrading, performing backups, and scaling the service. It also includes people and processes, such as identifying and training the support groups, developing mechanisms for customers to report problems and submit requests (and how those problems and requests should be handled), and providing documentation for the customers and the support teams.
 
 You need to know when there are problems with the service and when you should be thinking about scaling it up—therefore the service must be monitored. You will need to put some thought and effort into engineering the appropriate monitoring solution. You should also consider which requests users may make in relation to this service, and how those will be handled. Which automation and processes should be in place? Which documentation is needed to support the service?
 
-#### 17.6.1 Monitoring
+### Monitoring
 
 It isn’t a service if it isn’t monitored. If there is no monitoring, then you’re just running software. A service should be monitored for availability, problems, performance, and capacity-planning. See [Monitoring Distributed Systems](../principles/MONITORING.DISTRIBUTED.SYSTEMS.md) for monitoring practices.
 
@@ -204,7 +200,7 @@ During the planning and engineering phase of the project, you need to define wha
 
 You also need to define the process for adding new components into the monitoring system as the system is scaled up or upgraded. Likewise, you need to define how components are removed from the monitoring system as they are retired or repurposed. Ideally these changes should be automated, and driven from the inventory system. However, that means that this automation needs to be developed, and the processes need to be clearly defined and documented.
 
-#### 17.6.2 Support Model
+### Support Model
 
 The support model needs to specify who supports the various components of the service, and what the OLAs and SLAs for each component are. The OLA and SLA for the service need to take into account the OLAs and SLAs of the constituent parts, as well as the design of the service itself.
 
@@ -212,7 +208,7 @@ For example, if a service has components in multiple datacenters around the worl
 
 In a small or midsize company, many of these roles will be performed by the same people, who all know each other. In large companies, there will be different teams supporting each component, they won’t all know each other, and the processes and communication paths may not be clear. Make sure that all of this information is tracked down and documented in advance, rather than finding out in the midst of an incident that you do not know how to contact the on-site support staff in a remote location.
 
-#### 17.6.3 Service Request Model
+### Service Request Model
 
 For most services, the local engineering plan should also include a service request model (SRM). The SRM defines which requests users can make relating to this service, who can make those requests, how they make those requests, which approvals are required, who acts on the requests, which change control policies apply, and which SLA is used for turning around those requests.
 
@@ -220,7 +216,7 @@ Because each service is different, work with the vendor and stakeholders to defi
 
 Consider whether it makes sense to automate these requests. For example, if a user-add request will always be generated as a result of a new hire, can you link to the HR system, so that these requests are automated? This will eliminate the need for someone to remember to submit that request, and someone else to process it. Likewise, user-deletes should occur automatically when someone leaves the company, and perhaps when someone moves to a different role in a group that does not need access. Alternatively, moves could generate access review tasks for the new manager and the service owner.
 
-#### 17.6.4 Documentation
+### Documentation
 
 As part of support planning, operational procedures must be defined. These are different for every service, but generally include backups and restores, business continuity or disaster recovery plans, tasks related to onboarding new users, disconnecting users who are leaving, performing periodic tasks, and anything else required to keep the service running.
 
@@ -230,7 +226,7 @@ The documentation must also include the steps to take when debugging the service
 
 The helpdesk documentation should also specify which information needs to be gathered and passed on to the next support level if the issue remains unresolved and needs to be escalated. The documentation for the more senior SA team must include the vendor’s contact information and support contract number, all the components that the service depends on, and contact information for all the other teams that support those components. The contact information for other teams should be provided through a link to a well-known team support page that each team maintains itself, rather than duplicating information that may get stale into many different support documents.
 
-### 17.7 Summary
+## Summary
 
 Service engineering involves designing how a product will be configured and used in your environment. With a simple service, it is a matter of installing the software. Of course, most services are not simple. In such a case, we must design the service architecture and local engineering plans.
 
@@ -243,7 +239,3 @@ Service architecture should strive for simplicity. Revise the design over and ov
 When possible, do not expose actual hostnames to users. Instead, expose hostname aliases that can be moved to other machines. Do not hardcode IP addresses unless doing so is unavoidable.
 
 The service architecture should be supportable. It should indicate how the system will be monitored, how it will be accessed for administrative purposes, and so on. Documentation should include a runbook for common tasks, expected failure modes, and debugging typical problems.
-
-### Exercises
-
-1. What is a service architecture? What is a local engineering plan? How are they related and/or different? 2. Why is simplicity important in service engineering? 3. What are primary and external dependencies? 4. Which support services improve our ability to operate a service? 5. Pick a service you are familiar with, and list its primary and external dependencies. 6. What is dependency alignment? How can it be used to make a system less susceptible to failures?

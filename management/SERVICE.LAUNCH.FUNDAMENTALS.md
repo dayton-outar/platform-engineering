@@ -1,8 +1,4 @@
-# Chapter 19
-
-## Service Launch: Fundamentals
-
-Source: [The.Practice.of.System.and.Network.Administration-Vol.I-2017-19.pdf](./The.Practice.of.System.and.Network.Administration-Vol.I-2017-19.pdf), PDF pages 1–17.
+# Service Launch: Fundamentals
 
 The case studies and first-person accounts below reflect the source authors’ experience, as published in 2017.
 
@@ -12,7 +8,7 @@ Launching a new service can be the most exciting part of a job. It is the culmin
 
 This document focuses on the initial launch of a service, using our recommended six-step process. [Service Launch: DevOps](SERVICE.LAUNCH.DEVOPS.md), also deals with launches but covers more advanced techniques. [Service Conversions](SERVICE.CONVERSIONS.md), covers the special case where a launch requires users to be migrated from an old service to the new service. The companion volume, *The Practice of Cloud System Administration*, covers related topics such as techniques for upgrading live services.
 
-### 19.1 Planning for Problems
+## Planning for Problems
 
 While a service launch is exciting and fulfilling, the problem with launching a new service is that something always goes wrong. The road to launching a service is full of tricks and traps that catch us in the most non-obvious ways: Users with a particular web browser can’t access it, the service doesn’t work for remote users, the production environment doesn’t have enough space, the documentation is confusing, and so on.
 
@@ -26,7 +22,7 @@ The possibility of each of those problems had been foreseen and NASA had worked 
 
 As we gain experience we become better at foreseeing potential problems. We keep a checklist of potential issues to plan for. A typical system administrator accumulates this checklist in his or her head and uses past experience to be better prepared in the future. A good system administrator keeps the checklist written somewhere for reference. A great system administrator maintains this list in a way it can be used and updated by everyone in the organization. Each new launch problem results in updates to the list. As a result, with each new experience the entire organization gets smarter.
 
-### 19.2 The Six-Step Launch Process
+## The Six-Step Launch Process
 
 The general launch process relies on two major concepts: the **ready list** and iterations of launches and learning.
 
@@ -45,13 +41,13 @@ The entire process can be summarized as follows:
 - **Step 5: Capture the lessons learned.** Capture the lessons learned for posterity and to educate the organization.
 - **Step 6: Repeat.** Begin the process again.
 
-#### 19.2.1 Step 1: Define the Ready List
+### Step 1: Define the Ready List
 
 The ready list is a list of tasks that must be completed or assertions that must be satisfied to indicate that we are ready to launch. In other words, this is the list that tells us when we are done.
 
 Maintaining this list helps team members keep focus and avoid work that is unrelated to the shortest path to launch. It communicates your progress to management, other teams, and customers.
 
-##### What to List Items on the ready list generally fall into four categories:
+### What to List Items on the ready list generally fall into four categories:
 
 - **“Must have” feature set:** There may be other features requested, but the launch cannot happen without these features. This part of the list serves as a contract between the customer and the provider. Setting expectations in this way prevents the problem where, after launch, stakeholders are surprised that certain features are missing.
 - **“Would be nice” feature set:** All features that are not must-haves fit in this category.
@@ -59,7 +55,7 @@ Maintaining this list helps team members keep focus and avoid work that is unrel
 
 - **Assertions and approvals:** This is the list of things that must be true before launch. For example, the legal department has approved the trademark, security audits are complete, the CEO and head of product management have signed off, and so on. This checklist contains technical items such as verifying disk capacity or confirming that a particular ISP connection is up.
 
-##### List Attributes At a minimum each item in the list should have a brief title, a priority, the name of who is responsible for completing the task, a link to the history of the task, and a status.
+### List Attributes At a minimum each item in the list should have a brief title, a priority, the name of who is responsible for completing the task, a link to the history of the task, and a status.
 
 The priorities should be standardized among all projects to avoid confusion, to make it easier for people to move from project to project, and to prevent employees from spending time reinventing the wheel with each project. For simplicity’s sake, we focus on three priorities: must have, low priority, and not required.
 
@@ -67,7 +63,7 @@ If there has been a decision to not include a feature, it may be less confusing 
 
 If your organization has a standardized priority scheme for bugs, adopt it for use on the ready list to avoid confusion. For example, at Google there is a carefully defined set of bug priorities from P0 to P6. Of those, the definitions of P1, P2, and P5 map well to the must have, low priority, and not required priorities. Therefore we would adopt those priorities even though they are not contiguous numbers.
 
-##### Items Should Be Specific and Unambiguous
+### Items Should Be Specific and Unambiguous
 
 The description of an item should be measurable. “Make things better” is ambiguous. “Improve sort performance by 20 percent” and “System enables RAID controller” are better. One way to make sure goals are well written is to follow George T. Doran’s advice in his 1981 article, “There’s a S.M.A.R.T. Way to Write Management’s Goals and Objectives.” One is in a better position when goals are specific, measurable, achievable, relevant, and time-bound:
 
@@ -79,7 +75,7 @@ The description of an item should be measurable. “Make things better” is amb
 
 Doran’s article discourages us from trying to achieve all five qualities for every item. For example, listing a deadline is overkill for simple bug reports.
 
-##### Storing the Ready List The list should be viewable to all stakeholders—both people on the team and external people. This transparency enables everyone to understand what is going on outside their silo. It also helps management see progress and spot bottlenecks. Updates to the list should be made by those doing the work rather than requiring all updates go through a central coordinator. This improves agility.
+### Storing the Ready List The list should be viewable to all stakeholders—both people on the team and external people. This transparency enables everyone to understand what is going on outside their silo. It also helps management see progress and spot bottlenecks. Updates to the list should be made by those doing the work rather than requiring all updates go through a central coordinator. This improves agility.
 
 Following are the most common places to store and maintain the list. Pick whatever fits your team and corporate culture the best.
 
@@ -98,7 +94,7 @@ Making accomplishments visible motivates the team. The team will see the complet
 
 A visual indication of progress also helps communicate with management. You want to accurately communicate progress to management, especially executive management. If they peek at the list weekly, they should see more and more items being marked complete. If what they see is a list of what’s left to do, the subliminal message is that you haven’t even started. Upper-level managers have too much on their plate to remember what the list looked like last week. Expecting someone to remember that last week there were 20 items and this week there are only 15 is expecting too much.
 
-#### 19.2.2 Step 2: Work the List
+### Step 2: Work the List
 
 Now we work through the items in the list. Some we do ourselves, others we delegate.
 
@@ -116,11 +112,11 @@ Some teams use weekly status meetings to monitor progress. The purpose of the me
 
 Some teams start each day with a very fast status meeting called a “stand-up.” This technique is borrowed from Agile methodology. People stand in a circle and take turns announcing three things: what they completed yesterday, what they plan on doing today, and which roadblocks they are facing. To keep the meetings brief, there is no discussion, just the individual announcements. Because people are standing, there is a physical reason to keep the meeting short. Assisting co-workers with their roadblocks is done only after the meeting ends. As the meeting breaks up, people socialize a bit, as people often do. However, now it is productive socialization, because people initiate ad hoc discussions about the various roadblocks raised. It is more efficient to have two people discuss a roadblock together than to have the entire team pause and wait for the length of the discussion during the meeting.
 
-##### Single-Person Teams Need a Ready List, Too
+### Single-Person Teams Need a Ready List, Too
 
 You might not think you need to maintain a ready list if you are a solo SA or the only person on the project. The opposite is true. Keeping other people apprised of your status can be even more important in this situation. It keeps the work you do visible to management, and keeps customers aware of the status in a way that prevents them from bothering you to ask, thereby distracting you from your work.
 
-#### 19.2.3 Step 3: Launch the Beta Service
+### Step 3: Launch the Beta Service
 
 Before launching to real customers, the service should be launched to an isolated environment for testing. The isolated environment is called a **staging area**. The bugs and issues found there should be added to the ready list.
 
@@ -136,7 +132,7 @@ There are many different types of staging areas. Each has a different name and a
 
 Each stage has entry and exit criteria. The entry criteria determine when the testing starts. For example, the QA stage receives a release candidate from development, whose intention is to deliver a software package that the developers believe is ready for use. The exit criteria restrict or **gate** whether the release passes or fails. For example, the gate to successfully leave QA may be that all automated and manual tests pass. The gate to successfully leave UAT may be zero P0 bugs and no more than three P1 bugs. The larger the project, the more important it is that these exit and entry criteria be explicit and written.
 
-#### 19.2.4 Step 4: Launch the Production Service
+### Step 4: Launch the Production Service
 
 Finally we are ready to launch. The must-haves are done. As many of the nice-tohaves as possible are complete, too.
 
@@ -148,7 +144,7 @@ Communication is equally important. We need to communicate that the launch is ha
 
 You should never launch to all users at once. That is too risky. Launch to a few users and expand. Go beyond a simple beta user process. Release to waves of users, such as different departments or teams, starting with the most risk tolerant and ending with the most risk averse. Gradual rollouts are also discussed in [Service Conversions](SERVICE.CONVERSIONS.md#216-gradual-roll-outs).
 
-#### 19.2.5 Step 5: Capture the Lessons Learned
+### Step 5: Capture the Lessons Learned
 
 Congratulations on the launch! The next step is to learn from this experience. A retrospective is a live meeting where the launch process is reviewed. It is called a retrospective because it involves looking back at what happened. We determine what went well, what didn’t go well, and what needs to be improved. The purposes of the retrospective are fourfold:
 
@@ -176,7 +172,7 @@ Most companies have many IT teams. Imagine a company with ten IT teams. If they 
 
 In a traditional model, our problems define our weaknesses. A better model is one where problems and solutions are discussed openly. Problems are a means by which we learn something valuable. Each problem is an opportunity to share this new wisdom as widely as possible. Instead of defining our weaknesses, the discovery and communication of a problem makes the entire organization smarter.
 
-#### 19.2.6 Step 6: Repeat
+### Step 6: Repeat
 
 There’s no such thing as a final launch. There will be new releases with new features, bug fixes, and so on. Each requires another launch.
 
@@ -184,15 +180,15 @@ Each launch should have its own ready list and use a similar process, though fut
 
 As discussed in [Software Upgrades](SERVICE.REQUIREMENTS.md#1664-software-upgrades), software requires upgrades. Even if you do not add features or find bugs to be fixed, the underlying libraries and frameworks will need to be upgraded as security holes are discovered in them. They start out fresh but they go bad. Joshua Corman (2015) explained it this way: “Software ages like milk.”
 
-### 19.3 Launch Readiness Review
+## Launch Readiness Review
 
 A launch readiness review (LRR) is a process created to assure successful launches by comparing the state of the service against launch readiness criteria (LRC).
 
-##### Google’s Production Readiness Reviews
+### Google’s Production Readiness Reviews
 
 The term LRR comes from Google SRE culture, which is described in the book *Site Reliability Engineering: How Google Runs Production Systems* (Beyer, Jones, Petoff & Murphy 2016).
 
-#### 19.3.1 Launch Readiness Criteria
+### Launch Readiness Criteria
 
 The LRC include basic tasks such as verifying that stakeholders have approved the launch, that there is a disaster recovery plan in place, that data backups are working and have been tested, and that various security audits have been completed. The LRC also include items that come from the lessons learned during past launches.
 
@@ -204,7 +200,7 @@ Note that the launch criteria list is not the same as the launch procedure. The 
 
 When all the criteria are met, we are ready to launch. Management should be strict in applying the criteria. If exceptions are permitted, the business risk should be quantified so that managers understand the implications of what they are agreeing to.
 
-#### 19.3.2 Sample Launch Criteria
+### Sample Launch Criteria
 
 Here are some sample items that might appear on launch review criteria lists:
 
@@ -221,7 +217,7 @@ Here are some sample items that might appear on launch review criteria lists:
 - **Load testing is complete.** The system has been load-tested using simulations of the expected and optimistic traffic levels.
 - **Ten-times response plan is developed and tested.** If on the first day the service receives ten times as many users as expected, which steps will be taken? This plan must be written and tested.
 
-#### 19.3.3 Organizational Learning
+### Organizational Learning
 
 Sometimes problems identified during a retrospective become candidates to add to the launch readiness checklist. The LRC is how we capture learning in an organizationally beneficial way.
 
@@ -229,7 +225,7 @@ Without an LRC process each team will probably make similar mistakes with its la
 
 LRC are a way to improve the organization’s collective knowledge. They communicate learning from one group to another so that people do not repeat one another’s mistakes.
 
-#### 19.3.4 LRC Maintenance
+### LRC Maintenance
 
 As the LRC list grows, it can become a bureaucratic burden. We can prevent that problem by being cautious about adding new items, and by removing obsolete items.
 
@@ -243,7 +239,7 @@ Items should be updated and rewritten as needed. Obsolete items should be remove
 
 The best way to remove something from the list is to make it obsolete because it has become automatic. For example, suppose one LRC item is to explain how the service survives single-host failures. Each launch designs and implements a failover mechanism that then is documented, tested, reviewed, and evaluated as part of the LRC. If the company creates a centralized load balancing service that can be used on a subscription basis (“load balancer as a service”), the labor involved in satisfying this LRC item becomes significantly easier. The criteria can be satisfied by simply showing that the system uses the platform’s default load balancer.
 
-### 19.4 Launch Calendar
+## Launch Calendar
 
 Large organizations that engage in many simultaneous launches require some kind of coordination of these activities. Usually this takes the form of a launch calendar. The launch calendar may be a simple chronological list of future launches on a wiki or something more complex, such as a groupware calendar created via Microsoft Exchange or Google Calendar.
 
@@ -255,35 +251,35 @@ Some items on the calendar will be listed on their final planned date; other lau
 
 Each team should be held responsible for keeping its entries on the launch calendar up-to-date.
 
-### 19.5 Common Launch Problems
+## Common Launch Problems
 
 This section describes the most common launch problems. An observant reader may notice that most of these problems can be avoided by using the DevOps methodology described earlier. DevOps culture also encourages the early involvement of operations, which would prevent the other issues.
 
-#### 19.5.1 Processes Fail in Production
+### Processes Fail in Production
 
 Deployment processes that worked in other stages may fail in production. Often the deployment process is different in each of the dev, test, beta, and production environments. This often happens when a different team is responsible for each stage, and they don’t communicate or share code. The members of each team develop their own installation process. Often the production environment is completely different, and the production team finds itself developing a procedure from scratch, without the benefit of experience from deploying to the other stages. Or, perhaps the beta and production environments are similar enough that one process should work for both. However, the production environment has changed in the many months since the last time code was pushed to it and the process breaks. Either way, the lesson here is that the best launch experience comes from having a unified deployment mechanism across all stages. It should be developed as part of the code, not as something left to do the day the service is pushed to production. One of the goals of containers such as Docker is to provide a single delivery format that works in all stages.
 
-#### 19.5.2 Unexpected Access Methods
+### Unexpected Access Methods
 
 The way users access the service is different in all stages prior to production. Many service launches fail because tests were performed using one access method but customers actually access it another way. In one case, an SSL VPN was going to be how 80 percent of the users would access the service but the developers and testers used the service only without the VPN. In another case, the system was tested only by local users with fast networks; no one considered that actual users would be accessing the system over high-latency links, which would cause certain protocols to time out. The lesson here is to make sure the testing is as similar to the access method that real users will use.
 
-#### 19.5.3 Production Resources Unavailable
+### Production Resources Unavailable
 
 Assumptions are typically made about resources available in production. Suppose shortly before launch the developers announce that the new service will require a large amount of disk space, CPU, or bandwidth resources. Developers simply assumed that these resources would be available without making their requirements known ahead of time. The real-world logistics of installing additional servers or acquiring more bandwidth are complex and often take weeks to months of pre-work. Developers are often shocked to learn that there isn’t a petabyte of spare disk space they can use, or that adding ISP capacity can easily take 12 or more weeks. The lesson here is to involve operations with resource and capacity planning early in development, not at the end.
 
-#### 19.5.4 New Technology Failures
+### New Technology Failures
 
 The first time a new technology is used, the launch takes longer. The first time you use a new technology, it will take considerably longer to get it working in production. This is true for a new language, framework, database, or other service. For example, if your organization is a C# shop, the first time you try to use NodeJS in production you will discover dozens of unexpected issues, each requiring a week of experimentation, design, and testing. If you have great operational expertise in one brand of database, and a developer decides that some new data should be in a different database system, the developer may be surprised to discover that adding this database requires developing new expertise and procedures. Sadly, the true believers in the new technology can’t possibly imagine that any of these tasks will take any time because the new technology solves all problems (or so they think). As a result, the use of these new technologies may not even be communicated until the last minute and the launch will be delayed. The lesson here is that new technologies require weeks and possibly months of operational work before they can be used in production. This factor should be weighed as part of the decision to adopt the new technology. Descriptions of such failures have been documented in articles such as “Why MongoDB Never Worked Out at Etsy” (McKinley 2012) and “Providence: Failure Is Always an Option” (Punyon 2015).
 
-#### 19.5.5 Lack of User Training
+### Lack of User Training
 
 No training for users leads to disaster. For most new services, users require training or at least simple screenshots that walk them through the steps to access the system. Many times the excuse to delay training is the following Catch-22: Training requires that the system be launched, but the launch can’t be done until the training is complete. The organization, therefore, decides to launch without training and ends up in a sticky situation where people can’t go back to the old system (it has been disabled) and don’t know how to use the new system. One solution is to build a staging area used exclusively for training purposes. This provides a platform for training without disrupting the legacy production service. The lesson here is that the training process must be planned for just like any other feature.
 
-#### 19.5.6 No Backups
+### No Backups
 
 Suppose that shortly before launch, operations points out that the new system has no disaster recovery plan. The system is constructed in a way that makes doing backups and restores very difficult. More importantly, it can take weeks, perhaps months, to test the restore process until it is sufficiently reliable. The lesson here is that disaster recovery features must be built into a service and can not be designed as an afterthought.
 
-### 19.6 Summary
+## Summary
 
 Launching a service requires a lot of coordination. We must be prepared for unexpected surprises, especially the first time we use a new technology or are in a new environment.
 
@@ -296,7 +292,3 @@ As we launch more services, we start to accumulate best practices and guidelines
 Some common launch problems to be aware of include differences between test environments and production environments, operational difficulties the first time a new technology is used in production, and lack of resource and capacity planning.
 
 The more launches you are involved in, the better you will get at launching new services.
-
-### Exercises
-
-1. Describe the six-step launch process. 2. Steps 5 and 6 of the launch process are not part of the actual launch. Why are they important? 3. What is a ready list? 4. In a previous project you worked on, how was the ready list maintained? What were the pros and cons of maintaining it this way? What would you have done differently?

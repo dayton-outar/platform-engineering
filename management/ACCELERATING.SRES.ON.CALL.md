@@ -1,8 +1,4 @@
-# Chapter 28
-
-## Accelerating SREs to On-Call and Beyond
-
-Source: [Site.Reliability.Engineering-2016-28.pdf](./Site.Reliability.Engineering-2016-28.pdf), PDF pages 1–16.
+# Accelerating SREs to On-Call and Beyond
 
 The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
 
@@ -12,7 +8,7 @@ The first-person accounts and Google-specific practices below reflect the source
 
 ***Edited by Shylaja Nukala***
 
-### You’ve Hired Your Next SRE(s), Now What?
+## You’ve Hired Your Next SRE(s), Now What?
 
 You’ve hired new employees into your organization, and they’re starting as Site Reliability Engineers. Now you have to train them on the job. Investing up front in the education and technical orientation of new SREs will shape them into better engineers. Such training will accelerate them to a state of proficiency faster, while making their skill set more robust and balanced.
 
@@ -63,7 +59,7 @@ Tips for interpreting this illustration:
 
 - For maximum effect, training activities and practices should be appropriately paced: some are appropriate to undertake straightaway, some should happen right before an SRE officially goes on-call, and some should be continual and ongoing even by seasoned SREs. *Concrete learning experiences* should happen for the entire time leading up to the SRE going on-call.
 
-### Initial Learning Experiences: The Case for Structure Over Chaos
+## Initial Learning Experiences: The Case for Structure Over Chaos
 
 SRE teams undertake a natural mix of proactive[^p4-2] and reactive[^p4-3] work. It should be a strong goal of every SRE team to contain and reduce reactive work through ample proactivity, and the approach you take to onboarding your newbie(s) should be no exception. Consider the following all-too-common, but sadly suboptimal, onboarding process:
 
@@ -81,7 +77,7 @@ SRE students will have questions like the following:
 
 Making the jump from a previous company or university, while changing job roles (from traditional software engineer or traditional systems administrator) to this nebulous *Site Reliability Engineer* role is often enough to knock students’ confidence down several times. For more introspective personalities (especially regarding questions #2 and #3), the uncertainties incurred by nebulous or less-than-clear answers can lead to slower development or retention problems. Instead, consider the approaches outlined in the following sections. These suggestions are as concrete as any ticket or alert, but they are also sequential, and thus far more rewarding.
 
-#### Learning Paths That Are Cumulative and Orderly
+### Learning Paths That Are Cumulative and Orderly
 
 Put some amount of learning order into your system(s) so that your new SREs see a path before them. Any type of training is better than random tickets and interrupts, but do make a conscious effort to combine the right mix of theory and application: abstract concepts that will recur multiple times in a newbie’s journey should be frontloaded in their education, while the student should also receive hands-on experience as soon as practically possible.
 
@@ -116,7 +112,7 @@ It’s a good idea for all interested parties to get a sense of how much informa
 
 Depending on how the access permissions are configured for your service, you can also consider implementing a tiered access model. The first tier of access would allow your student read-only access to the inner workings of the components, and a later tier would permit them to mutate the production state. Completing sections of the on-call learning checklist satisfactorily would earn the student progressively deeper access to the system. The Search SRE team calls these attained levels “powerups”[^p7-4] on the route to on-call, as trainees are eventually added into the highest level of systems access.
 
-#### Targeted Project Work, Not Menial Work
+### Targeted Project Work, Not Menial Work
 
 SREs are problem solvers, so give them a hearty problem to solve! When starting out, having even a minor sense of ownership in the team’s service can do wonders for learning. In the reverse, such ownership can also make great inroads for trust building among senior colleagues, because they will approach their junior colleague to learn about the new component(s) or processes. Early opportunities for ownership are standard across Google in general: all engineers are given a starter project that’s meant to provide a tour through the infrastructure sufficient to enable them to make a small but useful contribution early. Having the new SRE split time between learning *and* project work will also give them a sense of purpose and productivity, which would not happen if they spent time only on learning *or* project work. Several starter project patterns that seem to work well include:
 
@@ -126,7 +122,7 @@ SREs are problem solvers, so give them a hearty problem to solve! When starting 
 
 - Automating a pain point that isn’t quite painful enough to have been automated already, providing the new SRE with an appreciation for the value SREs place on removing toil from our day-to-day operations.
 
-### Creating Stellar Reverse Engineers and Improvisational Thinkers
+## Creating Stellar Reverse Engineers and Improvisational Thinkers
 
 We can propose a set of guidelines for *how* to train new SREs, but *what* should we train them on? Training material will depend on the technologies being used on the job, but the more important question is: what kind of engineers are we trying to create? At the scale and complexity at which SREs operate, they cannot afford to merely be operations-focused, traditional system administrators. In addition to having a large-scale engineering mindset, SREs should exhibit the following characteristics:
 
@@ -138,21 +134,21 @@ We can propose a set of guidelines for *how* to train new SREs, but *what* shoul
 
 Let’s examine these attributes further, so that we can understand how to equip our SREs for these skills and behaviors.
 
-#### Reverse Engineers: Figuring Out How Things Work
+### Reverse Engineers: Figuring Out How Things Work
 
 Engineers are curious about how systems they’ve never seen before work—or, more likely, how the current versions of systems they used to know quite well work. By having a baseline understanding of how systems work at your company, along with a willingness to dig deep into the debugging tools, RPC boundaries, and logs of your binaries to unearth their flows, SREs will become more efficient at homing in on unexpected problems in unexpected system architectures. Teach your SREs about the diagnostic and debugging surfaces of your applications and have them practice drawing inferences from the information these surfaces reveal, so that such behavior becomes reflexive when dealing with future outages.
 
-#### Statistical and Comparative Thinkers: Stewards of the Scientific Method Under Pressure
+### Statistical and Comparative Thinkers: Stewards of the Scientific Method Under Pressure
 
 You can think of an SRE’s approach to incident response for large-scale systems as navigating through a massive decision tree unfolding in front of them. In the limited time window afforded by the demands of incident response, the SRE can take a few actions out of hundreds with the goal of mitigating the outage, either in the short term or the long term. Because time is often of the utmost importance, the SRE has to effectively and efficiently prune this decision tree. The ability to do so is partially gained through experience, which only comes with time and exposure to a breadth of production systems. This experience must be paired with careful construction of hypotheses that, when proven or disproven, even further narrow down that decision space. Put another way, tracking down system breakages is often akin to playing a game of “which of these things is not like the other?” where “things” might entail kernel version, CPU architecture, binary version(s) in your stack, regional traffic mix, or a hundred other factors. Architecturally, it’s the team’s responsibility to ensure all of these factors can be controlled for and individually analyzed and compared. However, we should also train our newest SREs to become good analysts and comparators from their earliest moments on the job.
 
-#### Improv Artists: When the Unexpected Happens
+### Improv Artists: When the Unexpected Happens
 
 You try out a fix for the breakage, but it doesn’t work. The developer(s) behind the failing system are nowhere to be found. What do you do now? You improvise! Learning multiple tools that can solve parts of your problem allows you to practice defense in depth in your own problem-solving behaviors. Being too procedural in the face of an outage, thus forgetting your analytical skills, can be the difference between getting stuck and finding the root cause. A case of bogged-down troubleshooting can be further compounded when an SRE brings too many untested assumptions about the cause of an outage into their decision making. Demonstrating that there are many analytical traps that SREs can fall into, which require “zooming out” and taking a different approach to resolution, is a valuable lesson for SREs to learn early on.
 
 Given these three aspirational attributes of high-performing SREs, what courses and experiences can we provide new SREs in order to send them along a path in the right direction? You need to come up with your own course content that embodies these attributes, in addition to the other attributes specific to your SRE culture. Let’s consider one class that we believe hits all of the aforementioned points.
 
-#### Tying This Together: Reverse Engineering a Production Service
+### Tying This Together: Reverse Engineering a Production Service
 
 “When it came time to learn [part of the Google Maps stack], [a new SRE] asked if, rather than passively having someone explain the service, she could do this herself—learning everything via Reverse Engineering class techniques, and having the rest of us correct her/fill in the blanks for whatever she missed or got wrong. The result? Well, it was probably more correct and useful than it would have been if *I’d* given the talk, and I’ve been on-call for this for over 5 years!”
 
@@ -166,11 +162,11 @@ Along the way, we build a system diagram and also discuss components that are sh
 
 At the end of the class, the students are charged with a task. Each student returns to their home team and asks a senior SRE to help them select a stack or slice of a stack for which they’ll be on-call. Using the skills learned in classes, the student then diagrams that stack on their own and presents their findings to the senior SRE. Undoubtedly the student will miss a few subtle details, which will make for a good discussion. It’s also likely that the senior SRE will learn something from the exercise as well, exposing drifts in their prior understanding of the ever-changing system. Because of the rapid change of production systems, it is important that your team welcome any chance to refamiliarize themselves with a system, including by learning from the newest, rather than oldest, members of the team.
 
-### Five Practices for Aspiring On-Callers
+## Five Practices for Aspiring On-Callers
 
 Being on-call is not the single most important purpose of any SRE, but production engineering responsibilities usually do involve some kind of urgent notification coverage. Someone who is capable of responsibly taking on-call is someone who understands the system that they work on to a reasonable depth and breadth. So we’ll use “able to take on-call” as a useful proxy for “knows enough and can figure out the rest.”
 
-#### A Hunger for Failure: Reading and Sharing Postmortems
+### A Hunger for Failure: Reading and Sharing Postmortems
 
 “Those who cannot remember the past are condemned to repeat it.”
 
@@ -186,7 +182,7 @@ Some SRE teams at Google run “postmortem reading clubs” where fascinating an
 
 Regular readings or presentations on outages, including trigger conditions and mitigation steps, do wonders for building a new SRE’s mental map and understanding of production and on-call response. Postmortems are also excellent fuel for future abstract disaster scenarios.
 
-#### Disaster Role Playing
+### Disaster Role Playing
 
 > “Once a week we have a meeting where a victim is chosen to be on the spot in front of the group, and a scenario—often a real one taken from the annals of Google history— is thrown at him or her. The victim, whom I think of as a game show contestant, tells the game show host what s/he would do or query to understand or solve the problem, and the host tells the victim what happens with each action or observation. It’s like *SRE Zork*. You are in a maze of twisty monitoring consoles, all alike. You must save innocent users from slipping into the Chasm of Excessive Query Latency, save datacenters from Near-Certain Meltdown, and spare us all the embarrassment of Erroneous Google Doodle Display.”
 
@@ -202,7 +198,7 @@ Over the next 30–60 minutes, the primary and secondary on-callers attempt to r
 
 When your disaster RPG is successful, everyone will have learned something: perhaps a new tool or trick, a different perspective on how to solve a problem, or (especially gratifying to new team members) a validation that you could have solved this week’s problem if you had been picked. With some luck, this exercise will inspire teammates to eagerly look forward to next week’s adventure or to ask to become the game master for an upcoming week.
 
-#### Break Real Things, Fix Real Things
+### Break Real Things, Fix Real Things
 
 A newbie can learn much about SRE by reading documentation, postmortems, and taking trainings. Disaster role playing can help get a newbie’s mind into the game. However, the experience derived from hands-on experience breaking and/or fixing *real* production systems is even better. There will be plenty of time for hands-on experience once a newbie has gone on-call, but such learning should happen *before* a new SRE reaches that point. Therefore, provide for such hands-on experiences much earlier in order to develop the student’s reflexive responses for using your company’s tooling and monitoring to approach a developing outage.
 
@@ -220,7 +216,7 @@ As an alternative to the overhead of asking a senior SRE to carefully plan a spe
 
 This exercise, which we perform on a quarterly basis, shakes out new bugs that we eagerly fix, because our systems do not always degrade as gracefully as we would expect.
 
-#### Documentation as Apprenticeship
+### Documentation as Apprenticeship
 
 Many SRE teams maintain an “on-call learning checklist,” which is an organized reading and comprehension list of the technologies and concepts relevant to the system(s) they maintain. This list must be internalized by a student before they’re eligible to serve as a shadow on-caller. Take a moment to revisit the example on-call learning checklist in Table 28-1. The learning checklist serves different purposes for different people:
 
@@ -244,7 +240,7 @@ In a rapidly changing environment, documentation can fall out of date quickly. O
 
 In Search SRE, we anticipate the arrival of new team member(s) by reviewing our on-call learning checklist, and sorting its sections by how up-to-date they are. As the new team member arrives, we point them to the overall learning checklist, but also task them with overhauling one or two of the most outdated sections. As you can see in Table 28-1, we label the senior SRE and developer contacts for each technology. We encourage the student to make an early connection with those subject matter experts, so that they might learn the inner workings of the selected technology directly. Later, as they become more familiar with the scope and tone of the learning checklist, they are expected to contribute a revised learning checklist section, which must be peer-reviewed by one or more senior SREs that are listed as experts.
 
-#### Shadow On-Call Early and Often
+### Shadow On-Call Early and Often
 
 Ultimately, no amount of hypothetical disaster exercises or other training mechanisms will fully prepare an SRE for going on-call. At the end of the day, tackling real outages will always be more beneficial from a learning standpoint than engaging with hypotheticals. Yet it’s unfair to make newbies wait until their first real page to have a chance to learn and retain knowledge.
 
@@ -260,7 +256,7 @@ When a page comes in, the new SRE is not the appointed on-caller, a condition wh
 
 Some teams will also include a final step: having the experienced on-caller “reverse shadow” the student. The newbie will become primary on-call and own all incoming escalations, but the experienced on-caller will lurk in the shadows, independently diagnosing the situation without modifying any state. The experienced SRE will be available to provide active support, help, validation, and hints as necessary.
 
-### On-Call and Beyond: Rites of Passage, and Practicing Continuing Education
+## On-Call and Beyond: Rites of Passage, and Practicing Continuing Education
 
 As comprehension increases, the student will reach a point in their career at which they are capable of reasoning through most of the stack comfortably, and can improvise their way through the rest. At this point, they should go on-call for their service. Some teams create a final exam of sorts that tests their students one last time before bestowing them with on-call powers and responsibilities. Other new SREs will submit their completion of the on-call learning checklist as evidence that they are ready. Regardless of how you gate this milestone, going on-call is a rite of passage and it should be celebrated as a team.
 
@@ -270,11 +266,11 @@ Set up a regular learning series for your whole team, where overviews of new and
 
 With some practice, you’ll gain much timely involvement from both SREs within your team and developers who work closely with your team, all while keeping everyone’s minds fresh about the future. There are other venues for educational engagement, too: consider having SREs give talks to your developer counterparts. The better your development peers understand your work and the challenges your team faces, the easier it will be to reach fully informed decisions on later projects.
 
-### Closing Thoughts
+## Closing Thoughts
 
 An upfront investment in SRE training is absolutely worthwhile, both for the students eager to grasp their production environment and for the teams grateful to welcome students into the ranks of on-call. Through the use of applicable practices outlined in this document, you will create well-rounded SREs faster, while sharpening team skills in perpetuity. How you apply these practices is up to you, but the charge is clear: as SRE, you have to scale your humans faster than you scale your machines. Good luck to you and your teams in creating a culture of learning and teaching!
 
-### Notes
+## Notes
 
 [^p1-1]: And doesn’t work!
 

@@ -1,7 +1,5 @@
 # SRE Supplementary Material
 
-Source: [Site.Reliability.Engineering-2016-32.pdf](./Site.Reliability.Engineering-2016-32.pdf), PDF pages 17–18, 36–84.
-
 The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
 
 ## PART V Conclusions

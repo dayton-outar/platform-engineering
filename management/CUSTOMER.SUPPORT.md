@@ -1,8 +1,4 @@
-# Chapter 27
-
-## Customer Support
-
-Source: [The.Practice.of.System.and.Network.Administration-Vol.I-2017-27.pdf](./The.Practice.of.System.and.Network.Administration-Vol.I-2017-27.pdf), PDF pages 1–19.
+# Customer Support
 
 The case studies and first-person accounts below reflect the source authors’ experience, as published in 2017.
 
@@ -14,7 +10,7 @@ Nothing is more important than an IT organization’s helpdesk. It is the face o
 
 The basics of running a helpdesk are first to simply have one and to ensure that it has a friendly face. The customer support center should have enough staff to support the traffic, a defined scope of coverage, processes for staff, an escalation process for when things go badly, and call-tracking software.
 
-### 27.1 Having a Helpdesk
+## Having a Helpdesk
 
 Every organization has a helpdesk. It may be physical, such as a walk-up counter, or virtual, such as by phone or email. Sometimes, the helpdesk function is unofficial, being the portion of each day spent directly helping customers.
 
@@ -24,7 +20,7 @@ Earlier is better when it comes to setting up a formal helpdesk. The best time t
 
 The transition from ad hoc to formal helpdesk can be uncomfortable to customers. SAs should expect this push-back and do their best to ease the transition. Communicating the new helpdesk procedures clearly is important.
 
-##### Tell People About Changes
+### Tell People About Changes
 
 When an organization is establishing a formal helpdesk, whether physical or virtual, people must be told that this is being done. When Lumeta had fewer than ten people, most of them did their own computer support, and Tom intervened for more difficult problems. Eventually, the company grew and had three SAs, including one who was dedicated to PC-related problems and other employees. For all intents and purposes, this person was the helpdesk.
 
@@ -34,7 +30,7 @@ Helpdesks do not need to be purely physical locations but instead can be virtual
 
 Self-help systems are also popular but should not be considered a replacement for systems that involve human interaction. With the pervasiveness of the web, there is no excuse not to have at least a simple repository of documentation for customers on such topics as how to get help or request service activation and solutions to common problems. A simple single-page web site with links to important documents, a wiki, or even a searchable blog (one post per FAQ) can be used. Web-based systems let customers help themselves. These systems can reduce the workload of helpdesk attendants but cannot provide interactive debugging or resolve workflow issues that require real-time interaction. There should be a phone number to call to report that the self-help system is down.
 
-##### Ease Transitions
+### Ease Transitions
 
 A 75-person department had a network decoupled from the centralized, corporate IT department. People who were more knowledgeable about the systems did more of the SA duties, and others did less. One semi-technical clerk on staff, named Karen (not her real name), took care of backups and was trained to do most installations and other semi-automated tasks. Nearly every bit of user documentation included the instruction, “Email Karen to get started.” As a result of business changes, the department was eventually required to use the centralized support that other departments in that building used. Customers were frustrated that instead of sending email to Karen, they had to send email to “help.” The personal touch had been lost. Rather than deal with the emotional issues head-on, management simply kept pushing people to use the new process.
 
@@ -42,13 +38,13 @@ Karen had a lot of political clout in the department because everyone knew her, 
 
 The problems could have been prevented if the transition had been handled better, first by understanding what the customers were used to and then by integrating that culture into the new process.
 
-### 27.2 Offering a Friendly Face
+## Offering a Friendly Face
 
 A helpdesk should have a friendly face. For a physical helpdesk, the interior design should be pleasant and welcoming. A web-based virtual helpdesk should be equally welcoming, which often means a design that uses soothing colors and readable fonts with the most commonly selected items at the top left of the first page.
 
 The faces of the staff members also should be welcoming and friendly, as should their personalities. Some people have personalities that are suited for customer service; others don’t. That factor should be a consideration when hiring people for your staff. The tone set by the staff will reflect that set by the supervisor. A supervisor who yells at the staff will find staff yelling at customers. A good-natured supervisor who can laugh and is always friendly will attract similar staff, who will reflect such an attitude with customers. It is easier to build a reputation for being friendly initially than to restore a bad reputation. In short, if you are the supervisor, be the friendly person you want your staff to be. Be a role model.
 
-### 27.3 Reflecting Corporate Culture
+## Reflecting Corporate Culture
 
 The look and feel of your helpdesk should reflect corporate culture. Often a helpdesk doesn’t garner respect in a company when people working at the helpdesk buck the corporate culture. For example, a company that is very strict and formal may reflect this with strict dress codes and ways of conducting business, but the people at the helpdesk wear logo T-shirts and jeans, and a visitor hears the sound of a video game being played in the background. A little asking around will find that the helpdesk has a reputation of being a bunch of slackers, no matter how hard they work or how high the quality of the service they provide.
 
@@ -56,7 +52,7 @@ The opposite happens, too. When Tom was at Bell Labs, he worked in an area with 
 
 Take the time to consider the culture and “look” of your helpdesk as compared to that of the customers they serve. Try to evolve to a culture that suits the customers served.
 
-### 27.4 Having Enough Staff
+## Having Enough Staff
 
 A helpdesk can be helpful only if it has enough people to serve customers in a timely manner. Otherwise, people will look elsewhere for their support.
 
@@ -72,13 +68,13 @@ Managing resources based on call volume also presents a more diverse set of pote
 
 You need to have appropriate metrics to make decisions about improving processes. Metrics can reveal good candidates for new automation, documentation, or training for both SAs and customers. Metrics can reveal which processes are more effective, which are used heavily, or which are not used at all.
 
-##### Case Study: Human Web Browsers
+### Case Study: Human Web Browsers
 
 Making the customers more self-sufficient can backfire if not done correctly. One company established a web site to give easy access to all the documentation and FAQs that previously had been the domain of the helpdesk staff. Upon examining the web site access logs, the management discovered an unexpected trend. At first, the web site was wildly successful. The hits to the site were coming from the customers. The volume of phone calls was reduced, and everything was happening as planned. However, by the third month, the logs indicated a new trend: The web site was seeing an increasing number of hits from the helpdesk itself.
 
 Investigation showed that people had returned to calling the helpdesk and that the helpdesk attendants were reading answers off the web site. The helpdesk was acting as a human web browser! The situation was rectified when the helpdesk attendants were instructed to try to refer people to the appropriate web page rather than give answers directly. Customers were reminded to visit the web site before calling the helpdesk.
 
-### 27.5 Defining Scope of Support
+## Defining Scope of Support
 
 A helpdesk should have a policy defining the scope of support. This document explains what an SA group is and isn’t responsible for. The components of scope are *what*, *who*, *where*, *when*, and *how long*:
 
@@ -98,7 +94,7 @@ When we investigate SA teams that have gained reputations for being unhelpful cu
 
 Without a written policy, the SAs are simply basing their responses on the accumulation of verbal edicts, and newer SAs simply follow the folklore they hear from their team members. New SAs, trying to be helpful, can undo a precedent without realizing it when they instead go against the ad hoc policy. Even worse, they may break something that shouldn’t have been touched or step on a different department’s toes.
 
-##### Case Study: Wide Scope, Narrow Responsibility
+### Case Study: Wide Scope, Narrow Responsibility
 
 Scope of support also means scope of responsibility. The New Jersey engineering division of a computer-aided design company was entirely in one building. The helpdesk’s policy was that no question was inappropriate, but the SAs had a sharply defined scope of responsibility. This worked because they understood where their responsibility ended. They had complete responsibility for certain issues: If someone reported a workstation problem, the SAs would fix it. For other issues, they would advocate on behalf of the customer:
 
@@ -110,7 +106,7 @@ Having a clearly defined scope of responsibility prevented the helpdesk from tak
 
 A helpdesk must have a good process for dealing with requests about technologies that are out of scope. Of course, the helpdesk could simply state that the request is out of scope and refuse to help, but that is an unfriendly response. It is much better to clearly state the scope of what the helpdesk can and can’t do for the person and then offer a little help but give a time limit before that assistance begins. For example, you might say, “We don’t support systems with that video card, but I’ll try my best for 30 minutes. If I can’t fix it, you are on your own.” You might spend 45 minutes on the problem and then politely tell the customer that you’ve reached your limit. The customer will appreciate your effort.
 
-##### Setting Expectations When Working Outside of Job Scope
+### Setting Expectations When Working Outside of Job Scope
 
 One of Jay Stiles’s favorite stories takes place before DHCP made network configuration automatic. At one point, Jay worked in a place that had one set of technicians who installed network jacks in offices and a different set of technicians who configured the PC to connect it to the network. The customers often asked the first group of technicians to configure their PCs. The technicians weren’t trained on how to do this but sometimes felt pressured and tried. Rarely were they successful, and more often than not, they corrupted some other configuration while trying to configure the PC. When they made this kind of mistake, their boss would be called and put in a difficult position: How do you answer a complaint about an employee who wasn’t supposed to do a particular task and didn’t do it correctly?
 
@@ -120,7 +116,7 @@ The boss started receiving calls that were compliments: “The technician tried 
 
 It’s all in how you sell it.
 
-### 27.6 Specifying How to Get Help
+## Specifying How to Get Help
 
 The companion to the scope-of-support document is a document that specifies how to get help: by phone, email, a ticket system, and so on. Certain types of requests may be directed to certain departments, or a unified helpdesk might be the single point of contact that forwards requests as appropriate to individual departments.
 
@@ -128,7 +124,7 @@ Such a document should be a few hundred words at most. Ideally, a shorter versio
 
 This is one of the most important things IT management can do to help the staff save time. If customers have not been given clear directions on the proper way to get help, they will contact SAs directly, interrupting them at inappropriate times, and making it impossible to get larger projects done. Even worse, SAs may be contacted at home!
 
-### 27.7 Defining Processes for Staff
+## Defining Processes for Staff
 
 Helpdesk staff should have well-defined processes to follow. In a smaller environment, this is not as important, because the processes are more ad hoc or are undocumented because they are being used by the people who built them. However, for a large organization, the processes must be well documented.
 
@@ -136,7 +132,7 @@ Very large helpdesks use *scripts* as part of their training. Every service supp
 
 [Handling an Incident Report](HANDLING.INCIDENT.REPORT.md), discusses a formal process that helpdesk attendants can use to process individual trouble reports.
 
-### 27.8 Establishing an Escalation Process
+## Establishing an Escalation Process
 
 Escalation is a process by which an issue is moved from the current staff person to someone with more expertise. The first line of operators should be able to handle 80 percent to 90 percent of all calls and escalate the remaining calls to a second tier of support. The people at this second tier may have more experience, more training, and, possibly, other responsibilities. Larger organizations may have four or more tiers; the higher tiers may include the people who built or currently maintain the service in question.
 
@@ -144,11 +140,11 @@ It is common to have a policy that the first tier of support should escalate all
 
 The escalation process is also what customers use when they are dissatisfied with the support they are receiving. One hopes that this happens as infrequently as possible, but inevitably someone will want to talk to a manager. The helpdesk should be prepared for this kind of request. Large numbers of calls being escalated to the second tier is a warning sign of a larger, systemic problem. Usually, it indicates that the first-tier staff people need more training or do not have the tools to do their job properly. If large numbers of calls are escalated to management, there may be systemic problems with the support the helpdesk is providing.
 
-##### Escalating for Results
+### Escalating for Results
 
 Escalation should not exist simply to pacify angry customers. One small ISP’s helpdesk often receives calls from angry individuals who demand to speak to a manager. In that case, the person hands the phone to the person on his or her left, who then claims to be the manager. Although this practice works in the short term or when business growth is exploding, it is not a sustainable way of maintaining a helpdesk.
 
-### 27.9 Defining “Emergency” in Writing
+## Defining “Emergency” in Writing
 
 Often, SAs are overloaded because every customer claims to have an emergency that requires immediate attention. SAs may feel that customers are using this claim to boss them around, which decreases morale and increases stress levels.
 
@@ -158,11 +154,11 @@ Every company should be able to define what constitutes an emergency. At a facto
 
 It may sound simple, but writing a definition of what constitutes an emergency can become a political battle. It may be part of a larger SLA document, or a stand-alone policy written to help helpdesk personnel make the right decision. This definition is often included in an escalation policy.
 
-##### Planning Well
+### Planning Well
 
 When Tom was in college, the business office put up a poster that said, “Bad planning on your part does not constitute an emergency.” The students were offended, but the sign stayed. The truth is that this statement could be one of the most important lessons the university could teach its students before they hit the real world.
 
-### 27.10 Supplying Request-Tracking Software
+## Supplying Request-Tracking Software
 
 Every helpdesk needs some kind of software to help it manage requests. The alternative is a collection of notes written on scraps of paper. Although it is simple in the beginning and sufficient for environments with one or two SAs, a system based on notes on paper doesn’t scale. Requests get lost, and management has no ability to oversee the process to better allocate resources. Those are the first qualities that you need in helpdesk software. As a helpdesk grows, software can help in other areas. The scripts mentioned in [Defining Processes for Staff](CUSTOMER.SUPPORT.md#277-defining-processes-for-staff) can be displayed automatically and can be made “smart” by being part of the information-gathering process rather than simply a static screen.
 
@@ -172,7 +168,7 @@ Another important aspect of helpdesk software is that it collects logs about whi
 
 Helpdesk software can also automate the collection of data on customer satisfaction. Every day, the software can select a random sample of the previous day’s customers and survey them about the service they received.
 
-##### Case Study: From Good to Bad
+### Case Study: From Good to Bad
 
 A software company with approximately 1,500 employees was using an enhanced version of a freely available call-tracking system. It was very simple to use, with a few different interfaces, the most popular of which was the email interface. The system tracked the customer, department, category, status, who the call was assigned to, how much time had been spent on it and by whom, priority, due date, and so on. Custom scripts produced metrics that management could use to track how things were going. Customers could use a web interface to see the history of their calls and all the other associated fields. Customers could also look at the call queue for the person to whom the call was assigned and see where it was in the person’s priority list. Although the system wasn’t glitzy, everyone was comfortable with it and could get the needed information out of it.
 
@@ -188,13 +184,13 @@ It is critical that helpdesk software match the workflow of the people who use i
 
 Choosing helpdesk software is not an easy process. Most software will need a lot of customizing for your environment. When you decide to invest in helpdesk software, you need to be prepared to invest in the customizations as well, so that the SAs can use it effectively. If it is a burden to use, they will not use it or will use it only for large projects.
 
-### 27.11 Statistical Improvements
+## Statistical Improvements
 
 Many sophisticated statistics can be gathered about a helpdesk. For example, you can monitor the rate of escalations to determine where more training is needed. However, when dealing with upper management for budgeting and planning purposes, historical statistics become much more valuable. You can make a better case for your budget if you can show multiyear trends of customer growth, call volume, types of calls, technologies used, services provided, and customer satisfaction. When you are asked to support a new technology or service, you can use past data to predict what the support costs may be.
 
 The value of statistics increases as the organization grows, because the management becomes less directly involved in the work being done. It is often difficult to collect statistics in small organizations, because practices are often less automated and can’t be instrumented to collect data. As an organization grows, statistics are easier to collect, and it becomes more important that they be collected.
 
-##### Identifying the Top Requesters
+### Identifying the Top Requesters
 
 SAs are usually detail-oriented people. Statistics gloss over the details to find general trends. As a consequence, SAs are often not the best people to generate statistics about helpdesk requests.
 
@@ -210,7 +206,7 @@ The third customer was, to put it politely, getting an SA to do the person’s j
 
 In the absence of any statistics, some basic rough estimates were still extremely useful. This one technique was able to eliminate approximately 10 percent of all the tickets entered into the system. That’s a a big improvement!
 
-### 27.12 After-Hours and 24/7 Coverage
+## After-Hours and 24/7 Coverage
 
 As computers become critical to an ever-expanding list of business processes, customers are asking for 24/7 coverage more often. Although a full three-shift staff may be required in some organizations, some very simple ways to provide 24/7 coverage are not as expensive.
 
@@ -218,7 +214,7 @@ For example, you can set up a voicemail box that alerts a pager when new message
 
 A variation on this technique is to have all managers of the customer groups know the home phone number of the helpdesk’s supervisor, who then takes responsibility for calling SAs in turn until one is found. This has the benefit of limiting personal information to fewer people but can wear down a helpdesk supervisor and doesn’t take into account the supervisor’s vacations. However, local solutions can be found, such as rotating this duty among a couple of supervisors.
 
-##### After-Hours Coverage at T. J. Watson
+### After-Hours Coverage at T. J. Watson
 
 The modern equivalent of a researcher’s laboratory catching fire at night is a major file server being down. In turn, you can treat this issue the same way other industries treat fire alarms. Security personnel have a call list in case of alarms, fires, and so on. You can send alerts to the security personnel, and give them a call list for IT problems. They can start at the top of the list and keep calling numbers until they find someone. Depending on the issue, that person may tell the security guard whom to call. Of course, this method means that the person whom is at the top of the list may never get a good night’s sleep!
 
@@ -226,7 +222,7 @@ In the late 1990s, IBM’s T. J. Watson facility extended the process for handli
 
 No matter how SAs are contacted after hours, the person must be compensated. Some organizations have a salary incentive for oncall time, equivalent to a fraction of the employee’s salary and time and a half if the person is called. Other organizations issue compensation time either officially or unofficially. Comp time allows the employee to take off that much time—or 1.5 times that amount, in some cases—without claiming it against vacation time.
 
-### 27.13 Better Advertising for the Helpdesk
+## Better Advertising for the Helpdesk
 
 Defining your policies and providing announcements online is nice, but rarely will anyone seek them out. In this section, we talk about getting your policies and announcements “out there” and understood.
 
@@ -238,7 +234,7 @@ New policies can be emailed to customers or sent via paper memo if they are part
 
 Messages are most effective when received at the right time. If server3 is being decommissioned in a month, inform people of that fact every time they use server3.
 
-### 27.14 Different Helpdesks for Different Needs
+## Different Helpdesks for Different Needs
 
 When an organization grows, it may make sense to have two separate helpdesks: one for requesting new services and another for reporting problems that arise after the service has been successfully enabled. Often, a third group deals with installing the new service, especially if it requires physical work. This third group may be an internal helpdesk that installers all over the organization can call to escalate installation problems. It is not uncommon, though, for this third group to be the second tier of one of the other helpdesks.
 
@@ -252,7 +248,7 @@ A provisioning helpdesk should have a web-based request system. This can save a 
 
 You do not need to create an entirely new software system to support this kind of functionality. The form data can simply be submitted into the regular requesttracking system, which can then handle the workflow.
 
-### 27.15 Summary
+## Summary
 
 For many customers, the helpdesk is the only way they interact with the IT organization. There may be dozens of subteams behind it, but the helpdesk is the only part that people see. Often they assume it is the entire organization.
 
@@ -263,7 +259,3 @@ Processes should be defined for staff to follow regarding how they provide suppo
 Once those functions are established, a helpdesk can grow in other areas. After-hours coverage can be instituted; policies can be better advertised; and, with high growth, the helpdesk can be split into separate groups for new-service provisioning and trouble reporting.
 
 We discussed a lot of topics in this document, and every issue in some way touched on communication. The helpdesk is how customers communicate with your organization, yet it is often the role of the helpdesk to communicate to customers how, when, and why things are done. Such communication can determine whether IT personnel are perceived as friendly or unfriendly. The statistics that are collected help communicate to management the needs of the organization during planning cycles. Escalation procedures keep the communication flowing when things stall. Having a written after-hours support policy sets expectations with customers and prevents the frustration of unexpected calls late at night.
-
-### Exercises
-
-1. Describe your helpdesk staff structure. 2. How many attendants does your helpdesk have at any given moment? How is that number selected? 3. Which helpdesk attendant in your organization is perceived as the least friendly by the customers? How do you know? How would you help that person improve? 4. How hands-on are you with your helpdesk? Which statistics do you use to manage it, and which statistics are given to your management? If you were one step less hands-on, which new statistics would you need then? 5. Figure out which customers generate the top 10 percent—or 1 percent for larger sites—of all requests. Which trends do you see in those requests, and how can this information be used to improve your helpdesk? 6. Report a problem tonight at 10 PM. Describe how well it went.
