@@ -1,7 +1,5 @@
 # Web Security for Developers-2020
 
-First-person accounts and opinions in this document are those of the original source author.
-
 ## Don’t Be an Accessory
 
 ![Figure 16-1: Chapter-opening artwork](/.attachments/16-1-Web.Security.for.Developers-2020-16.png)

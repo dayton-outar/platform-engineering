@@ -1,7 +1,5 @@
 # Compromising Authentication
 
-First-person accounts and opinions in this document are those of the original source author.
-
 Most websites provide some sort of login functionality. This is a form of *authentication*, the process of identifying users when they return to your website. Authenticating your users allows them to have an identity in an online community where they can contribute content, send messages to others, make purchases, and so on.
 
 Nowadays, internet users are comfortable with signing up to a site with a username and password, and logging back in when they next want to use it. This is especially true since browsers and plug-ins help with caching or choosing passwords, and third-party authentication services have become ubiquitous.

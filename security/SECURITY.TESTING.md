@@ -1,7 +1,5 @@
 # Designing Secure Software-2021
 
-First-person accounts and opinions in this document are those of the original source author.
-
 ## Security Testing
 
 *Testing leads to failure, and failure leads to understanding.*

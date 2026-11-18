@@ -1,7 +1,5 @@
 # Web Security for Developers-2020
 
-First-person accounts and opinions in this document are those of the original source author.
-
 ## Denial-of-Service Attacks
 
 ![Figure 17-1: Chapter-opening artwork](/.attachments/17-1-Web.Security.for.Developers-2020-17.png)

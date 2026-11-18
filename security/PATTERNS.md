@@ -1,7 +1,5 @@
 # Chapter 4 - Patterns
 
-First-person accounts and opinions in this document are those of the original source author.
-
 ![Figure 4-4: Chapter-opening artwork](/.attachments/4-4-Designing.Secure.Software-2021-4.png)
 
 *Figure 4-4: Chapter-opening artwork*

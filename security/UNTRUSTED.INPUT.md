@@ -1,7 +1,5 @@
 # Designing Secure Software-2021
 
-First-person accounts and opinions in this document are those of the original source author.
-
 ## Untrusted Input
 
 *I like engineering, but I love the creative input.*

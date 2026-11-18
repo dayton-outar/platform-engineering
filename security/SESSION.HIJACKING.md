@@ -1,7 +1,5 @@
 # Web Security for Developers-2020
 
-First-person accounts and opinions in this document are those of the original source author.
-
 ## Session Hijacking
 
 ![Figure 10-1: Chapter-opening artwork](/.attachments/10-1-Web.Security.for.Developers-2020-10.png)

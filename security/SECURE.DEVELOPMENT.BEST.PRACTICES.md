@@ -1,7 +1,5 @@
 # Designing Secure Software-2021
 
-First-person accounts and opinions in this document are those of the original source author.
-
 ## Secure Development Best Practices
 
 ## Secure Development Best Practices

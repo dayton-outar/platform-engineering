@@ -1,7 +1,5 @@
 # Web Security for Developers-2020
 
-First-person accounts and opinions in this document are those of the original source author.
-
 ## XML Attacks
 
 ![Figure 15-1: Chapter-opening artwork](/.attachments/15-1-Web.Security.for.Developers-2020-15.png)

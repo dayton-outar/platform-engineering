@@ -1,7 +1,5 @@
 # Web Security for Developers-2020
 
-First-person accounts and opinions in this document are those of the original source author.
-
 ## Permissions
 
 ![Figure 11-3: Chapter-opening artwork](/.attachments/11-3-Web.Security.for.Developers-2020-11.png)

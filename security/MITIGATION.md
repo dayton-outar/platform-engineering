@@ -1,7 +1,5 @@
 # Chapter 3
 
-First-person accounts and opinions in this document are those of the original source author.
-
 ![Figure 3-1: Chapter-opening artwork](/.attachments/3-1-Designing.Secure.Software-2021-3.png)
 
 *Figure 3-1: Chapter-opening artwork*

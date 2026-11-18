@@ -1,7 +1,5 @@
 # Web Security for Developers-2020
 
-First-person accounts and opinions in this document are those of the original source author.
-
 ## Third-Party Code
 
 ![Figure 14-1: Chapter-opening artwork](/.attachments/14-1-Web.Security.for.Developers-2020-14.png)

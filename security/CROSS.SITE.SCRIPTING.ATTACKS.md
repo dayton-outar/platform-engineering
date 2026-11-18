@@ -1,7 +1,5 @@
 # Web Security for Developers-2020
 
-First-person accounts and opinions in this document are those of the original source author.
-
 > Source boundary note: PDF page 1 is printed page 64, the concluding page of chapter 6. It is retained here with its supplied source. Chapter 7 begins on PDF page 2.
 
 You can mitigate the risks around all types of injection attacks by following the principle of least privilege: processes and software components should run with only the permissions they require to perform their assigned tasks, and no more. This approach reduces the harm an attack can do if they inject harmful code. Examples of following the principle of least privilege include limiting file and network access for your web server process, and connecting to your database under an account with limited permissions.
