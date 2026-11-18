@@ -22,11 +22,11 @@ These patterns either mitigate or avoid various security vulnerabilities, formin
 
 When and where to apply these patterns requires judgment. Let necessity and simplicity guide your design decisions. As powerful as these patterns are, don’t overdo it; just as you don’t need seven deadbolts and chains on your doors, you don’t need to apply every possible design pattern to fix a problem. Where several patterns are applicable, choose the best one or two, or maybe more for critical security demands. Overuse can be counterproductive because the diminishing returns of increased complexity and overhead quickly outweigh additional security gains.
 
-### Design Attributes
+## Design Attributes
 
 The first group of patterns describe at a high level what secure design looks like: simple and transparent. These derive from the adages “keep it simple” and “you should have nothing to hide.” As basic and perhaps obvious as these patterns may be, they can be applied widely and are very powerful.
 
-### Economy of Design
+## Economy of Design
 
 Designs should be as simple as possible.
 
@@ -42,7 +42,7 @@ Economy of Design is not an absolute mandate that everything must always be simp
 
 The Economy of Design pattern does not say that the simpler option is unequivocally better, or that the more complex one is necessarily problematic. In this example, *nix ACLs are not inherently better, and Windows ACLs are not necessarily buggy. However, Windows ACLs do represent more of a learning curve for developers and users, and using their more complicated features can easily confuse people as well as invite unintended consequences. The key design choice here, which I will not weigh in on, is to what extent the ACL designs best fit the needs of users. Perhaps *nix ACLs are too simplistic and fail to meet real demands; on the other hand, perhaps Windows ACLs are overly feature-bound and cumbersome in typical use patterns. These are difficult questions we must each answer for our own purposes, but for which this design pattern provides insight.
 
-### Transparent Design
+## Transparent Design
 
 Strong protection should never rely on secrecy.
 
@@ -52,11 +52,11 @@ This pattern specifically warns against a *reliance* on the secrecy of a design.
 
 The problem with Security by Obscurity is that while it may help forestall adversaries temporarily, it’s extremely fragile. For example, imagine that a design used an outdated cryptographic algorithm: if the attackers ever found out that the software was still using, say, DES (a legacy symmetric encryption algorithm from the 1970s), they could easily crack it within a day. Instead, do the work necessary to get to a solid security footing so that there is nothing to hide, whether or not the design details are public.
 
-### Exposure Minimization
+## Exposure Minimization
 
 The largest group of patterns call for caution: think “err on the safe side.” These are expressions of basic risk/reward strategies where you play it safe unless there is an important reason to do otherwise.
 
-### Least Privilege
+## Least Privilege
 
 It’s always safest to use just enough privilege for the job.
 
@@ -70,7 +70,7 @@ In practice, it does take more effort to selectively and sparingly use elevated 
 
 Like all rules of thumb, use this pattern with a sense of balance to avoid overcomplication. Least Privilege does not mean the system should always grant literally the minimum level of authorization (for instance, creating code that, in order to write file X, is given write access to only that one file). You may wonder, why not always apply this excellent pattern to the max? In addition to maintaining a general sense of balance and recognizing diminishing returns for any mitigation, a big factor here is the granularity of the mechanism that controls authorization, and the cost incurred while adjusting privileges up and down. For instance, in a *nix process, permissions are conferred based on user and group ID access control lists. Beyond the flexibility of changing between effective and real IDs (which is what `sudo` does), there is no easy way to temporarily drop unneeded privileges without forking a process. Code should operate with lower ambient privileges where it can, using higher privileges in the necessary sections and transitioning at natural decision points.
 
-### Least Information
+## Least Information
 
 It’s always safest to collect and access the minimum amount of private information needed for the job.
 
@@ -93,7 +93,7 @@ The `RequestCustomerData` API in the left column ignores the Least Information p
 
 Considering the Secure by Default pattern as well, the default for the `items` parameter should be a minimal set of fields, provided that callers can request exactly what they need to minimize information flow.
 
-### Secure by Default
+## Secure by Default
 
 Software should always be secure “out of the box.”
 
@@ -107,7 +107,7 @@ Ideally, you shouldn’t ever need to have insecure options. Carefully consider 
 
 Secure by Default applies much more broadly than to configuration options, though. Defaults for unspecified API parameters should be secure choices. A browser accepting a URL entered into the address bar without any protocol specified should assume the site uses HTTPS, and fall back to HTTP only if the former fails to connect. Two peers negotiating a new HTTPS connection should default to accepting the more secure cipher suite choices first.
 
-### Allowlists over Blocklists
+## Allowlists over Blocklists
 
 Prefer allowlists over blocklists when designing a security mechanism. *Allowlists* are enumerations of what’s safe, so they are inherently finite. By contrast, *blocklists* attempt to enumerate all that isn’t safe, and in doing so implicitly allow an infinite set of things you *hope* are safe. It’s clear which approach is riskier.
 
@@ -127,7 +127,7 @@ Often, the use of an allowlist is so glaringly obvious we don’t notice it as a
 
 Ironically, perhaps the biggest-selling consumer security product, antivirus software, attempts to block all known malware. Modern antivirus products are much more sophisticated than the old-school versions, which relied on comparing a digest against a database of known malware, but still, they all appear to work based on a blocklist to some extent. (A great example of Security by Obscurity, most commercial antivirus software is proprietary, so we can only speculate.) It makes sense that they’re stuck with blocklist techniques because they know how to collect examples of malware, and the prospect of somehow allowlisting all good software in the world before it’s released seems to be a nonstarter. My point isn’t about any particular product or an assessment of its worth, but about the design choice of protection by virtue of a blocklist, and why that’s inevitably risky.
 
-### Avoid Predictability
+## Avoid Predictability
 
 Any data (or behavior) that is predictable cannot be kept private, since attackers can learn it by guessing.
 
@@ -139,7 +139,7 @@ The problem of predictability takes many guises, and different types of leakage 
 
 The easy way to avoid these problems is to use *securely random* IDs. Truly random values cannot be guessed, so they do not leak information. (Strictly speaking, the length of IDs leaks the maximum number of possible IDs, but this usually isn’t sensitive information.) A standard system facility, random number generators come in two flavors: pseudorandom number generators and secure random number generators. You should use the secure option, which is slower, unless you’re certain that predictability is harmless.
 
-### Fail Securely
+## Fail Securely
 
 If a problem occurs, be sure to end up in a secure state.
 
@@ -149,11 +149,11 @@ Many software coding tasks that at first seem almost trivial often grow in compl
 
 Error cases are often tedious to test thoroughly, especially when combinations of multiple errors can compound into new code paths, so this can be fertile ground for attack. Ensure that each error is either safely handled, or leads to full rejection of the request. For example, when someone uploads an image to a photo sharing service, immediately check that it is well formed (because malformed images are often used maliciously), and if not, then promptly remove the data from storage to prevent its further use.
 
-### Strong Enforcement
+## Strong Enforcement
 
 These patterns concern how to ensure that code behaves by enforcing the rules thoroughly. Loopholes are the bane of any laws and regulations, so these patterns show how to avoid creating ways of gaming the system. Rather than write code and reason that you don’t think it will do something, it’s better to structurally design it so that forbidden operations cannot possibly occur.
 
-### Complete Mediation
+## Complete Mediation
 
 Protect all access paths, enforcing the same access, without exception.
 
@@ -185,7 +185,7 @@ Apple designed iMessage to include its own apps, making it possible to invoke th
 
 Avoid having multiple paths for accessing the same resource, each with custom code that potentially works slightly differently, because any discrepancies could mean weaker guards on some paths than on others. Multiple guards would require implementing the same essential check multiple times, and would be more difficult to maintain because you’d need to make matching changes in several places. The use of multiple guards incurs more chances of making an error and more work to thoroughly test.
 
-### Least Common Mechanism
+## Least Common Mechanism
 
 Maintain isolation between independent processes by minimizing shared mechanisms.
 
@@ -197,11 +197,11 @@ Next year, you hire a different accountant, and when you meet with them, they pu
 
 In the realm of software, apply this pattern by designing services that interface to independent processes or different users. Instead of a monolithic database with everyone’s data in it, can you provide each user with a separate database or otherwise scope access according to the context? There may be good reasons to put all the data in one place, but when you choose not to follow this pattern, be alert to the added risk and explicitly enforce the necessary separation. Web cookies are a great example of using this pattern because each client stores its own cookie data independently.
 
-### Redundancy
+## Redundancy
 
 _Redundancy_ is a core strategy for safety in engineering that’s reflected in many common-sense practices, such as spare tires for cars. These patterns show how to apply it to make software more secure.
 
-### Defense in Depth
+## Defense in Depth
 
 Combining independent layers of protection makes for a stronger overall defense that is often synergistically far more effective than any single layer.
 
@@ -217,7 +217,7 @@ A great example of this technique that balances the effort and overhead against 
 
 Code for sandbox execution first gets scanned by an analyzer (defense layer one), which examines it against a set of rules. If any violation occurs, the system rejects the code completely. For example, one rule might forbid the use of calls into the kernel; another rule might forbid the use of specific privileged machine instructions. If and only if the code passes the scanner, it then gets loaded into an interpreter that runs the code while also enforcing a number of restrictions intended to prevent the same kinds of overprivileged operations. For an attacker to break this system, they must first get past the scanner’s rule checking and also trick the interpreter into executing the forbidden operation. This example is especially effective because code scanning and interpretation are fundamentally different, so the chances of the same flaw appearing in both layers is low, especially if they’re developed independently. Even if there is a one-in-a-million chance that the scanner misses a particular attack technique, and the same goes for the interpreter, once they’re combined, the total system has about a one-ina-trillion chance of actually failing. That’s the power of this pattern.
 
-### Separation of Privilege
+## Separation of Privilege
 
 Two parties are more trustworthy than one.
 
@@ -235,11 +235,11 @@ You can’t achieve Separation of Privilege within a single computer because an 
 
 Insider threats are difficult, or in some cases impossible, to eliminate, but that doesn’t mean mitigations are a waste of time. Simply knowing that somebody is watching is, in itself, a large deterrent. Such precautions are not just about distrust: honest staff should welcome any Separation of Privilege that adds accountability and reduces the risk posed by their own mistakes. Forcing a rogue insider to work hard to cleanly cover their tracks slows them down and raises the odds of their being caught red-handed. Fortunately, human beings have well-evolved trust systems for face-to-face encounters with coworkers, and as a result, insider duplicity is extremely rare in practice.
 
-### Trust and Responsibility
+## Trust and Responsibility
 
 Trust and responsibility are the glue that makes cooperation work. Software systems are increasingly interconnected and interdependent, so these patterns are important guideposts.
 
-### Reluctance to Trust
+## Reluctance to Trust
 
 Trust should be always be an explicit choice, informed by solid evidence.
 
@@ -249,7 +249,7 @@ The use of HTTP cookies is a great example of this pattern. Web servers set cook
 
 Reluctance to Trust is important even in the absence of malice. For example, in a critical system, it’s vital to ensure that all components are up to the same high standards of quality and security so as not to compromise the whole. Poor trust decisions, such using code from an anonymous developer (which might contain malware, or simply be buggy) for a critical function quickly undermines security. This pattern is straightforward and rational, yet can be challenging in practice because people are naturally trusting and it can feel paranoid to withhold trust.
 
-### Accept Security Responsibility
+## Accept Security Responsibility
 
 All software professionals have a clear duty to take responsibility for security; they should reflect that attitude in the software they produce.
 
@@ -259,7 +259,7 @@ The anti-pattern that you don’t want is to someday encounter a problem and hav
 
 Consider another all-too-common case, where the responsibility gap occurs between the designer and user of the software. Recall the example of configuration settings from our discussion of the Secure by Default pattern, specifically when an insecure option is given. If the designer knows a configurable option to be less secure, they should carefully consider whether providing that option is truly necessary. That is, don’t just give users an option because it’s easy to do, or because “someone, someday, might want this.” That’s tantamount to setting a trap that someone will eventually fall into unwittingly. When valid reasons for a potentially risky configuration exist, first consider methods of changing the design to allow a safe way of solving the problem. Barring that, if the requirement is inherently unsafe, the designer should advise the user and protect them from configuring the option when unaware of the consequences. Not only is it important to document the risks and suggest possible mitigations to offset the vulnerability, but users should also receive clear feedback—ideally, something better than the responsibility-ditching “Are you sure? (Learn more: &lt;link&gt;)” dialog.
 
-### Patterns
+## Patterns
 
 This author personally considers “Are you sure?” dialogs and their ilk to almost always be a failure of design, and one that also often compromises security. I have yet to come across an example in which such a dialog is the best possible solution to the problem. When there are security consequences, this practice runs afoul of the Accept Security Responsibility pattern, in that the designer is foisting responsibility on to the user, who may well not be “sure” but has run out of options. To be clear, in these remarks I would not include normal confirmations, such as `rm(1)` command interactive prompts or other operations where it’s important to avoid accidental operation.
 
@@ -267,7 +267,7 @@ These dialogs can fall victim to the *dialog fatigue* phenomenon, in which peopl
 
 I’d like to see a new third option added to these dialogs—“No, I’m not sure but proceed anyway”—and have that logged as a severe error because the software has failed the user. For any situation where security is critical, scrutinize examples of this sort of responsibility offloading and treat them as significant bugs to be eventually resolved. Exactly how to eliminate these will depend on the particulars, but there are some general approaches to accepting responsibility. Be clear as to precisely what is about to happen and why. Keep the wording concise, but provide a link or equivalent reference to a complete explanation and good documentation. Avoid vague wording (“Are you sure you want to do this?”) and show exactly what the target of the action will be (don’t let the dialog box obscure important information). Never use double negatives or confusing phrasing (“Are you sure you want to go back?” where answering “No” selects the action). If possible, provide an undo option; a good pattern, seen more these days, is passively offering an undo following any major action. If there is no way to undo, then in the *link*ed documentation, offer a workaround, or suggest backing up data beforehand if unsure. Let’s strive to reduce these Hobson’s choices in quantity, and ideally confine them to use by professional administrators who have the know-how to accept responsibility.
 
-### Anti-Patterns
+## Anti-Patterns
 
 > _Learn to see in another’s calamity the ills which you should avoid._
 
@@ -277,13 +277,13 @@ Some skills are best learned by observing how a master works, but another import
 
 The following short sections list a few software security anti-patterns. These patterns may generally carry security risks, so they are best avoided, but they are not actual vulnerabilities. In contrast to the named patterns covered in the previous sections, which are generally recognizable terms, some of these don’t have well-established names, so I have chosen descriptive monikers here for convenience.
 
-### Confused Deputy
+## Confused Deputy
 
 The _Confused Deputy_ problem is a fundamental security challenge that is at the core of many software vulnerabilities. One could say that this is the mother of all anti-patterns. To explain the name and what it means, a short story is a good starting point. Suppose a judge issues a warrant, instructing their deputy to arrest Norman Bates. The deputy looks up Norman’s address, and arrests the man living there. The man insists there is a mistake, but the deputy has heard that excuse before. The plot twist of our story (which has nothing to do with _Psycho_) is that Norman anticipated getting caught and for years has used a false address. The deputy, confused by this subterfuge, used their arrest authority wrongly; you could say that Norman played them, managing to direct the deputy’s duly granted authority to his own malevolent purposes. (The despicable crime of swatting— falsely reporting an emergency to direct police forces against innocent victims—is a perfect example of the Confused Deputy problem, but I didn’t want to tell one of those sad stories in detail.)
 
 Common examples of confused deputies include the kernel when called by userland code, or a web server when invoked from the internet. The callee is a _deputy_ because the higher-privilege code is invoked to do things on behalf of the lower-privilege caller. This risk derives directly from the trust boundary crossing, which is why those are of such acute interest in threat modeling. There are numerous ways to confuse a deputy, including buffer overflows, poor input validation, and cross-site request forgery (CSRF) attacks, just to name a few. Unlike human deputies, who can rely on instinct, past experience, and other cues (including common sense), software is trivially tricked into doing things it wasn’t intended to, unless it’s designed and implemented with all necessary precautions fully anticipated.
 
-### Intention and Malice
+## Intention and Malice
 
 To recap, for software to be trustworthy, there are two requirements: it must be built by people you can trust are both honest and competent to deliver a quality product. The difference between the two conditions is intention. The problem with arresting Norman Bates wasn’t that the deputy was crooked; it was failing to properly ID the arrestee. Of course, code doesn’t disobey or get lazy, but poorly-written code can easily work in ways other than how it was intended. While many gullible computer users and occasionally even technically adept software professionals do get tricked into trusting malicious software, many attacks work by exploiting a Confused Deputy in software that is duly trusted but happens to be flawed.
 
@@ -295,7 +295,7 @@ Often, Confused Deputy vulnerabilities arise when the context of the original re
 
 The `Deputy` code in the center performs work for both low- and high-privilege code. When invoked from High on the right, it may do potentially dangerous operations in service of its trusted caller. Invocation from Low represents a trust boundary crossing, so `Deputy` should only do safe operations appropriate for low-privilege callers. Within the implementation, `Deputy` uses a subcomponent, `Utility`, to do its work. Code within `Utility` has no notion of high- and low-privilege callers, and hence is liable to mistakenly do potentially dangerous operations on behalf of `Deputy` that low-privilege callers should not be able to do.
 
-### Trustworthy Deputy
+## Trustworthy Deputy
 
 Let’s break down how to be a trustworthy deputy, beginning with a consideration of where the danger lies. Recall that trust boundaries are where the potential for confusion begins, because the goal in attacking a Confused Deputy is to leverage its higher privilege. So long as the deputy understands the request and who is requesting it, and the appropriate authorization checks happen, everything should be fine.
 
@@ -307,19 +307,19 @@ The [Code Access Security](MITIGATION.md#narrow-windows-of-vulnerability) model,
 
 In summary, at trust boundaries, handle lower-trust data and lower-privilege invocations with care so as not to become a Confused Deputy. Keep the context associated with requests throughout the process of performing the task so that authorization can be fully checked as needed. Beware that side effects do not allow requesters to exceed their authority.
 
-### Backflow of Trust
+## Backflow of Trust
 
 *Backflow of Trust* is present whenever a lower-trust component controls a higher-trust component. An example of this is when a system administrator uses their personal computer to remotely administer an enterprise system. While the person is duly authorized and trusted, their home computer isn’t within the enterprise regime and shouldn’t be hosting sessions using admin rights. In essence, you can think of this as a structural Elevation of Privilege just waiting to happen.
 
 While nobody in their right mind would fall into this anti-pattern in real life, it’s surprisingly easy to miss in an information system. Remember that what counts here is not the trust you *give* components, but how much trust the components *merit*. Threat modeling can surface potential problems of this variety through an explicit look at trust boundaries.
 
-### Third-Party Hooks
+## Third-Party Hooks
 
 Another form of the Backflow of Trust anti-pattern is when hooks in a component within your system provide a third party undue access. Consider a critical business system that includes a proprietary component performing some specialized process within the system. Perhaps it uses advanced AI to predict future business trends, consuming confidential sales metrics and updating forecasts daily. The AI component is cutting-edge, and so the company that makes it must tend to it daily. To make it work like a turnkey system, it needs a direct tunnel through the firewall to access the administrative interface.
 
 This also is a perverse trust relationship because this third party has direct access into the heart of the enterprise system, completely outside the purview of the administrators. If the AI provider were dishonest, or compromised, they could easily exfiltrate internal company data, or worse, and there would be no way of knowing. Note that a limited type of hook may not have this problem and would be acceptable. For example, if the hook implements an auto-update mechanism and is only capable of downloading and installing new versions of the software, it may be fine, given a suitable level of trust.
 
-### Unpatchable Components
+## Unpatchable Components
 
 It’s almost invariably a matter of when, not if, someone will discover a vulnerability in any given popular component. Once such a vulnerability becomes public knowledge, unless it is completely disconnected from any attack surface, it needs patching promptly. Any component in a system that you cannot patch will eventually become a permanent liability.
 

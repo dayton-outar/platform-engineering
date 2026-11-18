@@ -1,12 +1,10 @@
-# Chapter 6
-
-## Web Security for Developers-2020
+# Web Security for Developers-2020
 
 Source: [Web.Security.for.Developers-2020-6.pdf](Web.Security.for.Developers-2020-6.pdf) — 16 PDF pages.
 
 First-person accounts and opinions in this document are those of the original source author.
 
-### Injection Attacks
+## Injection Attacks
 
 ![Figure 6-3: Chapter-opening artwork](/.attachments/6-3-Web.Security.for.Developers-2020-6.png)
 
@@ -26,13 +24,13 @@ Knowing all of this, hackers attacking a website frequently pass malicious code 
 
 Injection attacks are astonishingly common on the internet and, if successful, can be devastating in their impact. As a web developer, you’ll need to know all the ways they can occur and how to defend against them. When writing website code, it’s important to consider what *could* come through in the HTTP requests being handled by the site, not just what you expect to come through. In this document, you’ll look at four types of injection attacks: SQL injection attacks, command injection attacks, remote code execution attacks, and attacks that exploit file upload vulnerabilities.
 
-### SQL Injection
+## SQL Injection
 
 *SQL injection* attacks target websites that use an underlying SQL database and construct data queries to the database in an insecure fashion. SQL injection attacks pose one of the greatest risks to websites because SQL databases are so common. This was evident in 2008, when hackers stole 130 million credit card numbers from Heartland Payment Systems, a payment processor that stores credit card details and handles payments for merchants. The hackers used a SQL injection attack to access the web servers that handled payment data, which was a disaster for a company that relies on the assurance of their information’s security to do business.
 
 Let’s begin by reviewing how SQL databases work, so that we can get to the heart of how SQL injection works and how we can stop it.
 
-### What Is SQL?
+## What Is SQL?
 
 *Structured Query Language*, or *SQL*, extracts data and data structures in relational databases. Relational databases store data in tables; each row in a table is a data item (for example, a user, or a product being sold). SQL syntax allows applications such as web servers to add rows to the database by using `INSERT` statements, read rows by using `SELECT` statements, update rows by using `UPDATE` statements, and remove rows by using `DELETE` statements.
 
@@ -57,7 +55,7 @@ SQL databases typically store information about the website’s users in a `user
 
 For each interaction, the web server is responsible for taking parts of the HTTP request (for example, the username and password entered into a login form) and constructing a SQL statement to run against the database. The actual execution of the statement happens through the *database driver*, a dedicated code library used to communicate with the database.
 
-### Anatomy of a SQL Injection Attack
+## Anatomy of a SQL Injection Attack
 
 SQL injection attacks occur when the web server insecurely constructs the SQL statement it passes to the database driver. This allows the attacker to pass arguments via the HTTP request that cause the driver to perform actions other than those the developer intends.
 
@@ -99,7 +97,7 @@ In this scenario, the attacker passes the email parameter as `billy@gmail` `.com
 
 If your website is vulnerable to SQL injection, an attacker can often run arbitrary SQL statements against your database, allowing them to bypass authentication; read, download, and delete data at will; or even inject malicious JavaScript into the pages rendered to your users. To scan websites for SQL injection vulnerabilities, hacking tools like Metasploit can be used to crawl websites and test HTTP parameters with potential exploits. If your site is vulnerable to SQL injection attacks, you can be sure that somebody will eventually take advantage of it.
 
-### Mitigation 1: Use Parameterized Statements
+## Mitigation 1: Use Parameterized Statements
 
 To protect against SQL injection attacks, your code needs to construct SQL strings using bind parameters. *Bind parameters* are placeholder characters that the database driver will safely replace with some supplied inputs—like the email or password values shown in Listing 6-1. A SQL statement containing bind parameters is called a *parameterized statement*.
 
@@ -131,7 +129,7 @@ Because the database driver makes sure not to terminate the SQL statement early,
 
 Similar types of injection attacks may be possible whenever a web server communicates with a separate backend by constructing a statement in the backend’s native language. This includes NoSQL databases like MongoDB and Apache Cassandra, distributed caches like Redis and Memcached, and directories that implement the Lightweight Directory Access Protocol (LDAP). Libraries that communicate with these platforms have their own implementation of bind parameters, so be sure to understand how they work and to use them in your code.
 
-### Mitigation 2: Use Object-Relational Mapping
+## Mitigation 2: Use Object-Relational Mapping
 
 Many web server libraries and frameworks abstract away the explicit construction of SQL statements in code and allow you to access data objects by using object-relational mapping. *Object-relational mapping (ORM)* libraries map rows in database tables to code objects in memory, meaning the developer generally doesn’t have to write their own SQL statements in order to read from and update the database. This architecture protects against SQL injection attacks under most circumstances, but can still be vulnerable if custom SQL statements are used—so it’s important to understand how your ORM works behind the scenes.
 
@@ -173,7 +171,7 @@ end
 
 In this scenario, the ActiveRecord framework will securely handle any SQL control characters an attacker adds to the `email` or `password` parameter.
 
-### Bonus Mitigation: Use Defense in Depth
+## Bonus Mitigation: Use Defense in Depth
 
 As a rule of thumb, you should always secure your website with redundancies. It’s not enough to check your code line by line for vulnerabilities. You need to consider and enforce security at every level of the stack, allowing failures at one level to be mitigated by other strategies. This is an approach called *defense in depth*.
 
@@ -181,7 +179,7 @@ Consider how you secure your home. The most important defense is installing lock
 
 When it comes to preventing SQL injection, defense in depth means using bind parameters, but also taking additional steps to minimize the harm in case an attacker *still* finds a way to successfully execute injection attacks. Let’s look at a couple of other ways to mitigate the risk of injection attacks.
 
-### Principle of Least Privilege
+## Principle of Least Privilege
 
 An additional way to mitigate injection attacks is to follow the *principle of least privilege*, which demands that every process and application run only with the permissions it needs to perform its permitted functions, and no more. This means that if an attacker injects code into your web server and compromises a particular software component, the damage they can do is limited to the actions permissible by that particular software component.
 
@@ -189,13 +187,13 @@ If your web server talks to a database, make sure the account it uses to log int
 
 A subset of the SQL language called *data definition language (DDL)* uses `CREATE`, `DROP`, and `MODIFY` statements to create, drop, and modify the table structures in the database itself. Web servers generally don’t require permissions to execute DDL statements, so don’t grant them the DDL set of permissions at runtime! Narrowing the web server privileges to the minimal DML set reduces the harm an attacker can do if they discover a code vulnerability.
 
-### Blind and Nonblind SQL Injection
+## Blind and Nonblind SQL Injection
 
 Hackers distinguish between blind and nonblind SQL injection attacks. If your website’s error message leaks sensitive information to the client, like the message `Unique constraint violated: this email address already exists in` `users table`, this is a *nonblind* SQL attack. In this scenario, the attacker gets immediate feedback on their attempts to compromise your system.
 
 If you keep your error messages to the client more generic, like the messages `Could not find this username and password` or `An unexpected error` `occurred`, this is a *blind* SQL attack. This scenario means the attacker is effectively operating in the dark and has less to work with. Websites vulnerable to nonblind injection attacks are much easier to compromise, so avoid leaking information in error messages.
 
-### Command Injection
+## Command Injection
 
 Another type of injection attack is *command injection*, which attackers can use to exploit a website that makes insecure command line calls to the underlying operating system. If your web application makes command line calls, make sure to construct your command strings securely. Otherwise, attackers can craft HTTP requests that execute arbitrary operating system commands, and seize control of your application.
 
@@ -203,7 +201,7 @@ For many programming languages, constructing command strings to invoke operating
 
 Command line calls are more common for interpreted languages. PHP is designed to follow the Unix philosophy—programs should do one thing and communicate with each other via text streams—so it’s common for PHP applications to call other programs via the command line. Similarly, Python and Ruby are popular for scripting tasks, so they make it easy to execute commands at the operating system level.
 
-### Anatomy of a Command Injection Attack
+## Anatomy of a Command Injection Attack
 
 If your website makes use of command line calls, make sure an attacker can’t trick the web server into injecting extra commands into the execution call. Imagine, for instance, that you have a simple website that does `nslookup` to resolve domains and IP addresses. The PHP code takes the domain or IP address from the HTTP request and constructs an operating system call as shown in Listing 6-11.
 
@@ -231,7 +229,7 @@ Here the attacker sends a domain parameter with the value `google.com` `&& echo 
 
 In this case, the injected command is a harmless `echo` command, which simply prints out `"HAXXED"` in the HTTP response. However, an attacker can use this vulnerability to inject and execute any command they choose on your server. With a bit of effort, they can explore the filesystem, read sensitive information, and compromise the entire application. Command line access on a web server gives the attacker complete freedom to take control of the system unless you take deliberate steps to lessen the impact.
 
-### Mitigation: Escape Control Characters
+## Mitigation: Escape Control Characters
 
 As with SQL injection, you can defend against command injection by properly escaping inputs from the HTTP request. This means replacing sensitive control characters (like the `&` character in our example) with a safe alternative. How you do this depends on the operating system and programing language you’re using. To make the PHP code in Listing 6-11 more secure, we simply need to use a call to `escapeshellarg`, as shown in Listing 6-12.
 
@@ -270,17 +268,17 @@ In Ruby, the `system()` function makes a command line call. Supply it with an ar
 
 As with SQL injection, following the principle of least privilege also helps limit the impact of successful command injection attacks. Your web server process should run with only the permissions it requires. For instance, you should limit the directories the web server process can read from and write to. On Linux, you can use the `chroot` command to prevent the process from exploring outside a designated root directory. You should try to limit the network access your web server has, too, by configuring firewalls and access control lists on the network. These steps will make it much harder for a hacker to exploit a command injection vulnerability, because even if they can execute commands, they can’t do anything besides read files in the web server’s running directory.
 
-### Remote Code Execution
+## Remote Code Execution
 
 So far, you’ve seen how vulnerabilities can creep in when web code constructs a call to databases, as with SQL injection, or to the operating system it’s running on, as with command injection. In other circumstances, attackers can inject malicious code to be executed in the language of the web server itself, a tactic called *remote code execution*. Remote code execution attacks on websites are rarer than the injection attacks we discussed earlier, but every bit as dangerous.
 
-### Anatomy of a Remote Code Execution Attack
+## Anatomy of a Remote Code Execution Attack
 
 An attacker can achieve remote code execution by discovering a vulnerability in a particular type of web server, and then creating *exploit scripts* to target websites running on that web server technology. The exploit script incorporates malicious code in the body of the HTTP request, encoded in such a way that the server will read and execute that code when the request is handled. The techniques used to perform remote execution attacks vary significantly. Security researchers will analyze codebases for common web servers, looking for vulnerabilities that permit malicious code to be injected.
 
 In early 2013, researchers discovered a vulnerability in Ruby on Rails that permitted attackers to inject their own Ruby code into the server process. Because the Rails framework automatically parses requests according to their `Content-Type` header, security researchers noticed that if they created an XML request with an embedded YAML object (a markup language commonly used in the Rails community for storing configuration data), they could trick the parsing process into executing arbitrary code.
 
-### Mitigation: Disable Code Execution During Deserialization
+## Mitigation: Disable Code Execution During Deserialization
 
 Remote code execution vulnerabilities usually occur when web server software uses insecure serialization. *Serialization* is the process of converting an in-memory data structure into a stream of binary data, usually for the purpose of passing the data structure across a network. *Deserialization* refers to the reverse process that occurs at the other end, when the binary data is converted back into a data structure.
 
@@ -290,7 +288,7 @@ If a web server uses deserialization to handle data coming in from HTTP requests
 
 As a developer who uses a web server to build sites, rather than one who writes the web server code itself, protecting against remote code execution in your web stack usually amounts to staying aware of security advisories. You’re unlikely to be writing your own serialization libraries, so be aware of where your codebase uses third-party serialization libraries. Make sure to turn off active code execution features in your own code, and keep an eye out for vulnerability announcements issued by your web server vendor.
 
-### File Upload Vulnerabilities
+## File Upload Vulnerabilities
 
 The final type of injection attack we’ll look at in this document takes advantage of vulnerabilities in file upload functions. Websites use file upload functions for a variety of purposes: letting users add images to their profile or posts, adding attachments to messages, submitting paperwork, sharing documents with other users, and so on. Browsers make it easy to upload files via built-in file-upload widgets and JavaScript APIs that allow you to drag files onto a web page and send them asynchronously to the server.
 
@@ -298,7 +296,7 @@ However, browsers aren’t exactly careful about checking the contents of a file
 
 Let’s see how attackers typically exploit file upload functions so that we identify the various security weaknesses that we need to plug.
 
-### Anatomy of a File Upload Attack
+## Anatomy of a File Upload Attack
 
 As an example of a file upload vulnerability, let’s look at how an attacker could potentially abuse the profile image upload function of your site. The attacker first writes a small *web shell*, a simple executable script that will take an argument from an HTTP request, execute it on the command line, and output the result. Web shells are a common tool used by hackers attempting to compromise a web server. Listing 6-15 shows an example of a web shell written in PHP.
 
@@ -329,11 +327,11 @@ To perform a command injection attack, the hacker can pass a `cmd` argument to t
 
 In this scenario, the attacker can explore your filesystem. The attacker has taken advantage of your file upload function to gain the same access to your operating system as they would with a command injection attack.
 
-### Mitigations
+## Mitigations
 
 You can use several mitigations to protect yourself against vulnerabilities in file upload code. The most important mitigations ensure that any uploaded files can’t be executed as code. Following the principle of defense in depth, you should also analyze uploaded files and reject any that appear to be corrupt or malicious.
 
-### Mitigation 1: Host Files on a Secure System
+## Mitigation 1: Host Files on a Secure System
 
 The first, most important approach to securing file upload functions is to ensure that your web server treats uploaded files as inert rather than executable objects. You can do this by hosting your uploaded files in a content delivery network (CDN) such as Cloudflare or Akamai, which offloads the security burden to a third party who stores your files securely.
 
@@ -341,7 +339,7 @@ CDNs have other nonsecurity-related benefits too. CDNs serve files extremely fas
 
 If for some reason a CDN isn’t an option, you can get many of the same benefits by storing uploaded files in cloud-based storage (for example, Amazon Simple Storage Service, or S3) or a dedicated content management system. Both approaches provide secure storage that defuses all web shells as they’re uploaded. (Although, if you’re hosting your own content management system, you’ll have to make sure to configure it correctly.)
 
-### Mitigation 2: Ensure Uploaded Files Cannot Be Executed
+## Mitigation 2: Ensure Uploaded Files Cannot Be Executed
 
 If using a CDN or content management system isn’t an option, you need to take the same steps to secure your files that a CDN or content management does behind the scenes. This means ensuring that all files are written to disk without executable permissions, separating uploaded files into a particular directory or partition (so they aren’t intermingled with code), and *hardening* your servers so that only the minimally required software is installed. (Uninstall the PHP engine if you aren’t using it!) It’s a good idea to rename files as you upload them too, so you don’t write files with dangerous file extensions to disk.
 
@@ -358,7 +356,7 @@ with os.fdopen(open(file_descriptor, "wb")) as file_handle:
 
 Removing unneeded software from your operating system is always a good idea, because it gives a hacker fewer tools to play with. The Center for Internet Security (CIS) provides prehardened operating system images that make a good starting point. They’re available as Docker images or as Amazon Machine Images (AMIs) in the Amazon Web Services Marketplace.
 
-### Mitigation 3: Validate the Content of Uploaded Files
+## Mitigation 3: Validate the Content of Uploaded Files
 
 If you’re uploading files with a known file type, consider adding some file-type checking in your code. Make sure the `Content-Type` header in the HTTP request of the upload matches the expected file type, but be aware that an attacker can easily spoof the header.
 
@@ -372,11 +370,11 @@ It’s possible to validate the file type after the file has been uploaded, part
 
 *Listing 6-17: Reading the file headers to validate a file format in Python*
 
-### Mitigation 4: Run Antivirus Software
+## Mitigation 4: Run Antivirus Software
 
 Finally, if you’re running on a server platform that’s prone to viruses (hello, Microsoft Windows!) make sure you’re running up-to-date antivirus software. File upload functions are an open door to virus payloads.
 
-### Summary
+## Summary
 
 In this document, you learned about various injection attacks, whereby an attacker crafts malicious HTTP requests to take control of backend systems.
 

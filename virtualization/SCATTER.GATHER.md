@@ -1,6 +1,4 @@
-# Chapter 8
-
-## Scatter/Gather
+# Scatter/Gather
 
 Source: [Designing.Distributed.Systems-2025-8.pdf](./Designing.Distributed.Systems-2025-8.pdf), PDF pages 1–8.
 
@@ -18,7 +16,7 @@ Scatter/gather is quite useful when you have a large amount of mostly independen
 
 Whereas the previous examples of caching sharded the data to maximize the efficiency of memory usage, the scatter/gather algorithm shards the computation necessary to service the request, reducing the latency via parallel processing. Though sometimes, as we will see, the data is sharded as well.
 
-### Scatter/Gather with Root Distribution
+## Scatter/Gather with Root Distribution
 
 The simplest form of scatter/gather is one in which each leaf is entirely homogenous but the work is distributed to a number of different leaves in order to improve the performance of the request. This pattern is equivalent to solving an “embarrassingly parallel” problem. The problem can be broken up into many different pieces, and each piece can be put back together with all of the other pieces to form a complete answer.
 
@@ -26,7 +24,7 @@ To understand this in more concrete terms, imagine that you need to service a us
 
 Additionally, truly achieving a completely parallel speed-up on a single process is going to be tricky, as things like memory, network, or disk bandwidth start to become the bottleneck. Instead of (or in addition to) parallelizing an application across cores on a single machine, we can use the scatter/gather pattern to parallelize requests across multiple processes on many different machines. In this way, we can improve our overall latency requests, since we are no longer bound by the number of cores we can get on a single machine, as well as ensure that the bottleneck in our process continues to be CPU, since the memory, network, and disk bandwidth are all spread across a number of different machines. Additionally, because every machine in the scatter/gather tree is capable of handling every request, the root of the tree can dynamically dispatch load to different nodes at different times depending on their responsiveness. If, for some reason, a particular leaf node is responding more slowly than other machines (e.g., it has a noisy neighbor process that is interfering with resources), then the root can dynamically redistribute load to assure a fast response.
 
-#### Hands On: Distributed Document Search
+### Hands On: Distributed Document Search
 
 To see an example of scatter/gather in action, consider the task of searching across a large database of documents for all documents that contain the words “cat” and “dog.” One way to perform this search would be to open up all of the documents, read through the entire set, searching for the words in each document, and then return to the user the set of documents that contain both words.
 
@@ -44,7 +42,7 @@ A diagram of this process is shown in Figure 8-2: the leaf returns {doc1, doc2, 
 
 *Figure 8-2. Example of a term-sharded scatter/gather system*
 
-### Scatter/Gather with Leaf Sharding
+## Scatter/Gather with Leaf Sharding
 
 While applying the replicated data scatter/gather pattern allows you to reduce the processing time required for handling user requests, it doesn’t allow you to scale beyond an amount of data that can be held in the memory or disk of a single machine. Much like the replicated serving pattern that was previously described, it is simple to build a replicated scatter/gather system. But at a certain data size, it is necessary to introduce sharding in order to build a system that can hold more data than can be stored on a single machine.
 
@@ -54,7 +52,7 @@ As a concrete example of this sort of architecture, consider implementing search
 
 When a user submits a request to find a particular word (e.g., “rockets”) in all of the patents in the index, that request is sent to each shard, which searches through its patent shard for patents that match the word in the query. Any matches that are found are returned to the root node in response to the shard request. The root node then collates all of these responses together into a single response that contains all the patents that match the particular word. The operation of this search index is illustrated in Figure 8-3.
 
-#### Hands On: Sharded Document Search
+### Hands On: Sharded Document Search
 
 The previous example scattered the different term requests across the cluster, but this only works if all of the documents are present on all of the machines in the scatter/ gather tree. If there is not enough room for all of the documents in all of the leaves in the tree, then sharding must be used to put different sets of documents onto different leaves.
 
@@ -66,7 +64,7 @@ In Figure 8-3, the first leaf serves documents 1 through 10 and returns {doc1, d
 
 *Figure 8-3. Conjunctive query executing in a scatter/gather search system*
 
-#### Choosing the Right Number of Leaves
+### Choosing the Right Number of Leaves
 
 It might seem that in the scatter/gather pattern, replicating out to a very large number of leaves would always be a good idea. You parallelize your computation and consequently reduce the clock time required to process any particular request. However, increased parallelization comes at a cost, and thus choosing the right number of leaf nodes in the scatter/gather pattern is critical to designing a performant distributed system.
 
@@ -86,7 +84,7 @@ Together, these complications of scatter/gather systems lead us to some conclusi
 
 The same straggler problem applies to availability. If you issue a request to 100 leaf nodes, and the probability that any leaf node failing is 1 in 100, you are again practically guaranteed to fail every single user request.
 
-### Scaling Scatter/Gather for Reliability and Scale
+## Scaling Scatter/Gather for Reliability and Scale
 
 Of course, just as with a sharded system, having a single replica of a sharded scatter/ gather system is likely not the desirable design choice. A single replica means that if it fails, all scatter/gather requests will fail for the duration that the shard is unavailable because all requests are required to be processed by all leaf nodes in the scatter/gather pattern. Likewise, upgrades will take out a percentage of your shards, so an upgrade while under user-facing load is no longer possible. Finally, the computational scale of your system will be limited by the load that any single node is capable of achieving. Ultimately, this limits your scale, and as we have seen in previous sections, you cannot simply increase the number of shards in order to improve the computational power of a scatter/gather pattern.
 
@@ -98,6 +96,6 @@ Given these challenges of reliability and scale, the correct approach is to repl
 
 Built this way, each leaf request from the root is actually load balanced across all healthy replicas of the shard. This means that if there are any failures, they won’t result in a user-visible outage for your system. Likewise, you can safely perform an upgrade under load, since each replicated shard can be upgraded one replica at a time. Indeed, you can perform the upgrade across multiple shards simultaneously, depending on how quickly you want to perform the upgrade.
 
-### Summary
+## Summary
 
 This document describes the scatter/gather pattern, a distributed system for improving computation speed and reducing the latency of handling any particular request. Whereas previous serving patterns focused on scaling for additional load or scaling for additional data, scatter/gather scales to increase responsiveness, to reduce the user-perceived time spent processing a request. We also saw how compute sharding with scatter/gather can be combined with data sharding for large indexes, as well as adding replication to improve reliability and redundancy. Any large-scale distributed system is often a combination of multiple different serving patterns.

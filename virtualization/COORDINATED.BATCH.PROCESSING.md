@@ -1,6 +1,4 @@
-# Chapter 13
-
-## Coordinated Batch Processing
+# Coordinated Batch Processing
 
 Source: [Designing.Distributed.Systems-2025-13.pdf](./Designing.Distributed.Systems-2025-13.pdf), PDF pages 1–9.
 
@@ -14,7 +12,7 @@ First-person accounts and opinions in this document reflect the original source 
 
 Probably the most canonical example of this aggregation is the *reduce* part of the MapReduce pattern. It’s easy to see that the map step is an example of sharding a work queue, and the reduce step is an example of coordinated processing that eventually reduces a large number of outputs down to a single aggregate response. However, there are a number of different aggregate patterns for batch processing, and this document discusses a number of them in addition to real-world applications.
 
-### Join (or Barrier Synchronization)
+## Join (or Barrier Synchronization)
 
 [Work Queue Systems](WORK.QUEUE.SYSTEMS.md) describes patterns for breaking up work and distributing it in parallel on multiple nodes. In particular, we saw how a sharded work queue could distribute work in parallel to a number of different work queue shards. However, sometimes when processing a workflow, it is necessary to have the complete set of work available to you before you move on to the next stage of the workflow.
 
@@ -30,7 +28,7 @@ Coordination through join ensures that no data is missing before some sort of ag
 
 *Figure 13-2. The join pattern for batch processing*
 
-### Reduce
+## Reduce
 
 If sharding a work queue is an example of the *map* phase of the canonical MapReduce algorithm, then what remains is the *reduce* phase. Reduce is an example of a coordinated batch processing pattern because it can happen regardless of how the input is split up, and it is used similar to join; that is, to group together the parallel output of a number of different batch operations on different pieces of data.
 
@@ -40,7 +38,7 @@ With the reduce pattern, each step in the reduce merges several different output
 
 This is a fortunate contrast to the join pattern, because unlike join, it means that reduce can be started in parallel while there is still processing going on as part of the map/shard phase. Of course, in order to produce a complete output, all of the data must be processed eventually, but the ability to begin early means that the batch computation executes more quickly overall.
 
-#### Hands On: Count
+### Hands On: Count
 
 To understand how the reduce pattern works, consider the task of counting the number of instances of a particular word in a book. We can first use sharding to divide up the work of counting words into a number of different work queues. As an example, we could create 10 different sharded work queues with 10 different people responsible for counting words in each queue. We can shard the book among these 10 work queues by looking at the page number. All pages that end in the number 1 will go to the first queue, all pages that end in the number 2 will go to the second, and so forth.
 
@@ -81,7 +79,7 @@ It’s clear to see that this reduction phase can be repeated on the output of p
 
 Ultimately, in this example you can see that the output of the reduction will be a single output with the count of all of the various words that are present in the book. Of course, the number of times reduce is run has an impact on the overall performance of the batch processing. Too many reduce operations cause significant wasted computation, while too few begin to resemble the synchronization of the join pattern.
 
-#### Sum
+### Sum
 
 A similar but slightly different form of reduction is the summation of a collection of different values. This is like counting, but rather than simply counting one for every value, you actually add together a value that is present in the original output data.
 
@@ -95,7 +93,7 @@ Now that we are producing output, the reduce pattern can kick in.
 
 In this case, the reduce doesn’t even really need to be aware of the two-level sharding that we performed. It is sufficient for the reduce to simply grab two or more output items, such as (Seattle, 4,000,000) and (Northampton, 25,000), and sum them together to produce a new output (Seattle-Northampton, 4,025,000). It’s clear to see that, like counting, this reduction can be performed an arbitrary number of times with the same code running at each interval, and at the end, there will only be a single output containing the complete population of the United States. Importantly, again, nearly all of the computation required is happening in parallel.
 
-#### Histogram
+### Histogram
 
 As a final example of the reduce pattern, consider that while we are counting the population of the United States via parallel sharding/mapping and reducing, we also want to build a model of the average American family. To do this, we want to develop a *histogram* of family size; that is, a model that estimates the total number of families with zero to 10 children. We will perform our multilevel sharding exactly as before (indeed, we can likely use the same workers).
 
@@ -111,7 +109,7 @@ However, this time, the output of the data collection phase is a histogram per t
 
 From the previous examples, we can see that if we apply the reduce pattern, we should be able to combine all of these histograms to develop a comprehensive picture of the United States. At first blush, it may seem quite difficult to understand how to merge these histograms, but when combined with the population data from the summation example, we can see that if we multiply each histogram by its relative population, then we can obtain the total population for each item being merged. If we then divide this new total by the sum of the merged populations, it is clear that we can merge and update multiple different histograms into a single output. Given this, we can apply the reduce pattern as many times as necessary until a single output is produced.
 
-#### Hands On: An Image Tagging and Processing Pipeline
+### Hands On: An Image Tagging and Processing Pipeline
 
 To see how coordinated batch processing can be used to accomplish a larger batch task, consider the job of tagging and processing a set of images. Let us assume that we have a large collection of images of highways at rush hour, and we want to count both the numbers of cars, trucks, and motorcycles, as well as distribution of the colors of each of the vehicles. Let us also suppose that there is a preliminary step to blur the license plates of all of the vehicles to preserve anonymity.
 
@@ -161,6 +159,6 @@ The output of this work queue is a JSON tuple that looks like this:
 
 This data represents the information found in a single image. To aggregate all of this data together, we will use the reduce pattern described previously and made famous by MapReduce to sum everything together just as we did in the count example above. At the end, this reduce pipeline stage produces the final count of images and colors found in the complete set of images.
 
-### Summary
+## Summary
 
 This document describes *coordinated batch processing*, which is used to synchronize workflows for preconditions or to combine output from previous workflows into a merged output. The *join* pattern is used as a barrier synchronizer to ensure that all of the necessary output is ready before proceeding to the next stage. Reduce combines output from multiple shards into an output that can be reduced further until the final output is ready. Sum and histogram are specific types of reduce operations that are useful for obtaining specific statistical results from your data. Taken together, these patterns for coordination in batch processing can ensure that you can build the workflow that is necessary for any batch operation or calculation you need to perform.

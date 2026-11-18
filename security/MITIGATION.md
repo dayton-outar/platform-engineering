@@ -8,7 +8,7 @@ First-person accounts and opinions in this document are those of the original so
 
 *Figure 3-1: Chapter-opening artwork*
 
-### Mitigation
+## Mitigation
 
 >_Everything is possible to mitigate through art and diligence._
 
@@ -22,7 +22,7 @@ This document begins with a conceptual discussion of mitigation, and from there 
 
 The rest of this document provides guidance for recurrent security challenges encountered in software design: instituting an access policy and access controls, designing interfaces, and protecting communications and storage. Together, these discussions form a playbook for addressing common security needs.
 
-### Addressing Threats
+## Addressing Threats
 
 Threat modeling reveals what can go wrong, and in doing so, focuses our security attention where it counts. But believing we can always eliminate vulnerabilities would be naive. Points of risk—critical events or decision thresholds—are great opportunities for mitigation.
 
@@ -32,11 +32,11 @@ A good example of a smart mitigation is the best practice of checking the passwo
 
 This example illustrates the idea of harm reduction but is quite specific to password checking. Now let’s consider mitigation strategies that are more widely applicable.
 
-### Structural Mitigation Strategies
+## Structural Mitigation Strategies
 
 Mitigations often amount to common sense: reducing risk where there are opportunities to do so. Threat modeling helps us see potential vulnerabilities in terms of attack surfaces, trust boundaries, and assets (targets needing protection). *Structural mitigations* generally apply to these very features of the model, but their realization depends on the specifics of the design. The subsections that follow discuss techniques that should be widely applicable because they operate at the model level of abstraction.
 
-### Minimize Attack Surfaces
+## Minimize Attack Surfaces
 
 Once you have identified the attack surfaces of a system, you know where exploits are most likely to originate, so anything you can do to harden the system’s “outer shell” will be a significant win. A good way to think about attack surface reduction is in terms of how much code and data are touched downstream of each point of entry. Systems that provide multiple interfaces to perform the same function may benefit from unifying these interfaces because that means less code that might contain vulnerabilities. Here are a few examples of this commonly used technique:
 
@@ -44,7 +44,7 @@ Once you have identified the attack surfaces of a system, you know where exploit
 
 These are just some of the most common scenarios where attack surface reduction works. For particular systems, you might find much more creative customized opportunities. Keep thinking of ways to reduce external access, minimize functionality and interfaces, and protect any services that are needlessly exposed. The better you understand where and how a feature is actually used, the more of these mitigations you’ll be able to find.
 
-### Narrow Windows of Vulnerability
+## Narrow Windows of Vulnerability
 
 This mitigation technique is similar to attack surface reduction, but instead of metaphorical surface area, it reduces the effective time interval in which a vulnerability can occur. Also based on common sense, this is why hunters only disengage the safety just before firing and reengage it soon after.
 
@@ -71,7 +71,7 @@ The code in this example has powerful privileges, but it may be called by less-t
 
 Consider this application of narrowing windows of vulnerability in a different way. Online banking offers convenience and speed, and mobile devices allow us to bank from anywhere. But storing your banking credentials in your phone is risky—you don’t want someone emptying out your bank account if you lose it, which is much more likely with a mobile device. A great mitigation that I would like to see implemented across the banking industry would be the ability to configure the privilege level you are comfortable with for each device. A cautious customer might restrict the mobile app to checking balances and a modest daily transaction dollar limit. The customer would then be able to bank by phone with confidence. Further useful limits might include windows of time, geolocation, domestic currency only, and so on. All of these mitigations help because they limit the worst-case scenario in the event of any kind of compromise.
 
-### Minimize Data Exposure
+## Minimize Data Exposure
 
 Another structural mitigation to data disclosure risk is limiting the lifetime of sensitive data in memory. This is much like the preceding technique, but here you’re minimizing the duration for which sensitive data is accessible and potentially exposed instead of the duration for which code is running at high privilege. Recall that intraprocess access is hard to control, so the mere presence of data in memory puts it at risk. When the stakes are high, such as handling extremely sensitive data, you can think of it as “the meter is running.” For the most critical information—data such as private encryption keys, or authentication credentials such as passwords—it may be worth overwriting any in-memory copies as soon as they are no longer needed. This reduces the time during which a leak is conceivably possible through any means. The Heartbleed vulnerability threatened security for much of the web, exposing all kinds of sensitive data lying around in memory. Limiting how long such data was retained probably would have been a useful mitigation (“stanching the blood flow,” if you will), even without foreknowledge of the exploit.
 
@@ -79,7 +79,7 @@ You can apply this technique to data storage design as well. When a user deletes
 
 Generally speaking, proactively wiping copies of data is an extreme measure that’s appropriate only for the most sensitive data, or important actions such as account closure. Some languages and libraries help do this automatically, and except where performance is a concern, a simple wrapper function can wipe the contents of memory clean before it is recycled.
 
-### Access Policy and Access Controls
+## Access Policy and Access Controls
 
 Standard operating system permissions provide very rudimentary file access controls. These control *read* (confidentiality) or *write* (integrity) access on an all-or-nothing basis for individual files based on the user and group ownership of a process. Given this functionality, it’s all too easy to think in the same limited terms when designing protections for assets and resources— but the right access policy might be more granular and depend on many other factors.
 
@@ -95,7 +95,7 @@ Once you have a fine-grained access policy, you face the challenge of setting th
 
 But is there a way to narrow the gap between normal circumstances and the rare highest-demand case that the system should allow? One great tool to handle this tricky situation is a policy provision for self-declared exceptions to be used in extraordinary circumstances. Such an option allows individual agents to bump up their own limits for a short period of time by providing a rationale. With this kind of “relief valve” in place, the basic access policy can be tightly constrained. When needed, once agents hit the access limit, they can file a quick notice—stating, for example, “high call volume today, I’m working late to finish up”—and receive additional access authorization. Such notices can be audited, and if they become commonplace, management could bump the policy up with the knowledge that demand has legitimately grown and an understanding of why. Such flexible techniques enable you to create access policies with softer limits, rather than hard-and-fast restrictions that tend to be arbitrary.
 
-### Interfaces
+## Interfaces
 
 Software designs consist of components that correspond to functional parts of the system. You can visualize these designs as block diagrams, with lines representing the connections between the parts. These connections denote *interfaces*, which are a major focus of security analysis—not only because they reveal data and control flows, but also because they serve as well-defined chokepoints where you can add mitigations. In particular, where there is a trust boundary, the main security focus is on the flow of data and control from the lower- to the higher-trust component, so that is where defensive measures are often needed.
 
@@ -105,7 +105,7 @@ Interfaces also exist within processes, where interaction is relatively unconstr
 
 Any large software design faces the delicate task of structuring components to minimize regions of highly privileged access, as well as restricting sensitive information flow in order to reduce security risk. To the extent that the design restricts information access to a minimal set of components that are well isolated, attackers will have a much harder time getting access to sensitive data. By contrast, in weaker designs, all kinds of data flow all over the place, resulting in greater exposure from a vulnerability anywhere within the component. The architecture of interfaces is a major factor that determines the success systems have at protecting assets.
 
-### Communication
+## Communication
 
 Modern networked systems are so common that standalone computers, detached from any network, have become rare exceptions. The cloud computing model, combined with mobile connectivity, makes network access ubiquitous. As a result, communication is fundamental to almost every software system in use today, be it through internet connections, private networks, or peripheral connections via Bluetooth, USB, and the like.
 
@@ -113,7 +113,7 @@ In order to protect these communications, the channel must be physically secured
 
 Even the best encryption is not a magic bullet, though. One remaining threat is that encryption cannot conceal the *fact of communication*. In other words, if attackers can read the raw data in the channel, even if they’re unable to decipher its contents, they can still see that data is being sent and received on the wire, and roughly estimate the amount of data flow. Furthermore, if attackers can tamper with the communication channel, they might be able to delay or block the transmission entirely.
 
-### Storage
+## Storage
 
 The security of data storage is much like the security of communications, because storing data is analogous to sending it into the future, at which point you will retrieve it for some purpose. Viewed in this way, just as data that is being communicated is vulnerable on the wire, stored data is vulnerable at rest on the storage medium. Protecting data at rest from potential tampering or disclosure requires either physical security or encryption. Likewise, availability depends on the existence of backup copies or successful physical protection.
 

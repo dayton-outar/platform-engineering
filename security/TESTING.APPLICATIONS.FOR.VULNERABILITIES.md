@@ -8,7 +8,7 @@ Source: [Implementing.Security.for.Applications-2005-3-2.pdf](Implementing.Secur
 
 First-person accounts and opinions in this document are those of the original source authors.
 
-### Lesson 2: Testing Assemblies for Vulnerabilities
+## Lesson 2: Testing Assemblies for Vulnerabilities
 
 Unit testing has its limits for vulnerability testing. Specifically, unit testing cannot detect poor coding practices, such as not declaring permission requirements. Unit testing also cannot detect confidential data being transmitted through unencrypted communica- tions channels, nor vulnerability to denial-of-service (DoS) attacks. As a developer, it is worthwhile for you to perform these fundamental types of tests against your own assemblies.
 
@@ -22,7 +22,7 @@ Unit testing has its limits for vulnerability testing. Specifically, unit testin
 
 **Estimated lesson time: 30 minutes**
 
-### The Developer’s Pre-Release Security Testing Process
+## The Developer’s Pre-Release Security Testing Process
 
 Formal security testing involves using one of several different well-known processes. This repository won’t attempt to describe these formalized processes, because this repository is about development, not testing. However, before handing off an application you develop to QA, you should consider the following steps when examining it for poten- tial security vulnerabilities:
 
@@ -42,7 +42,7 @@ Formal security testing involves using one of several different well-known proce
 
 **See Also** For more information about formal security testing methodologies, read the Open *Source Security Testing Methodology Manual*, available at *http://www.isecom.org/projects /osstmm.shtml*.
 
-### Best Practices for Vulnerability Testing
+## Best Practices for Vulnerability Testing
 
 Thoroughly covering vulnerability testing would require an entire book, so this section provides best practices. Developers who are performing preliminary vulnerability testing on their own applications prior to handoff to QA should apply as many of these best practices as they can:
 
@@ -58,11 +58,11 @@ Thoroughly covering vulnerability testing would require an entire book, so this 
 
 - **Test Windows Forms applications as a regular user** By not using an admin- istrator account, you will identify any problems your application has complying with the principle of least privilege.
 
-### Available Security Testing Tools
+## Available Security Testing Tools
 
 As a developer, you probably do not have a significant amount of time allocated to test- ing your own applications. To allow you to perform some pre-QA security testing as efficiently as possible, this section describes no-cost tools that automate and simplify the process of identifying vulnerabilities in your application.
 
-### FxCop
+## FxCop
 
 FxCop compares assemblies to a list of rules based on the Microsoft .NET Framework Design Guidelines. FxCop reveals a large number of both common and uncommon coding mistakes, many of which are security related. For example, making *IntPtr* and *UIntPtr* pointers public fields exposes a potential security vulnerability, because another assembly might be able to read or modify the pointers. Most rules do not have a direct impact on the vulnerability level of the application. However, following the .NET Framework Design Guidelines will make the code more consistent and easier to review, which in turn improves security.
 
@@ -76,7 +76,7 @@ Figure 3-2 shows FxCop discovering a number of weaknesses in an assembly, includ
 
 *Figure 3-2: FxCop discovers that specific exceptions are not caught.*
 
-### Network Monitor
+## Network Monitor
 
 Network Monitor is a protocol analyzer (more commonly known as a *sniffer*) that is included free with Microsoft server operating systems. Network Monitor captures and analyzes raw network communications. After it captures traffic, you can examine the communications to determine whether encryption is used and whether any confiden- tial information is being transmitted across the network without being encrypted or obscured.
 
@@ -106,7 +106,7 @@ Early in my career I spent some time studying Request For Comments (RFCs), espec
 
 To the untrained eye, the weakest of encryption techniques, or even reversible encoding, appears to be encrypted. In short, you can use Network Monitor to detect only obvious, glaring communications vulnerabilities. However, you not *seeing* any problems doesn’t mean a sophisticated attacker can’t find a weakness.
 
-### Application Center Test
+## Application Center Test
 
 Application Center Test, a tool included with Visual Studio .NET, is primarily designed to test the performance of ASP.NET applications. However, it should not be overlooked as a tool for testing resistance to DoS attacks. DoS attacks against applications are effec- tive because the applications do not scale efficiently. Testing an ASP.NET application under heavy load simulates one type of a DoS attack against your application, and Application Center Test will reveal how your application responds to heavy load, and which pages in your application fail.
 
@@ -118,7 +118,7 @@ Figure 3-4 shows a Web application being tested. As shown in the figure, the Web
 
 Application Center Test produced the following summary output from a live Web server that handled about 250 requests per second. In the Response Codes section, notice that 100 percent of the response codes were 200—the HTTP success response code. An application that was less resistant to DoS attacks would have begun returning other HTTP response codes, such as 500.
 
-### Errors Counts
+## Errors Counts
 
 - HTTP: 0
 
@@ -126,7 +126,7 @@ Application Center Test produced the following summary output from a live Web se
 
 - Socket: 0
 
-### Additional Network Statistics
+## Additional Network Statistics
 
 - Average bandwidth (bytes/sec): 1,120,257.96
 
@@ -146,7 +146,7 @@ Application Center Test produced the following summary output from a live Web se
 
 - Number of timeout errors: 0
 
-### Response Codes
+## Response Codes
 
 - Response Code: 200 - The request completed successfully.
 
@@ -162,7 +162,7 @@ When creating tests, remember that attackers might not use standard, well-formed
 
 **Off the Record** Unfortunately, no amount of testing or scalability can make your applica- tion entirely resistant to DoS attacks. Well-formed distributed DoS attacks will almost always cause an application, computer, or the underlying network to become inaccessible. Yes, with proper tuning, you can enable your application to resist an attacker with a single computer. However, if your application gets targeted by an attacker who controls thousands of *zombie computers* (compromised computers that an attacker controls), you’re going offline.
 
-### Permissions View Tool
+## Permissions View Tool
 
 The Permissions View tool (Permview.exe) is a command-line tool that developers and testers can use to view the permission sets requested by an assembly or to view all declarative security used by an assembly. For example, you can use Permview.exe to verify that a developer has specifically requested permissions in the assembly, and that the permissions are not excessive. The following output shows Permview analyzing an assembly that contains a minimum permission set request of Unrestricted, which would be considered excessive in most circumstances:
 
@@ -190,17 +190,17 @@ refused permission set:
 
 Permview is included with the .NET Framework software development kit. It is prob- ably not in your path by default, but if you installed Visual Studio .NET 2003, you can find it in the C:\Program Files\Microsoft Visual Studio .NET 2003\SDK\v1.1\Bin\ folder.
 
-### PEVerify Tool
+## PEVerify Tool
 
 The PEVerify (PEVerify.exe) tool helps developers who generate Microsoft intermediate language (MSIL)—such as compiler writers and script engine developers—determine whether their MSIL code and associated metadata meet type safety requirements. Some compilers generate verifiably type-safe code only if you avoid using certain language constructs. If, as a developer, you are using such a compiler, you might want to verify that you have not compromised the type safety of your code. In this situation, you can run the PEVerify tool on your files to check the MSIL and metadata.
 
 PEVerify is included with the .NET Framework software development kit. It is probably not in your path by default, but if you installed Visual Studio .NET 2003, you can find it in the C:\Program Files\Microsoft Visual Studio .NET 2003\SDK\v1.1\Bin\ folder.
 
-### Practice: Testing Assemblies for Vulnerabilities
+## Practice: Testing Assemblies for Vulnerabilities
 
 In this practice, you use FxCop to analyze a sample assembly. Then, you analyze one of your own assemblies, and answer questions about the results. Complete the proce- dure in Exercise 1, and then answer the questions and complete the tasks in Exercise 2. If you are unable to answer a question, review the lesson materials and try the question again.
 
-### Exercise 1: Using FxCop to Test an Assembly for Security Weaknesses
+## Exercise 1: Using FxCop to Test an Assembly for Security Weaknesses
 
 In this exercise, you use FxCop to analyze a sample assembly to identify potential security weaknesses.
 
@@ -250,7 +250,7 @@ FxCop displays a list of rules that have been violated, as shown in Figure 3-5.
 
 13. Click OK to return to FxCop, examine each of the other rules, and think about which of the rules could have an impact on security.
 
-### Exercise 2: Analyzing FxCop Results
+## Exercise 2: Analyzing FxCop Results
 
 In this exercise, you answer questions about FxCop’s analysis of an application you have written. First, use FxCop to analyze the assembly you most recently compiled.
 

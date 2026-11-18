@@ -1,12 +1,10 @@
-# Chapter 2
-
-## Designing Secure Software-2021
+# Designing Secure Software-2021
 
 Source: [Designing.Secure.Software-2021-2.pdf](Designing.Secure.Software-2021-2.pdf) — 20 PDF pages.
 
 First-person accounts and opinions in this document are those of the original source author.
 
-### Threats
+## Threats
 
 *The threat is usually more terrifying than the thing itself.*
 
@@ -28,7 +26,7 @@ Setting out to enumerate all the threats and identify all the points of vulnerab
 
 Finally, it’s important to understand that threat modeling can provide new levels of understanding of the target system beyond the scope of security. Through the process of examining the software in new ways, you may gain insights that suggest various improvements, efficiencies, simplifications, and new features unrelated to security.
 
-### The Adversarial Perspective
+## The Adversarial Perspective
 
 *Exploits are the closest thing to “magic spells” we experience in the real world: Construct the right incantation, gain remote control over device.*
 
@@ -44,7 +42,7 @@ Even though we can never really anticipate what our adversaries will spend time 
 
 In the end, as with all forms of violence, it’s always far easier to attack and cause harm than to defend. Attackers get to choose their point of entry, and with determination they can try as many exploits as they like, because they only need to succeed once. All this amounts to more reasons why it’s important to prioritize security work: the defenders need every advantage available.
 
-### The Four Questions
+## The Four Questions
 
 Adam Shostack, who carried the threat modeling torch at Microsoft for years, boils the methodology down to Four Questions:
 
@@ -54,7 +52,7 @@ The first question aims to establish the project’s context and scope. Answerin
 
 There is much more to threat modeling than this, but it’s surprising how far simply working from the Four Questions can take you. Armed with these concepts, in conjunction with the other ideas and techniques in this repository, you can significantly raise the security bar for the systems you build and operate.
 
-### Threat Modeling
+## Threat Modeling
 
 “What could possibly go wrong?”
 
@@ -68,7 +66,7 @@ For complex systems, a complete inventory of all potential threats will be enorm
 
 People intuitively do something akin to threat modeling in daily life, taking what we call common-sense precautions. To send a private message in a public place, most people type it instead of dictating it aloud to their phones. Using the language of threat modeling, we’d say the message content is the information asset, and disclosure is the threat. Speaking within earshot of others is the attack surface, and using a silent, alternative input method is a good mitigation. If a nosy stranger is watching, you could add an additional mitigation, like cupping the phone with your other hand to shield the screen from view. But while we do this sort of thing all the time quite naturally in the real world, applying these same techniques to complex software systems, where our familiar physical intuitions don’t apply, requires much more discipline.
 
-### Work from a Model
+## Work from a Model
 
 You’ll need a rigorous approach in order to thoroughly identify threats. Traditionally, threat modeling uses data flow diagrams (DFDs) or Unified Modeling Language (UML) descriptions of the system, but you can use whatever model you like. Whatever high-level description of the system you choose, be it a DFD, UML, a design document, or an informal “whiteboard session,” the idea is to look at an abstraction of the system, so long as it has enough granularity to capture the detail you need for analysis.
 
@@ -80,7 +78,7 @@ Let’s consider what the right level of granularity would be for a generic web 
 
 The Goldilocks version would fall somewhere between these extremes. The data stored in the database (assets) would be clumped into categories, each of which you could treat as a whole: say, customer data, inventory data, and system logs. The server component would be broken into parts granular enough to reveal multiple processes, including what privilege each runs at, perhaps an internal cache on the host machine, and descriptions of the communication channels and network used to talk to the internet and the database.
 
-### Identify Assets
+## Identify Assets
 
 Working methodically through the model, identify assets and the potential threats to them. Assets are the entities in the system that you must protect. Most assets are data, but they could also include hardware, communication bandwidth, computational capacity, and physical resources, such as electricity.
 
@@ -100,7 +98,7 @@ Finally, always consider the value of assets from the perspectives of all partie
 
 Not all companies take this approach. Facebook’s Beacon feature automatically posted the details of users’ purchases to their news feeds, then quickly shut down following an immediate outpouring of customer outrage and some lawsuits. While Beacon never endangered Facebook (except by damaging the brand’s reputation), it posed a real danger to customers. Threat modeling the consequences of information disclosure for customers would have quickly revealed that the unintended disclosure of purchases of Christmas or birthday presents, or worse, engagement rings, was likely to prove problematic.
 
-### Identify Attack Surfaces
+## Identify Attack Surfaces
 
 Pay special attention to attack surfaces, because these are the attacker’s first point of entry. You should consider any opportunity to minimize the attack surface a big win, because doing so shuts off a potential source of trouble entirely. Many attacks potentially fan out across the system, so stopping them early can be a great defense. This is why secure government buildings have checkpoints with metal detectors just inside the single public entrance.
 
@@ -108,13 +106,13 @@ Software design is typically much more complex than the design of a physical bui
 
 Note that attack surfaces exist outside the digital realm. Consider the kiosk, for example: a display in a public area could leak information via “shoulder surfing.” An attacker could also perform even subtler *side-channel attacks* to deduce information about the internal state of a system by monitoring its electromagnetic emissions, heat, power consumption, keyboard sounds, and so forth.
 
-### Identify Trust Boundaries
+## Identify Trust Boundaries
 
 Next, identify the system’s trust boundaries. Since trust and privilege are almost always paired, you can think in terms of privilege boundaries if that makes more sense. Human analogs of trust boundaries might be the interface between a manager (who is privy to more internal information) and an employee, or the door of your house, where you choose whom to let inside.
 
 Consider a classic example of a trust boundary: an operating system’s kernel-userland interface. This architecture became popular in a time when mainframe computers were the norm and machines were often shared by many users. The system booted up the kernel, which isolated applications in different userland process instances (corresponding to different user accounts) from interfering with each other or crashing the whole system. Whenever userland code calls into the kernel, execution crosses a trust boundary. Trust boundaries are important, because the transition into higher-privilege execution is an opportunity for bigger trouble.
 
-### Threats
+## Threats
 
 In this repository I’ll be talking about *high* and *low privilege* as well as *high* and *low trust*, and there is great potential for confusion since they are very closely related and difficult to separate cleanly. The inherent character of trust and privilege is such that they almost invariably correlate: where trust is high, privilege is also usually high, and vice versa. Beyond the scope of this repository, it’s common for people to use these expressions (**trust versus privilege**) interchangeably, and generously interpreting them however makes best sense to you without insisting on correcting others is usually the best practice.
 
@@ -138,7 +136,7 @@ Always conduct transitions across trust boundaries through well-defined interfac
 
 The biggest risks usually hide in low-to-high trust transitions, like the SSH listener example, for obvious reasons. However, this doesn’t mean you should ignore high-to-low trust transitions. Any time your system passes data to a less-trusted component, it’s worth considering if you’re disclosing information, and if doing so might be a problem. For example, even low-privilege processes can read the hostname of the computer they are running in, so don’t name machines using sensitive information that might give attackers a hint if they attain a beachhead and get code running on the system. Additionally, whenever high-trust services work on behalf of low-trust requests, you risk a DoS attack if the userland requester manages to overtax the kernel.
 
-### Identify Threats
+## Identify Threats
 
 Now we begin the work at the heart of threat modeling: identifying potential threats. Working from your model, pore over the parts of the system. The threats tend to cluster around assets and at trust boundaries, but could potentially lurk anywhere.
 
@@ -146,7 +144,7 @@ I recommend starting with a rough pass (say, from a 10,000-foot view of the syst
 
 Identifying direct threats to your assets should be easy, as well as threats at trust boundaries, where attackers might easily trick trusted components into doing their bidding. Many examples of such threats in specific situations are given throughout this repository. Yet you might also find threats that are indirect, perhaps because there is no asset immediately available to harm, or a trust boundary to cross. Don’t immediately disregard these without considering how such threats might work as part of a chain of events—think of them as bank shots in billiards, or stepping stones that form a path. In order to do damage, an attacker would have to combine multiple indirect threats; or perhaps, paired with bugs or poorly designed functionality, the indirect threats afford openings that give attackers a foot in the door. Even lesser threats might be worth mitigating, depending on how promising they look and how critical the asset at risk may be.
 
-### A Bank Vault Example
+## A Bank Vault Example
 
 So far, these concepts may still seem rather abstract, so let’s look at them in context by threat modeling an imaginary bank vault. While reading this walkthrough, focus on the concepts, and if you are paying attention, you should be able to expand on the points I raise (which, intentionally, are not exhaustive).
 
@@ -176,7 +174,7 @@ These are just a few of the many possible defensive mitigations. If these types 
 
 Real bank security and financial risk management are of course far more complex, but this simplified example shows how the threat modeling process works, including how it propels analysis forward. Gold in a vault is about as simple an asset as it gets, but now you should be wondering, how exactly does one examine a model of a complex software system to be able to see the threats it faces?
 
-### Categorizing Threats with STRIDE
+## Categorizing Threats with STRIDE
 
 In the late 1990s, Microsoft Windows dominated the personal computing landscape. As PCs became essential tools for both businesses and homes, many believed the company’s sales would grow endlessly. But Microsoft had only begun to figure out how networking should work. The Internet (back then still usually spelled with a capital I) and this new thing called the World Wide Web were rapidly gaining popularity, and Microsoft’s Internet Explorer web browser had aggressively gained market share from the pioneering Netscape Navigator. Now the company faced this new problem of security: Who knew what can of worms connecting all the world’s computers might open up?
 
@@ -209,7 +207,7 @@ According to the Gold Standard, we should maintain accurate records of critical 
 
 Typically, we mitigate the threat of repudiation by running systems in which administrators and users understand they are responsible for their actions, because they know an accurate audit trail exists. This is also one more good reason to avoid having admin passwords written on a sticky note that everyone shares. If you do that, when trouble happens, everyone can credibly claim someone else must have done it. This applies even if you fully trust everyone, because accidents happen, and the more evidence you have available when trouble arises, the easier it is to recover and remediate.
 
-### STRIDE at the Movies
+## STRIDE at the Movies
 
 Just for fun (and to solidify these concepts), consider the STRIDE threats applied to the plot of the film *Ocean’s Eleven*. This classic heist story nicely demonstrates threat modeling concepts, including the full complement of STRIDE categories, from the perspectives of both attacker and defender. Apologies for the simplification of the plot, which I’ve done for brevity and focus, as well as for spoilers.
 
@@ -217,7 +215,7 @@ Danny Ocean violates parole (an *elevation of privilege*), flies out to meet his
 
 Threatening to blow up the remaining millions in the vault (a very expensive *denial of service*), the gang negotiates to keep the money in the van. The casino owner refuses and calls in the SWAT team, and in the ensuing chaos the gang destroys the vault’s contents and gets away. After the smoke clears, the casino owner checks the vault, lamenting his total loss, then notices a minor detail that seems amiss. The owner confronts Danny—who is back in lockup, as if he had never left—and we learn that the SWAT team was, in fact, the gang (*spoofing* by impersonating the police), who walked out with the money hidden in their tactical equipment bags after the fake battle. The practice vault mock-up had provided video to make it only appear (*spoofing* of the location) that the real vault had been compromised, which didn’t actually happen until the casino granted full access to the fake SWAT team (an *elevation of privilege* for the gang). Danny and the gang make a clean getaway with the money—a happy ending for the perpetrators that might have turned out quite differently had the casino hired a threat modeling consultant!
 
-### Mitigate Threats
+## Mitigate Threats
 
 At this stage, you should have a collection of potential threats. Now you need to assess and prioritize them to best guide an effective defense. Since threats are, at best, educated guesses about future events, all of your assessments will contain some degree of subjectivity.
 
@@ -249,7 +247,7 @@ Use tamper-evident packaging that makes it easy to detect a modified product, pr
 
 [Mitigation](MITIGATION.md) discusses how to design software to minimize threats, and what strategies and secure software patterns are useful for devising mitigations of various sorts.
 
-### Privacy Considerations
+## Privacy Considerations
 
 Privacy threats are just as real as security threats, and they require separate consideration in a full assessment of threats to a system, because they add a human element to the risk of information disclosure. In addition to possible regulatory and legal considerations, personal information handling may involve ethical concerns, and it’s important to honor stakeholder expectations.
 
@@ -259,7 +257,7 @@ A few very general considerations for minimizing privacy threats include the fol
 
 • Assess privacy by modeling scenarios of actual use cases, not thinking in the abstract. • Learn what privacy policies or legal requirements apply, and follow the terms rigorously. • Restrict the collection of data to only what is necessary. • Be sensitive to the possibility of seeming creepy. • Never collect or store private information without a clear intention for its use. • When information already collected is no longer used or useful, proactively delete it. • Minimize information sharing with third parties (which, if it occurs, should be well documented). • Minimize disclosure of sensitive information—ideally this should be done only on a need-to-know basis. • Be transparent, and help end users understand your data protection practices.
 
-### Threat Modeling Everywhere
+## Threat Modeling Everywhere
 
 The threat modeling process described here is a formalization of how we navigate in the world; we manage risk by balancing it against opportunities. In a dangerous environment, all living organisms make decisions based on these same basic principles. Once you start looking for it, you can find instances of threat modeling everywhere.
 
@@ -271,4 +269,4 @@ Here are a few other examples of threat modeling you may have noticed in daily l
 
 You can probably think of lots of ways that you apply these techniques, too. For most of us, when we can draw on our physical intuitions about the world, threat modeling is remarkably easy to do. Once you recognize that software threat modeling works the same way as your already well-honed skills in other contexts, you can begin to apply your natural capabilities to software security analysis, and quickly raise your skills to the next level.
 
-### Threats
+## Threats

@@ -1,6 +1,4 @@
-# Chapter 11
-
-## Pipeline Architecture Style
+# Pipeline Architecture Style
 
 Source: [Fundamentals.of.Software.Architecture-2020-11.pdf](./Fundamentals.of.Software.Architecture-2020-11.pdf), PDF pages 1–6.
 
@@ -8,7 +6,7 @@ One of the fundamental styles in software architecture that appears again and ag
 
 Developers in many functional programming languages will see parallels between language constructs and elements of this architecture. In fact, many tools that utilize the MapReduce programming model follow this basic topology. While these examples show a low-level implementation of the pipeline architecture style, it can also be used for higher-level business applications.
 
-### Topology
+## Topology
 
 The topology of the pipeline architecture consists of pipes and filters, illustrated in Figure 11-1.
 
@@ -18,11 +16,11 @@ The topology of the pipeline architecture consists of pipes and filters, illustr
 
 The pipes and filters coordinate in a specific fashion, with pipes forming one-way communication between filters, usually in a point-to-point fashion.
 
-#### Pipes
+### Pipes
 
 *Pipes* in this architecture form the communication channel between filters. Each pipe is typically unidirectional and point-to-point (rather than broadcast) for performance reasons, accepting input from one source and always directing output to another. The payload carried on the pipes may be any data format, but architects favor smaller amounts of data to enable high performance.
 
-#### Filters
+### Filters
 
 *Filters* are self-contained, independent from other filters, and generally stateless. Filters should perform one task only. Composite tasks should be handled by a sequence of filters rather than a single one.
 
@@ -57,7 +55,7 @@ The unidirectional nature and simplicity of each of the pipes and filters encour
 
 Even the designers of Unix shells are often surprised at the inventive uses developers have wrought with their simple but powerfully composite abstractions.
 
-### Example
+## Example
 
 The pipeline architecture pattern appears in a variety of applications, especially tasks that facilitate simple, one-way processing. For example, many Electronic Data Interchange (EDI) tools use this pattern, building transformations from one document type to another using pipes and filters. ETL tools (extract, transform, and load) leverage the pipeline architecture as well for the flow and modification of data from one database or data source to another. Orchestrators and mediators such as Apache Camel utilize the pipeline architecture to pass information from one step in a business process to another.
 
@@ -71,7 +69,7 @@ Notice in Figure 11-2 the use of the pipeline architecture style to process the 
 
 This example shows the extensibility properties of the pipeline architecture. For example, in Figure 11-2, a new tester filter could easily be added after the Uptime Filter to pass the data on to another newly gathered metric, such as the database connection wait time.
 
-### Architecture Characteristics Ratings
+## Architecture Characteristics Ratings
 
 A one-star rating in the characteristics ratings table Figure 11-3 means the specific architecture characteristic isn’t well supported in the architecture, whereas a five-star rating means the architecture characteristic is one of the strongest features in the architecture style.
 

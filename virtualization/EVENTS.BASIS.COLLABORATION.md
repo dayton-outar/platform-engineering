@@ -1,6 +1,4 @@
-# Chapter 5
-
-## Events: A Basis for Collaboration
+# Events: A Basis for Collaboration
 
 Source: [Designing.Event-Driven.Systems-2018-5.pdf](./Designing.Event-Driven.Systems-2018-5.pdf), PDF pages 1–16.
 
@@ -20,7 +18,7 @@ So we can condense all these issues into a single observation. The imperative pr
 
 In this document we’re going to focus on the other side of the architecture coin: composing services not through chains of commands and queries, but rather through streams of events. This is an implementation pattern in its own right, and has been used in industry for many years, but it also forms a baseline for the more advanced patterns we’ll be discussing in Part III and Part V, where we blend the ideas of event-driven processing with those seen in streaming platforms.
 
-### Commands, Events, and Queries
+## Commands, Events, and Queries
 
 Before we go any further, consider that there are three distinct ways that programs can interact over a network: commands, events, and queries. If you’ve not considered the distinction between these three before, it’s well worth doing so, as it provides an important reference for interprocess communication.
 
@@ -64,7 +62,7 @@ The beauty of events is they wear two hats: a notification hat that triggers ser
 
 *Figure 5-1. A visual summary of commands, events, and queries*
 
-### Coupling and Message Brokers
+## Coupling and Message Brokers
 
 The term *loose coupling* is used widely. It was originally a design heuristic for structuring programs, but when applied to network-attached services, particularly those run by different teams, it must be interpreted slightly differently. Here is a relatively recent definition from Frank Leymann:
 
@@ -76,7 +74,7 @@ These assumptions broadly relate to a combination of data, function, and operabi
 
 This captures the intuitive notion of coupling: that if two entities are coupled, then an action applied to one will result in some action applied to the other. But an important part of this definition of connascence is the word *change*, which implies a temporal element. Coupling isn’t a static thing; it matters only in the very instant that we try to change our software. In fact, if we left our software alone, and never changed it, coupling wouldn’t matter at all.
 
-#### Is Loose Coupling Always Good?
+### Is Loose Coupling Always Good?
 
 There is a widely held sentiment in industry that tight coupling is bad and loose coupling is good. This is not wholly accurate. Both tight and loose coupling are actually pretty useful in different situations. We might summarize the relationship as:
 
@@ -108,7 +106,7 @@ Messaging helps us build loosely coupled services because it moves pure data fro
 
 On the other hand, request-driven approaches are more tightly coupled as functionality, data, and operational factors are concentrated in a single place. Later in this document we discuss the idea of a *bounded context*, which is a way of balancing these two: request-driven protocols used inside the bounded context, and messaging between them. We also discuss the wider consequences of coupling in some detail in [Sharing Data and Services Across an Organization](SHARING.DATA.SERVICES.ACROSS.ORGANIZATION.md).
 
-#### Essential Data Coupling Is Unavoidable
+### Essential Data Coupling Is Unavoidable
 
 All significantly sized businesses have core datasets that many programs need. If you are sending a user an email, you need their address; if you’re building a sales report, you need sales figures; and so on. Data is something applications cannot do without, and there is no way to code around not having the data (while you might, for example, code around not having access to some piece of functionality). So pretty much all business systems, in larger organizations, need a base level of *essential data coupling*.
 
@@ -118,7 +116,7 @@ All significantly sized businesses have core datasets that many programs need. I
 
 *Figure 5-12. Callout illustration accompanying the discussion on PDF page 6*
 
-### Using Events for Notification
+## Using Events for Notification
 
 Most message brokers provide a publish-subscribe facility where the logic for how messages are routed is defined by the receivers rather than the senders; this process is known as *receiver-driven routing*. So the receiver retains control of their presence in the interaction, which makes the system pluggable (see Figure 5-2).
 
@@ -154,7 +152,7 @@ Pluggability becomes increasingly important as systems get more complex. Say we 
 
 *Figure 5-5. Extending the system described in Figure 5-4 by adding a repricing service to demonstrate the pluggability of the architecture*
 
-### Using Events to Provide State Transfer
+## Using Events to Provide State Transfer
 
 In Figure 5-5, we used events as a means of notification, but left the query for the customer’s address as a REST/RPC call.
 
@@ -166,7 +164,7 @@ We can also use events as a type of state transfer so that, rather than sending 
 
 This makes use of the other property events have—their replication hat. (Formally this is termed event-carried state transfer, which is essentially a form of data integration.) So the notification hat makes the architecture more pluggable, and the replication hat moves data from one service to another so queries can be executed locally. Replicating a dataset locally is advantageous in much the same way that caching is often advantageous, as it makes data access patterns faster.
 
-### Which Approach to Use
+## Which Approach to Use
 
 We can summarize the advantages of the pure “query by event-carried state transfer” approach as follows:
 
@@ -202,7 +200,7 @@ Of course, as we saw earlier, we can blend the two approaches together and, depe
 
 Implementers should be careful to note that he directs this at a strict definition of microservices, one where services are independently deployable. Slacker interpretations, which are seen broadly in industry, may not qualify so strong an assertion.
 
-### The Event Collaboration Pattern
+## The Event Collaboration Pattern
 
 To build fine-grained services using events, a pattern called Event Collaboration is often used. This allows a set of services to collaborate around a single business workflow, with each service doing its bit by listening to events, then creating new ones. So, for example, we might start by creating an order, and then different services would evolve the workflow until the purchased item makes it to the user’s door.
 
@@ -224,7 +222,7 @@ Choreographed systems have the advantage that they are pluggable. If the payment
 
 *Figure 5-13. Callout illustration accompanying the discussion on PDF page 13*
 
-### Relationship with Stream Processing
+## Relationship with Stream Processing
 
 The notification and replication duality that events demonstrate maps cleanly to the concepts of stateless and stateful stream processing, respectively. The best way to understand this is to consider the shipping service example we discussed earlier in this document. If we changed the shipping service to use the Kafka Streams API, we could approach the problem in two ways (Figure 5-8):
 
@@ -248,7 +246,7 @@ So the use of event-carried state transfer, in stateful stream processing, diffe
 
 This topic is discussed in detail in [Processing Events with Stateful Functions](PROCESSING.EVENTS.STATEFUL.FUNCTIONS.md).
 
-### Mixing Request- and Event-Driven Protocols
+## Mixing Request- and Event-Driven Protocols
 
 A common approach, particularly seen in smaller web-based systems, is to mix protocols, as shown in Figure 5-9. Online services interact directly with a user, say with REST, but also journal state changes to Kafka (see [Event Sourcing, Command Sourcing, and CQRS in a Nutshell](EVENT.SOURCING.CQRS.STATEFUL.PATTERNS.md#event-sourcing-command-sourcing-and-cqrs-in-a-nutshell)). Offline services (for billing, fulfillment, etc.) are built purely with events.
 
@@ -268,7 +266,7 @@ This approach, which confines reuse within a bounded context, is an idea that co
 
 This idea was extended by microservice implementers, so a bounded context describes a set of closely related components or services that share code and are deployed together. Across bounded contexts there is less sharing (be it code, functionality, or data). In fact, as we noted earlier in this document, microservices are often termed “shared nothing” for this reason.[^p16-6]
 
-### Summary
+## Summary
 
 Businesses are a collection of people, teams, and departments performing a wide range of functions, backed by technology. Teams need to work asynchronously with respect to one another to be efficient, and many business processes are inherently asynchronous—for example, shipping a parcel from a warehouse to a user’s door. So we might start a project as a website, where the frontend makes synchronous calls to backend services, but as it grows the web of synchronous calls tightly couple services together at runtime. Event-based methods reverse this, decoupling systems in time and allowing them to evolve independently of one another.
 
@@ -276,7 +274,7 @@ In this document we noticed that events, in fact, have two separate roles: one f
 
 But with all this talk of events, we’ve talked little of replayable logs or stream processing. When we apply these patterns with Kafka, the toolset itself creates new opportunities. Retention in the broker becomes a tool we can design for, allowing us to embrace data on the outside with a central store of events that services can refer back to. So the ops engineers, whom we discussed in the opening section of this document, will still be playing detective, but hopefully not quite as often—and at least now the story comes with a script!
 
-### Notes
+## Notes
 
 [^p2-1]: The term *command* originally came from Bertrand Meyer’s CQS (Command Query Separation) principle. A slightly different definition from Bertrand’s is used here, leaving it optional as to whether a command should return a result or not. There is a reason for this: a command is a request for something specific to happen in the future. Sometimes it is desirable to have no return value; other times, a return value is important. Martin Fowler uses the example of popping a stack, while here we use the example of processing a payment, which simply returns whether the command succeeded. By leaving the command with an optional return type, the implementer can decide if it should return a result or not, and if not CQS/CQRS may be used. This saves the need for having another name for a command that *does* return a result. Finally, a command is never an event. A command has an explicit expectation that something (a state change or side effect) will happen in the future. Events come with no such future expectation. They are simply a statement that something happened.
 

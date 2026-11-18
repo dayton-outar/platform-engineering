@@ -1,6 +1,4 @@
-# Chapter 3
-
-## The Sidecar Pattern
+# The Sidecar Pattern
 
 Source: [Designing.Distributed.Systems-2025-3.pdf](./Designing.Distributed.Systems-2025-3.pdf), PDF pages 1–10.
 
@@ -12,7 +10,7 @@ The first single-node pattern is the sidecar pattern. The sidecar pattern is a s
 
 *Figure 3-1. The generic sidecar pattern*
 
-### An Example Sidecar: Adding HTTPS to a Legacy Service
+## An Example Sidecar: Adding HTTPS to a Legacy Service
 
 Consider, for example, a legacy web service. Years ago, when it was built, internal network security was not as high a priority for the company, and thus, the application only services requests over unencrypted HTTP, not HTTPS. Due to recent security incidents, the company has mandated the use of HTTPS for all company websites. To compound the misery of the team sent to update this particular web service, the source code for this application was built with an old version of the company’s build system, which no longer functions.
 
@@ -26,7 +24,7 @@ At the same time, this nginx service can terminate HTTPS traffic on the external
 
 *Figure 3-2. The HTTPS sidecar*
 
-### Dynamic Configuration with Sidecars
+## Dynamic Configuration with Sidecars
 
 Simply proxying traffic into an existing application is not the only use for a sidecar. Another common example is configuration synchronization. Many older applications use a configuration file for parameterizing the application; this may be a raw text file or something more structured like TOML, XML, JSON, or YAML. Many preexisting applications were written to assume that this file was present on the filesystem and read their configuration from there. However, in a cloud native environment it is often quite useful to use an API for updating configuration stored elsewhere. This allows you to do a dynamic push of configuration information via an API instead of manually logging in to every server and updating the configuration file using imperative commands. The desire for such an API is driven both by ease of use as well as the ability to add automation like rollback, which makes configuring (and reconfiguring) safer and easier. Kubernetes supports ConfigMap resources for exactly this purpose.
 
@@ -38,7 +36,7 @@ Similar to the case of HTTPS, new applications can be written with the expectati
 
 When the legacy application starts, it loads its configuration from the filesystem, as expected. This configuration is placed into the filesystem using a ConfigMap volume which places the current contents of a ConfigMap resource at a particular location in the filesystem. When the configuration manager starts, it examines the configuration API and looks for differences between the local filesystem and the configuration stored in the API. If there are differences, the configuration manager downloads the new configuration to the local filesystem and signals to the legacy application that it should reconfigure itself with this new configuration. The actual mechanism for this notification varies by application. Some applications actually watch the configuration file for changes, while others respond to a SIGHUP signal. In extreme cases, the configuration manager may send a SIGKILL signal to abort the legacy application. Once aborted, the container orchestration system will restart the legacy application, at which point it will load its new configuration. As with adding HTTPS to an existing application, this pattern illustrates how the sidecar pattern can help adapt pre-existing applications to more cloud native scenarios.
 
-### Modular Application Containers
+## Modular Application Containers
 
 At this point, you might be forgiven if you thought that the sole reason for the sidecar pattern to exist was to adapt legacy applications where you no longer wanted to make modifications to the original source code. While this is a common use case for the pattern, there are many other motivations for designing things using sidecars. One of the other main advantages of using the sidecar pattern is modularity and reuse of the components used as sidecars. In deploying any real-world, reliable application, there is functionality that you need for debugging or other management of the application, such as giving a readout of all of the different processes using resources in the container, similar to the top command-line tool.
 
@@ -46,7 +44,7 @@ One approach to providing this introspection is to require that each developer i
 
 Of course, as with any technical choice, there are trade-offs between this modular container-based pattern and rolling your own code into your application. The library-based approach is always going to be somewhat less tailored to the specifics of your application. This means that it may be less efficient in terms of performance, or that the API may require some adaptation to fit into your environment. I would compare these trade-offs to the difference between buying off-the-rack clothing versus bespoke fashion. The bespoke fashion will always fit you better, but it will take longer to arrive and cost more to acquire. As with clothes, for most of us it makes sense to buy the more general-purpose solution when it comes to coding. Of course, if your application demands extremes in terms of performance, you can always choose the handwritten solution.
 
-#### Hands On: Deploying the topz Container
+### Hands On: Deploying the topz Container
 
 To see the topz sidecar in action, you first need to deploy some other container to act as the application container. Choose an existing application that you are running and deploy it using Docker:
 
@@ -68,7 +66,7 @@ This will launch the topz sidecar in the same PID namespace as the application c
 
 You can mix this sidecar with any other existing container to easily get a view into how the container is using its resources via a web interface.
 
-### Building a Simple PaaS with Sidecars
+## Building a Simple PaaS with Sidecars
 
 The sidecar pattern can be used for more than adaptation and monitoring. It can also be used as a means to implement the complete logic for your application in a simplified, modular manner. As an example, imagine building a simple platform as a service (PaaS) built around the git workflow. Once you deploy this PaaS, simply pushing new code up to a Git repository results in that code being deployed to the running servers. We’ll see how the sidecar pattern makes building this PaaS remarkably straightforward.
 
@@ -92,7 +90,7 @@ The Node.js application and Git synchronization sidecar are coscheduled and depl
 
 *Figure 3-4. A simple sidecar-based PaaS*
 
-### Designing Sidecars for Modularity and Reusability
+## Designing Sidecars for Modularity and Reusability
 
 In all of the examples of sidecars that we have detailed throughout this document, one of the most important themes is that every one was a modular, reusable artifact. To be successful, the sidecar should be reusable across a wide variety of applications and deployments. By achieving modular reuse, sidecars can dramatically speed up the building of your application.
 
@@ -106,7 +104,7 @@ However, this modularity and reusability, just like achieving modularity in high
 
 Once you follow these common approaches, you will develop sidecars that can be re-used across a wide variety of applications.
 
-#### Parameterized Containers
+### Parameterized Containers
 
 Parameterizing your containers is the most important thing you can do to make your containers modular and reusable regardless of whether they are sidecars or not, though sidecars and other add-on containers are especially important to parameterize.
 
@@ -128,7 +126,7 @@ docker run -e=PROXY_PORT=8080 -e=CERTIFICATE_PATH=/path/to/cert.crt ...
 
 In your container, you would use those variables to configure an nginx.conf file that points the web server to the correct file and proxy location.
 
-#### Define Each Container’s API
+### Define Each Container’s API
 
 Given that you are parameterizing your containers, it is obvious that your containers are defining a “function” that is called whenever the container is executed. This function is clearly a part of the API that is defined by your container, but there are other parts to this API as well, including calls that the container will make to other services as well as traditional HTTP or other APIs that the container provides.
 
@@ -140,7 +138,7 @@ While that example is obvious, even more subtle changes can break the sidecar AP
 
 I hope this discussion has shown you that for true modularity, you need to be very conscious of the API that your sidecar provides, and that “breaking” changes to that API may not always be as obvious as changing the name of a parameter.
 
-#### Documenting Your Containers
+### Documenting Your Containers
 
 By now, you’ve seen how you can parameterize your sidecar containers to make them modular and reuseable. You’ve learned about the importance of maintaining a stable API to ensure that you don’t break sidecars for your users. But there’s one final step to building modular, reusable containers: ensuring that people can use them in the first place.
 
@@ -177,6 +175,6 @@ LABEL "org.opencontainers.image.version"="1.0.3"
 
 The names for these labels are drawn from the schema established by the Open Containers Initiative. The Open Containers Initiative (OCI) is the specification body which maintains the definition of what it means to be a container image. A part of that specification is the definition of a shared set of annotations/labels. By using a common taxonomy of image labels, multiple different tools can rely on the same meta information in order to visualize, monitor, and correctly use an application. By adopting shared terms, you can use the set of tools developed in the community without modifying your image. Of course, you can also add whatever additional labels make sense in the context of your image.
 
-### Summary
+## Summary
 
 Over the course of this document, we’ve introduced the sidecar pattern for combining containers on a single machine. In the sidecar pattern, a sidecar container augments and extends an application container to add functionality. Sidecars can be used to update existing legacy applications when changing the application is too costly. Likewise, they can be used to create modular utility containers that standardize implementations of common functionality. These utility containers can be reused in a large number of applications, increasing consistency and reducing the cost of developing each application. [Ambassadors](AMBASSADORS.md) and [Adapters](ADAPTERS.md) demonstrate other uses for modular, reusable containers.

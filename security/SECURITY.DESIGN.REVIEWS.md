@@ -1,12 +1,10 @@
-# Chapter 7
-
-## Designing Secure Software-2021
+# Designing Secure Software-2021
 
 Source: [Designing.Secure.Software-2021-7.pdf](Designing.Secure.Software-2021-7.pdf) — 17 PDF pages.
 
 First-person accounts and opinions in this document are those of the original source author.
 
-### Security Design Reviews
+## Security Design Reviews
 
 *A good, sympathetic review is always a wonderful surprise.*
 
@@ -22,29 +20,29 @@ Ideally, the security reviewer is someone not involved in the design work, givin
 
 Sharing these methods and encouraging more software professionals to perform SDRs themselves was one of my core goals in writing this repository. You will almost certainly do a better SDR on the software systems that you work with and know well than someone with more security experience who is unfamiliar with those systems. This repository provides guidance to help you with this task, and it’s my hope that in doing so it will contribute in some small way to raising the bar for software security.
 
-### SDR Logistics
+## SDR Logistics
 
 Before presenting the methodology for an SDR, it’s important to give a little background and discuss some basic logistics. What purpose does an SDR serve? If we’re going to perform one, during what stage of the design process should this be done? Finally, I’ll give a few tips on preparation and the importance of documentation in particular.
 
-### Why Conduct an SDR?
+## Why Conduct an SDR?
 
 Having done a few hundred SDRs myself, I can report that it never feels like a waste of time. SDRs take only a tiny fraction of the total design time, and will either identify important improvements to enhance security or provide strong assurance that the design properly addresses security. Simple, straightforward designs are quick to review, and for larger designs the review process provides a useful framework for identifying and validating the major hotspots. Even when you review a design that ostensibly covers all the bases for security, it’s good due diligence to confirm this. And of course, when the SDR does turn up significant issues, the effort proves extremely worthwhile, because detecting these issues during implementation would be difficult and remedying them after the fact would be costly.
 
 In addition, SDRs can yield valuable new insights, resulting in design changes unrelated to security. An SDR offers a great opportunity to involve diverse perspectives (user experience, customer support, marketing, legal, and so forth), with everyone pondering easily overlooked topics such as the potential for abuse and unintended consequences.
 
-### When to Conduct an SDR
+## When to Conduct an SDR
 
 Plan on performing an SDR when the design (or design iteration) is complete and stable, typically following the functional review, but before the design is finalized, since there may be changes needed. I strongly recommend against trying to handle security as part of the functional review, because the mindset and areas of focus are so different. Also, it’s important for everyone—not just the reviewer—to focus on security, and that’s difficult to do during a combined review when there’s a tendency to concentrate more on the workings of the designs.
 
 Designs that are complicated or security-critical often benefit from an additional preliminary SDR, when the design is beginning to gel but still not fully formed, in order to get early input on major threats and overall strategy. The preliminary SDR can be less formal, previewing points of particular security interest (where you would expect to dig further) and discussing security trade-offs at a high level. Good software designers should always consider and address security and privacy issues throughout the design. To be clear, designers should *never* ignore security and rely on the SDR to fix those issues for them. They should always expect to be fully responsible for the security of their designs, with security reviewers in a support role helping to ensure that they do a thorough job. In turn, security reviewers shouldn’t pontificate, but instead clearly and persuasively present their findings to designers without judgment.
 
-### Documentation Is Essential
+## Documentation Is Essential
 
 Effective SDRs depend on up-to-date documentation so that all parties have an accurate and consistent understanding of the design under review. Informal word-of-mouth SDRs are better than nothing, but crucial details are easily omitted or miscommunicated, and without a written record, valuable results are easily lost. Personally, I always prefer having design documents to preview ahead of a meeting, so I can start studying the design in advance and not take up meeting time with learning what we are working on.
 
 The quality of the design documentation is, in my experience, an invaluable aid in delivering a great SDR. Of course, thorough documentation may not be available in practice, and the [case study](#case-study-a-difficult-review) talks about handling that situation as well. Any design document vaguely specifying to “store customer data securely,” for example, deserves a big red flag, unless it goes on to describe what that means and how to do that. Blanket statements without specifics almost always betray naivety and a lack of a solid understanding of security.
 
-### The SDR Process
+## The SDR Process
 
 The following explanation of the SDR process describes how I conducted them at a large software company with a formal, mandatory review process. That said, software design is practiced in countless different ways, and you can adapt the same strategies and analysis to less formal organizations.
 
@@ -58,7 +56,7 @@ Everyone has a different style. Some reviewers like to dive in and do a “marat
 
 The following walkthrough of the SDR process explains each stage, with bullet points summarizing useful techniques. When you perform an SDR you can refer to the bullets for each stage as you work through the process.
 
-### 1. Study
+## 1. Study
 
 Study the design and supporting documents to gain a basic understanding of the software as preparation for the review. In addition to security know-how, reviewers ideally bring domain-specific expertise. Lacking that, try to pick up what you can, and stay curious throughout the process. Trade-offs are inherent in most security decisions, so a single-minded push for more and more security is likely to overdo things, and risk ruining the design in the process. To understand how too much security can be bad, think of a house designed solely to reduce the risk of fire. Built entirely of concrete, with one thick steel door and no windows, it would be costly as well as ugly, and nobody would want to live in it.
 
@@ -66,7 +64,7 @@ In this preparatory stage:
 
 • First, read the documentation to get a high-level understanding of the design. • Next, put on your “security hat” and go through it again with a threataware mindset. • Take notes, capturing your ideas and observations for future reference. • Flag potential issues for later, but at this stage it’s premature to do much security analysis.
 
-### 2. Inquire
+## 2. Inquire
 
 Ask the designer clarifying questions to understand the basic threats to the system. For simpler designs that are readily understood, or when the designer has produced rock-solid documentation, you may be able to skip this stage. Consider it an opportunity to confirm your understanding of the design and to resolve any ambiguities or open questions before proceeding further. Reviewers certainly don’t need to know a design inside and out to be effective—that’s the designer’s job—but you do need a solid grasp of the broad outlines and how its major components interact.
 
@@ -76,7 +74,7 @@ This stage is your opportunity to fill in gaps before digging in. Here are some 
 
 There’s no need to limit the questions you ask as a security reviewer to strictly what’s in the design document. Understanding peer systems can be extremely helpful for gauging their impact on the design’s security. Omitted details can be hardest to spot. For example, if the design implicitly stores data without providing any details of how this is handled, ask about the storage and its security.
 
-### 3. Identify
+## 3. Identify
 
 Identify the security-critical parts of the design and zero in on them for close analysis. Work from basic principles to see through a security lens: think in terms of C-I-A, the Gold Standard, assets, attack surfaces, and trust boundaries. While these parts of the design deserve special attention, keep the security review focused on the whole for now, so as not to completely ignore the other parts. That said, it’s fine to skip over aspects of the design with little or no relevance to security.
 
@@ -84,7 +82,7 @@ In this exploratory stage you should:
 
 • Examine interfaces, storage, and communications—these will typically be central points of focus. • Work inward from the most exposed attack surfaces toward the most valuable assets, just as determined attackers would. • Evaluate to what degree the design addresses security explicitly. • If needed, point out key protections and get them called out in the design as important features.
 
-### 4. Collaborate
+## 4. Collaborate
 
 Collaborate with the designer, conveying findings and discussing alternatives. Ideally, the designer and reviewer meet for discussion and go through the issues one by one. This is a learning process for everyone: the designer gets a fresh perspective on the design while learning about security, and the reviewer gains insights about the design and the designer’s intentions, deepening their understanding of the security challenges and the best mitigation alternatives. The joint goal is making the design better overall; security is the focus of the review, but not the only consideration. There’s no need to make final decisions on changes on the spot, but it is important to reach an agreement eventually about what design changes deserve consideration.
 
@@ -94,7 +92,7 @@ Here are some guidelines for effective collaboration:
 
 Expanding on “the last word”: in practice, this balance will depend on the organization and its culture, applicable industry standards, possible regulatory requirements, and other factors. In large or highly regimented organizations, the last word may involve sign-offs by multiple parties, including an architecture board, standards compliance officers, usability assessors, and executive stakeholders. When multiple approvals are required, designers must balance competing interests, so security reviewers should be especially conscientious of this dynamic and be as flexible as possible.
 
-### 5. Write
+## 5. Write
 
 Write an *assessment report* of the review findings and recommendations. The findings are the security reviewer’s assessment of the security of a design. The report should focus on potential design changes to consider, and an analysis of the security of the design as it stands. Any changes the designer has already agreed to should be prominently identified as such, and subject to later verification. Consider including priority rankings for suggested changes, such as this simple three-level scheme:
 
@@ -114,7 +112,7 @@ You can skimp on writing up the report if this level of rigor feels too fussy, b
 
 The style, length, and level of detail in these reports varies greatly depending on the organizational culture, available time, number of stakeholders, and many other factors. When, as reviewer, you collaborate closely with the software designer, you may be able to incorporate needed provisions directly into the design document, rather than enumerating issues in need of change in a report. Even for small, informal projects, assigning separate designer and reviewer roles is worthwhile so there are multiple sets of eyes on the work, and to ensure that security is duly considered. However, even a solo design benefits from the designer going back over their own work with their security hat on for fresh perspective.
 
-### 6. Follow Up
+## 6. Follow Up
 
 Follow up on agreed design changes resulting from a security review to confirm they were resolved correctly. When the collaboration has gone well, I usually just check that documentation updates happened without looking at the implementation (and that approach has never backfired in my experience). In other circumstances, and subject to your judgment, reviewers may need to be more vigilant. Sign off on the review when it’s complete, including the verification of all necessary changes. Assigning the SDR in the project bug tracker is a great way to track progress reliably. Otherwise, use a more or less formal process if you prefer. Here are a few pointers for this final stage:
 
@@ -122,11 +120,11 @@ Follow up on agreed design changes resulting from a security review to confirm t
 
 In the best case, the designer looks to the reviewer as a security resource and will continue engaging as needed over time.
 
-### Assessing Design Security
+## Assessing Design Security
 
 Now that we’ve covered the SDR process, this section delves into the thought processes behind conducting the review. The material in this repository up to this point has given you the concepts and tools you need to perform an SDR. The foundational principles, threat modeling, design techniques, patterns, mitigations, crypto tools—it all goes into the making of a secure design.
 
-### Using the Four Questions as Guidance
+## Using the Four Questions as Guidance
 
 The Four Questions used for threat modeling in [Threats](THREATS.md) are an excellent guide to help you conduct an effective SDR. Explicit threat modeling is great if you have the time and want to invest the effort, but if you don’t, using the Four Questions as touchstones is a good way to integrate a threat perspective into your review. More detailed explanations will be given in the subsections that follow, but at the highest level, here is how these questions map onto an SDR:
 
@@ -140,13 +138,13 @@ The Four Questions used for threat modeling in [Threats](THREATS.md) are an exce
 
 You can use the Four Questions as a tickler while working on an SDR. If you’ve read the design document and noted areas of focus but don’t know exactly what you are looking for yet, run through the Four Questions— especially #2 and #3—and consider how they apply to specific parts of the design. From there, your assessment will naturally shift to #4. If the answer isn’t “We’re doing just fine,” it likely suggests a good topic of discussion, or an entry you should include in the assessment report.
 
-### What Are We Working On?
+## What Are We Working On?
 
 There are a few specific ways this question keeps you on track. First, it’s important to know the purpose of the design so you can confidently suggest cutting any part that incurs risk but is not actually necessary. Conversely, when you do suggest changes, you don’t want to break a feature that’s actually needed. Perhaps most importantly, you may be able to suggest an alternative to a risky feature that takes a new direction.
 
 For example, in the privacy space, if you’re reviewing a payroll system that collects personal information from all employees, you might identify a health question as particularly sensitive. If the data item in question is truly superfluous, then cutting it from the design is the right move. However, if it’s important to the business function the design serves, instead you can propose ways to stringently protect against disclosure of this data (such as early encryption, or deletion within a short time frame).
 
-### What Can Go Wrong?
+## What Can Go Wrong?
 
 The review should confirm that the designer has anticipated the important threats that the system faces. And it’s not enough for the designer to be aware of these threats; they must have actually created a design that lives up to the task of withstanding them.
 
@@ -154,7 +152,7 @@ Certain threats may be acceptable and left unmitigated, and in this case, the re
 
 Try to anticipate future changes that might invalidate this decision to accept the risk. Building on the example just mentioned, you might add, “If the system moves to a third-party datacenter we should revisit this physical network access risk decision.”
 
-### What Are We Going to Do About It?
+## What Are We Going to Do About It?
 
 Security protection mechanisms and mitigations should become apparent in the design as the reviewer studies it. Reviewers typically spend most of their time on the last two questions: identifying what makes the design secure and assessing how secure it is. One way of approaching this task is by matching the threats to the mitigations to see if all bases are covered. Pointing out issues arising from this question and confirming that the design is satisfactory are among the most important contributions of an SDR.
 
@@ -162,7 +160,7 @@ If the design is not doing enough to mitigate security risks, then you should it
 
 When the design does provide a mitigation for a given threat, evaluate its effectiveness and consider whether there might be better alternatives. Sometimes, designers “reinvent the wheel” by building security mechanisms from scratch: good feedback would be to suggest using a standard library instead. If the design is secure but that’s achieved at a great performance cost, propose another way if you can. An example of this might be pointing out redundant security mechanisms, such as encrypting data that is sent over an encrypting HTTPS connection, and describing how to streamline the design.
 
-### Did We Do a Good Job?
+## Did We Do a Good Job?
 
 This last question goes to the bottom line: Do you consider the design secure? Competent designers should have already addressed security, so much of the value of the SDR is in assuring that they saw the whole picture and anticipated the major threats. In my experience, SDRs quickly identify issues and opportunities, or at minimum suggest interesting trade-off decisions worth considering now (because later you won’t have the luxury of making changes so easily).
 
@@ -174,7 +172,7 @@ After the summary, if there are multiple subpar areas that require fixing, break
 
 Of course, no design is perfect, so in judging a design to be lacking, it’s important to be clear about what standard you are holding it to. This is difficult to express in the abstract, so a good approach is to point out specific threats, vulnerabilities, and consequences to make your case. It may be best to couch your assessment in terms of the security of a comparable product; for example, “Our main competitor claims to be ransomware-resistant as a major selling point, but this design is particularly susceptible to such attacks due to maintaining the inventory database locally on a computer that employees also use to surf the web.”
 
-### Where to Dig
+## Where to Dig
 
 It’s impractical to dig into every corner of a large design, so reviewers need to focus as quickly as possible on key areas that are security-critical. I encourage security reviewers to follow their instincts when deciding where to direct their efforts within the design. Begin by reading through the design and noting areas of interest according to your intuition. Next, go back to the areas of largest concern, study them more carefully, and collect questions to ask, letting potential threats and the Four Questions be your guide. Some of these leads will be more productive than others. If you do start down an unproductive path, you will usually realize this before long, so you can refocus your efforts elsewhere.
 
@@ -184,13 +182,13 @@ Keep an eye out for attack surfaces and give them due attention. The more readil
 
 Trust boundaries guarding valuable resources, especially when reachable from an attack surface, are the major generic feature of a design that reviewers should be sure to emphasize in their analysis. Sometimes valuable assets can be better isolated from external-facing components, but often the exposure is unavoidable. These are the kinds of factors that reviewers need to search out and assess throughout the process.
 
-### Privacy Reviews
+## Privacy Reviews
 
 Depending on your skill set and organizational responsibilities, you may want to handle information privacy within the scope of an SDR, or separately. Privacy feedback within an SDR should center on applicable privacy policies and how they relate to data collection, use, storage, and sharing within the scope of the design.
 
 A good technique is to run through the privacy policy and note passages that pertain to the design, then look for ways to protect against violations. As [Secure Design](SECURE.DESIGN.md) describes, the technical focus is on ensuring that the design is in compliance with policy. Get sign-offs from privacy specialists and legal for issues requiring more expertise.
 
-### Reviewing Updates
+## Reviewing Updates
 
 Once released, software seems to take on a life of its own, and over time, change is inevitable. This is especially true in Agile or other iterative development practices, where design change is a constant process. Design documents can easily become neglected along the way and, years later, lost or irrelevant. Yet changes to a software design potentially impact its security properties, so it’s wise to perform an incremental SDR update to ensure that the design stays secure.
 
@@ -198,7 +196,7 @@ Design documents should be living documents that track the evolution of the arch
 
 Underestimating the impact of a “simple change” is a common invitation to a security disaster, and re-reviewing the design is a great way to proactively assess such impacts effectively. If the design change is so minor that a review is unnecessary, it’s also true that a reviewer could confirm right away that there is no security impact. For anything but a trivial design change, I would suggest that there is little to gain from skipping the SDR update, given the risk of missing this important safeguard.
 
-### Managing Disagreement
+## Managing Disagreement
 
 *Whatever you do in life, surround yourself with smart people who’ll argue with you.*
 
@@ -206,7 +204,7 @@ Underestimating the impact of a “simple change” is a common invitation to a 
 
 An important lesson from my years of evangelizing security—learned the hard way, though obvious in hindsight—is that good interpersonal communication is critical to conducting successful SDRs. The analysis is technical, of course, but critiquing a design requires good communication and collaboration, so human factors are also key. Too often, security specialists, be they in-house or outsourced, get reputations (deservedly or not) of being hypercritical interlopers who are never satisfied. That perception subtly poisons interactions, not only making the work difficult, but adversely impacting the effectiveness of everybody’s efforts. We have to acknowledge this factor in order to do better.
 
-### Communicate Tactfully
+## Communicate Tactfully
 
 SDRs are inherently adversarial, in that they largely consist of pointing out risks and potential flaws in designs in which people are often heavily invested. Once identified, design weaknesses often look painfully obvious in hindsight, and it’s easy for reviewers to slip into casting this as carelessness, or even incompetence—but it is *never* productive to communicate that way. Instead, treat the issues that do arise as teaching opportunities. Once the designer understands the problem, often they will lead the discussion into other productive areas the reviewer might have missed. Having someone point out a vulnerability in your own design is the best way there is to learn security.
 
@@ -214,7 +212,7 @@ An SDR spent ruthlessly tearing apart a weak design with a one-sided lecture on 
 
 Getting along with people while delivering possibly unwelcome messages is, of course, desirable, but it is also much easier said than done. The focus here is technical software review rather than general advice on interpersonal relationships. But the human factor is important enough—or more precisely, ignoring it potentially undermines the work enough—that it merits prominent mention. My fundamental guidance is simple: be aware of how you deliver messages and consider how others will receive them and likely respond. To show how this works for an SDR, I offer a true story, and a set of tips that I have come to rely on.
 
-### Case Study: A Difficult Review
+## Case Study: A Difficult Review
 
 One of my most memorable SDRs is a great object lesson in the importance of soft skills. It began with a painful email exchange I initiated just to get documentation and ask a few basic questions. The exchange made it immediately clear that the team lead viewed the SDR as a complete waste of time. On top of that, because they had been unaware of this product launch requirement, it had suddenly become an unwelcome new obstacle blocking the release they were working so hard toward. The first key takeaway from this story is the importance of recognizing the other participants’ perspective on the process, right or wrong, and adapting accordingly.
 
@@ -236,7 +234,7 @@ It’s never easy to convince busy people that you are helping them by taking up
 
 By the completion of the SDR, the product team had a far better understanding of security—and by extension, of their own product. In the end, they did see the value of the review, and acknowledged that the product had been improved as a result. Better yet, for version two, the team proactively reached out to me and we sailed through the update SDR with flying colors.
 
-### Escalating Disagreements
+## Escalating Disagreements
 
 When the designer and reviewer fail to reach consensus, they should agree to disagree. If the issue is minor, the reviewer can simply note the point of disagreement in the assessment report and defer to the designer. In such cases, make the disagreement explicit, perhaps in a section called “Recommendations Declined,” explaining the suggested design change and why you recommended it, as well as the potential consequences of not making the change. However, if there is a serious dispute about a major decision, the reviewer should escalate the issue.
 
@@ -246,7 +244,7 @@ Over many years of conducting security reviews, I have never had occasion to esc
 
 Another major cause of disconnect happens when the designer fails to see that data confidentiality or integrity matters, usually because they are missing the necessary end user perspective or not considering the full range of possible use cases. One more important factor to consider is this: Hypothetically, if we changed our minds after release, how much harder would the change be to make at that stage? Nobody wants to say “I told you so” after the fact, but putting the opposing conditions in writing is usually the best way to make the right choice.
 
-### Practice, Practice, Practice
+## Practice, Practice, Practice
 
 To solidify what you have learned in this document and truly make it your own, I strongly encourage readers to take the leap, find a software design, and perform an SDR for it. If there is no current software design in your sphere of interest just now, choose any available existing design and review it as an exercise. If the software you chose has no formal written design, start by creating a rough representation of the design yourself (it doesn’t have to be a complete or polished document, even a block diagram will do), and review that. Generally, it’s best to start with a modest-sized design so you don’t get in over your head, or carve out a component from a large system and review just that part. Having read this far should have prepared you to begin. You can start by doing quick reviews for your own use if you don’t feel confident enough yet to share your assessment reports.
 
@@ -256,4 +254,4 @@ Start with an existing design document and identify its security provisions. Con
 
 With each SDR, you will improve your proficiency. Even when you don’t find any significant vulnerabilities, you will enhance your knowledge of the design, as well as your security skills. There certainly is no shortage of software in need of security attention, so I invite you to get started. I believe how quickly you acquire this valuable skill set will surprise you.
 
-### Security Design Reviews
+## Security Design Reviews

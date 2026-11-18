@@ -1,6 +1,4 @@
-# Chapter 18
-
-## Choosing the Appropriate Architecture Style
+# Choosing the Appropriate Architecture Style
 
 Source: [Fundamentals.of.Software.Architecture-2020-18.pdf](./Fundamentals.of.Software.Architecture-2020-18.pdf), PDF pages 1–12.
 
@@ -10,7 +8,7 @@ It depends! With all the choices available (and new ones arriving almost daily),
 
 However contextual the decision is, some general advice exists around choosing an appropriate architecture style.
 
-### Shifting “Fashion” in Architecture
+## Shifting “Fashion” in Architecture
 
 Preferred architecture styles shift over time, driven by a number of factors:
 
@@ -44,7 +42,7 @@ Many external factors only peripherally associated with software development may
 
 Regardless of where an organization stands in terms of current architecture fashion, an architect should understand current industry trends to make intelligent decisions about when to follow and when to make exceptions.
 
-### Decision Criteria
+## Decision Criteria
 
 When choosing an architectural style, an architect must take into account all the various factors that contribute to the structure for the domain design. Fundamentally, an architect designs two things: whatever domain has been specified, and all the other structural elements required to make the system a success.
 
@@ -100,13 +98,13 @@ Because synchronous communication presents fewer design, implementation, and deb
 
 The output of this design process is architecture topology, taking into account what architecture style (and hybridizations) the architect chose, architecture decision records about the parts of the design which required the most effort by the architect, and architecture fitness functions to protect important principles and operational architecture characteristics.
 
-### Monolith Case Study: Silicon Sandwiches
+## Monolith Case Study: Silicon Sandwiches
 
 In the Silicon Sandwiches architecture kata, after investigating the architecture characteristics, we determined that a single quantum was sufficient to implement this system. Plus, this is a simple application without a huge budget, so the simplicity of a monolith appeals.
 
 However, we created two different component designs for Silicon Sandwiches: one domain partitioned and another technically partitioned. Given the simplicity of the solution, we’ll create designs for each and cover trade-offs.
 
-#### Modular Monolith
+### Modular Monolith
 
 A modular monolith builds domain-centric components with a single database, deployed as a single quantum; the modular monolith design for Silicon Sandwiches appears in Figure 18-1.
 
@@ -118,7 +116,7 @@ This is a monolith with a single relational database, implemented with a single 
 
 Because the architecture style itself doesn’t inherently handle customization, the architect must make sure that that feature becomes part of domain design. In this case, the architect designs an Override endpoint where developers can upload individual customizations. Correspondingly, the architect must ensure that each of the domain components references the Override component for each customizable characteristic—this would make a perfect fitness function.
 
-#### Microkernel
+### Microkernel
 
 One of the architecture characteristics the architect identified in Silicon Sandwiches was customizability. Looking at domain/architecture isomorphism, an architect may choose to implement it using a microkernel, as illustrated in Figure 18-2.
 
@@ -132,7 +130,7 @@ The other unique design element here utilizes the Backends for Frontends (BFF) p
 
 Communication within either Silicon Sandwich architecture can be synchronous— the architecture doesn’t require extreme performance or elasticity requirements—and none of the operations will be lengthy.
 
-### Distributed Case Study: Going, Going, Gone
+## Distributed Case Study: Going, Going, Gone
 
 The Going, Going, Gone (GGG) kata presents more interesting architecture challenges. Based on its component analysis, this architecture needs differing architecture characteristics for different parts of the architecture. For example, architecture characteristics like availability and scalability will differ between roles like auctioneer and bidder.
 

@@ -1,6 +1,4 @@
-# Chapter 12
-
-## Microkernel Architecture Style
+# Microkernel Architecture Style
 
 Source: [Fundamentals.of.Software.Architecture-2020-12.pdf](./Fundamentals.of.Software.Architecture-2020-12.pdf), PDF pages 1–14.
 
@@ -8,7 +6,7 @@ First-person accounts and opinions in this document reflect the original source 
 
 The *microkernel* architecture style (also referred to as the *plug-in* architecture) was coined several decades ago and is still widely used today. This architecture style is a natural fit for product-based applications (packaged and made available for download and installation as a single, monolithic deployment, typically installed on the customer’s site as a third-party product) but is widely used in many nonproduct custom business applications as well.
 
-### Topology
+## Topology
 
 The microkernel architecture style is a relatively simple monolithic architecture consisting of two architecture components: a core system and plug-in components. Application logic is divided between independent plug-in components and the basic core system, providing extensibility, adaptability, and isolation of application features and custom processing logic. Figure 12-1 illustrates the basic topology of the microkernel architecture style.
 
@@ -16,7 +14,7 @@ The microkernel architecture style is a relatively simple monolithic architectur
 
 *Figure 12-1. Basic components of the microkernel architecture style*
 
-#### Core System
+### Core System
 
 The *core system* is formally defined as the minimal functionality required to run the system. The Eclipse IDE is a good example of this. The core system of Eclipse is just a basic text editor: open a file, change some text, and save the file. It’s not until you add plug-ins that Eclipse starts becoming a usable product. However, another definition of the core system is the happy path (general processing flow) through the application, with little or no custom processing. Removing the cyclomatic complexity of the core system and placing it into separate plug-in components allows for better extensibility and maintainability, as well as increased testability. For example, suppose an electronic device recycling application must perform specific custom assessment rules for each electronic device received. The Java code for this sort of processing might look as follows:
 
@@ -68,7 +66,7 @@ The presentation layer of the core system can be embedded within the core system
 
 *Figure 12-3. User interface variants*
 
-#### Plug-In Components
+### Plug-In Components
 
 Plug-in components are standalone, independent components that contain specialized processing, additional features, and custom code meant to enhance or extend the core system. Additionally, they can be used to isolate highly volatile code, creating better maintainability and testability within the application. Ideally, plug-in components should be independent of each other and have no dependencies between them.
 
@@ -102,7 +100,7 @@ It is not a common practice for plug-in components to connect directly to a cent
 
 *Figure 12-7. Plug-in components can own their own data store*
 
-### Registry
+## Registry
 
 The core system needs to know about which plug-in modules are available and how to get to them. One common way of implementing this is through a plug-in registry. This registry contains information about each plug-in module, including things like its name, data contract, and remote access protocol details (depending on how the plug-in is connected to the core system). For example, a plug-in for tax software that flags high-risk tax audit items might have a registry entry that contains the name of the service (AuditChecker), the data contract (input data and output data), and the contract format (XML).
 
@@ -120,7 +118,7 @@ static {
 }
 ```
 
-### Contracts
+## Contracts
 
 The contracts between the plug-in components and the core system are usually standard across a domain of plug-in components and include behavior, input data, and output data returned from the plug-in component. Custom contracts are typically found in situations where plug-in components are developed by a third party where you have no control over the contract used by the plug-in. In such cases, it is common to create an adapter between the plug-in contract and your standard contract so that the core system doesn’t need specialized code for each plug-in.
 
@@ -144,7 +142,7 @@ In this contract example, the device assessment plug-in is expected to return th
 
 Notice the roles and responsibility model between the core system and the plug-in component in this example, specifically with the assessmentReport field. It is not the responsibility of the core system to format and understand the details of the assessment report, only to either print it out or display it to the user.
 
-### Examples and Use Cases
+## Examples and Use Cases
 
 Most of the tools used for developing and releasing software are implemented using the microkernel architecture. Some examples include the Eclipse IDE, PMD, Jira, and Jenkins, to name a few). Internet web browsers such as Chrome and Firefox are another common product example using the microkernel architecture: viewers and other plug-ins add additional capabilities that are not otherwise found in the basic browser representing the core system. The examples are endless for product-based software, but what about large business applications? The microkernel architecture applies to these situations as well. To illustrate this point, consider an insurance company example involving insurance claims processing.
 
@@ -156,7 +154,7 @@ The claims rules for each jurisdiction can be contained in separate standalone p
 
 Another example of a large and complex business application that can leverage the microkernel architecture is tax preparation software. For example, the United States has a basic two-page tax form called the 1040 form that contains a summary of all the information needed to calculate a person’s tax liability. Each line in the 1040 tax form has a single number that requires many other forms and worksheets to arrive at that single number (such as gross income). Each of these additional forms and worksheets can be implemented as a plug-in component, with the 1040 summary tax form being the core system (the driver). This way, changes to tax law can be isolated to an independent plug-in component, making changes easier and less risky.
 
-### Architecture Characteristics Ratings
+## Architecture Characteristics Ratings
 
 A one-star rating in the characteristics ratings in Figure 12-8 means the specific architecture characteristic isn’t well supported in the architecture, whereas a five-star rating means the architecture characteristic is one of the strongest features in the architecture style.
 

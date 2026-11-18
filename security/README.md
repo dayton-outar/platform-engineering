@@ -4,11 +4,11 @@ Explore software threats, secure design, web vulnerabilities, and application se
 
 ## Table of Contents
 
-### Overview
+## Overview
 
 1. [Security overview and web security checklist](SECURITY.OVERVIEW.md)
 
-### Designing Secure Software
+## Designing Secure Software
 
 1. [Threats](THREATS.md)
 2. [Mitigation](MITIGATION.md)
@@ -19,7 +19,7 @@ Explore software threats, secure design, web vulnerabilities, and application se
 7. [Security Testing](SECURITY.TESTING.md)
 8. [Secure Development Best Practices](SECURE.DEVELOPMENT.BEST.PRACTICES.md)
 
-### Web Security for Developers
+## Web Security for Developers
 
 1. [Injection Attacks](INJECTION.ATTACKS.md)
 2. [Cross-Site Scripting Attacks](CROSS.SITE.SCRIPTING.ATTACKS.md)
@@ -33,7 +33,7 @@ Explore software threats, secure design, web vulnerabilities, and application se
 10. [Don’t Be an Accessory](DONT.BE.ACCESSORY.md)
 11. [Denial-of-Service Attacks](DENIAL.OF.SERVICE.ATTACKS.md)
 
-### Implementing Security for Applications (.NET)
+## Implementing Security for Applications (.NET)
 
 1. [Implementing Security at Design Time](SECURITY.AT.DESIGN.TIME.md)
 2. [Using Secure Coding Best Practices](SECURE.CODING.BEST.PRACTICES.md)

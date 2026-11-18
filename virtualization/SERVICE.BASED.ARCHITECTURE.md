@@ -1,12 +1,10 @@
-# Chapter 13
-
-## Service-Based Architecture Style
+# Service-Based Architecture Style
 
 Source: [Fundamentals.of.Software.Architecture-2020-13.pdf](./Fundamentals.of.Software.Architecture-2020-13.pdf), PDF pages 1–16.
 
 *Service-based* architecture is a hybrid of the microservices architecture style and is considered one of the most pragmatic architecture styles, mostly due to its architectural flexibility. Although service-based architecture is a distributed architecture, it doesn’t have the same level of complexity and cost as other distributed architectures, such as microservices or event-driven architecture, making it a very popular choice for many business-related applications.
 
-### Topology
+## Topology
 
 The basic topology of service-based architecture follows a distributed macro layered structure consisting of a separately deployed user interface, separately deployed remote coarse-grained services, and a monolithic database. This basic topology is illustrated in Figure 13-1.
 
@@ -22,7 +20,7 @@ Services are accessed remotely from a user interface using a remote access proto
 
 One important aspect of service-based architecture is that it typically uses a centrally shared database. This allows services to leverage SQL queries and joins in the same way a traditional monolithic layered architecture would. Because of the small number of services (4 to 12), database connections are not usually an issue in service-based architecture. Database changes, however, can be an issue. The section [Database Partitioning](SERVICE.BASED.ARCHITECTURE.md#database-partitioning) describes techniques for addressing and managing database change within a service-based architecture.
 
-### Topology Variants
+## Topology Variants
 
 Many topology variants exist within the service-based architecture style, making this perhaps one of the most flexible architecture styles. For example, the single monolithic user interface, as illustrated in Figure 13-1, can be broken apart into user interface domains, even to a level matching each domain service. These user interface variants are illustrated in Figure 13-2.
 
@@ -42,7 +40,7 @@ Finally, it is also possible to add an API layer consisting of a reverse proxy o
 
 *Figure 13-4. Adding an API layer between the user interface and domain services*
 
-### Service Design and Granularity
+## Service Design and Granularity
 
 Because domain services in a service-based architecture are generally coarse-grained, each domain service is typically designed using a layered architecture style consisting of an API facade layer, a business layer, and a persistence layer. Another popular design approach is to domain partition each domain service using sub-domains similar to the modular monolith architecture style. Each of these design approaches is illustrated in Figure 13-5.
 
@@ -58,7 +56,7 @@ To illustrate this point, consider the example of a catalog checkout process wit
 
 Domain services, being coarse-grained, allow for better data integrity and consistency, but there is a trade-off. With service-based architecture, a change made to the order placement functionality in the OrderService would require testing the entire coarse-grained service (including payment processing), whereas with microservices the same change would only impact a small OrderPlacement service (requiring no change to the PaymentService). Furthermore, because more code is being deployed, there is more risk with service-based architecture that something might break (including payment processing), whereas with microservices each service has a single responsibility, hence less chance of breaking other functionality when being changed.
 
-### Database Partitioning
+## Database Partitioning
 
 Although not required, services within a service-based architecture usually share a single, monolithic database due to the small number of services (4 to 12) within a given application context. This database coupling can present an issue with respect to database table schema changes. If not done properly, a table schema change can potentially impact every service, making database changes a very costly task in terms of effort and coordination.
 
@@ -82,7 +80,7 @@ Notice in Figure 13-7 the use of the *common* domain and the corresponding commo
 
 > Make the logical partitioning in the database as fine-grained as possible while still maintaining well-defined data domains to better control database changes within a service-based architecture.
 
-### Example Architecture
+## Example Architecture
 
 To illustrate the flexibility and power of the service-based architecture style, consider the real-world example of an electronic recycling system used to recycle old electronic devices (such as an iPhone or Galaxy cell phone). The processing flow of recycling old electronic devices works as follows: first, the customer asks the company (via a website or kiosk) how much money they can get for the old electronic device (called *quoting*). If satisfied, the customer will send the electronic device to the recycling company, which in turn will receive the physical device (called *receiving*). Once received, the recycling company will then assess the device to determine if the device is in good working condition or not (called *assessment*). If the device is in good working condition, the company will send the customer the money promised for the device (called *accounting*). Through this process, the customer can go to the website at any time to check on the status of the item (called *item status*). Based on the assessment, the device is then recycled by either safely destroying it or reselling it (called *recycling*). Finally, the company periodically runs ad hoc and scheduled financial and operational reports based on recycling activity (called *reporting*).
 
@@ -96,7 +94,7 @@ Also notice in how the user interface applications are federated into their resp
 
 This example illustrates many of the benefits of the service-based architecture approach: scalability, fault tolerance, and security (data and functionality protection and access), in addition to agility, testability, and deployability. For example, the Assessment service is changed constantly to add assessment rules as new products are received. This frequent change is isolated to a single domain service, providing agility (the ability to respond quickly to change), as well as testability (the ease of and completeness of testing) and deployability (the ease, frequency, and risk of deployment).
 
-### Architecture Characteristics Ratings
+## Architecture Characteristics Ratings
 
 A one-star rating in the characteristics ratings table in Figure 13-9 means the specific architecture characteristic isn’t well supported in the architecture, whereas a five-star rating means the architecture characteristic is one of the strongest features in the architecture style.
 
@@ -122,7 +120,7 @@ Simplicity and overall cost are two other drivers that differentiate this archit
 
 Service-based architectures tend to be more reliable than other distributed architectures due to the coarse-grained nature of the domain services. Larger services mean less network traffic to and between services, fewer distributed transactions, and less bandwidth used, therefore increasing overall reliability with respect to the network.
 
-### When to Use This Architecture Style
+## When to Use This Architecture Style
 
 The flexibility of this architecture style (see [Topology Variants](SERVICE.BASED.ARCHITECTURE.md#topology-variants)) combined with the number of three-star and four-star architecture characteristics ratings make service-based architecture one of the most pragmatic architecture styles available. While there are certainly other distributed architecture styles that are much more powerful, some companies find that power comes at too steep of a price, while others find that they quite simply don’t need that much power. It’s like having the power, speed, and agility of a Ferrari used only for driving back and forth to work in rush-hour traffic at 50 kilometers per hour—sure it looks cool, but what a waste of resources and money!
 

@@ -1,6 +1,4 @@
-# Chapter 5
-
-## Adapters
+# Adapters
 
 Source: [Designing.Distributed.Systems-2025-5.pdf](./Designing.Distributed.Systems-2025-5.pdf), PDF pages 1–9.
 
@@ -18,7 +16,7 @@ Yet, to effectively monitor and operate your application, you need common interf
 
 The remainder of this document gives several different applications of the adapter pattern.
 
-### Monitoring
+## Monitoring
 
 When monitoring your software, you want a single solution that can automatically discover and monitor any application that is deployed into your environment. To make this feasible, every application has to implement the same monitoring interface. There are numerous examples of standardized monitoring interfaces, such as syslog, Event Tracing for Windows (ETW), JMX for Java applications, and many, many other protocols and interfaces. However, each of these is unique in both protocol for communication as well as the style of communication (push versus pull).
 
@@ -30,7 +28,7 @@ Decoupling the system in this fashion makes for a more comprehensible, maintaina
 
 This ensures that a misbehaving monitoring adapter cannot cause problems with a user-facing service.
 
-#### Hands On: Using Prometheus for Monitoring
+### Hands On: Using Prometheus for Monitoring
 
 As an example, consider monitoring your containers via the Prometheus open source project. Prometheus is a monitoring aggregator, which collects metrics and aggregates them into a single time-series database. On top of this database, Prometheus provides visualization and query language for introspecting the collected metrics. To collect metrics from a variety of different systems, Prometheus expects every container to expose a specific metrics API. This enables Prometheus to monitor a wide variety of different programs through a single interface.
 
@@ -69,7 +67,7 @@ spec:
 
 This example illustrates not only the value of the adapter pattern for ensuring a consistent interface, but also the value of container patterns in general for modular container reuse. In this case, the example shown combines an existing Redis container with an existing Prometheus adapter. The net effect is a monitorable Redis server, with little work on our part to deploy it. In the absence of the adapter pattern, the same deployment would have required significantly more custom work and would have resulted in a much less operable solution, since any updates to either Redis or the adapter would have required work to apply the update.
 
-### Logging
+## Logging
 
 Much like monitoring, there is a wide variety of heterogeneity in how systems log data to an output stream. Systems might divide their logs into different levels (such as debug, info, warning, and error) with each level going into a different file. Some might simply log to stdout and stderr. This is especially problematic in the world of containerized applications, where there is a general expectation that your containers will log to stdout, because that is what is available via commands like docker logs or kubectl logs.
 
@@ -85,7 +83,7 @@ Fortunately, as with monitoring, the adapter pattern can help provide a modular,
 
 *Figure 5-2. Callout illustration accompanying the discussion on PDF page 5*
 
-#### Hands On: Normalizing Different Logging Formats with fluentd
+### Hands On: Normalizing Different Logging Formats with fluentd
 
 One common task for an adapter is to normalize log metrics into a standard set of events. Many different applications have different output formats, but you can use a standard logging tool deployed as an adapter to normalize them all to a consistent format. In this example, we will use the fluentd monitoring agent as well as some community-supported plug-ins to obtain logs from a variety of different sources.
 
@@ -120,7 +118,7 @@ A similar exercise can be done to monitor logs from the Apache Storm system. Aga
 
 This adapter builds a bridge between Storm and the time series of logs.
 
-### Adding a Health Monitor
+## Adding a Health Monitor
 
 One last example of applying the adapter pattern is derived from monitoring the health of an application container. Consider the task of monitoring the health of an off-the-shelf database container. In this case, the container for the database is supplied by the database project, and we would rather not modify that container simply to add health checks. Of course, a container orchestrator will allow us to add simple health checks to ensure that the process is running and that it is listening on a particular port, but what if we want to add richer health checks that actually run queries against the database?
 
@@ -128,7 +126,7 @@ Container orchestration systems like Kubernetes enable us to use shell scripts a
 
 The answer to these problems should be easy to guess by now: we can use an adapter container. The database runs in the application container and shares a network interface with the adapter container. The adapter container is a simple container that only contains the shell script for determining the health of the database. This script can then be set up as the health check for the database container and can perform whatever rich health checks our application requires. If these checks ever fail, the database will be automatically restarted.
 
-#### Hands On: Adding Rich Health Monitoring for MySQL
+### Hands On: Adding Rich Health Monitoring for MySQL
 
 Suppose, then, that you want to add deep monitoring on a MySQL database where you actually run a query that is representative of your workload. In this case, one option would be to update the MySQL container to contain a health check that is specific to your application. However, this is generally an unattractive idea because it requires that you both modify some existing MySQL base image as well as update that image as new MySQL images are released.
 
@@ -208,6 +206,6 @@ In contrast, if we use patterns like the adapter to develop modular solutions co
 
 Sometimes design patterns aren’t just for the developers who apply them, but lead to the development of communities that can collaborate and share solutions between members of the community as well as the broader developer ecosystem.
 
-### Summary
+## Summary
 
 Sometimes the world isn’t perfectly aligned. The components that we need to use to build our systems can have different interfaces or different protocols for interactions like logging, monitoring, and RPCs. Adapters can be a critical tool to add consistency to our systems, enabling them to share a consistent protocol and way of connecting. Using an adapter is often significantly easier than trying to change the upstream project.

@@ -1,6 +1,4 @@
-# Chapter 16
-
-## Orchestration-Driven Service-Oriented Architecture
+# Orchestration-Driven Service-Oriented Architecture
 
 Source: [Fundamentals.of.Software.Architecture-2020-16.pdf](./Fundamentals.of.Software.Architecture-2020-16.pdf), PDF pages 1–9.
 
@@ -8,7 +6,7 @@ First-person accounts and opinions in this document reflect the original source 
 
 Architecture styles, like art movements, must be understood in the context of the era in which they evolved, and this architecture exemplifies this rule more than any other. The combination of external forces that often influence architecture decisions, combined with a logical but ultimately disastrous organizational philosophy, doomed this architecture to irrelevance. However, it provides a great example of how a particular organizational idea can make logical sense yet hinder most important parts of the development process.
 
-### History and Philosophy
+## History and Philosophy
 
 This style of service-oriented architecture appeared just as companies were becoming enterprises in the late 1990s: merging with smaller companies, growing at a break-neck pace, and requiring more sophisticated IT to accommodate this growth. However, computing resources were scarce, precious, and commercial. Distributed computing had just become possible and necessary, and many companies needed the variable scalability and other beneficial characteristics.
 
@@ -16,7 +14,7 @@ Many external drivers forced architects in this era toward distributed architect
 
 This style of architecture also exemplifies how far architects can push the idea of technical partitioning, which had good motivations but bad consequences.
 
-### Topology
+## Topology
 
 The topology of this type of service-oriented architecture is shown in Figure 16-1.
 
@@ -28,17 +26,17 @@ Not all examples of this style of architecture had the exact layers illustrated 
 
 Service-oriented architecture is a distributed architecture; the exact demarcation of boundaries isn’t shown in Figure 16-1 because it varied based on organization.
 
-### Taxonomy
+## Taxonomy
 
 The architect’s driving philosophy in this architecture centered around enterprise-level reuse. Many large companies were annoyed at how much they had to continue to rewrite software, and they struck on a strategy to gradually solve that problem. Each layer of the taxonomy supported this goal.
 
-#### Business Services
+### Business Services
 
 *Business services* sit at the top of this architecture and provide the entry point. For example, services like ExecuteTrade or PlaceOrder represent domain behavior. One litmus test common at the time—could an architect answer affirmatively to the question “Are we in the business of...” for each of these services?
 
 These service definitions contained no code—just input, output, and sometimes schema information. They were usually defined by business users, hence the name business services.
 
-#### Enterprise Services
+### Enterprise Services
 
 The *enterprise services* contain fine-grained, shared implementations. Typically, a team of developers is tasked with building atomic behavior around particular business domains: CreateCustomer, CalculateQuote, and so on. These services are the building blocks that make up the coarse-grained business services, tied together via the orchestration engine.
 
@@ -46,15 +44,15 @@ This separation of responsibility flows from the reuse goal in this architecture
 
 Unfortunately, the dynamic nature of reality defies these attempts. Business components aren’t like construction materials, where solutions last decades. Markets, technology changes, engineering practices, and a host of other factors confound attempts to impose stability on the software world.
 
-#### Application Services
+### Application Services
 
 Not all services in the architecture require the same level of granularity or reuse as the enterprise services. *Application services* are one-off, single-implementation services. For example, perhaps one application needs geo-location, but the organization doesn’t want to take the time or effort to make that a reusable service. An application service, typically owned by a single application team, solves these problems.
 
-#### Infrastructure Services
+### Infrastructure Services
 
 *Infrastructure services* supply the operational concerns, such as monitoring, logging, authentication, and authorization. These services tend to be concrete implementations, owned by a shared infrastructure team that works closely with operations.
 
-#### Orchestration Engine
+### Orchestration Engine
 
 The *orchestration engine* forms the heart of this distributed architecture, stitching together the business service implementations using orchestration, including features like transactional coordination and message transformation. This architecture is typically tied to a single relational database, or a few, rather than a database per service as in microservices architectures. Thus, transactional behavior is handled declaratively in the orchestration engine rather than in the database.
 
@@ -64,7 +62,7 @@ Because this mechanism forms the heart of the architecture, Conway’s law corre
 
 While this approach might sound appealing, in practice it was mostly a disaster. Off-loading transaction behavior to an orchestration tool sounded good, but finding the correct level of granularity of transactions became more and more difficult. While building a few services wrapped in a distributed transaction is possible, the architecture becomes increasingly complex as developers must figure out where the appropriate transaction boundaries lie between services.
 
-#### Message Flow
+### Message Flow
 
 All requests go through the orchestration engine—it is the location within this architecture where logic resides. Thus, message flow goes through the engine even for internal calls, as shown in Figure 16-2.
 
@@ -74,7 +72,7 @@ All requests go through the orchestration engine—it is the location within thi
 
 In Figure 16-2, the CreateQuote business-level service calls the service bus, which defines the workflow that consists of calls to CreateCustomer and CalculateQuote, each of which also has calls to application services. The service bus acts as the intermediary for all calls within this architecture, serving as both an integration hub and orchestration engine.
 
-### Reuse...and Coupling
+## Reuse...and Coupling
 
 A major goal of this architecture is reuse at the service level—the ability to gradually build business behavior that can be incrementally reused over time. Architects in this architecture were instructed to find reuse opportunities as aggressively as possible. For example, consider the situation illustrated in Figure 16-3.
 
@@ -96,7 +94,7 @@ Another negative side effect of consolidating behavior into a single place: cons
 
 Perhaps the most damaging revelation from this architecture came with the realization of the impractically of building an architecture so focused on technical partitioning. While it makes sense from a separation and reuse philosophy standpoint, it was a practical nightmare. Domain concepts like CatalogCheckout were spread so thinly throughout this architecture that they were virtually ground to dust. Developers commonly work on tasks like “add a new address line to CatalogCheckout.” In a service-oriented architecture, that could entail dozens of services in several different tiers, plus changes to a single database schema. And, if the current enterprise services aren’t defined at the correct transactional granularity, the developers will either have to change their design or build a new, near-identical service to change transactional behavior. So much for reuse.
 
-### Architecture Characteristics Ratings
+## Architecture Characteristics Ratings
 
 Many of the modern criteria we use to evaluate architecture now were not priorities when this architecture was popular. In fact, the Agile software movement had just started and had not penetrated into the size of organizations likely to use this architecture.
 

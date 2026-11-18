@@ -1,6 +1,4 @@
-# Chapter 14
-
-## Kafka Streams and KSQL
+# Kafka Streams and KSQL
 
 Source: [Designing.Event-Driven.Systems-2018-14.pdf](./Designing.Event-Driven.Systems-2018-14.pdf), PDF pages 1–6.
 
@@ -10,7 +8,7 @@ When it comes to building event-driven services, the Kafka Streams API provides 
 
 In this document we look more closely at this unique tool for stateful stream processing, along with its powerful declarative interface: KSQL.
 
-### A Simple Email Service Built with Kafka Streams and KSQL
+## A Simple Email Service Built with Kafka Streams and KSQL
 
 Kafka Streams is the core API for stream processing on the JVM (Java, Scala, Clojure, etc.). It is based on a DSL (domain-specific language) that provides a declaratively styled interface where streams can be joined, filtered, grouped, or aggregated via the DSL itself. It also provides functionally styled mechanisms (map, flatMap, transform, peek, etc.) for adding bespoke processing of messages one at a time. Importantly, you can blend these two approaches together in the services you build, with the declarative interface providing a high-level abstraction for SQL-like operations and the more functional methods adding the freedom to branch out into any arbitrary code you may wish to write.
 
@@ -52,7 +50,7 @@ Then we implement the emailer as a simple consumer using Kafka’s Node.js API (
 
 *Figure 14-2. Executing a streaming operation as a sidecar, with the resulting stream being processed by a Node.js client*
 
-### Windows, Joins, Tables, and State Stores
+## Windows, Joins, Tables, and State Stores
 
 [Processing Events with Stateful Functions](PROCESSING.EVENTS.STATEFUL.FUNCTIONS.md) introduced the notion of holding whole tables inside the Kafka Streams API, making services stateful. Here we look a little more closely at how both streams and tables are implemented, along with some of the other core features.
 
@@ -84,10 +82,10 @@ The final use of the state store is to save information, just like we might writ
 
 *Figure 14-5. Using a state store to keep application-specific state within the Kafka Streams API as well as backed up in Kafka*
 
-### Summary
+## Summary
 
 This document provided a brief introduction to streams, tables, and state stores: three of the most important elements of a streaming application. Streams are infinite and we process them a record at a time. Tables represent a whole dataset, materialized locally, which we can join to much like a database table. State stores behave like dedicated databases which we can read and write to directly with any information we might wish to store. These features are of course just the tip of the iceberg, and both Kafka Streams and KSQL provide a far broader set of features, some of which we explore in [Building Streaming Services](BUILDING.STREAMING.SERVICES.md), but they all build on these base concepts.
 
-### Notes
+## Notes
 
 [^p5-1]: The difference between these two is actually slightly subtler.

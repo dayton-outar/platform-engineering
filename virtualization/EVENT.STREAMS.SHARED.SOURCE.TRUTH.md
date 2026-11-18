@@ -1,6 +1,4 @@
-# Chapter 9
-
-## Event Streams as a Shared Source of Truth
+# Event Streams as a Shared Source of Truth
 
 Source: [Designing.Event-Driven.Systems-2018-9.pdf](./Designing.Event-Driven.Systems-2018-9.pdf), PDF pages 1–4.
 
@@ -8,7 +6,7 @@ First-person accounts and opinions in this document reflect the original source 
 
 As we saw in Part II of this repository, events are a useful tool for system design, providing notification, state transfer, and decoupling. For a couple of decades now, messaging systems have leveraged these properties, moving events from system to system, but only in the last few years have messaging systems started to be used as a storage layer, retaining the datasets that flow through them. This creates an interesting architectural pattern. A company’s core datasets are stored as centralized event streams, with all the decoupling effects of a message broker built in. But unlike traditional brokers, which delete messages once they have been read, historic data is stored and made available to any team that needs it. This links closely with the ideas developed in Event Sourcing (see [Event Sourcing, CQRS, and Other Stateful Patterns](EVENT.SOURCING.CQRS.STATEFUL.PATTERNS.md)) and Pat Helland’s concept of data on the outside. ThoughtWorks calls this pattern event streaming as the source of truth.
 
-### A Database Inside Out
+## A Database Inside Out
 
 “Turning the database inside out” was a phrase coined by Martin Kleppmann. Essentially it is the idea that a database has a number of core components—a commit log, a query engine, indexes, and caching—and rather than conflating these concerns inside a single black-box technology like a database does, we can split them into separate parts using stream processing tools and these parts can exist in different places, joined together by the log. So Kafka plays the role of the commit log, a stream processor like Kafka Streams is used to create indexes or views, and these views behave like a form of continuously updated cache, living inside or close to your application (Figure 9-1).
 
@@ -48,7 +46,7 @@ What is interesting about Jay’s description is he casts the analogy in the con
 
 As we’ll see in [Lean Data](LEAN.DATA.md), this leads to some further optimizations where each view is optimized to target a specific use case, in much the same way that materialized views are used in relational databases to create read-optimized, use-case-focused datasets. Of course, unlike in a relational database, the view is decoupled from the underlying data and can be regenerated from the log should it need to be changed. (See [Materialized Views](EVENT.SOURCING.CQRS.STATEFUL.PATTERNS.md#materialized-views).)
 
-### Summary
+## Summary
 
 This document introduced the analogy that stream processing can be viewed as a database turned inside out, or unbundled. In this analogy, responsibility for data storage (the log) is segregated from the mechanism used to query it (the Stream Processing API). This makes it possible to create views and embed them exactly where they are needed—in another application, in another geography, or on another platform. There are two main drivers for pushing data to code in this way:
 

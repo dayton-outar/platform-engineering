@@ -1,6 +1,4 @@
-# Chapter 13
-
-## Evolving Schemas and Data over Time
+# Evolving Schemas and Data over Time
 
 Source: [Designing.Event-Driven.Systems-2018-13.pdf](./Designing.Event-Driven.Systems-2018-13.pdf), PDF pages 1–7.
 
@@ -10,7 +8,7 @@ Schemas are the APIs used by event-driven services, so a publisher and subscribe
 
 There are a fair few options available for schema management: Protobuf and JSON Schema are both popular, but most projects in the Kafka space use Avro. For central schema management and verification, Confluent has an open source Schema Registry that provides a central repository for Avro schemas.
 
-### Using Schemas to Manage the Evolution of Data in Time
+## Using Schemas to Manage the Evolution of Data in Time
 
 Schemas provide a contract that defines what a message should look like. This is pretty intuitive. Importantly, though, most schema technologies provide a mechanism for validating whether a message in a new schema is backward-compatible with previous versions (or vice versa). This property is essential. (Don’t use Java serialization or any non-evolvable format across services that change independently.)
 
@@ -26,7 +24,7 @@ The Confluent Schema Registry can be used to police this approach. The Schema Re
 
 *Figure 13-1. Calling out to the Schema Registry to validate schema compatibility when reading and writing orders in the orders service*
 
-### Handling Schema Change and Breaking Backward Compatibility
+## Handling Schema Change and Breaking Backward Compatibility
 
 The pain of long schema migrations is one of the telltale criticisms of the relational era. But the reality is that evolving schemas are a fundamental attribute of the way data ages. The main difference between then and now is that late-bound/ schema-on-read approaches allow many incompatible data schemas to exist in the same table, topic, or the like at the same time. This pushes the problem of translating the format—from old to new—into the application layer, hence the name “schema on read.”
 
@@ -54,13 +52,13 @@ Services continue in this dual-topic mode until fully migrated to the v2 topic, 
 
 As an aside, we discussed the single writer principle in [Consistency and Concurrency in Event-Driven Systems](CONSISTENCY.CONCURRENCY.EVENT.DRIVEN.SYSTEMS.md). One of the reasons for applying this approach is that it makes schema upgrades simpler. If we had three different services writing orders, it would be much harder to schedule a non-backward-compatible upgrade without a conjoined release.
 
-### Collaborating over Schema Change
+## Collaborating over Schema Change
 
 In the previous section we discussed how to roll out a non-backward-compatible schema change. However, before such a process ensues, or even before we make a minor change to a schema, there is usually some form of team-to-team collaboration that takes place to work out whether the change is appropriate. This can take many forms. Sending an email to the affected teams, telling them what the new schema is and when it’s going live, is pretty common, as is having a central team that manages the process. Neither of these approaches works particularly well in practice, though. The email method lacks structure and accountability. The central team approach stifles progress, because you have to wait for the central team to make the change and then arrange some form of sign-off.
 
 The best approach I’ve seen for this is to use GitHub. This works well because (a) schemas are code and should be version-controlled for all the same reasons code is, and (b) GitHub lets implementers propose a change and raise a pull request (PR), which they can code against while they build and test their system. Other interested parties can review, comment, and approve. Once consensus is reached, the PR can be merged and the new schema can be rolled out. It is this process for reliably reaching (and auditing) consensus on a change, without impeding the progress of the implementer unduly, that makes this approach the most useful option.
 
-### Handling Unreadable Messages
+## Handling Unreadable Messages
 
 Schemas aren’t always enough to ensure downstream applications will work. There is nothing to prevent a semantic error—for example, an unexpected character, invalid country code, negative quantity, or even invalid bytes (say due to corruption)—from causing a process to stall. Such errors will typically hold up processing until the issue is fixed, which can be unacceptable in some environments.
 
@@ -68,7 +66,7 @@ Traditional messaging systems often include a related concept called a *dead let
 
 Some implementers choose to create a type of dead letter queue of their own in a separate topic. If a consumer cannot read a message for whatever reason, it is placed on this error queue so processing can continue. Later the error queue can be reprocessed.
 
-### Deleting Data
+## Deleting Data
 
 When you keep datasets in the log for longer periods of time, or even indefinitely, there are times you need to delete messages, correct errors or corrupted data, or redact sensitive sections. A good example of this is recent regulations like General Data Protection Regulation (GDPR), which, among other things, gives users the right to be forgotten.
 
@@ -82,22 +80,22 @@ If the key of the topic is something other than the CustomerId, then you need so
 
 There is a less common case, which is worth mentioning, where the key (which Kafka uses for ordering) is completely different from the key you want to be able to delete by. Let’s say that you need to key your orders by ProductId. This choice of key won’t let you delete orders for individual customers, so the simple method just described wouldn’t work. You can still achieve this by using a key that is a composite of the two: make the key [ProductId][CustomerId], then use a custom partitioner in the producer that extracts the ProductId and partitions only on that value. Then you can delete messages using the mechanism discussed earlier using the [ProductId][CustomerId] pair as the key.
 
-#### Triggering Downstream Deletes
+### Triggering Downstream Deletes
 
 Quite often you’ll be in a pipeline where Kafka is moving data from one database to another using Kafka connectors. In this case, you need to delete the record in the originating database and have that propagate through Kafka to any Connect sinks you have downstream. If you’re using CDC this will just work: the delete will be picked up by the source connector, propagated through Kafka, and deleted in the sinks. If you’re not using a CDC-enabled connector, you’ll need some custom mechanism for managing deletes.
 
-### Segregating Public and Private Topics
+## Segregating Public and Private Topics
 
 When using Kafka for Event Sourcing or stream processing, in the same cluster through which different services communicate, we typically want to segregate private, internal topics from shared, business topics.
 
 Some teams prefer to do this by convention, but you can apply a stricter segregation using the authorization interface. Essentially you assign read/write permissions, for your internal topics, only to the services that own them. This can be implemented through simple runtime validation, or alternatively fully secured via TLS or SASL.
 
-### Summary
+## Summary
 
 In this document we looked at a collection of somewhat disparate issues that affect event-driven systems. We considered the problem of schema change: something that is inevitable in the real-world. Often this can be managed simply by evolving the schema with a format like Avro or Protobuf that supports backward compatibility. At other times evolution will not be possible and the system will have to undergo a non-backward-compatible change. The dual-schema upgrade window is one way to handle this.
 
 Then we briefly looked at handling unreadable messages as well as how data can be deleted. For many users deleting data won’t be an issue–it will simply age out of the log–but for those that keep data for longer periods this typically becomes important.
 
-### Notes
+## Notes
 
 [^p5-1]: See *https://www.rabbitmq.com/dlx.html* and *https://ibm.co/2ui3rKO*.

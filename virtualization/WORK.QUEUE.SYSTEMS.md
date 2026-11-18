@@ -1,6 +1,4 @@
-# Chapter 11
-
-## Work Queue Systems
+# Work Queue Systems
 
 Source: [Designing.Distributed.Systems-2025-11.pdf](./Designing.Distributed.Systems-2025-11.pdf), PDF pages 1–12.
 
@@ -12,7 +10,7 @@ The simplest form of batch processing is a *work queue*. In a work queue system,
 
 *Figure 11-1. A generic work queue*
 
-### A Generic Work Queue System
+## A Generic Work Queue System
 
 The work queue is an ideal way to demonstrate the power of distributed system patterns. Most of the logic in the work queue is wholly independent of the actual work being done, and in many cases the delivery of the work can be performed in an independent manner as well. To illustrate this point, consider the work queue illustrated in Figure 11-1. If we take a look at it again and identify functionality that can be provided by a shared set of *library containers*, it becomes apparent that most of the implementation of a containerized work queue can be shared across a wide variety of users, as shown in Figure 11-2.
 
@@ -22,7 +20,7 @@ The work queue is an ideal way to demonstrate the power of distributed system pa
 
 Building a reusable container-based work queue requires the definition of interfaces between the generic library containers and the user-defined application logic. In the containerized work queue, there are two interfaces: the source container interface, which provides a stream of work items that need processing, and the worker container interface, which knows how to actually process a work item.
 
-#### The Source Container Interface
+### The Source Container Interface
 
 To operate, every work queue needs a collection of work items that need processing. There are many different sources of work items for the work queue, depending on the specific application of the work queue. However, once the set of items has been obtained, the actual operation of the work queue is quite generic. Consequently, we can separate the application-specific queue source logic from the generic queue processing logic. Given the previously defined patterns of container groups, this can be seen as an example of the ambassador pattern defined previously. The generic work queue container is the primary application container, and the application-specific source container is the ambassador that proxies the generic work queue’s requests out to the concrete definition of the work queue out in the real world. This container group is illustrated in Figure 11-3.
 
@@ -32,7 +30,7 @@ To operate, every work queue needs a collection of work items that need processi
 
 Interestingly, while the ambassador container is clearly application-specific, there is also a variety of generic implementations of the work queue source API. For example, a source might be a list of pictures stored in a cloud storage API, a collection of files stored on network storage, or a queue in a pub/sub system like Kafka or Redis. In these cases, though the user chooses the particular work queue ambassador that fits their scenario, they should be reusing a single generic “library” implementation of the container itself. This minimizes work and maximizes code reuse.
 
-#### Work Queue API
+### Work Queue API
 
 Given this coordination between the generic work-queue manager and the application-specific ambassador, we need a formal definition of the interface between the two containers. Though there are a variety of different protocols, an HTTP RESTful API is both the easiest to implement as well as the de facto standard for such an interface. The coordinating work queue expects the ambassador to implement the following URLs:
 
@@ -77,7 +75,7 @@ Importantly, you will notice that this API doesn’t have any affordances for re
 
 The item details are obtained from this API, and the item.data field is passed along to the worker interface for processing.
 
-#### The Worker Container Interface
+### The Worker Container Interface
 
 Once a particular work item has been obtained by the work queue manager, it needs to be processed by a worker. This is the second container interface in our generic work queue. This container and interface are slightly different than the previous work queue source interface for a few reasons. The first is that it is a one-off API: a single call is made to begin the work, and no other API calls are made throughout the life of the worker container. Secondly, the worker container is not inside a container group with the work queue manager. Instead, it is launched via a container orchestration API and scheduled to its own container group. This means that the work queue manager has to make a remote call to the worker container in order to start work. It also means that we may need to be more careful about security to prevent a malicious user in our cluster from injecting extra work into the system.
 
@@ -91,7 +89,7 @@ This file-based API pattern is also easier for the container to implement. Often
 
 Consider the example of a work queue worker that downloads a file from cloud storage and runs a shell script with that file as input, and then copies its output back up to cloud storage. Such a container can be mostly generic but then have the specific script to execute supplied to it as a runtime parameter. In this way, most of the work of file handling can be shared by multiple users/work queues and only the specifics of file processing need to be supplied by the end user.
 
-#### The Shared Work Queue Infrastructure
+### The Shared Work Queue Infrastructure
 
 Given implementations of the two container interfaces described previously, what is left to implement our reusable work queue implementation? The basic algorithm for the work queue is fairly straightforward:
 
@@ -171,7 +169,7 @@ while True:
     time.sleep(10)
 ```
 
-### Hands On: Implementing a Video Thumbnailer
+## Hands On: Implementing a Video Thumbnailer
 
 To provide a concrete example of how we might use a work queue, consider the task of generating thumbnails for videos. These thumbnails help users determine which videos they want to watch.
 
@@ -259,7 +257,7 @@ You can create the ffmpeg container using a base image of your choice and instal
 
 By defining a simple source container as well as an even simpler worker container, we can clearly see the power and utility of a generic container-based queuing system. It dramatically reduces the time/distance between an idea for implementing a work queue and the corresponding concrete implementation.
 
-### Dynamic Scaling of the Workers
+## Dynamic Scaling of the Workers
 
 The previously described work queue is great for processing work items as quickly as they arrive in the work queue, but this can lead to bursty resource loads being placed onto a container orchestrator cluster. This is good if you have a lot of different workloads that will burst at different times and thus keep your infrastructure evenly utilized. But if you don’t have a sufficient number of different workloads, this feast or famine approach to scaling your work queue might require that you over-provision resources to support the bursts that will lie idle (and cost too much money) while you don’t have work to perform.
 
@@ -277,7 +275,7 @@ Thus, we can keep track of both of these metrics for our work queue, and the ave
 
 This approach makes it fairly straightforward to build an autoscaler to dynamically size up our work queue. Sizing down the work queue is somewhat trickier, but you can use the same math as well as a heuristic for the amount of spare capacity for the safety margin you want to maintain. For example, you can reduce the parallelism until the processing time for an item is 90% of the interarrival time for new items. While in some cases it is more efficient to build your own scaler, many times it is better to use an open source solution. That is where the Kubernetes Event-Driven Autoscaling (KEDA) project is useful. KEDA provides numerous different event-based scalers, which can be used to scale your application. KEDA supports event sources ranging from files on disk to events in pub/sub systems and many more.
 
-### The Multiworker Pattern
+## The Multiworker Pattern
 
 One of the themes of this repository has been the use of containers for encapsulation and reuse of code. The same holds true for the work queue patterns described in this document. In addition to the patterns for reusing containers for driving the work queue itself, you can also reuse multiple different containers to compose a worker implementation. Suppose, for example, that you have three different types of work that you want to perform on a particular work queue item. For example, you might want to detect faces in an image, tag those faces with identities, and then blur the faces in the image. You could write a single worker to perform this complete set of tasks, but this would be a bespoke solution that would not be reusable the next time you want to identify something else, such as cars, yet still provide the same blurring.
 
@@ -289,6 +287,6 @@ To achieve this kind of code reuse, the *multiworker pattern* is something of a 
 
 Because of this code reuse, the composition of multiple different worker containers means an increase in the reuse of code and a reduction in effort for people designing batch-oriented distributed systems.
 
-### Summary
+## Summary
 
 This document begins the discussion of batch systems by introducing *workflows*. A workflow is a sequence of discrete actions which, when put together in a sequence, achieve some goal like the processing of an order or the machine-learning analysis of a video. This document showed how containers can be used to build modular workflows with sidecar containers providing workflow orchestration while application containers supply the specific processing necessary for your workflow. Workflow is a key part of most distributed batch systems. Its generic pattern is easy to adapt and extend to meet the specific needs of your workload.

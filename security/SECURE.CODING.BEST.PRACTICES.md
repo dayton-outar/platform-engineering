@@ -8,7 +8,7 @@ Source: [Implementing.Security.for.Applications-2005-2-1.pdf](Implementing.Secur
 
 First-person accounts and opinions in this document are those of the original source authors.
 
-### Lesson 1: Validating Input
+## Lesson 1: Validating Input
 
 Treat all input as hostile. All input, whether received directly from a user or from another application, must go through a three-step validation process before being considered safe by your application. This lesson describes techniques for implementing each of these three phases in your application:
 
@@ -34,7 +34,7 @@ Figure 2-1 shows the input validation process.
 
 **Estimated lesson time: 35 minutes**
 
-### Guidelines for Constraining Input
+## Guidelines for Constraining Input
 
 Start the input validation process by constraining input and checking for known good data by validating for type, length, format, and range. There are several different techniques for validating data, including using regular expressions, strong types, ASP.NET validator controls, typed data expressions, and the *String.Length* property. Use regular expressions to constrain string input, or use the *String.Length* property when you are only checking the length. Use strong types to constrain input other than strings, such as numbers and dates, and use typed data comparisons to limit their range. When creating a Web application, use regular expressions to validate input without writing code by using ASP.NET validator controls.
 
@@ -49,7 +49,7 @@ Start the input validation process by constraining input and checking for known 
 | Format checks | • Strong types • Regular expressions |
 | Range checks | • ASP.NET validator controls • Typed data comparisons |
 
-### Use Regular Expressions to Constrain String Input
+## Use Regular Expressions to Constrain String Input
 
 When building security into your application, regular expressions are the most efficient way to validate user input. If you build an application that accepts a five-digit number from a user, you can use a regular expression to ensure that the input is exactly five characters long and that each character is a number between 0 and 9, inclusive. Similarly, when prompting a user for her first and last name, you can check her input with a regular expression and throw an exception when the input contains numbers, delimiters, or any other non-alphabetic character.
 
@@ -207,7 +207,7 @@ One common approach is to instruct users to replace characters in their own name
 
 As an alternative, perform as much filtering as possible on the input, and then clean the input of any potentially malicious content. Most input validation should be pessimistic and allow only input that consists entirely of approved characters, but input validation of real names might need to be optimistic and cause an error only when specifically denied characters exist. For example, you could reject a user’s name if it contained one of the following characters: !, @, #, $, %, ^, *, (, ), <, >. All these characters are unlikely to appear in a name but likely to be used in an attack. Microsoft Visual Studio .NET provides the following regular expression to match valid names: “[a-zA-Z’`- Ã‚Â´\s]{1,40}”.
 
-### Use Strong Types and Typed Data Comparisons for Non-String Data
+## Use Strong Types and Typed Data Comparisons for Non-String Data
 
 User input is generally received in the form of a string. For example, input from an ASP.NET form is received by retrieving the “System.Web.UI.WebControls.TextBox.Text” string, and input from a Windows Form application is available within the “Sys- tem.Windows.Forms.TextBox.Text” string.
 
@@ -245,7 +245,7 @@ Try
         End Try
 ```
 
-### Validate Strings Based on Their Length
+## Validate Strings Based on Their Length
 
 Most strings that users type, including names, have a practical (if not theoretical) length limit. Therefore, validating strings based on their length can be extremely useful for .NET Framework applications. However, it is more than *useful* to other development environments—it is *critical*. Accepting input that is longer than the application was designed to handle leads to buffer overflow attacks. Fortunately, applications built on the .NET Framework are naturally resistant to buffer overflows, because the .NET Framework automatically verifies that the buffer can hold the contents you are writing into it.
 
@@ -340,7 +340,7 @@ The server-side component of the validator Web controls does improve security, h
 
 **Note** Everyone knows Web applications will be attacked with malicious input, but many Windows Forms developers wrongly think GUI applications are immune. Windows Forms applications can be attacked, but it doesn’t happen as frequently. That’s probably why the .NET Framework includes an excellent set of validator controls in the *System.Web.UI.WebControls* namespace, but doesn’t include any validator controls in *System.Windows.Forms*. You can, and should, make your own GUI validator controls, however. For information about creating your own validator controls, read *http://msdn.microsoft.com/library/en-us/dnadvnet/html /vbnet04082003.asp*.
 
-### Guidelines for Rejecting Malicious Input
+## Guidelines for Rejecting Malicious Input
 
 The best way to validate input is to force it to constrain to a specific type, format, length, and range. However, not all potentially malicious input can be identified using this technique. Sometimes, you must constrain the input, and then specifically seek out potentially malicious input. For example, the following regular expression could be used to identify a script block within HTML input:
 
@@ -352,7 +352,7 @@ Rejecting input that matched that regular expression would make it more difficul
 
 In summary, rejecting input that contains known, dangerous content can reduce the risk of your application being exploited. However, this technique is error-prone. You should use this technique only after input has been tightly constrained.
 
-### Guidelines for Sanitizing Input
+## Guidelines for Sanitizing Input
 
 Sometimes, valid characters can be used with malicious intent by attackers. For example, an attacker can use apostrophes during SQL injection attacks because they are the most common delimiter in SQL commands. However, when trying to protect against this, you might not be able to reject all input containing an apostrophe because the character can appear in names, locations, and sentences.
 
@@ -386,11 +386,11 @@ comment = comment.Replace(“<", “&lt”)
 
 **Tip** Simply stripping out “<” and “>” from user input will ruin everyone’s emoticons. :-<
 
-### Practice: Validating Input
+## Practice: Validating Input
 
 In this practice, you create an ASP.NET application that rigorously validates input. Read the scenario and then complete the exercise that follows. If you are unable to answer a question, review the lesson materials and try the question again.
 
-### Scenario
+## Scenario
 
 Your organization, Northwind Traders, is creating a Web-based application to allow customers to enter their own contact information into your database. As a new employee, you are assigned a simple task: create the front-end interface and prepare the user input to be stored in a database. You begin by interviewing several company personnel and reviewing the technical requirements.
 
@@ -410,7 +410,7 @@ Technical Requirements Create an ASP.NET application that accepts the following 
 
 - Phone number
 
-### Exercise
+## Exercise
 
 Answer the following questions to show that you can implement best practices for validating potentially malicious user input:
 
@@ -418,7 +418,7 @@ Answer the following questions to show that you can implement best practices for
 
 2. How can you further constrain the input by writing code?
 
-### Lesson Summary
+## Lesson Summary
 
 - Your primary defense against malicious input is to reject all input that does not meet exacting requirements for format, length, type, and range.
 
@@ -432,7 +432,7 @@ Answer the following questions to show that you can implement best practices for
 
 Source: [Implementing.Security.for.Applications-2005-2-2.pdf](Implementing.Security.for.Applications-2005-2-2.pdf) — section 2, 6 pages.
 
-### Lesson 2: Minimizing Canonicalization Problems
+## Lesson 2: Minimizing Canonicalization Problems
 
 Attacks exploiting canonicalization problems in Web applications have been, and will continue to be, one of the biggest challenges to Web developers. *Canonicalization* problems are not unique to Web applications, however. The same problems can be exploited in Windows Forms applications, because local filenames can be represented in multiple, and often confusing, ways. This lesson provides best practices for reducing your vulnerability to canonicalization problems by using features built into the .NET Framework.
 
@@ -444,7 +444,7 @@ Attacks exploiting canonicalization problems in Web applications have been, and 
 
 **Estimated lesson time: 15 minutes**
 
-### Best Practices for Avoiding Canonicalization Problems in Windows Forms Applications
+## Best Practices for Avoiding Canonicalization Problems in Windows Forms Applications
 
 If you validate a filename before the operating system canonicalizes it, an attacker can pass a filename that you won’t detect as invalid. You can reduce your vulnerability to canonicalization attacks by manually canonicalizing a path before validating it. Additionally, rather than optimistically attempting to match invalid input, you should validate that the path contains only allowed characters.
 
@@ -562,7 +562,7 @@ The *System.IO.Path* class includes several other methods that are useful for av
 
 **Note** It’s worth mentioning that the .NET Framework inherently eliminates several well- known canonicalization problems. For example, the Win32 API would have accepted the name “C:\boot.ini::$DATA” as a valid path, but the .NET Framework throws an exception with the message “The given path’s format is not supported.”
 
-### Best Practices for Avoiding Canonicalization Problems in ASP.NET Applications
+## Best Practices for Avoiding Canonicalization Problems in ASP.NET Applications
 
 To avoid canonicalization problems in ASP.NET applications, use the *Request.MapPath* method to canonicalize input that specifies the path to a file. To understand how the *Request.MapPath* method works, you must know that Web requests are submitted to a *virtual path* that maps to a *physical path* on the server. For example, if an HTTP request for the virtual path “/index.htm” is submitted to the default Web site, the Web server canonicalizes the virtual path into the physical path C:\Inetpub\Wwwroot\Index.htm. Many paths are not as straightforward, however.
 
@@ -601,7 +601,7 @@ Try
          End Try
 ```
 
-### Lesson Summary
+## Lesson Summary
 
 - Use the *System.IO.Path.GetFullPath* method to reduce the vulnerability of canonicalization problems in Windows Forms applications.
 
@@ -613,7 +613,7 @@ Try
 
 Source: [Implementing.Security.for.Applications-2005-2-3.pdf](Implementing.Security.for.Applications-2005-2-3.pdf) — section 3, 14 pages.
 
-### Lesson 3: Minimizing SQL Injection Attacks
+## Lesson 3: Minimizing SQL Injection Attacks
 
 Although not as common as canonicalization problems or CSS attacks, SQL injection attacks might be the most harmful common server attack. By submitting malicious characters and commands to a database application that processes user input, a SQL injection attack can expose private data and modify (or even destroy) information stored in a database. This lesson provides guidelines for creating database applications that are resistant to SQL injection attacks, and provides detailed instructions for using features built into the .NET Framework to help prevent a database server from interpreting commands issued by attackers.
 
@@ -633,7 +633,7 @@ Although not as common as canonicalization problems or CSS attacks, SQL injectio
 
 **Estimated lesson time: 45 minutes**
 
-### Guidelines for Structuring Your Application to Simplify Maintenance of Database Access Code
+## Guidelines for Structuring Your Application to Simplify Maintenance of Database Access Code
 
 Even skilled developers can make mistakes that lead to SQL injection vulnerabilities. You can greatly reduce the likelihood of making mistakes, and simplify the process of identifying and fixing mistakes, by creating separate classes for interacting with your database.
 
@@ -698,7 +698,7 @@ Private Function GetDSFromID(ByVal ID As String) As DataSet
 
 Both of these code samples contain SQL injection vulnerabilities. However, the second code sample is easier to fix, because code that is accessing the database is located in a separate method. Ideally, database access methods are centralized in a single class in your application. To make your code easier to maintain and fix, never open a database connection directly from methods that perform non-database functions.
 
-### Best Practices for Configuring SQL Permissions
+## Best Practices for Configuring SQL Permissions
 
 When starting the development of a database application, you must not only plan the structure of the tables, views, and indices, you must also plan and assign the database privileges. Each role in your application, including guests, authenticated users, and administrators who manage the application, should have a separate role in the database. Each of these roles should be granted the minimal privileges required to access the tables, views, and stored procedures in the database.
 
@@ -730,7 +730,7 @@ The more granular you assign permissions, the better. If tables contain a combin
 
 **See Also** Databases are an important part of most business applications, and you must be familiar with database security concepts. However, detailed coverage of SQL Server security configuration is outside the scope of this repository. For more information, see “Security Resources” on the Windows Server System page of the Microsoft Web site at *http://www.microsoft.com/sql/techinfo/administration/2000/security/* .
 
-### What Are Stored Procedures?
+## What Are Stored Procedures?
 
 Whenever possible, use stored procedures, rather than dynamically generated SQL, to communicate with the database. *Stored procedures* are SQL commands that are stored on the database. Calling a stored procedure is as easy as issuing a database query, but stored procedures are more difficult to abuse with a SQL injection attack. You should use parameterized stored procedures for data access whenever possible. The security benefits include:
 
@@ -744,7 +744,7 @@ Whenever possible, use stored procedures, rather than dynamically generated SQL,
 
 **Important** Using limited user accounts, permissions, and stored procedures cannot prevent SQL injection attacks. Only correctly parsing input prevents SQL injection attacks. These other techniques reduce the damage of successful SQL injection attacks, which is an important part of implementing defense-in-depth.
 
-### What Are Parameterized SQL Commands?
+## What Are Parameterized SQL Commands?
 
 You *can* dynamically generate SQL queries based on user input while minimizing the risk of being vulnerable to a SQL injection attack. It is never the most secure method for querying a database, however. The most secure way to query a database is to build SQL statements using parameterized SQL commands. *Parameterized SQL commands* are SQL commands that use typed parameters and parameter placeholders to ensure that input data is checked for length and type.
 
@@ -752,7 +752,7 @@ You *can* dynamically generate SQL queries based on user input while minimizing 
 
 **Exam Tip** In order from least secure to most secure: dynamically generated SQL, parame! terized SQL commands, and parameterized stored procedures.
 
-### Examples: Parameterized SQL Commands
+## Examples: Parameterized SQL Commands
 
 Consider the following method, which retrieves the first row of the Products table based on the *productID* argument:
 
@@ -850,7 +850,7 @@ Private Shared Function GetRowFromID(ByVal productID As Integer) As DataRow
         End Function
 ```
 
-### Why the Second Example Is More Secure Than the First Example
+## Why the Second Example Is More Secure Than the First Example
 
 If you compare the two methods without considering security, the first is clearly superior. It is several lines shorter, and shorter code is almost always better. Also, it accepts the *productID* parameter in the native string format that it will have when entered by the user—saving the need to convert it from a string to an integer, and then back to a string.
 
@@ -885,7 +885,7 @@ The parameterized SQL query is functionally identical, except for a single chara
 
 **Note** Remember, defense-in-depth isn’t about being a perfect programmer. It’s about providing multiple layers of defense to prevent the inevitable mistakes from being exploited. Using parameterized SQL queries is an excellent way to reduce the possibility for human error to be exploited.
 
-### Best Practices for Protecting Pattern Matching Statements
+## Best Practices for Protecting Pattern Matching Statements
 
 The SQL injection attacks discussed so far in this document take advantage of the fact that dynamically generated SQL queries use an apostrophe as a delimiter. The apostrophe is not the only special character that can be exploited, however. Queries that use the *LIKE* clause assign special meanings to the %, [, and _ characters. For example, the following SQL command would return all rows in which the *ProductName* column starts with an A:
 
@@ -934,11 +934,11 @@ Notice that these methods do not replace a single apostrophe with a double apost
         not using SQL parameters, also add the command Replace(“‘”, “‘‘“).
 ```
 
-### Practice: Preventing SQL Injection Attacks
+## Practice: Preventing SQL Injection Attacks
 
 In this practice, you will configure a SQL Server database to allow queries from an ASP.NET application. Then, you will improve the application to reduce the vulnerability to SQL injection exploits. Complete the procedures in Exercises 1 and 2, and then complete the task and answer the questions in Exercise 3. If you are unable to answer a question, review the lesson materials and try the question again.
 
-### Exercise 1: Creating a Vulnerable Application
+## Exercise 1: Creating a Vulnerable Application
 
 In this exercise, you compile and run an ASP.NET application that is vulnerable to SQL injection attacks. Then, you will perform a SQL injection attack to drop a table in the database.
 
@@ -994,7 +994,7 @@ The Northwind application shows the ID and name of the product, as shown in Figu
 
 *Figure 2-8: Querying for a product to verify that the sample application is correctly configured*
 
-### Exercise 2: Exploiting a Vulnerable Application
+## Exercise 2: Exploiting a Vulnerable Application
 
 In this exercise, you perform a SQL injection attack to exploit the vulnerability in the Northwind application.
 
@@ -1014,7 +1014,7 @@ The Northwind application shows an exception error message, as shown in Figure 2
 
 4. In Enterprise Manager, select the Tables node in the left pane, and then press F5 to refresh the display. The DeleteMe table disappears, indicating that the table was successfully deleted.
 
-### Exercise 3: Fixing a Vulnerable Application
+## Exercise 3: Fixing a Vulnerable Application
 
 In this exercise, you fix the vulnerable application, and then answer questions about the techniques you used to repair the vulnerabilities. First, modify the application to remove all obvious SQL injection exploits. Then, answer the following questions:
 
@@ -1024,7 +1024,7 @@ In this exercise, you fix the vulnerable application, and then answer questions 
 
 3. Besides changing the code in the application, what techniques could be used to reduce the likelihood of a SQL injection exploit?
 
-### Lesson Summary
+## Lesson Summary
 
 - Create separate methods and classes for database access code to make managing the code more efficient.
 
@@ -1042,7 +1042,7 @@ In this exercise, you fix the vulnerable application, and then answer questions 
 
 Source: [Implementing.Security.for.Applications-2005-2-4.pdf](Implementing.Security.for.Applications-2005-2-4.pdf) — section 4, 6 pages.
 
-### Lesson 4: Minimizing Cross-Site Scripting
+## Lesson 4: Minimizing Cross-Site Scripting
 
 SQL injection attacks and attacks that exploit canonicalization problems both directly attack the server. Cross-site scripting attacks are different, because they use the server to attack end users. An attacker exploiting a CSS vulnerability places HTML or client- side script code into user input that the server then displays to other users. CSS attacks can cause your server to send dangerous and possibly objectionable content to innocent end users, which can hurt the Web site’s reputation. Applications that might be vulnerable to CSS attacks are online forums, comment pages, and guest books.
 
@@ -1064,7 +1064,7 @@ This lesson teaches you how to reduce the likelihood that both types of CSS vuln
 
 **Estimated lesson time: 10 minutes**
 
-### Guidelines for Sanitizing User Comments
+## Guidelines for Sanitizing User Comments
 
 **See Also** For information about how CSS vulnerabilities are exploited, see [Security At Design Time](SECURITY.AT.DESIGN.TIME.md).
 
@@ -1103,7 +1103,7 @@ If you want to provide users with more robust HTML capabilities, it will be almo
 
 All modern browsers should ignore these attempted CSS exploits. However, not everyone uses a modern browser, and developers usually don’t have the option of limiting the browsers that request pages from a Web application. Additionally, you never know when a vulnerability will be discovered in a modern browser. Learn from the mistakes of the past, and avoid echoing input containing any type of HTML content to end users.
 
-### Guidelines for Sanitizing Request Parameters
+## Guidelines for Sanitizing Request Parameters
 
 The second form of a CSS attack involves an attacker enticing a victim to click a hyperlink to a vulnerable application. The hyperlink is specially formed to contain codes that will cause the application to generate a Web page that launches a client-side script on the user’s browser or causes the browser to send a request to a malicious server. Consider the Web page shown in Figure 2-10, which displays the contents of the *name* request parameter.
 
@@ -1139,11 +1139,11 @@ tion’s Web.Config file:
 
 **See Also** For more information about the *validateRequest* attribute, including details about how to enable similar functionality for ASP.NET 1.0 application, read “Adding Cross-Site Scripting Protection to ASP. NET 1.0” on the MSDN page of the Microsoft Web site at http: //msdn.microsoft.com/library/en-us/dnaspp/html/scriptingprotection.asp.
 
-### Practice: Preventing Cross-Site Scripting
+## Practice: Preventing Cross-Site Scripting
 
 In this practice, you will discuss techniques for preventing canonicalization problems from being exploited. Read the scenario and then complete the exercise that follows. If you are unable to answer the question, review the lesson materials and try the question again.
 
-### Scenario
+## Scenario
 
 Your organization, Northwind Traders, is using a Perl script on its public Web site to allow potential customers to submit questions to your Sales team. This Perl script accepts several different request parameters, and then displays them to the user to request confirmation before storing the request to the database. Unfortunately, one of the systems administrators discovered that this Perl script was being exploited using a CSS attack. The attacker tricks users into clicking on a www.northwindtraders.com link (which users trust because your company has an excellent reputation) that passes HTML-encoded parameters to the Perl script. The Perl script then sends the parameters back to the user, as if the malicious input needed to be confirmed. The malicious input includes a client-side browser script that redirects the user’s browser to an unfavorable site that Northwind Traders would definitely not want to be associated with.
 
@@ -1157,13 +1157,13 @@ Interviews Following is a list of company personnel interviewed and their statem
 
 - **Chief Security Officer** “This problem is more serious than a bad contract programmer. Clearly Perl isn’t a secure enough application environment, so we’d better find something less prone to vulnerabilities. Also, why did this go undiscovered for so long? What do I have to do to get your boss to perform a code review once in a while?”
 
-### Exercise
+## Exercise
 
 Answer the following question to show that you can implement best practices for validating potentially malicious request parameters and echoing them back to the user’s browser.
 
 1. How would you recommend creating a form that meets everyone’s requirements?
 
-### Lesson Summary
+## Lesson Summary
 
 - Sanitize user comments that are displayed to other users by removing all HTML encoding. When necessary, you can allow a limited number of very specific HTML codes.
 

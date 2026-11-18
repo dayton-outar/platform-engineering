@@ -1,6 +1,4 @@
-# Chapter 3
-
-## Is Kafka What You Think It Is?
+# Is Kafka What You Think It Is?
 
 Source: [Designing.Event-Driven.Systems-2018-3.pdf](./Designing.Event-Driven.Systems-2018-3.pdf), PDF pages 1–4.
 
@@ -10,7 +8,7 @@ There is an old parable about an elephant and a group of blind men. None of the 
 
 Likewise, when people learn about Kafka they often see it from a certain viewpoint. These perspectives are usually accurate, but highlight only some subsection of the whole platform. In this document we look at some common points of view.
 
-### Kafka Is Like REST but Asynchronous?
+## Kafka Is Like REST but Asynchronous?
 
 Kafka provides an asynchronous protocol for connecting programs together, but it is undoubtedly a bit different from, say, TCP (transmission control protocol), HTTP, or an RPC protocol. The difference is the presence of a *broker*. A broker is a separate piece of infrastructure that broadcasts messages to any programs that are interested in them, as well as storing them for as long as is needed. So it’s perfect for streaming or fire-and-forget messaging.
 
@@ -18,7 +16,7 @@ Other use cases sit further from its home ground. A good example is request-resp
 
 So Kafka is a mechanism for programs to exchange information, but its home ground is event-based communication, where events are business facts that have value to more than one service and are worth keeping around.
 
-### Kafka Is Like a Service Bus?
+## Kafka Is Like a Service Bus?
 
 If we consider Kafka as a messaging system—with its Connect interface, which pulls data from and pushes data to a wide range of interfaces and datastores, and streaming APIs that can manipulate data in flight—it does look a little like an ESB (enterprise service bus). The difference is that ESBs focus on the integration of legacy and off-the-shelf systems, using an ephemeral and comparably low-throughput messaging layer, which encourages request-response protocols (see the previous section).
 
@@ -30,7 +28,7 @@ ThoughtWorks called this out recently, encouraging users to steer clear of recre
 
 So Kafka may look a little like an ESB, but as we’ll see throughout this repository, it is very different. It provides a far higher level of throughput, availability, and storage, and there are hundreds of companies routing their core facts through a single Kafka cluster. Beyond that, streaming encourages services to retain control, particularly of their data, rather than providing orchestration from a single, central team or platform. So while having one single Kafka cluster at the center of an organization is quite common, the pattern works because it is simple—nothing more than data transfer and storage, provided at scale and high availability. This is emphasized by the core mantra of event-driven services: *Centralize an immutable stream of facts. Decentralize the freedom to act, adapt, and change*.
 
-### Kafka Is Like a Database?
+## Kafka Is Like a Database?
 
 Some people like to compare Kafka to a database. It certainly comes with similar features. It provides storage; production topics with hundreds of terabytes are not uncommon. It has a SQL interface that lets users define queries and execute them over the data held in the log. These can be piped into views that users can query directly. It also supports transactions. These are all things that sound quite “databasey” in nature!
 
@@ -38,7 +36,7 @@ So many of the elements of a traditional database are there, but if anything, Ka
 
 So while the analogy is not wholly inaccurate, it is a little off the mark. Kafka is designed to move data, operating on that data as it does so. It’s about real-time processing first, long-term storage second.
 
-### What Is Kafka Really? A Streaming Platform
+## What Is Kafka Really? A Streaming Platform
 
 As Figure 3-1 illustrates, Kafka is a streaming platform. At its core sits a cluster of Kafka brokers (discussed in detail in [Beyond Messaging: An Overview of the Kafka Broker](KAFKA.BROKER.OVERVIEW.md)). You can interact with the cluster through a wide range of client APIs in Go, Scala, Python, REST, and more.
 

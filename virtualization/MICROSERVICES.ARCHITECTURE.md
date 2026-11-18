@@ -1,6 +1,4 @@
-# Chapter 17
-
-## Microservices Architecture
+# Microservices Architecture
 
 Source: [Fundamentals.of.Software.Architecture-2020-17.pdf](./Fundamentals.of.Software.Architecture-2020-17.pdf), PDF pages 1–22.
 
@@ -8,7 +6,7 @@ First-person accounts and opinions in this document reflect the original source 
 
 *Microservices* is an extremely popular architecture style that has gained significant momentum in recent years. In this document, we provide an overview of the important characteristics that set this architecture apart, both topologically and philosophically.
 
-### History
+## History
 
 Most architecture styles are named after the fact by architects who notice a particular pattern that keeps reappearing—there is no secret group of architects who decide what the next big movement will be. Rather, it turns out that many architects end up making common decisions as the software development ecosystem shifts and changes. The common best ways of dealing with and profiting from those shifts become architecture styles that others emulate.
 
@@ -20,7 +18,7 @@ While reuse is beneficial, remember the First Law of Software Architecture regar
 
 However, if the architect’s goal requires high degrees of decoupling, then they favor duplication over reuse. The primary goal of microservices is high decoupling, physically modeling the logical notion of bounded context.
 
-### Topology
+## Topology
 
 The topology of microservices is shown in Figure 17-1.
 
@@ -30,7 +28,7 @@ The topology of microservices is shown in Figure 17-1.
 
 As illustrated in Figure 17-1, due to its single-purpose nature, the service size in microservices is much smaller than other distributed architectures, such as the orchestration-driven service-oriented architecture. Architects expect each service to include all necessary parts to operate independently, including databases and other dependent components. The different characteristics appear in the following sections.
 
-### Distributed
+## Distributed
 
 Microservices form a *distributed architecture*: each service runs in its own process, which originally implied a physical computer but quickly evolved to virtual machines and containers. Decoupling the services to this degree allows for a simple solution to a common problem in architectures that heavily feature multitenant infrastructure for hosting applications. For example, when using an application server to manage multiple running applications, it allows operational reuse of network bandwidth, memory, disk space, and a host of other benefits. However, if all the supported applications continue to grow, eventually some resource becomes constrained on the shared infrastructure. Another problem concerns improper isolation between shared applications.
 
@@ -40,13 +38,13 @@ Performance is often the negative side effect of the distributed nature of micro
 
 Because microservices is a distributed architecture, experienced architects advise against the use of transactions across service boundaries, making determining the granularity of services the key to success in this architecture.
 
-### Bounded Context
+## Bounded Context
 
 The driving philosophy of microservices is the notion of *bounded context*: each service models a domain or workflow. Thus, each service includes everything necessary to operate within the application, including classes, other subcomponents, and database schemas. This philosophy drives many of the decisions architects make within this architecture. For example, in a monolith, it is common for developers to share common classes, such as Address, between disparate parts of the application. However, microservices try to avoid coupling, and thus an architect building this architecture style prefers duplication to coupling.
 
 Microservices take the concept of a domain-partitioned architecture to the extreme. Each service is meant to represent a domain or subdomain; in many ways, microservices is the physical embodiment of the logical concepts in domain-driven design.
 
-#### Granularity
+### Granularity
 
 Architects struggle to find the correct granularity for services in microservices, and often make the mistake of making their services too small, which requires them to build communication links back between the services to do useful work.
 
@@ -72,7 +70,7 @@ If an architect builds a set of services that offer excellent domain isolation y
 
 Iteration is the only way to ensure good service design. Architects rarely discover the perfect granularity, data dependencies, and communication styles on their first pass. However, after iterating over the options, an architect has a good chance of refining their design.
 
-#### Data Isolation
+### Data Isolation
 
 Another requirement of microservices, driven by the bounded context concept, is data isolation. Many other architecture styles use a single database for persistence. However, microservices tries to avoid all kinds of coupling, including shared schemas and databases used as integration points.
 
@@ -82,13 +80,13 @@ Architects are accustomed to using relational databases to unify values within a
 
 While this level of data isolation creates headaches, it also provides opportunities. Now that teams aren’t forced to unify around a single database, each service can choose the most appropriate tool, based on price, type of storage, or a host of other factors. Teams have the advantage in a highly decoupled system to change their mind and choose a more suitable database (or other dependency) without affecting other teams, which aren’t allowed to couple to implementation details.
 
-### API Layer
+## API Layer
 
 Most pictures of microservices include an API layer sitting between the consumers of the system (either user interfaces or calls from other systems), but it is optional. It is common because it offers a good location within the architecture to perform useful tasks, either via indirection as a proxy or a tie into operational facilities, such as a naming service (covered in [Operational Reuse](MICROSERVICES.ARCHITECTURE.md#operational-reuse)).
 
 While an API layer may be used for variety of things, it should not be used as a mediator or orchestration tool if the architect wants to stay true to the underlying philosophy of this architecture: all interesting logic in this architecture should occur inside a bounded context, and putting orchestration or other logic in a mediator violates that rule. This also illustrates the difference between technical and domain partitioning in architecture: architects typically use mediators in technically partitioned architectures, whereas microservices is firmly domain partitioned.
 
-### Operational Reuse
+## Operational Reuse
 
 Given that microservices prefers duplication to coupling, how do architects handle the parts of architecture that really do benefit from coupling, such as operational concerns like monitoring, logging, and circuit breakers? One of the philosophies in the traditional service-oriented architecture was to reuse as much functionality as possible, domain and operational alike. In microservices, architects try to split these two concerns.
 
@@ -120,7 +118,7 @@ Each service forms a node in the overall mesh, as shown in Figure 17-4. The serv
 
 Architects use *service discovery* as a way to build elasticity into microservices architectures. Rather than invoke a single service, a request goes through a service discovery tool, which can monitor the number and frequency of requests, as well as spin up new instances of services to handle scale or elasticity concerns. Architects often include service discovery in the service mesh, making it part of every microservice. The API layer is often used to host service discovery, allowing a single place for user interfaces or other calling systems to find and create services in an elastic, consistent way.
 
-### Frontends
+## Frontends
 
 Microservices favors decoupling, which would ideally encompass the user interfaces as well as backend concerns. In fact, the original vision for microservices included the user interface as part of the bounded context, faithful to the principle in DDD. However, practicalities of the partitioning required by web applications and other external constraints make that goal difficult. Thus, two styles of user interfaces commonly appear for microservices architectures; the first appears in Figure 17-5.
 
@@ -140,7 +138,7 @@ In Figure 17-6, this approach utilizes components at the user interface level to
 
 Developers can implement the microfrontend pattern in a variety of ways, either using a component-based web framework such as React or using one of several open source frameworks that support this pattern.
 
-### Communication
+## Communication
 
 In microservices, architects and developers struggle with appropriate granularity, which affects both data isolation and communication. Finding the correct communication style helps teams keep services decoupled yet still coordinated in useful ways.
 
@@ -158,7 +156,7 @@ Because microservices is a distributed architecture, each service may be written
 
 Describes services calling one another. While architects in microservices try to discourage transactional method calls, services commonly call other services via the network to collaborate and send/receive information.
 
-#### Enforced Heterogeneity
+### Enforced Heterogeneity
 
 A well-known architect who was a pioneer in the microservices style was the chief architecture at a personal information manager startup for mobile devices. Because they had a fast-moving problem domain, the architect wanted to ensure that none of the development teams accidentally created coupling points between each other, hindering the teams’ ability to move independently. It turned out that this architect had a wide mix of technical skills on the teams, thus mandating that each development team use a different technology stack. If one team was using Java and the other was using .NET, it was impossible to accidentally share classes!
 
@@ -166,7 +164,7 @@ This approach is the polar opposite of most enterprise governance policies, whic
 
 For asynchronous communication, architects often use events and messages, thus internally utilizing an event-driven architecture, covered in [Event-Driven Architecture Style](EVENT.DRIVEN.ARCHITECTURE.md); the broker and mediator patterns manifest in microservices as *choreography* and *orchestration*.
 
-#### Choreography and Orchestration
+### Choreography and Orchestration
 
 *Choreography* utilizes the same communication style as a broker event-driven architecture. In other words, no central coordinator exists in this architecture, respecting the bounded context philosophy. Thus, architects find it natural to implement decoupled events between services.
 
@@ -208,7 +206,7 @@ Alternatively, an architect may choose to use orchestration for complex business
 
 In Figure 17-10, the architect builds a mediator to handle the complexity and coordination required for the business workflow. While this creates coupling between these services, it allows the architect to focus coordination into a single service, leaving the others less affected. Often, domain workflows are inherently coupled—the architect’s job entails finding the best way to represent that coupling in ways that support both the domain and architectural goals.
 
-#### Transactions and Sagas
+### Transactions and Sagas
 
 Architects aspire to extreme decoupling in microservices, but then often encounter the problem of how to do transactional coordination across services. Because the decoupling in the architecture encourages the same level for the databases, atomicity that was trivial in monolithic applications becomes a problem in distributed ones.
 
@@ -248,7 +246,7 @@ While it is possible for architects to build transactional behavior across servi
 
 > A few transactions across services is sometimes necessary; if it’s the dominant feature of the architecture, mistakes were made!
 
-### Architecture Characteristics Ratings
+## Architecture Characteristics Ratings
 
 The microservices architecture style offers several extremes on our standard ratings scale, shown in Figure 17-13. A one-star rating means the specific architecture characteristic isn’t well supported in the architecture, whereas a five-star rating means the architecture characteristic is one of the strongest features in the architecture style.
 
@@ -268,7 +266,7 @@ Performance is another reason that microservices often use choreography rather t
 
 Microservices is decidedly a domain-centered architecture, where each service boundary should correspond to domains. It also has the most distinct quanta of any modern architecture—in many ways, it exemplifies what the quantum measure evaluates. The driving philosophy of extreme decoupling creates many headaches in this architecture but yields tremendous benefits when done well. As in any architecture, architects must understand the rules to break them intelligently.
 
-### Additional References
+## Additional References
 
 While our goal in this document was to touch on some of the significant aspects of this architecture style, many excellent resources exist to get further and more detailed about this architecture style. Additional and more detailed information can be found about microservices in the following references:
 

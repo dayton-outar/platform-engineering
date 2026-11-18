@@ -1,14 +1,12 @@
-# Chapter 8
-
-## Web Security for Developers-2020
+# Web Security for Developers-2020
 
 Source: [Web.Security.for.Developers-2020-8.pdf](Web.Security.for.Developers-2020-8.pdf) — 6 PDF pages.
 
 First-person accounts and opinions in this document are those of the original source author.
 
-### Cross-Site Request Forgery Attacks
+## Cross-Site Request Forgery Attacks
 
-### Cross-Site Request Forgery Attacks
+## Cross-Site Request Forgery Attacks
 
 ![Figure 8-1: Chapter-opening artwork](/.attachments/8-1-Web.Security.for.Developers-2020-8.png)
 
@@ -24,7 +22,7 @@ CSRF is a remarkably common vulnerability that most major websites have exhibite
 
 Gmail contact lists, trigger one-click purchases on Amazon, and change router configuration. This document examines how CSRF attacks typically work and shows some coding practices that protect against them.
 
-### Anatomy of a CSRF Attack
+## Anatomy of a CSRF Attack
 
 Attackers usually launch CSRF attacks by exploiting websites that implement `GET` requests that change the state of a web server. A `GET` request is triggered when a victim clicks a link, allowing the attacker to craft misleading links into the target site that perform unexpected actions. `GET` requests are the only type of HTTP request that contain the entirety of the request’s contents in a URL, so they’re uniquely vulnerable to CSRF attacks.
 
@@ -40,7 +38,7 @@ One canny hacker used this loophole to create a viral *worm* on Twitter. Because
 
 The hacker tricked a handful of victims into clicking the malicious link, and those victims tweeted unexpected posts on the timelines. As more and more users read the original tweets and clicked the embedded link out of curiosity, they too tweeted the same thing. Soon, tens of thousands of Twitter users were being tricked into expressing their desire to molest goats (the content of the initial tweet). The first Twitter worm was born, and the Twitter development team scrambled to close the security hole before things got out of hand.
 
-### Mitigation 1: Follow REST Principles
+## Mitigation 1: Follow REST Principles
 
 To protect your users against CSRF attacks, make sure that your `GET` requests don’t change the state of the server. Your website should use `GET` requests only to fetch web pages or other resources. You should perform actions that change server state—for example, logging the user in or out, resetting passwords, writing posts, or closing an account—only through `PUT`, `POST`, or `DELETE` requests. This design philosophy, called *Representational State Transfer (REST)*, comes with a host of other benefits besides CSRF protection.
 
@@ -50,7 +48,7 @@ Not all actions have an obvious corresponding HTTP method. For instance, when a 
 
 Protecting your `GET` requests doesn’t mean that there aren’t vulnerabilities in other types of requests, as you’ll see with our second mitigation.
 
-### Mitigation 2: Implement Anti-CSRF Cookies
+## Mitigation 2: Implement Anti-CSRF Cookies
 
 Defusing your `GET` requests shuts the door on most CSRF attacks, but you still need to protect against requests using the other HTTP verbs. Attacks using those verbs are much less common than `GET`-based CSRF attacks, and require much more work, but an attacker might try them if they think the payoff is sufficient.
 
@@ -79,7 +77,7 @@ You should use anti-CSRF cookies to validate HTTP requests made from JavaScript,
 
 After you’ve implemented anti-CSRF cookies, your website should be much safer. Now you need to close one final loophole, to make sure attackers can’t steal your anti-CSRF tokens and embed them in malicious code.
 
-### Mitigation 3: Use the SameSite Cookie Attribute
+## Mitigation 3: Use the SameSite Cookie Attribute
 
 The final protection against CSRF attacks you must implement is to specify a `SameSite` attribute when you set cookies. By default, when a browser generates a request to your website, it will attach to the request the last known cookies that the site set, regardless of the source of the request. This means that malicious cross-site requests will arrive at your web server with any security cookies you previously set. This doesn’t defeat anti-CSRF measures in and of itself, but if an attacker steals the security token from your HTML forms, and installs it in their own malicious forms, they can still launch a CSRF attack.
 
@@ -103,13 +101,13 @@ Set-Cookie: session_id=82938d911e13f3; SameSite=Lax;
 
 This allows seamless linking into your site, but strips the ability of an attacker to forge malicious actions such as `POST` requests. Provided your `GET` requests are side-effect free, this setting is no less safe.
 
-### Bonus Mitigation: Require Reauthentication for Sensitive Actions
+## Bonus Mitigation: Require Reauthentication for Sensitive Actions
 
 You might notice that some websites force you to reconfirm your login details when you perform sensitive actions, such as when you change your password or initiate a payment. This is known as *reauthentication*, and it’s a common way to secure sites against CSRF attacks, because it gives the user a clear indication that you’re about to do something significant and potentially dangerous.
 
 Reauthentication also has the positive side effect of protecting your users if they accidentally leave themselves logged in on shared or stolen devices. If your website handles financial transactions or confidential data, you should strongly consider forcing your users to reenter their credentials when they perform sensitive actions.
 
-### Summary
+## Summary
 
 Attackers can use web requests from other sites to trick your users into performing undesired actions. The solution to such cross-site request forgery attacks is threefold.
 

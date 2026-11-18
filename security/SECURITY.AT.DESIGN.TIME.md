@@ -8,7 +8,7 @@ Source: [Implementing.Security.for.Applications-2005-1-1.pdf](Implementing.Secur
 
 First-person accounts and opinions in this document are those of the original source authors.
 
-### Lesson 1: Evaluating Security Threats
+## Lesson 1: Evaluating Security Threats
 
 Modern applications must be designed to withstand many different types of attacks. Before you can defend against those attacks, you must understand how to perform them yourself. Put on your black hat for the remainder of this lesson, read about how vulnerable applications are attacked, and think about applications you have worked with or written that might be vulnerable.
 
@@ -26,7 +26,7 @@ The purpose of this lesson is not to teach you how to attack other developers’
 
 **Estimated lesson time: 45 minutes**
 
-### Why Developers Write Vulnerable Applications
+## Why Developers Write Vulnerable Applications
 
 Reading the technology news, you could get the impression that only the least intelligent application developers create code with security vulnerabilities. The real reasons are much more complex, however. The three main reasons programmers write vulnerable applications are:
 
@@ -36,13 +36,13 @@ Reading the technology news, you could get the impression that only the least in
 
 - **Application developers are human, and humans make mistakes** Even developers who make application security a priority are capable of forgetting to carefully parse user input, or of storing secret information in a location where the data can be compromised. There’s no shame in making this type of mistake, because it will happen to every developer at some point in his or her career.
 
-### Types of Application Attacks
+## Types of Application Attacks
 
 Developers create vulnerable code for many reasons, and application vulnerabilities can never be completely eliminated. It’s not the vulnerabilities that cause problems, though—it’s the exploits. *Exploits* take advantage of an application’s vulnerability to perform some malicious task, such as crashing the application, corrupting data, compromising secrets, and spreading malicious code. The sections that follow describe the most common types of exploits and how they happen.
 
 **Tip** The term *vulnerability* refers to a security weakness in an application. The term *attack* is used to describe an attempt at exploiting an application. Attacks can be successful or unsuccessful, because attackers often use attacks just to determine whether an application is vulnerable. The term *exploit* describes a successful attack against a known vulnerability.
 
-### What Is a Buffer Overflow Attack?
+## What Is a Buffer Overflow Attack?
 
 A *buffer overflow* (also known as a buffer overrun) occurs when an application attempts to store too much data in a buffer, and memory not allocated to the buffer is overwritten. When the data is user input, an attacker might be able to intentionally induce a buffer overflow by entering more data than the application expects. A particularly crafty attacker can even enter data that instructs the operating system to run the attacker’s malicious code with the application’s privileges.
 
@@ -106,7 +106,7 @@ The change was very simple; eliminating the vulnerability required adding only a
 
 Although applications built on top of the .NET Framework automatically take advantage of the platform’s buffer overflow capabilities, it is still possible for buffer overflow vulnerabilities to be discovered in the .NET Framework itself. Of course, Microsoft will release updates to fix vulnerabilities as they are discovered.
 
-### What Is a Parsing Error?
+## What Is a Parsing Error?
 
 As discussed in the topic about buffer overflows, any user input has the potential to be malicious. Buffer overflows are one of the most sophisticated ways an attacker can exploit an application, and using them to do more than generate an error requires very sophisticated skills. However, one particular set of common exploits is much easier for an attacker to take advantage of: parsing errors. *Parsing errors*, including canonicalization errors, CSS vulnerabilities, and SQL injection vulnerabilities, occur when an application fails to adequately check user input for potentially malicious content.
 
@@ -181,7 +181,7 @@ SELECT HasShipped FROM orders WHERE ID=‘1234’ drop table customers --
 
 Assuming a table named customers existed, and the application had the right to drop the table, the table would be lost. Depending on the application and the database configuration, such maliciously malformed queries can also be used to retrieve data from the database and run operating system commands.
 
-### What Are Denial-Of-Service Attacks?
+## What Are Denial-Of-Service Attacks?
 
 A *denial-of-service (DoS)* attack prevents legitimate users from accessing a network service. A DoS attack does not give the attacker a higher level of access; instead, it denies legitimate users from accessing the application. Although the most dangerous attacks allow an attacker to gain elevated privilege on the target computer, DoS attacks can be very costly to victims. Generally, the loss of private information is much more devastating than the damage done by a denial-of-service attack, and as a developer, you should focus more of your energy on preventing potential vulnerabilities that an attacker could exploit to reveal information.
 
@@ -203,7 +203,7 @@ However, this application would be extremely vulnerable to a denial-of-service a
 
 3. Allocate memory for user.
 
-### What Is Cryptography Cracking?
+## What Is Cryptography Cracking?
 
 *Cryptography cracking* is the process of capturing encrypted content and deriving the original, unencrypted data without a key. Cryptography cracking is a complex and costly process, and attackers generally rely on it only when other, simpler attacks against an application fail. If the attacker can successfully crack the encryption, the attacker can gain access to the unencrypted communications.
 
@@ -211,7 +211,7 @@ However, this application would be extremely vulnerable to a denial-of-service a
 
 Only the most sophisticated attackers are capable of cracking encrypted cyphertext. Even with the proper skills and tools, it can take an attacker years (or even thousands of years) to identify the unencrypted data given in an encrypted message. However, many cryptographic techniques have flaws that allow the attacker to crack the cryptography much faster. Additionally, a developer who does not follow best practices for implementing encryption might introduce weaknesses into an otherwise strong encryption method. For example, an application that uses a strong encryption method but stores the private key in a location that is publicly accessible to an attacker might allow an attacker to gain access to private, encrypted communications.
 
-### What Are Man-In-The-Middle Attacks?
+## What Are Man-In-The-Middle Attacks?
 
 A *man-in-the-middle (MITM)* attack is a sophisticated attack in which an attacker impersonates a server to intercept requests from a legitimate client. Then, the attacker impersonates the user to the destination server, as shown in Figure 1-3. At that point the attacker can examine and potentially modify the communications between the client and server.
 
@@ -221,13 +221,13 @@ A *man-in-the-middle (MITM)* attack is a sophisticated attack in which an attack
 
 Any application that does not require both encryption and authentication is susceptible to man-in-the-middle attacks. Man-in-the-middle attacks are usually prevented by implementing authentication and encryption at the level of the operating system, rather than at the application level. IP Security (IPSec) is commonly used to prevent man-in- the-middle attacks between two hosts without requiring individual applications to implement server authentication and encryption.
 
-### What Is Password Cracking?
+## What Is Password Cracking?
 
 *Password cracking* is an attack that tries to guess a user’s password by attempting hundreds, thousands, or millions of passwords. Any application that authenticates a user by using static credentials is susceptible to password cracking. In other words, if you prompt a user for a user name and password, an attacker can guess passwords until he finds a valid combination. Normally, the attacker does not manually type user names and passwords at a keyboard, but instead automates the password-guessing process using a script.
 
 There are two approaches to guessing passwords: brute force and dictionary. Whereas a true brute force attack uses a methodical approach to guessing passwords (“a”, “b” … “aaa”, “aab to zzzzzzz”), password-cracking attacks usually use a password dictionary to increase the chances of finding a valid password quickly. *Password dictionaries* contain lists of commonly used passwords. Password cracking using a dictionary is very effective, because most users choose easy-to-remember words and names as passwords. Lesson 2 in this document discusses techniques for limiting the effectiveness of this type of attack by using error reporting.
 
-### Types of Attacks That Specific Applications Are Vulnerable To
+## Types of Attacks That Specific Applications Are Vulnerable To
 
 Table 1-1 shows which types of applications are vulnerable to each of the major types of attacks.
 
@@ -246,7 +246,7 @@ Table 1-1 shows which types of applications are vulnerable to each of the major 
 
 *O = generally not vulnerable, X = potentially vulnerable*.
 
-### Practice: Evaluating Security Threats
+## Practice: Evaluating Security Threats
 
 In this practice, you will answer questions that require you to explain how to exploit vulnerable applications. If you are unable to answer a question, review the lesson materials and try the question again.
 
@@ -294,7 +294,7 @@ f. Password cracking
 
 4. Think back to the last application you developed. Theoretically, which types of attacks could that application have been vulnerable to? Of those potential vulnerabilities, which do you feel you were sufficiently protected against? Did you use defense-in-depth, secure coding practices, or other techniques to limit your risk?
 
-### Lesson Summary
+## Lesson Summary
 
 - Any developer’s application can have a security vulnerability, because anyone can make a mistake, and new security attacks are discovered constantly.
 
@@ -320,7 +320,7 @@ f. Password cracking
 
 Source: [Implementing.Security.for.Applications-2005-1-2.pdf](Implementing.Security.for.Applications-2005-1-2.pdf) — section 2, 18 pages.
 
-### Lesson 2: Implementing Best Practices to Design Secure Applications
+## Lesson 2: Implementing Best Practices to Design Secure Applications
 
 Before you write the first line of code for an application, you must think about how the application’s design will limit the potential for vulnerabilities. Having a design that takes security into account will limit the damage done by any mistakes you make, ease the burden of releasing security updates, and reduce the likelihood of your application being successfully exploited by an attacker.
 
@@ -342,7 +342,7 @@ The goal of Lesson 1 was to demonstrate that applications must be able to surviv
 
 **Estimated lesson time: 45 minutes**
 
-### What Is Defense-In-Depth?
+## What Is Defense-In-Depth?
 
 *Defense-in-depth* is a proven technique for reducing the exposure of vulnerabilities. Network engineers use defense-in-depth to protect computers on a network by providing multiple layers of protection from potential attackers. For example, an engineer might design a network (such as the one shown in Figure 1-4) with three layers of packet filtering: a packet-filtering router, a hardware firewall, and software firewalls on each of the hosts (such as Internet Connection Firewall). If an attacker manages to bypass one or two of the layers of protection, the hosts will still be protected from communications that have not specifically been allowed.
 
@@ -366,21 +366,21 @@ The secure in deployment tenet states that the application must include monitori
 
 Best Practices for Implementing the Secure by Design Tenet Secure by design is the most complex of the SD3 tenets. It consists of using security features, such as cryptography, authentication, authorization, and firewalls, to reduce the risks of several types of attacks. Secure by design also dictates least privilege, separation of privilege, and reducing the attack surface of the application. Effectively implementing the many secure coding best practices, described throughout this repository, requires the use of a security-oriented design process. This section presents the best practices for implementing the secure by design tenet.
 
-### When Your Application Stores or Transmits Data That Attackers Want, Use Cryptography
+## When Your Application Stores or Transmits Data That Attackers Want, Use Cryptography
 
 Often, attackers won’t directly attack your application, but they will attempt to compromise data located in memory, stored on the hard disk, or being transferred across the network. Today, the best way to protect this data is by using cryptography. Cryptography encrypts information in such a way that it can be deciphered only by users with a valid key. If your application stores or transmits data that would be potentially useful to an attacker, especially personal information about people, financial information, or authentication credentials, encrypt this data. You can implement this encryption yourself, or require your end users to use platform encryption features such as Encrypting File System (EFS), Secure Sockets Layer (SSL), and IP Security (IPSec).
 
 Isolated storage is an excellent way to use cryptography.
 
-### Use Authentication Mechanisms Built into the .NET Framework
+## Use Authentication Mechanisms Built into the .NET Framework
 
 *Authentication* is the process of proving a user’s identity and is most often done by requiring a user to provide a user name and password. When designing your application, consider how you will authenticate users. Authentication mechanisms are frequently attacked by attackers using brute force or dictionary password-cracking tools, or by attackers who can capture authentication data from the network. Fortunately, designing an authentication method is fairly simple, because you can and *should* leverage the authentication mechanisms built into the .NET framework.
 
-### Use .NET Framework APIs for Authorization
+## Use .NET Framework APIs for Authorization
 
 After a user is authenticated, your application must determine whether the user has sufficient rights to perform the action she has requested—this is known as *authorization*. Although authorization often can be controlled by configuring access control lists (ACLs) for files, databases, and other objects used by your application, you might have to examine a user’s authorization within your application. The .NET Framework provides Application Programming Interfaces (APIs) for examining a user’s properties, including group memberships.
 
-### Use Standard Network Protocols for Network Communications When Possible
+## Use Standard Network Protocols for Network Communications When Possible
 
 Firewalls analyze network traffic and drop all packets that are not specifically allowed. Even though designing an application for security does not require you to implement your own firewall functionality, you must plan on firewalls being present on the networks where your application is deployed. To improve compatibility with firewalls, leverage standard network protocols for network communications whenever possible.
 
@@ -400,7 +400,7 @@ For example, use .NET remoting or Web services to communicate between two comput
 
 - **Developers initiated connections from the server to the client** Most firewalls block all incoming connections by default, making this type of protocol particularly difficult to configure. When designing the network protocol, assume that you can establish a Transmission Control Protocol (TCP) session to the server but cannot establish a TCP session to a client.
 
-### Implement the Principle of Least Privilege
+## Implement the Principle of Least Privilege
 
 Design and implement your applications so that they use the least privileges necessary to carry out any action. Doing so reduces the damage that can be done if your application is successfully misused by an attacker. For example, if you need to read the contents of a file, open that file for read access only. Least privilege is more than using the minimal level of file lock, however. During the design phase, plan to allow your application to run without Administrator or System privileges. Further, document specifically what privileges are necessary to allow end users to configure accounts to run your application with minimal permissions.
 
@@ -412,7 +412,7 @@ For example, if your application needs to update a registry value in the HKEY_LO
 
 2. Non-interactive applications such as services should run in the context of a restricted user account created specifically for the service. Services should not run as System.
 
-### Use a Security-Oriented Design Process
+## Use a Security-Oriented Design Process
 
 Even the process that you use to design your application should consider security. Here is an example of a security-oriented design process:
 
@@ -424,7 +424,7 @@ Even the process that you use to design your application should consider securit
 
 **4.•** Engineers with security experience analyze all code for security vulnerabilities before releasing it to customers. Requiring your application to withstand a *tiger team* analysis from an objective outside organization can identify vulnerabilities before the application is deployed in production environments.
 
-### Implement the Separation of Privilege Principle
+## Implement the Separation of Privilege Principle
 
 Design your application so that day-to-day functions run in a separate process and separate security context from management functions. Figure 1-5 shows a simplified design of an e-commerce application without separation of privilege. In this example, the entire application is run in the context of the ASP.NET user account. This requires that the ASP.NET user account have privileges to perform management tasks, such as deleting rows from the Orders table. Additionally, application management functionality such as the *Management.ShipOrder()* and *Management.AddInventory()* functions could be called by an attacker who would be able to compromise the application.
 
@@ -438,7 +438,7 @@ Figure 1-6 shows the same simplified e-commerce application designed using separ
 
 *Figure 1-6: An e-commerce application designed with separation of privilege*
 
-### Follow Known Techniques for Reducing the Attack Surface
+## Follow Known Techniques for Reducing the Attack Surface
 
 Your application should minimize the attack surface by offering the simplest possible user interface and exposing the fewest number of ways for users (including other applications) to submit requests. Reducing the attack surface gives attackers fewer targets, which reduces the likelihood of an exploit. Use the following techniques to reduce attack surface:
 
@@ -456,13 +456,13 @@ Your application should minimize the attack surface by offering the simplest pos
 
 - Minimize the number of application components installed by default.
 
-### Best Practices for Implementing the Secure by Default Tenet
+## Best Practices for Implementing the Secure by Default Tenet
 
 Experience shows that most users accept every default setting when installing an application. After all, many users install the application before reading the accompanying documentation. As a result, your application’s default settings will almost always be the settings used in production environments.
 
 You cannot burden your users by instructing them to change default settings or uninstall unnecessary components to improve security. After the application is up and running, there’s an excellent chance the user will never again reconfigure it. Instead, you must make your application’s default settings as secure as possible. If those default settings don’t provide functionality that your users need, they’re better off manually adding the functionality later.
 
-### Ensure That the Setup Routine’s Default Settings Install Only Necessary Application Components
+## Ensure That the Setup Routine’s Default Settings Install Only Necessary Application Components
 
 Many applications, particularly those written for Windows systems, are designed to provide maximum functionality after a default installation. Developers choose to enable as many features as possible by default to make the application easier for administrators to configure. Although these developers’ intentions are noble, experience has shown that modern applications must be able to survive in a hostile environment. Each feature that is enabled in an application is another potential security vulnerability.
 
@@ -478,13 +478,13 @@ You can learn from the mistakes made with IIS 4.0, or you can follow the example
 
 *Figure 1-7: Optional IIS 6.0 components not installed by default*
 
-### Configure the Most Restrictive Permissions Possible During Configuration
+## Configure the Most Restrictive Permissions Possible During Configuration
 
 In addition to minimizing the number of installed components, take care to configure the most restrictive permissions possible during configuration. To use Windows as an example once again, earlier versions of Windows granted the Everyone group Full Control over most files, folders, and registry settings. Since the release of those earlier versions of Windows, Microsoft learned many important secure development lessons.
 
 As a result, Windows Server 2003 provides much more restrictive permissions, dramatically reducing the potential for vulnerabilities to be exploited in systems with the default configuration settings. End users still have the opportunity to modify security settings to make them less restrictive, but they must consciously select those security settings.
 
-### Implement Application Diversity
+## Implement Application Diversity
 
 The most wide-spread worms, including the CodeRed and SQLSlammer worms, propagate by connecting to random IP addresses using a well-known port number. For example, SQLSlammer always sends packets with a destination port of 1434/udp, the port Microsoft SQL Server listens on by default. The port number a SQL Server listens on is configurable, but because SQL Server uses 1434/udp by default, the vast majority of installations listen on the default port number.
 
@@ -496,7 +496,7 @@ Application diversity does have a drawback—it complicates configuration and ma
 
 Randomizing server port numbers is the most obvious way to take advantage of application diversity to provide an additional layer of protection against application exploits, because most modern worms only attempt to contact an application’s well-known port number. However, you can also provide diversity for folder names, file names, file extensions, and other application settings. For example, some versions of IIS installed sample content that an administrator could use to verify that the Web server was running correctly. Later, vulnerabilities were discovered in this content, and worms exploited these vulnerabilities to quickly propagate. Using random folder names to store this sample content would not have prevented the vulnerability, but it would have prevented a worm from exploiting it in an automated fashion, because the worm would need to first discover the path to the sample content, which would be different on every server.
 
-### Best Practices for Implementing the Secure in Deployment Tenet
+## Best Practices for Implementing the Secure in Deployment Tenet
 
 The third tenet of Microsoft’s secure development strategy is secure in deployment. The development process isn’t finished when the application is released; you must keep the application secure as your customers run it. The following list describes the three best practices.
 
@@ -508,7 +508,7 @@ The third tenet of Microsoft’s secure development strategy is secure in deploy
 
 These are discussed in more detail in the next few sections.
 
-### Have a Process for Identifying Newly Discovered Security Vulnerabilities and Issuing Updates
+## Have a Process for Identifying Newly Discovered Security Vulnerabilities and Issuing Updates
 
 Microsoft itself provides an interesting example of how to handle security updates, because they have an extremely large installed base of customers, and new vulnerabilities are discovered in Microsoft software on a regular basis. The security update process begins when a new vulnerability is reported to the Microsoft Security Responses Center (MSRC) by a customer, a security organization, or an internal Microsoft employee. After the MSRC verifies that the vulnerability is genuine, they determine the severity of the vulnerability. The severity takes into account the potential damage an exploit could cause, the number of customers affected, and whether an exploit already exists.
 
@@ -550,7 +550,7 @@ Many organizations might choose to not deploy your updates at all. This is under
 
 Yes, systems administrators should make an effort to promptly deploy security updates. But if they don’t, be sympathetic to their reasons.
 
-### Have a System That Allows Customers to Monitor Events That Occur While Your Application Runs
+## Have a System That Allows Customers to Monitor Events That Occur While Your Application Runs
 
 Has your application ever been attacked or exploited? How would you know?
 
@@ -580,7 +580,7 @@ When generating an event about a client request, always record as much informati
 
 The term *monitoring* is used to indicate continuous analysis of an application’s status to enable real-time administrator notification and response. *Auditing* is very similar to monitoring, except that auditing requires events to be archived over a long period of time. Monitoring can notify administrators that an attack is currently taking place. If administrators discover that an attack took place several weeks or months in the past, they might perform auditing to identify how the attack took place and what damage was done. From an application developer’s perspective, you can provide for both monitoring and auditing by writing important events to the event log, because administrators will be able to archive those logs.
 
-### Ensure That Applications Can Handle Failures and Errors Securely
+## Ensure That Applications Can Handle Failures and Errors Securely
 
 Developers create descriptive error messages to help administrators troubleshoot problems. Unfortunately, attackers can use these descriptive error messages to discover details about an application’s design.
 
@@ -588,7 +588,7 @@ For example, a well-written application will use exception handling to detect pr
 
 **See Also** For more information about reporting errors, see [Secure Coding Best Practices](SECURE.CODING.BEST.PRACTICES.md).
 
-### Practice: Implementing Best Practices to Design Secure Applications
+## Practice: Implementing Best Practices to Design Secure Applications
 
 In this practice, you will answer questions to show that you can implement best practices to design secure applications. If you are unable to answer a question, review the lesson materials and try the question again.
 
@@ -620,7 +620,7 @@ f. Providing error messages to end users that include detailed descriptions of f
 
 4. In retrospect, how would you have designed the last application you developed differently if you were using defense-in-depth?
 
-### Lesson Summary
+## Lesson Summary
 
 - Defense-in-depth protects against vulnerabilities caused by human error by providing multiple layers of protection.
 
@@ -638,7 +638,7 @@ f. Providing error messages to end users that include detailed descriptions of f
 
 Source: [Implementing.Security.for.Applications-2005-1-3.pdf](Implementing.Security.for.Applications-2005-1-3.pdf) — section 3, 15 pages.
 
-### Lesson 3: Accessing Resources with Least Privilege
+## Lesson 3: Accessing Resources with Least Privilege
 
 When I visit my bank, I am allowed to enter the lobby and talk to a teller. However, I am not allowed to walk behind the counter. In fact, a locked door prevents customers from entering the area where the bank tellers work.
 
@@ -660,13 +660,13 @@ Applications that are designed for least privilege do not require administrator 
 
 **Estimated lesson time: 60 minutes**
 
-### Why You Should Use Least Privilege
+## Why You Should Use Least Privilege
 
 Many security-conscious users willingly restrict their own privileges to make an attacker less likely to abuse their access level by corrupting system components. The simplest way to restrict your privileges is to log on to the operating system using a user account that is not a member of the Administrators group. You’ve no doubt seen this practice recommended before, but if you tried it, you probably discovered that it is not as simple as it sounds.
 
 Many applications attempt to perform functions that require administrator privileges. When you attempt to use these applications while logged on as a standard user, the application fails. As a result, users need to run the application using administrator privileges. If the application is compromised while it has administrator privileges, it can do far more damage than if it were restricted to standard user privileges. For example, an administrator could replace key system files with files containing a virus, whereas a standard user would not be allowed to overwrite those files.
 
-### Guidelines for Writing Code to Use the Least Privilege Principle
+## Guidelines for Writing Code to Use the Least Privilege Principle
 
 You can provide an additional layer of protection for your application by designing Windows Forms applications to run using only standard user privileges, and by encouraging users to not run the application as an administrator. If a vulnerability is discovered in your application, the potential damage an exploit can do is limited to the restricted rights the user has to the system. If you are creating an ASP.NET application or a Windows service, design your application to run in the context of a standard user with customized privileges rather than in the context of the System account.
 
@@ -688,7 +688,7 @@ If you develop and debug new applications using a standard user account, it will
 
 Even if you are the original developer, identifying every privilege and resource required by an existing application can be very challenging. For example, the application might require access to Dynamic Link Libraries (DLLs) located in the system directory, or the application might call an external resource that attempts to write temporary files to the system folder. The more lines of code in the application, the more time required to identify the privilege changes necessary to a standard user account.
 
-### Guidelines for Determining Appropriate Levels of Privilege
+## Guidelines for Determining Appropriate Levels of Privilege
 
 Even if your application requires permissions that members of the Users group lack, do not instruct users to run the application as an administrator. Members of the Administrators group have several additional privileges and greater rights to files, registry values, and other resources. However, these permissions can be granted to any group or any user account. Any application can be run by a non-Administrator once you understand the permissions required and have granted those permissions to a user account.
 
@@ -722,7 +722,7 @@ An alternative to adjusting ACLs and privileges is to prompt the user for admini
 
 For example, consider a human resources application that is typically used by standard users but that requires elevated privileges when new user accounts are added. When a new employee is added, your application should prompt the user for credentials that show permission to add users immediately before creating the user account. If an attacker accesses the application while it is running as a standard user, the attacker will be prevented from creating a new user account—often one of the first tasks an attacker will attempt.
 
-### The Process of Isolating Missing Privileges
+## The Process of Isolating Missing Privileges
 
 Fortunately, Windows 2000, Windows XP, and Windows Server 2003 each include auditing capabilities that add an event to the Security event log each time a resource is accessed with insufficient permissions. Identifying the source of authorization problems using auditing is complex, but auditing will identify insufficient privileges that would be nearly impossible to find debugging code line by line. The flow chart in Figure 1-11 shows the authorization troubleshooting process that occurs when you use auditing.
 
@@ -734,7 +734,7 @@ Most of the troubleshooting process is self-explanatory, but enabling system aud
 
 *Figure 1-11: Using auditing to identify authorization problems*
 
-### How to Enable System Auditing
+## How to Enable System Auditing
 
 The first step in identifying resources with insufficient privileges is to enable auditing on a system-wide basis:
 
@@ -754,7 +754,7 @@ The first step in identifying resources with insufficient privileges is to enabl
 
 *Figure 1-12: Enabling auditing*
 
-### How to Enable Resource Auditing
+## How to Enable Resource Auditing
 
 After enabling failure auditing for the Audit Object Access or Audit Directory Services Access policies, you must enable auditing for the individual resources that are being accessed. The exact process varies depending on the type of object you want to audit. The following process applies to enabling auditing for folders or files, the most common source of authorization problems. The process for auditing other types of objects is very similar, although you will use a different tool for each object.
 
@@ -784,7 +784,7 @@ After enabling failure auditing for the Audit Object Access or Audit Directory S
 
 Now that failure auditing is enabled for those resources, every time the specified user is denied access to the resource, Windows will add an event to the security event log.
 
-### How to Analyze Events in Event Viewer
+## How to Analyze Events in Event Viewer
 
 After you enable auditing and re-create the problem condition, Windows adds events to the Security event log that describe which resource could not be accessed and the type of operation that was attempted. To view failure audit events by using Event Viewer:
 
@@ -838,11 +838,11 @@ Notice that the *Accesses* line lists *Synchronize* and *ReadData*. This indicat
 
 After identifying the resources the user requires access to and assigning new permissions, repeat the troubleshooting process by re-creating the problem.
 
-### Practice: Updating an Application to Use Least Privilege
+## Practice: Updating an Application to Use Least Privilege
 
 In this practice, you will test a simple application as both an administrator and a standard user account. You will then debug any problems accessing resources as a standard user. Complete Exercises 1 through 3 and then answer the questions in Exercise 4.
 
-### Exercise 1: Running Code as an Administrator
+## Exercise 1: Running Code as an Administrator
 
 In this exercise, you will test a simple application to determine whether it is capable of running using the Administrator account.
 
@@ -864,7 +864,7 @@ Visual Studio will compile and launch the application, which will display the co
 
 5. Close MostPrivileges, and then close Visual Studio. Remain logged on as Administrator.
 
-### Exercise 2: Running Code as a User
+## Exercise 2: Running Code as a User
 
 In this exercise, you will test a simple application to determine whether it is capable of running using a standard user account.
 
@@ -908,7 +908,7 @@ As shown in Figure 1-17, the Users group has only Read and Read & Execute permis
 
 14. Click OK, and then log off Windows.
 
-### Exercise 3: Updating the Application to Use Least Privilege
+## Exercise 3: Updating the Application to Use Least Privilege
 
 In this exercise, you will update the sample application so that it uses least privilege and will run while logged on as a standard user. Then, you will test it to verify that it runs correctly.
 
@@ -950,7 +950,7 @@ The MostPrivileges application launches and shows the contents of the Hosts file
 192.168.1.100 www.microsoft.com
 ```
 
-### Exercise 4: Reflecting on Updating an Application to Use Least Privilege
+## Exercise 4: Reflecting on Updating an Application to Use Least Privilege
 
 Answer the following questions. If you are unable to answer a question, review the lesson materials and try the question again.
 
@@ -966,7 +966,7 @@ c. Allows your application to run with minimal privileges
 
 d. Provides standard users access to the .NET Framework
 
-### Lesson Summary
+## Lesson Summary
 
 - Develop applications using a standard user account to identify resources and privileges your application requires that standard users lack access to.
 

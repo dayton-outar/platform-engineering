@@ -1,6 +1,4 @@
-# Chapter 11
-
-## Consistency and Concurrency in Event-Driven Systems
+# Consistency and Concurrency in Event-Driven Systems
 
 Source: [Designing.Event-Driven.Systems-2018-11.pdf](./Designing.Event-Driven.Systems-2018-11.pdf), PDF pages 1–10.
 
@@ -18,7 +16,7 @@ Business systems often don’t need to work offline in this way, but there are s
 
 But on the other hand, business systems typically want strong consistency to reduce the potential for errors, which is why there are vocal proponents who consider stronger safety properties valuable. There is also an argument for wanting a bit of both worlds. This middle ground is where event-driven systems sit, often with some form of eventual consistency.
 
-### Eventual Consistency
+## Eventual Consistency
 
 The previous section refers to an intuitive notion of consistency: the idea that business operations execute sequentially on a single copy of data. It’s quite easy to build a system that has this property. Services call one another through RPCs, just like methods in a single-threaded program: a set of sequential operations. Data is passed by reference, using an ID. Each service looks up the data it needs in the database. When it needs to change it, it changes it in the database. Such a system might look something like Figure 11-1.
 
@@ -46,7 +44,7 @@ Let’s dig into these with an example that continues our theme of online retail
 
 *Figure 11-2. An event-driven system connected via a log*
 
-#### Timeliness
+### Timeliness
 
 Consider the email service (4) and orders view (5). Both subscribe to the same event stream (Validated Orders) and process them concurrently. Executing concurrently means one will lag slightly behind the other. Of course, if we stopped writes to the system, then both the orders view and the email service would *eventually converge* on the same state, but in normal operation they will be at slightly different positions in the event stream. So they lack timeliness with respect to one another. This could cause an issue for a user, as there is an indirect connection between the email service and the orders service. If the user clicks the link in the confirmation email, but the view in the orders service is lagging, the link would either fail or return an incorrect state (7).
 
@@ -54,7 +52,7 @@ So a lack of timeliness (i.e., lag) can cause problems if services are linked in
 
 But what if this behavior is unacceptable, as this email example demonstrates? Well, we can always add serial execution back in. The call to the orders service might block until the view is updated (this is the approach taken in the worked example in [Building Streaming Services](BUILDING.STREAMING.SERVICES.md)). Alternatively, we might have the orders service raise a View Updated event, used to trigger the email service after the view has been updated. Both of these synthesize serial execution where it is necessary.
 
-#### Collisions and Merging
+### Collisions and Merging
 
 Collisions occur if two services update the same entity at the same time. If we design the system to execute serially, this won’t happen, but if we allow concurrent execution it can.
 
@@ -66,7 +64,7 @@ In some situations this ability to make changes to the same entity in different 
 
 A good compromise for large business systems is to keep the lack of timeliness (which allows us to have lots of replicas of the same state, available read-only) but remove the opportunity for collisions altogether (by disallowing concurrent mutations). We do this by allocating a single writer to each type of data (topic) or alternatively to each state transition. We’ll talk about this next.
 
-### The Single Writer Principle
+## The Single Writer Principle
 
 A useful way to generify these ideas is to isolate consistency concerns into owning services using the *single writer principle*. Martin Thompson used this term in response to the wide-scale use of locks in concurrent environments, and the subsequent efficiencies that we can often gain by consolidating writes to a single thread. The core idea closely relates to the Actor model,[^p6-3] several ideas in database research,[^p6-4] and anecdotally to system design. From a services perspective, it also marries with the idea that services should have a single responsibility.
 
@@ -90,7 +88,7 @@ So, instead of sharing a global consistency model (e.g., via a database), we use
 
 As we’ll see in [Scaling Concurrent Operations in Streaming Systems](BUILDING.STREAMING.SERVICES.md#scaling-concurrent-operations-in-streaming-systems), single writers can be scaled out linearly through partitioning, if we use Kafka’s Streams API.
 
-#### Command Topic
+### Command Topic
 
 A common variant on this pattern uses two topics per entity, often named Command and Entity. This is logically identical to the base pattern, but the Command topic can be written to by any process and is used only for the initiating event. The Entity topic can be written to only by the owning service: the single writer. Splitting these two allows administrators to enforce the single writer principle strictly by configuring topic permissions. So, for example, we might break order events into two topics, shown in Table 11-1.
 
@@ -101,7 +99,7 @@ A common variant on this pattern uses two topics per entity, often named Command
 | **Event types** | OrderRequest(ed) | OrderValidated, OrderCompleted |
 | **Writer** | Any service | Orders service |
 
-#### Single Writer Per Transition
+### Single Writer Per Transition
 
 A less stringent variant of the single writer principle involves services owning individual transitions rather than all transitions in a topic (see Table 11-2). So, for example, the payment service might not use a Payment topic at all. It might simply add extra payment information to the existing order message (so there would be a Payment section of the Order schema). The payment service then owns just that one transition and the orders service owns the others.
 
@@ -112,7 +110,7 @@ A less stringent variant of the single writer principle involves services owning
 | **Topic** | OrdersTopic | OrdersTopic |
 | **Writable transition** | OrderRequested->OrderValidated<br>PaymentReceived->OrderConfirmed | OrderValidated->PaymentReceived |
 
-### Atomicity with Transactions
+## Atomicity with Transactions
 
 Kafka provides a transactions feature with two guarantees:
 
@@ -122,7 +120,7 @@ Kafka provides a transactions feature with two guarantees:
 
 But transactions provide a very interesting and powerful feature to Kafka Streams: they join writes to state stores and writes to output topics together, atomically. Kafka’s transactions are covered in full in [Transactions, but Not as We Know Them](TRANSACTIONS.md).
 
-### Identity and Concurrency Control
+## Identity and Concurrency Control
 
 The notion of identity is hugely important in business systems, yet it is often overlooked. For example, to detect duplicates, messages need to be uniquely identified, as we discussed in [Transactions, but Not as We Know Them](TRANSACTIONS.md). Identity is also important for handling the potential for updates to be made at the same time, by implementing optimistic concurrency control.
 
@@ -145,15 +143,15 @@ The version identifier can then be used to handle concurrency. As an example (se
 
 The optimistic concurrency control technique can be implemented in synchronous or asynchronous systems equivalently.
 
-### Limitations
+## Limitations
 
 The single writer principle and other related patterns discussed in this document are exactly that: patterns, which are useful in common cases, but don’t provide general solutions. There will always be exceptions, particularly in environments where the implementation is constrained, for example, by legacy systems.
 
-### Summary
+## Summary
 
 In this document we looked at why global consistency can be problematic and why eventual consistency can be useful. We adapted eventual consistency with the single writer principle, keeping its lack of timeliness but avoiding collisions. Finally, we looked at implementing identity and concurrency control in event-driven systems.
 
-### Notes
+## Notes
 
 [^p1-1]: For a full treatment, see Martin Kleppmann’s encyclopedic *Designing Data-Intensive Applications* (Sebastopol, CA: O’Reilly, 2017).
 

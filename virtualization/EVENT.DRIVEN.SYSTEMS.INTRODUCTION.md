@@ -1,6 +1,4 @@
-# Chapter 1
-
-## Introduction
+# Introduction
 
 Source: [Designing.Event-Driven.Systems-2018-1.pdf](./Designing.Event-Driven.Systems-2018-1.pdf), PDF pages 1–5.
 

@@ -1,12 +1,10 @@
-# Chapter 6
-
-## Designing Secure Software-2021
+# Designing Secure Software-2021
 
 Source: [Designing.Secure.Software-2021-6.pdf](Designing.Secure.Software-2021-6.pdf) — 14 PDF pages.
 
 First-person accounts and opinions in this document are those of the original source author.
 
-### Secure Design
+## Secure Design
 
 *Overload, clutter, and confusion are not attributes of information, they are failures of design.*
 
@@ -24,13 +22,13 @@ Software design is an art, and this document focuses on just the security aspect
 
 The secure design practice described here follows a process typical of a large enterprise, but you can adapt these techniques to however you work. Smaller organizations will operate much more informally, and the designer and reviewer may be the same person. The techniques presented approach the problem in a general way so as to be easily applicable to however you like to do software design.
 
-### Secure Design
+## Secure Design
 
 A useful security design document shows how security is built in from the start. It can be a working draft with enough detail to explain the design; it need not be perfectly polished.
 
 For example, a logging tool can facilitate auditing while minimizing disclosure of private information. Such a component can mitigate risks in a larger system that processes sensitive data.
 
-### Integrating Security in Design
+## Integrating Security in Design
 
 *I will contend that conceptual integrity is the most important consideration in system design.*
 
@@ -46,7 +44,7 @@ When you look at a prospective software design, put on your “security hat.” 
 
 More experienced designers will incorporate security into the design from the start. If this seems daunting, it’s fine to start with a “featurecomplete” draft design and make a second pass through it with a focus on security, but that’s a lot more work. Major changes are most easily made if caught earlier in the process, avoiding the wasted effort of redoing after the fact. Explore new architectures and play with basic requirements sooner rather than later, when it’s more easily done. As Josh Bloch once quipped: “A week of coding can often save an hour of thought.”
 
-### Making Design Assumptions Explicit
+## Making Design Assumptions Explicit
 
 In the mid-1980s, I worked for a company that designed and built what was then a powerful computer from the ground up: both the hardware and the software. After years of development, the work of both teams came together when the operating system was loaded into the prototype hardware at last. . . and immediately tanked. It turned out that the hardware team had largely come from IBM, where they use big-endian architecture, and the software team mostly came from HP, which traditionally used little-endian, so “bit 0” meant the high-order bit on the hardware but the low-order bit on the software. Throughout years of planning and meetings and prototyping, everybody had just assumed the endianness of the company culture they came from. (And of course, it was the software team that had to make the necessary changes once they figured this out.)
 
@@ -60,7 +58,7 @@ Clarification of assumptions is important to security because misunderstandings 
 
 Often within an enterprise, or any set of related projects, many of these assumptions will remain the same across a set of designs, in which case you can compile a list in a shared document that provides common background. Individual designs then need only reference this common base and detail any exceptions where the applicable assumptions vary. For example, a billing system may be subject to higher security standards and need to conform with specific financial regulations for a credit card processing component than the rest of the enterprise applications.
 
-### Defining the Scope
+## Defining the Scope
 
 It’s impossible to do a good review of the security of a design if there is uncertainty about the scope of the review. Clarifying the scope is also vital to answering the first of the Four Questions from [Threats](THREATS.md): “What are we working on?” To see why this is, consider the design for a new customer billing system. Does the design include the web app used for collecting reports of billable hours, or is that a separate design? What about the existing databases it relies on—is the security of those systems in scope or not? And should the review include the design of the new web-based API you’ll be using to report to the corporate accounting system?
 
@@ -76,7 +74,7 @@ It’s common, and often a good thing, for redesign to creep outside of its inte
 
 Few software designs exist in a vacuum; they depend on existing systems, processes, and components. Ensuring that the design works well with its dependencies is critical. In particular, matching security expectations is key, because you cannot build a secure application out of insecure components. And it’s important to note that secure/insecure is not a binary choice; it’s a continuum, where the assumptions and expectations need to align. Read up on security design review reports for peer systems and dependencies to substantiate your security expectations for them.
 
-### Setting Security Requirements
+## Setting Security Requirements
 
 Security requirements largely derive from the second of the Four Questions: “What can go wrong?” The C-I-A triad is a useful starting point: describe the need to protect private data from unauthorized disclosure (confidentiality), the importance of securing and backing up data (integrity), and the extent to which the system needs to be robust and reliable (availability). The security requirements of many software systems are straightforward, but it’s still well worth detailing them for completeness and to convey priorities. What may be entirely obvious to you may not be to others, so it’s a good idea to articulate the desired security stance.
 
@@ -102,7 +100,7 @@ Compromise of the server’s private encryption key would completely undermine t
 
 We plan to do this experiment only once, and the funding required for it will not likely be available again for years, so we cannot afford to lose the information our instruments collect. Streaming data must be instantly replicated and stored redundantly on different storage media, while simultaneously being communicated over two distinct networks to physically separated remote storage systems as additional backup.
 
-### Threat Modeling
+## Threat Modeling
 
 One of the best ways to improve the security of your software architecture is to incorporate threat modeling into the design process. Designing software involves creatively juggling competing requirements and strategies, iteratively deciding on some aspects of the system, and, at times, reversing course to progress toward a complete vision. Viewing the process through the lens of threat modeling can illuminate design trade-offs, so it has great potential to lead the designer in the right direction—but figuring out exactly how to achieve improved outcomes requires some trial and error.
 
@@ -124,11 +122,11 @@ When the costs of maximizing security are low, it’s easy to push for doing so�
 
 • When usability conflicts with security, explore user interface alternatives. Also, prototype and measure usability under realistic situations; sometimes usability concerns are imaginary and do not manifest in practice. • Explain security risks with potential scenarios (derived from threat models) that illustrate major possible downsides of certain designs, and use these to demonstrate the cost of not implementing mitigations.
 
-### Building in Mitigations
+## Building in Mitigations
 
 After you’ve defined the software system’s scope and security requirements, answering the first two of the Four Questions, it’s time to consider the third: “What are we going to do about it?” This question guides the designer to incorporate the needed protections and mitigations into the design. In the following subsections we will examine how to do this for interfaces and for data, two of the most common recurring themes in software design. The discussion and examples that follow only scratch the surface of possibilities for mitigations in design. The ideas in [Threats](THREATS.md), [Mitigation](MITIGATION.md), and [Patterns](PATTERNS.md) can be applied according to the needs of a particular design.
 
-### Designing Interfaces
+## Designing Interfaces
 
 Interfaces define the boundaries of the system, delineating the limits of the design or of its constituent components. They may include system calls, libraries, networks (client/server or peer-to-peer), inter- and intraprocess APIs, shared data structures in common datastores, and more. Complex interfaces, such as secure communication protocols, often deserve their own design.
 
@@ -140,7 +138,7 @@ To design secure interfaces, begin with a solid description of how they work, in
 
 Sometimes, you are stuck using existing components that weren’t designed with security in mind or are not sufficiently secure for your requirements—or you just don’t know how secure the components are. Flag this as an issue if you have no choice in the matter and, if possible, do research to find out what you can about the components’ security properties (this might include trying to attack a test mock-up). Another option in some cases is to wrap the interface to add security protection. For example, given a storage component that is vulnerable to data leaks, you could design an extra layer of software that provides encryption and decryption, ensuring that the component stores only encrypted data, which is harmless if disclosed.
 
-### Designing Data Handling
+## Designing Data Handling
 
 Data handling is central to virtually all designs, so securing it is an important step. A good starting point for secure data handling is outlining your data protection goals. When a particular subset of data requires extra protection, make that explicit, and ensure it’s handled consistently throughout the design. For example, in an online shopping application, apply additional safeguards to credit card information.
 
@@ -150,7 +148,7 @@ Identify public information, or data otherwise exempt from any confidentiality r
 
 Always treat personal information as sensitive in the absence of an explicit decision otherwise, and only collect such data in the first place if there is a specific use for it. Storing sensitive data indefinitely creates an endless obligation to protect it. You can best avoid this by destroying disused information when possible (after a number of years of inactivity, for example). Designs should anticipate the need to eventually remove private data from the system when no longer needed and specify what conditions will trigger deletion, including of backup copies.
 
-### Integrating Privacy into Design
+## Integrating Privacy into Design
 
 Failures to protect private information make headlines routinely. I believe that integrating information privacy considerations into software design is an important way companies can do better. Privacy issues concern the human implications of data protection, involving not only legal and regulatory issues, but also customer expectations and the potential impact of unauthorized disclosures. Getting this right requires special expertise and subjective judgment. But part of the problem hinges on granting third parties the authorization to use data, which requires allowing access. To that extent, good software design can institute controls to minimize missteps.
 
@@ -166,13 +164,13 @@ Design explicit privacy protections wherever possible. In instances where you ca
 
 • As the design evolves, if a field in a database becomes disused, consider deleting it in order to reduce the risk of disclosure. • Consider building in an approval process for data sharing to ensure the receiving parties have management approval.
 
-### Planning for the Full Software Life Cycle
+## Planning for the Full Software Life Cycle
 
 Too many software designs implicitly assume that the system will last forever, ignoring the reality that the lifetime of all software is finite. Many aspects of a system’s eventual lifetime—from its first release and deployment, through updates and maintenance, to its eventual decommissioning—have important security implications that are easily missed later on. As wonderful as any software design might be, whether it takes off or fizzles out, it will undergo changes as its environment evolves. The impacts of these changes are best anticipated during the design process and addressed then, or at least noted for posterity. Within an enterprise, many of these issues are generic, and a general treatment of them should cover most systems, with exceptions specified as needed in individual designs.
 
 The end of a system’s life is difficult to imagine when the new design is being created, but most of the implications should be clear, and any design should at least consider the long-term disposition of data. Specific legal or business reasons may require you to retain data for a certain period of time, but you should destroy it when it is no longer needed, including backup copies. Some systems need to go through specific stages when approaching end of life, and good design can make this easy to get right by having suitable structure and configuration options in place from the start. For example, a purchasing system might stop accepting orders but need to continue providing data for payroll and record-keeping purposes for another year, then archive transaction records for long-term retention.
 
-### Making Trade-offs
+## Making Trade-offs
 
 Balancing trade-offs when there are no easy choices requires a lot of engineering judgment, while weighing many other considerations. Implementing more security mitigations reduces risk, but only up to the point that complexity leads to more bugs overall—and you should always be wary of increased development effort with diminishing returns. This repository will repeatedly advise designers to compromise between competing priorities, but this is easier said than done. This section covers some rules of thumb for striking these important balances.
 
@@ -184,7 +182,7 @@ The design phase represents the best opportunity to strike the right balance bet
 
 Striking the right balance between these idealized principles and the pragmatic demands of building a real-world system is at the heart of secure software design. Perfect security is never the goal, and there is a limit to the benefits of additional mitigations. Exactly where the sweet spot lies is never easy to determine, but software designs that make these trade-offs explicit have better chances of finding a sensible compromise.
 
-### Design Simplicity
+## Design Simplicity
 
 *Simplicity is the ultimate sophistication.*
 

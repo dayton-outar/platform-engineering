@@ -1,12 +1,10 @@
-# Chapter 12
-
-## Designing Secure Software-2021
+# Designing Secure Software-2021
 
 Source: [Designing.Secure.Software-2021-12.pdf](Designing.Secure.Software-2021-12.pdf) — 16 PDF pages.
 
 First-person accounts and opinions in this document are those of the original source author.
 
-### Security Testing
+## Security Testing
 
 *Testing leads to failure, and failure leads to understanding.*
 
@@ -20,7 +18,7 @@ This document introduces security testing as an essential part of developing rel
 
 This document opens with a quick overview of the uses of security testing, followed by a walkthrough of how security testing could have saved the world from a major vulnerability. Next, we look at the basics of writing security test cases to detect and catch vulnerabilities or their precursors. Fuzz testing is a powerful supplementary technique that can help you ferret out deeper problems. We’ll also cover security regression tests, created in response to existing vulnerabilities to ensure that the same mistakes are never made twice. This document concludes with a discussion of how testing helps to prevent denial-of-service (DoS) and related attacks, followed by a summary of security testing best practices (which covers a wide range of ideas for security testing, but is by no means comprehensive).
 
-### What Is Security Testing?
+## What Is Security Testing?
 
 To begin, it’s important to define what I mean by *security testing*. Most testing consists of exercising code to check that functionality works as intended. Security testing simply flips this around, ensuring that operations that should *not* be allowed aren’t (an example with code will shortly make this distinction clear).
 
@@ -50,7 +48,7 @@ What all of these tests have in common is that they are off the beaten path of n
 
 Security testing is likely the best way you can start making real improvements to application security, and it isn’t difficult to do. There are no public statistics for how much or how little security testing is done in the software industry, but the preponderance of recurrent vulnerabilities strongly suggests that it’s an enormous missed opportunity.
 
-### Security Testing the GotoFail Vulnerability
+## Security Testing the GotoFail Vulnerability
 
 *What a testing of character adversity is.*
 
@@ -122,13 +120,13 @@ fail:
 }
 ```
 
-### Security Testing
+## Security Testing
 
 The `VerifyServerKeyExchange` function takes a `params` argument consisting of three fields, computes the message digest hash over its contents, and compares the result to the `expected_hash` value that authenticates the data. A zero return value indicates that the hashes match, which is required for a valid request. A nonzero return value means there was a problem: the hash *values* did not match (`-100`), the hash *lengths* did not match (`-106`), or some nonzero error code was returned from the hash computation library due to an unspecified error. Security depends on this: any tampering with the hash value or the data causes the hashes to mismatch, signaling that something is amiss.
 
 Let’s first walk through the correct version of the code, before the duplicated `goto` statement was introduced. After setting up a `HashCtx ctx` context variable, it hashes the three data fields of `params` in turn (at `1`, `2`, and `3`). If any error occurs, it jumps to the `fail` label to return the error code in the variable `err`. Otherwise, it continues, copying the hash result into a buffer and comparing that (at `4`) to the expected hash value. The comparison function `memcmp` returns `0` for equal, or if the hashes are different, the code assigns an error code of `-100` to `err` and falls through to return that result.
 
-### Functional Testing
+## Functional Testing
 
 Before considering security testing, let’s start with a functional test for the `VerifyServerKeyExchange` function. Functional testing checks that the code performs as expected, and this simple example is by no means complete. This example uses the MinUnit test framework for C. To follow along, all you need to know is that `mu_assert(``condition``,` `message``)` checks that the expression `condition` is true; if not, the assertion fails, printing the `message` provided:
 
@@ -139,13 +137,13 @@ mu_assert(0 == VerifyServerKeyExchange(test0, expected_hash, SIG_LEN),
 
 This calls the function with known-good parameters, so we expect a return value of `0` to pass the test. In the function itself, the three fields will be hashed (at `1`, `2`, and `3`). The hashes compare equal at `4`. Not shown are the test values for the three fields of data (in the `ExchangeParams` struct named `test0`) with the precomputed correct hash (`expected_hash`) that the server would sign.
 
-### Functional Testing with the Vulnerability
+## Functional Testing with the Vulnerability
 
 Now let’s introduce the GotoFail vulnerability (that highlighted line of code) and see what impact it has. When we rerun the functional test with the extra `goto`, the test still passes. The code works fine up to the duplicated `goto`, but then jumps over the hashing of the third data field (at `3`) and the comparison of hashes (at `4`). The function will continue to verify correct inputs, but now it will also verify some bad inputs that it should reject. However, we don’t know that yet. This is precisely why security testing is so important—and why it’s so easily overlooked.
 
 More thorough functional testing might well include additional test cases, such as to check for verification failure (a nonzero return value). However, functional testing often stops short of thoroughly covering all the cases where we need the verify function to reject inputs in the name of security. This is where security testing comes in, as we shall see next.
 
-### Security Test Cases
+## Security Test Cases
 
 Now let’s write some security test cases. Since there are three chunks of data to hash, that suggests writing three corresponding tests; each of these will change the data values in some way, resulting in a hash that won’t match the expected value. The target verify function should reject these inputs because the changed values potentially represent data tampering, which the hash comparison is supposed to prevent. The actual values (`test1`, `test2`,
 
@@ -171,7 +169,7 @@ mu_assert(-100 == VerifyServerKeyExchange(test0, wrong_hash, SIG_LEN),
 
 This test fails as well with the errant `goto`, as we would expect. While for this particular vulnerability just one of these tests would have caught it, the purpose of security testing is to cover as broad a range of potential vulnerabilities as possible.
 
-### The Limits of Security Tests
+## The Limits of Security Tests
 
 Security testing aims to detect the potential major points of failure in code, but it will never cover all of the countless ways for code to go wrong. It’s possible to introduce a vulnerability that the tests we just wrote won’t detect, but it’s unlikely to happen inadvertently. Unless test coverage is extremely thorough, the possibility of crafting a bug that slips through the tests remains; however, the major threat here is inadvertent bugs, so a modest set of security test cases can be quite effective.
 
@@ -181,7 +179,7 @@ Determining how thorough the security test cases need to be requires judgment, b
 
 Having closely examined a real security vulnerability with a simple (if unexpected) cause, and how to security test for such eventualities, let’s consider the general case and see how we could have anticipated this sort of problem and proactively averted it.
 
-### Writing Security Test Cases
+## Writing Security Test Cases
 
 *A good test case is one that has a high probability of detecting an as yet undiscovered error.*
 
@@ -195,7 +193,7 @@ You should create security test cases when you write other unit tests, not as a 
 
 General examples of commonplace security test cases include testing that login attempts with the wrong password fail, that unauthorized attempts to access kernel resources from user space fail, and that digital certificates that are invalid or malformed in various ways are always rejected. Reading the code is a great way to get ideas for good security test cases.
 
-### Testing Input Validation
+## Testing Input Validation
 
 Let’s consider security test cases for input validation. As a simple example, we’ll test input validation code that requires a string that is at least 10 characters and at most 20 characters long, consisting only of alphanumeric ASCII characters.
 
@@ -207,7 +205,7 @@ Of course, the functional tests should have already checked that sample inputs t
 
 For another similar example, suppose the code under test stores a byte array parameter in a fixed-length buffer of *N* bytes. Security test cases should ensure that the code works as expected with inputs of sizes up to and including *N*, but that an input of size *N*+1 gets safely rejected.
 
-### Testing for XSS Vulnerabilities
+## Testing for XSS Vulnerabilities
 
 Now let’s look at a more challenging security test case and some of the different test strategies that are available. Recall the XSS vulnerability where an untrusted input injects itself into HTML generated on the web server and breaks out into the page, such as by introducing script that runs to launch an attack. The root cause of this vulnerability is improper escaping, so that is where our security tests will focus.
 
@@ -272,7 +270,7 @@ The `find` method finds the first `<meta>` tag in the soup, which we assign to t
 
 Because we used the parser library, this security test case works on the parsed objects, shielded from the idiosyncrasies of HTML. If the XSS injects a malicious input that manages to break out of the double quotes, the parsed HTML won’t have the same value in the `node` object for the `<meta>` tag. So, even if you had no clue that double quote characters were problematic for some XSS attacks, you could easily try a range of special characters and rely on the parser to figure out which were working properly (or not). The next topic takes this idea of trying a number of test case variations and automates it at scale.
 
-### Fuzz Testing
+## Fuzz Testing
 
 *Fuzz testing* is a technique that automatically generates test cases in an effort to bombard the target code with test inputs. This helps you determine if particular inputs might cause the code to fail or crash the process. Here’s an analogy that might help: a dishwasher cleans by spraying water at many different angles from a rotating arm. Without knowledge of how dishware happens to be loaded or at what angle shooting water will be effective, it sprays at random and still manages to get everything clean. In contrast to how security test cases written with specific intentions, the scattershot method of fuzz testing can be quite effective at finding a wider range of bugs, some of which will be vulnerabilities.
 
@@ -297,7 +295,7 @@ This example is simplistic to the point of stretching the definition of fuzz tes
 
 There are many libraries that offer various fuzzing capabilities, from random fuzzing to the generation of variations based on the knowledge of specific formats such as HTML, XML, and JSON. If you have a particular testing strategy in mind, you can certainly write your own test cases and try them. The idea is that test cases are cheap, and generating lots of them is an easy way of getting good test coverage.
 
-### Security Regression Tests
+## Security Regression Tests
 
 *What regresses, never progresses.*
 
@@ -321,7 +319,7 @@ The correct behavior is to ignore such invalid requests. Some good security regr
 
 • Test that known exploit requests no longer receive a response. • Test with request byte counts greater than 16,384 (the maximum). • Test requests with payloads of 0 bytes and the maximum byte size. • Investigate whether other types of packets in the TLS protocol could have similar issues, and if so test those as well.
 
-### Availability Testing
+## Availability Testing
 
 *Worry about being unavailable; worry about being absent or fraudulent.*
 
@@ -335,7 +333,7 @@ Security testing should include test cases for identifying code that may be subj
 
 The next sections explain two basic strategies to test for this kind of problem: measuring the performance of specific functionality and monitoring overall performance against various loads.
 
-### Resource Consumption
+## Resource Consumption
 
 For functionality that you know may be susceptible to an availability attack, add security test cases that measure and determine a sensible limit on the input to protect blow-ups from occurring. Then test further to ensure that input validation prevents larger inputs from overloading the system.
 
@@ -347,7 +345,7 @@ In addition to this kind of targeted testing, measure performance metrics for th
 
 One easy technique to guard against a code change causing dramatic increases in memory consumption is to run tests under artificially resourceconstrained conditions. *Memory* here refers to stack and heap space, swap space, disk file and database, and so forth. Unit tests should run with little available memory; if the test suite ever hits the limit, that’s worth investigating. Larger integration tests will need resources comparable to those available in production, and when run with minimal headroom they can serve as a “canary in the coal mine.” For example, if you can test the system successfully with 80 percent of the memory available in production, that provides some assurance of 20 percent headroom (excess capacity).
 
-### Threshold Testing
+## Threshold Testing
 
 One important but easily overlooked protection of system availability is to establish warning signs before fundamental limits are reached. A classic example of exceeding such a limit happened to a well-known software company not long ago, when the 32-bit counter that assigned unique IDs to the objects that the system managed wrapped from 2,147,483,647 to 0, resulting in the IDs of low-numbered objects being duplicated. It took hours to remedy the problem—a disaster that could easily have been averted by monitoring for the counter approaching its limit and issuing a warning when it reached, say, `0.99*INT_MAX`. Surely, in the early days of the product, it was difficult to imagine the counter ever reaching its maximum, but as the company grew and the prospect became a potential issue, nobody considered the possibility.
 
@@ -363,23 +361,23 @@ The “Y2K bug” is now a distant memory of a non-event (possibly due to the ex
 
 *Figure 12-1: Bug (courtesy of Randall Munroe, xkcd.com/376 )*
 
-### Distributed Denial-of-Service Attacks
+## Distributed Denial-of-Service Attacks
 
 Denial-of-service (DoS) attacks are single actions that adversely impact availability; distributed denial-of-service (DDoS) attacks accomplish this through the cumulative effect of a number of concerted actions. For internetconnected systems, the open architecture of the internet creates an additional risk of DDoS attacks, such as from a coordinated botnet. Brute-force overloading from distributed anonymous sources generally ends up as a contest of scale of computing power. Mitigating these attacks typically requires reliance on DDoS protection vendors that have networking expertise backed by massive datacenter capacity.
 
 I point this out as separate from the other categories of availability threats because this isn’t something you can easily mitigate on your own should your server be unfortunate enough to become a target of a serious DDoS attack.
 
-### Best Practices for Security Testing
+## Best Practices for Security Testing
 
 Writing solid security test cases is an important way to improve the security of any codebase. While security test cases can’t guarantee perfect security, they confirm that your protections and mitigations are working, and are thus a significant step in the right direction. A robust suite of security test cases, combined with security regression tests, dramatically lowers the chances of a major security lapse.
 
-### Test-Driven Development
+## Test-Driven Development
 
 Security test cases are especially important when you’re writing critical code and thinking through its security implications. I strongly endorse *test-driven development (TDD)*, where you write test cases concurrently with new code—rigorous practitioners of this method actually make the tests first, only authoring new code in order to fix the initially failing tests. TDD with security test cases included from the start ensures that security is built into the code, rather than as an afterthought, but whatever methodology you use for testing, security test cases need to be part of your test suite.
 
 If others write the tests, developers should provide guidance that describes the security test cases needed, because they can be harder to intuit without a solid understanding of the security demands on the code.
 
-### Leveraging Integration Testing
+## Leveraging Integration Testing
 
 *Integration testing* puts systems through their paces to ensure that all the components, already unit-tested individually, work together as they should. These are important tests for quality assurance purposes—but once you’ve invested the effort, it’s easy to extend them for a little security testing, too.
 
@@ -387,7 +385,7 @@ In 2018, a major social media platform advised its customers to change their pas
 
 Passwords are a convenient example for explanatory purposes, but this technique applies to any private data. Test systems require a bunch of synthetic data to stand in for actual user data in production, and all of that private content could potentially leak in just the same way. A more comprehensive leak test would scan all system outputs not explicitly protected as confidential for any traces of test input data that are private.
 
-### Security Testing Catch-Up
+## Security Testing Catch-Up
 
 If you are working on a codebase bereft of security test cases, assuming that security is a priority, there is some important work that needs doing. If there is a design that considers security that has been threat modeled and reviewed, use it as a map of what code deserves attention first. It’s usually wise to divide the job into pieces with incremental milestones, do an achievable first iteration or two, and then assess the remaining need as you work through the tasks.
 

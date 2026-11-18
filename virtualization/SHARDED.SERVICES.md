@@ -1,6 +1,4 @@
-# Chapter 7
-
-## Sharded Services
+# Sharded Services
 
 Source: [Designing.Distributed.Systems-2025-7.pdf](./Designing.Distributed.Systems-2025-7.pdf), PDF pages 1–14.
 
@@ -16,7 +14,7 @@ Replicated services are generally used for building stateless services, whereas 
 
 Sharding is not exclusively for stateful services, though. Sometimes sharding can also be useful for stateless services for the purpose of isolation. Failures in distributed systems can sometimes come from the input requests to the system (“poison requests”) in a replicated system—if the poison requests come in a large enough volume, they can take down all of the replicas. In such systems, sharding can form an isolation boundary that protects the majority of the requests from the poison ones. Though the poison requests may take out the entire shard, that will only be a fraction of the requests that the system processes.
 
-### Sharded Caching
+## Sharded Caching
 
 To completely illustrate the design of a sharded system, this section provides a deep dive into the design of a sharded caching system. A *sharded cache* is a cache that sits between the user requests and the actual frontend implementation. A high-level diagram of the system is shown in Figure 7-2.
 
@@ -34,11 +32,11 @@ In [Ambassadors](AMBASSADORS.md), we discussed how an ambassador could be used t
 
 - The sharding function
 
-#### Why You Might Need a Sharded Cache
+### Why You Might Need a Sharded Cache
 
 Reminder: the primary reason for sharding any service is to increase the size of the data being stored in the service. To understand how this helps a caching system, imagine the following system: each cache has 10 GB of RAM available to store results, and can serve 100 requests per second (RPS). Suppose then that our service has a total of 200 GB possible results that could be returned, and an expected 1,000 RPS. Clearly, we need 10 replicas of the cache in order to satisfy 1,000 RPS (10 replicas × 100 requests per second per replica). The simplest way to deploy this service would be as a replicated service, as described in [Replicated Load-Balanced Services](REPLICATED.LOAD.BALANCED.SERVICES.md). But deployed this way, the distributed cache can only hold a maximum of 5% (10 GB/200 GB) of the total data set that we are serving. This is because each cache replica is independent, and thus each cache replica stores roughly the exact same data in the cache. This is great for redundancy, but pretty terrible for maximizing memory utilization. If instead, we deploy a 10-way sharded cache, we can still serve the appropriate number of RPS (10 × 100 is still 1,000), but because each cache serves a completely unique set of data, we are able to store 50% (10 × 10 GB/200 GB) of the total data set. This tenfold increase in cache storage means that the memory for the cache is much better utilized, since each key exists only in a single cache. The more data we store in the cache, the faster the overall system will be able to operate since more requests can be served from the cache.
 
-#### The Role of the Cache in System Performance
+### The Role of the Cache in System Performance
 
 In [Replicated Load-Balanced Services](REPLICATED.LOAD.BALANCED.SERVICES.md) we discussed how caches can be used to optimize end-user performance and latency, but one thing that wasn’t covered was the criticality of the cache to your application’s performance, reliability, and stability.
 
@@ -56,7 +54,7 @@ But the performance of your system isn’t just defined in terms of the number o
 
 Finally, it isn’t just failures that you need to think about. If you need to upgrade or redeploy a sharded cache, you cannot just deploy a new replica and assume it will immediately take the existing load. A newly created cache shard doesn’t have any data stored in memory. Responses are cached as they are received in response to user requests. A newly deployed cache needs to be “warmed up” or filled with responses before it can provide maximal benefit. Deploying a new version of a sharded cache will generally result in temporarily losing some capacity. Another, more advanced option is to replicate your shards.
 
-#### Replicated Sharded Caches
+### Replicated Sharded Caches
 
 Sometimes your system is so dependent on a cache for latency or load that it is not acceptable to lose an entire cache shard if there is a failure or you are doing a rollout. Alternatively, you may have so much load on a particular cache shard that you need to scale it to handle the load. For these reasons, you may choose to deploy a sharded replicated service. A sharded replicated service combines the replicated service pattern described in [Replicated Load-Balanced Services](REPLICATED.LOAD.BALANCED.SERVICES.md) with the sharded pattern described in previous sections. In a nutshell, rather than having a single server implement each shard in the cache, a replicated service is used to implement each cache shard.
 
@@ -64,7 +62,7 @@ This design is obviously more complicated to implement and deploy, but it has se
 
 Additionally, because each replicated cache shard is an independent replicated service, you can scale each cache shard in response to its load; this sort of “hot sharding” is discussed at the end of this document.
 
-#### Hands On: Deploying an Ambassador and Memcache for a Sharded Cache
+### Hands On: Deploying an Ambassador and Memcache for a Sharded Cache
 
 In [Ambassadors](AMBASSADORS.md) we saw how to deploy a sharded Redis service. Deploying a sharded memcache is similar.
 
@@ -252,7 +250,7 @@ spec:
 
 This load balancer can be created using kubectl create -f shard-router-service.yaml.
 
-### An Examination of Sharding Functions
+## An Examination of Sharding Functions
 
 So far we’ve discussed the design and deployment of both simple sharded and replicated sharded caches, but we haven’t spent very much time considering how traffic is routed to different shards. Consider a sharded service where you have 10 independent shards. Given some specific user request *Req*, how do you determine which shard *S* in the range from zero to nine should be used for the request? This mapping is the responsibility of the *sharding function*. A sharding function is very similar to a hashing function, which you may have encountered when learning about hashtable data structures. Indeed, a bucket-based hashtable could be considered an example of a sharded service. Given both *Req* and *Shard*, then the role of the sharding function is to relate them together, specifically:
 
@@ -274,7 +272,7 @@ Fortunately for us, modern programming languages include a wide variety of high-
 
 *Shard* = *hash(Req)* % 10 If the output of the hash function has the appropriate properties in terms of determinism and uniformity, those properties will be preserved by the modulo operator.
 
-#### Selecting a Key
+### Selecting a Key
 
 Given this sharding function, it might be tempting to simply use the hashing function that is built into the programming language, hash the entire object, and call it a day. The result of this, however, will not be a very good sharding function.
 
@@ -296,7 +294,7 @@ shard(country(request.ip), request.path) This first determines the country from 
 
 Determining the appropriate key for your sharding function is vital to the optimal design of a sharded system. Determining the correct shard key requires an understanding of the requests that you expect to see.
 
-#### Consistent Hashing Functions
+### Consistent Hashing Functions
 
 Setting up the initial shards for a new service is relatively straightforward: you set up the appropriate shards and the roots to perform the sharding, and you are off to the races. However, what happens when you need to change the number of shards in your sharded service? Such “re-sharding” is often a complicated process.
 
@@ -304,7 +302,7 @@ To understand why this is true, consider the sharded cache previously examined. 
 
 To resolve these kinds of problems, many sharding functions use *consistent hashing functions*. Consistent hashing functions are special hash functions that are guaranteed to only remap *# keys / # shards*, when being resized to *# shards*. For example, if we use a consistent hashing function for our sharded cache, moving from 10 to 11 shards will only result in remapping < 10% (*K / 11*) keys. This is dramatically better than losing the entire sharded service.
 
-#### Hands On: Building a Consistent HTTP Sharding Proxy
+### Hands On: Building a Consistent HTTP Sharding Proxy
 
 To shard HTTP requests, the first question to answer is what to use as the key for the sharding function. Though there are several options, a good general-purpose key is the request path as well as the fragment and query parameters (i.e., everything that makes the request unique). Note that this does *not* include cookies from the user or the language/location (e.g., EN_US). If your service provides extensive customization to users or their location, you will need to include them in the hash key as well.
 
@@ -339,13 +337,13 @@ http {
 
 Note that we chose to use the full request URI as the key for the hash and use the key word consistent to indicate that we want to use a consistent hashing function.
 
-### Sharded Replicated Serving
+## Sharded Replicated Serving
 
 Most of the examples in this document so far have described sharding in terms of cache serving. But, of course, caches are not the only kinds of services that can benefit from sharding. Sharding is useful when considering any sort of service where there is more data than can fit on a single machine. In contrast to previous examples, the key and sharding function are not a part of the HTTP request, but rather some context for the user.
 
 For example, consider implementing a large-scale multiplayer game. Such a game world is likely to be far too large to fit on a single machine. However, players who are distant from each other in this virtual world are unlikely to interact. Consequently, the world of the game can be *sharded* across many different machines. The sharding function is keyed off of the player’s location so that all players in a particular location land on the same set of servers.
 
-### Hot Sharding Systems
+## Hot Sharding Systems
 
 Ideally the load on a sharded cache will be perfectly even, but in many cases this isn’t true, and “hot shards” appear because organic load patterns drive more traffic to one particular shard.
 
@@ -355,6 +353,6 @@ As an example of this, consider a sharded cache for a user’s photos; when a pa
 
 *Figure 7-3. An example of a hot sharded system: initially the shards are evenly distributed, but when extra traffic comes to shard A, it is replicated to two machines, and shards B and C are combined on a single machine*
 
-### Summary
+## Summary
 
 This document introduced the concept of sharding, which directs particular requests to particular groups of machines instead of load-balancing all traffic to all replicas of a service. An example was given of how sharding can significantly improve the efficiency and performance of a caching system attached to a serving API. Sharding is not just useful for caching, however. Systems like large-scale open world game servers and databases can scale beyond the size limits of a single machine by sharding their data across multiple different shard servers. Sharding also helps with isolation, limiting the blast radius of poison requests to a subset of all servers. Setting up a sharded system requires a careful understanding and design of both the shard key and the key hashing function. Identifying the right way to partition your data can often make the difference between a scalable system and one which runs into bottlenecks as it scales. Understanding the details of sharding is critical to building larger and more complex distributed systems.

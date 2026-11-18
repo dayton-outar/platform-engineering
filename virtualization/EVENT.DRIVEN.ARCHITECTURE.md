@@ -1,6 +1,4 @@
-# Chapter 14
-
-## Event-Driven Architecture Style
+# Event-Driven Architecture Style
 
 Source: [Fundamentals.of.Software.Architecture-2020-14.pdf](./Fundamentals.of.Software.Architecture-2020-14.pdf), PDF pages 1–32.
 
@@ -18,11 +16,11 @@ An event-based model, on the other hand, reacts to a particular situation and ta
 
 *Figure 14-1. Request-based model*
 
-### Topology
+## Topology
 
 There are two primary topologies within event-driven architecture: the *mediator topology* and the *broker topology*. The mediator topology is commonly used when you require control over the workflow of an event process, whereas the broker topology is used when you require a high degree of responsiveness and dynamic control over the processing of an event. Because the architecture characteristics and implementation strategies differ between these two topologies, it is important to understand each one to know which is best suited for a particular situation.
 
-### Broker Topology
+## Broker Topology
 
 The broker topology differs from the mediator topology in that there is no central event mediator. Rather, the message flow is distributed across the event processor components in a chain-like broadcasting fashion through a lightweight message broker (such as RabbitMQ, ActiveMQ, HornetQ, and so on). This topology is useful when you have a relatively simple event processing flow and you do not need central event orchestration and coordination.
 
@@ -72,7 +70,7 @@ The ability to restart a business transaction (recoverability) is also something
 | High performance | Restart capabilities |
 | High fault tolerance | Data inconsistency |
 
-### Mediator Topology
+## Mediator Topology
 
 The mediator topology of event-driven architecture addresses some of the shortcomings of the broker topology described in the previous section. Central to this topology is an event mediator, which manages and controls the workflow for initiating events that require the coordination of multiple event processors. The architecture components that make up the mediator topology are an initiating event, an event queue, an event mediator, event channels, and event processors.
 
@@ -156,7 +154,7 @@ While the mediator topology addresses the issues associated with the broker topo
 
 The choice between the broker and mediator topology essentially comes down to a trade-off between workflow control and error handling capability versus high performance and scalability. Although performance and scalability are still good within the mediator topology, they are not as high as with the broker topology.
 
-### Asynchronous Capabilities
+## Asynchronous Capabilities
 
 The event-driven architecture style offers a unique characteristic over other architecture styles in that it relies solely on asynchronous communication for both fire-and-forget processing (no response required) as well as request/reply processing (response required from the event consumer). Asynchronous communication can be a powerful technique for increasing the overall responsiveness of a system.
 
@@ -172,7 +170,7 @@ The difference in response time between the two examples in Figure 14-13 from 3,
 
 The main issue with asynchronous communications is error handling. While responsiveness is significantly improved, it is difficult to address error conditions, adding to the complexity of the event-driven system. The next section addresses this issue with a pattern of reactive architecture called the *workflow event* pattern.
 
-### Error Handling
+## Error Handling
 
 The workflow event pattern of reactive architecture is one way of addressing the issues associated with error handling in an asynchronous workflow. This pattern is a reactive architecture pattern that addresses both resiliency and responsiveness. In other words, the system can be resilient in terms of error handling without an impact to responsiveness.
 
@@ -250,7 +248,7 @@ trade placed: 2WE35HF6DHF,BUY,AAPL,8756 <-- this was the original trade in error
 
 One of the consequences of the workflow event pattern is that messages in error are processed out of sequence when they are resubmitted. In our trading example, the order of messages matters, because all trades within a given account must be processed in order (for example, a SELL for IBM must occur before a BUY for AAPL within the same brokerage account). Although not impossible, it is a complex task to maintain message order within a given context (in this case the brokerage account number). One way this can be addressed is by the Trade Placement service queueing and storing the account number of the trade in error. Any trade with that same account number would be stored in a temporary queue for later processing (in FIFO order). Once the trade originally in error is fixed and processed, the Trade Place ment service then de-queues the remaining trades for that same account and processes them in order.
 
-### Preventing Data Loss
+## Preventing Data Loss
 
 Data loss is always a primary concern when dealing with asynchronous communications. Unfortunately, there are many places for data loss to occur within an event-driven architecture. By data loss we mean a message getting dropped or never making it to its final destination. Fortunately, there are basic out-of-the-box techniques that can be leveraged to prevent data loss when using asynchronous messaging.
 
@@ -276,7 +274,7 @@ Issue 3 (Event Processor B is unable to persist the message to the database due 
 
 *Figure 14-17. Preventing data loss within an event-driven architecture*
 
-### Broadcast Capabilities
+## Broadcast Capabilities
 
 One of the other unique characteristics of event-driven architecture is the capability to broadcast events without knowledge of who (if anyone) is receiving the message and what they do with it. This technique, which is illustrated in Figure 14-18, shows that when a producer publishes a message, that same message is received by multiple subscribers.
 
@@ -286,7 +284,7 @@ One of the other unique characteristics of event-driven architecture is the capa
 
 Broadcasting is perhaps the highest level of decoupling between event processors because the producer of the broadcast message usually does not know which event processors will be receiving the broadcast message and more importantly, what they will do with the message. Broadcast capabilities are an essential part of patterns for eventual consistency, complex event processing (CEP), and a host of other situations. Consider frequent changes in stock prices for instruments traded on the stock market. Every ticker (the current price of a particular stock) might influence a number of things. However, the service publishing the latest price simply broadcasts it with no knowledge of how that information will be used.
 
-### Request-Reply
+## Request-Reply
 
 So far in this document we’ve dealt with asynchronous requests that don’t need an immediate response from the event consumer. But what if an order ID is needed when ordering a book? What if a confirmation number is needed when booking a flight? These are examples of communication between services or event processors that require some sort of synchronous communication.
 
@@ -330,7 +328,7 @@ The other technique used to implement request-reply messaging is to use a *tempo
 
 While the temporary queue technique is much simpler, the message broker must create a temporary queue for each request made and then delete it immediately afterward. Large messaging volumes can significantly slow down the message broker and impact overall performance and responsiveness. For this reason we usually recommend using the correlation ID technique.
 
-### Choosing Between Request-Based and Event-Based
+## Choosing Between Request-Based and Event-Based
 
 The request-based model and event-based model are both viable approaches for designing software systems. However, choosing the right model is essential to the overall success of the system. We recommend choosing the request-based model for well-structured, data-driven requests (such as retrieving customer profile data) when certainty and control over the workflow is needed. We recommend choosing the event-based model for flexible, action-based events that require high levels of responsiveness and scale, with complex and dynamic user processing.
 
@@ -348,13 +346,13 @@ Understanding the trade-offs with the event-based model also helps decide which 
 | Better real-time decision making |  |
 | Better reaction to situational awareness |  |
 
-### Hybrid Event-Driven Architectures
+## Hybrid Event-Driven Architectures
 
 While many applications leverage the event-driven architecture style as the primary overarching architecture, in many cases event-driven architecture is used in conjunction with other architecture styles, forming what is known as a hybrid architecture. Some common architecture styles that leverage event-driven architecture as part of another architecture style include microservices and space-based architecture. Other hybrids that are possible include an event-driven microkernel architecture and an event-driven pipeline architecture.
 
 Adding event-driven architecture to any architecture style helps remove bottlenecks, provides a back pressure point in the event requests get backed up, and provides a level of user responsiveness not found in other architecture styles. Both microservices and space-based architecture leverage messaging for data pumps, asynchronously sending data to another processor that in turn updates data in a database. Both also leverage event-driven architecture to provide a level of programmatic scalability to services in a microservices architecture and processing units in a space-based architecture when using messaging for interservice communication.
 
-### Architecture Characteristics Ratings
+## Architecture Characteristics Ratings
 
 A one-star rating in the characteristics ratings table in Figure 14-22 means the specific architecture characteristic isn’t well supported in the architecture, whereas a five-star rating means the architecture characteristic is one of the strongest features in the architecture style.
 

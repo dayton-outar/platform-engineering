@@ -1,6 +1,4 @@
-# Chapter 15
-
-## AI Inference and Serving
+# AI Inference and Serving
 
 Source: [Designing.Distributed.Systems-2025-15.pdf](./Designing.Distributed.Systems-2025-15.pdf), PDF pages 1–7.
 
@@ -10,7 +8,7 @@ In the last few years, AI has become a key part of many different types of appli
 
 AI and machine learning is a complex topic that can take years to master, but fortunately, with the assistance of libraries and pre-built models, it takes significantly less time to begin to incorporate intelligence into your application. This document does not attempt to make you an AI expert, but it can serve as an introduction to the concepts and approaches for using AI in your system.
 
-### The Basics of AI Systems
+## The Basics of AI Systems
 
 Before we get started on the details of using AI in your system, it is useful to get a grounding in the core concepts that make up AI application. The place that most people start is with a model. A model is a collection of numeric weights that encode the knowledge in a neural network. In modern LLMs, there are trillions of these weights. As a rough definition, you can think of the model as a function that takes a collection of inputs and transforms them into some output.
 
@@ -26,7 +24,7 @@ For LLMs, the final part of inference is the prompt itself. When you chat with a
 
 [The Basics of AI Systems](AI.INFERENCE.SERVING.md#the-basics-of-ai-systems) described the components of an AI application. The following sections will get into more details about how the application can be built.
 
-### Hosting a Model
+## Hosting a Model
 
 Building a model is a large, complex task that could fill an entire book (or more) and is thus outside of the scope for this document. Even if you are interested in doing your own training or fine-tuning, you are encouraged to begin by using pretrained models so that you can get a sense for how well AI works with your application. Not every application is a great fit for the current state of AI models, and thus, before investing the time, energy, and money in training, it makes sense to evaluate your overall approach.
 
@@ -36,7 +34,7 @@ Typically, LLMs require high-performance dedicated GPUs to achieve the required 
 
 The challenge of the cost of inference has led to the development so-called “small language models.” These models, like Microsoft’s Phi family of models, use much more focused training data to achieve reasonable performance with many fewer weights (billions versus trillions). Though their scores on AI benchmarks cannot compete with larger models like ChatGPT, the reduced size means that both the cost and latency of inference can be dramatically reduced. For many applications, the trade-off is worth it, and small language models (SLMs) can deliver acceptable quality at a much lower cost. Furthermore, since SLMs can run on a mobile device, they also can help address concerns from users who do not want to share their data with a cloud-based model.
 
-### Distributing a Model
+## Distributing a Model
 
 So far we’ve talked a lot about models for both training and inference, but we’ve had little discussion of how the models themselves are actually stored to file and loaded for processing. There are several different frameworks for performing training and inferences (we’ll discuss them in a coming section), and each framework has its own file format; for example, TensorFlow uses the TF2 file format. It’s fine to use a framework-specific format if you don’t plan to distribute your model and you don’t expect to ever change formats. However, for most users a framework-independent open format for models is the best choice.
 
@@ -48,7 +46,7 @@ The models stored in these hubs can be quite large; and thus, while you can down
 
 The final consideration with model distribution is safe deployment of new models. Though changes to models typically happen less frequently than changes to your code, you will make changes to the model over time. Just like safe deployment of your code, it is critical that you perform safe deployment of your model. Changes in your model can have significant and unpredictable impact on the quality and reliability of your application. To limit these risks, you should follow the best practice of progressive exposure and start by using the new model on only a very small subset of your users, typically tied to a percentage of users or a specific geography. As you gain confidence that the model is working correctly, you can gradually expand it to more and more users until ultimately all of your application is using the new model.
 
-### Development with Models
+## Development with Models
 
 The complexity of inference means that it requires significant compute capacity. Whether you are hosting your own models or using a cloud-based model as a service, this means that every inference is expensive. Unless you are specifically doing development related to the quality of your inference (e.g., prompt engineering), it probably doesn’t make sense to pay the costs of a full model when you are working on the user interface or other parts of the service which are not directly related to the AI.
 
@@ -58,7 +56,7 @@ In this approach, you develop a parameter to the API, which indicates which mode
 
 Similarly, when performing continuous evaluation and automated unit testing of your application, it makes sense to deploy smaller, cheaper models, unless you are specifically evaluating quality.
 
-### Retrieval-Augmented Generation
+## Retrieval-Augmented Generation
 
 Users interacting with AI systems expect that they are capable of understanding the context of the specific user, as well as the latest information available in the world. Unfortunately, because of the nature of AI models, the models themselves are fixed at a specific point in time when they were trained. Because these models are static and based on generic information, providing responses that are specific to the user or reflect the current state of the world are challenging. Retrieval-Augmented Generation (RAG) is a technique developed to handle these challenges.
 
@@ -78,7 +76,7 @@ We can see how the personalized and up-to-date information provided by the RAG r
 
 RAG is a great technique for experienced developers who may not have lots of AI experience to develop sophisticated AI applications. By combining traditional database queries with natural language prompts from users, very successful natural language interfaces can be built that feel very personal. A further benefit of the RAG approach is that it respects user privacy. None of the user’s personal information is encoded into the LLM, where it might accidentally be revealed to other users. Instead, the information is only accessible to the user that has access to the information, and provides it to the model in the form of an augmented prompt. Because of its explainability and privacy-protecting features, RAG is one of the most popular techniques for chat-based AI systems today.
 
-### Testing and Deployment
+## Testing and Deployment
 
 At this point, the idea of testing our services is well understood and accepted as a required practice if you want to maintain a reliable and well running service. But what does it mean to perform a unit test in the context of an AI application when making changes to the prompt can have significant impact on the different responses that you get from the model?
 
@@ -98,6 +96,6 @@ In addition to such AI-driven quality testing, before you release a new code or 
 
 AI changes the way we build applications, and thus, also changes the way those applications are tested. However, it does not change the criticality of testing and evaluating every change you make to ensure it does not impact the overall quality of your application.
 
-### Summary
+## Summary
 
 In just a few years, AI has transformed both our imagination of what our applications could be, as well as our users’ expectations for how they can interact with those applications. However, at the end of the day, AI inference is just another function that is provided by a distributed system and delivered to our users. This document provides an introduction to the core concepts and techniques for building AI applications that will enable anyone familiar with distributed systems to augment their distributed applications with AI.

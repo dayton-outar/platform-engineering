@@ -1,6 +1,4 @@
-# Chapter 9
-
-## Functions and Event-Driven Processing
+# Functions and Event-Driven Processing
 
 Source: [Designing.Distributed.Systems-2025-9.pdf](./Designing.Distributed.Systems-2025-9.pdf), PDF pages 1–11.
 
@@ -14,11 +12,11 @@ So far, we have examined design for systems with long-running computation. The s
 
 *Figure 9-2. Callout illustration accompanying the discussion on PDF page 1*
 
-### Determining When FaaS Makes Sense
+## Determining When FaaS Makes Sense
 
 As with many tools for developing a distributed system, it can be tempting to see a particular solution like event-driven processing as a universal hammer. However, the truth is that it is best suited to a particular set of problems. Within a particular context it is a powerful tool, but stretching it to fit all applications or systems will lead to overly complicated, brittle designs. Especially since FaaS is a relatively new computing tool, before discussing specific design patterns, it is worth discussing the benefits, limitations, and optimal situations for employing event-driven computing.
 
-#### The Benefits of FaaS
+### The Benefits of FaaS
 
 The benefits of FaaS are primarily for the developer. It dramatically simplifies the distance from code to running service. Because there is no artifact to create or push beyond the source code itself, FaaS makes it simple to go from code on a laptop or web browser to running code in the cloud.
 
@@ -26,7 +24,7 @@ Likewise, the code that is deployed is managed and scaled automatically. As more
 
 Finally, much like containers, functions are an even more granular building block for designing distributed systems. Functions are stateless, and thus any system you build on top of functions is inherently more modular and decoupled than a similar system built into a single binary. But, of course, this is also the challenge of developing systems in FaaS. The decoupling is both a strength and a weakness. The following section describes some of the challenges that come from developing systems using FaaS.
 
-#### The Challenges of FaaS
+### The Challenges of FaaS
 
 As described in “The Benefits of FaaS”, developing systems using FaaS forces you to strongly decouple each piece of your service. Each function is entirely independent. The only communication is across the network, and each function instance cannot have local memory, requiring all states to be stored in a storage service. This forced decoupling can improve the agility and speed with which you can develop services, but it can also significantly complicate the operations of the same service.
 
@@ -42,15 +40,15 @@ Now consider what happens when a request comes into any of these functions: it k
 
 For now, when adopting FaaS, you must be vigilant to adopt rigorous monitoring and alerting for how your system is behaving so that you can detect situations and correct them before they become significant problems. Of course, the complexity introduced by monitoring flies somewhat in the face of the simplicity of deploying to FaaS, which is friction that your developers must overcome.
 
-#### The Need for Background Processing
+### The Need for Background Processing
 
 FaaS is inherently an event-based application model. Functions are executed in response to discrete events that occur and trigger the execution of the functions. Additionally, because of the serverless nature of the implementation of these services, the runtime of any particular function instance is generally time bounded. This means that FaaS is usually a poor fit for situations that require processing. Examples of such background processing might be transcoding a video, compressing log files, or other sorts of low-priority, long-running computations. In many cases, it is possible to set up a scheduled trigger that synthetically generates events in your functions on a particular schedule. Though this is a good fit for responding to temporal events (e.g., firing a text-message alarm to wake someone up), it is still not sufficient infrastructure for generic background processing. To achieve that, you need to launch your code in an environment that supports long-running processes. And this generally means switching to a pay-per-consumption rather than pay-per-request model for the parts of your application that do background processing.
 
-#### The Need to Hold Data in Memory
+### The Need to Hold Data in Memory
 
 In addition to the operational challenges, there are some architectural limitations that make FaaS ill-suited for some types of applications. The first of these limitations is the need to have a significant amount of data loaded into memory in order to process user requests. There are a variety of services (e.g., serving a search index of documents) that require a great deal of data to be loaded in memory in order to service user requests. Even with a relatively fast storage layer, loading such data can take significantly longer than the desired time to service a user request. Because with FaaS, the function itself may be dynamically spun up in response to a user request *while the user is waiting*, the need to load a lot of detail may significantly impact the latency that the user perceives while interacting with your service. Of course, once your FaaS has been created, it may handle a large number of requests, so this loading cost can be amortized across a large number of requests. But if you have a sufficient number of requests to keep a function active, then it’s likely you are overpaying for the requests you are processing.
 
-#### The Costs of Sustained Request-Based Processing
+### The Costs of Sustained Request-Based Processing
 
 The cost model of public cloud FaaS is based on per-request pricing. This approach is great if you only have a few requests per minute or hour. In such a situation, you are idle most of the time, and given a pay-per-request model, you are only paying for the time when your service is actively serving requests. In contrast, if you service requests via a long-running service, either in a container or a virtual machine, then you are always paying for processor cycles that are largely sitting around waiting for a user request.
 
@@ -58,11 +56,11 @@ However, as a service grows, the number of requests that you are servicing grows
 
 Consequently, as your service grows and evolves, it’s highly likely that your use of FaaS will evolve as well. One ideal way to scale FaaS is to run an open source FaaS that runs on a container orchestrator like Kubernetes. That way, you can still take advantage of the developer benefits of FaaS, while taking advantage of the pricing models of virtual machines.
 
-### Patterns for FaaS
+## Patterns for FaaS
 
 In addition to understanding the trade-offs in deploying event-driven or FaaS architectures as part of your distributed system, understanding the best ways to deploy FaaS is critical to the design of a successful system. This section describes some canonical patterns for incorporating FaaS.
 
-#### The Decorator Pattern: Request or Response Transformation
+### The Decorator Pattern: Request or Response Transformation
 
 FaaS is ideal for deploying simple functions that can take an input, transform it into an output, and then pass it on to a different service. This general pattern can be used to augment or decorate HTTP requests to or from a different service. A basic illustration of this pattern is shown in Figure 9-1.
 
@@ -84,7 +82,7 @@ Given the previous discussion of the adapter pattern in the single-node section,
 
 > Kubeless installs itself as a native Kubernetes third-party API. This means that once it is installed, you can use the native kubectl command-line tool. For example, you can see deployed functions using kubectl get functions. Currently, you should have no functions deployed.
 
-#### Hands On: Adding Request Defaulting Prior to Request Processing
+### Hands On: Adding Request Defaulting Prior to Request Processing
 
 To demonstrate the utility of the decorator pattern for FaaS, consider the task of adding default values to a RESTful function call if the values are missing. This is quite straightforward to do using FaaS. We’ll write the defaulting function using the Python programming language:
 
@@ -122,7 +120,7 @@ kubeless function call add-defaults --data '{"name": "foo"}'
 
 The decorator pattern shows just how easy it is to adapt and extend existing APIs with additional features like validation or defaulting.
 
-#### Handling Events
+### Handling Events
 
 While most systems are request-driven, handling a steady stream of user and API requests, many other systems are more event-driven in nature. The differentiation, in my mind at least, between a request and an event has to do with the notion of *session*. Requests are part of a larger series of interactions or sessions; generally each user request is part of a larger interaction with a complete web application or API. *Events*, as I see them, instead tend to be single-instance and asynchronous in nature. Events are important and need to be properly handled, but they are fired off from a main interaction and responded to some time later. Examples of events include a user signing up for a new service (which might trigger a welcome email), someone uploading a file to a shared folder (which might send notifications to everyone who has access to the folder), or even a machine being about to reboot (which might notify an operator or automated system to take appropriate action).
 
@@ -130,7 +128,7 @@ Because these events tend to be largely independent and stateless in nature, and
 
 A concrete example of integrating an event-based component to an existing service is implementing two-factor authentication. In this case, the event is the user logging into a service. The service can generate an event for this action, fire it into a function-based handler that takes the code and the user’s contact information, and sends the two-factor code via text message.
 
-#### Hands On: Implementing Two-Factor Authentication
+### Hands On: Implementing Two-Factor Authentication
 
 Two-factor authentication requires that the user both have something that they know (e.g., a password) as well as something that they possess (e.g., a phone) to be able to log in to the system. Two-factor authentication is significantly more secure than passwords alone since it requires two different security compromises (a thief learning your password *and* a thief stealing your phone) to enable a true security problem.
 
@@ -173,7 +171,7 @@ This function can then be made asynchronously from client-side JavaScript whenev
 
 Again, developing a simple, asynchronous, event-based service that is triggered whenever a user logs in is made dramatically simpler using FaaS.
 
-#### Event-Based Pipelines
+### Event-Based Pipelines
 
 There are some applications that are inherently easier to think about in terms of a pipeline of decoupled events. These event pipelines often resemble the flowcharts of old. They can be represented as a directed graph of connected event syncs. In the event pipeline pattern, each node is a different function or webhook, and the edges linking the graph together are HTTP or other network calls to the function/webhook. In general, there is no shared state between the different pieces of the pipeline, but there may be a context or other reference point that can be used to look up information in shared storage.
 
@@ -181,7 +179,7 @@ So, what is the difference between this type of pipeline and a “microservices�
 
 As an example of this, imagine a pipeline in which the original event is code being submitted into a source control system. This event then triggers a build. The build may take multiple minutes to complete, and when it does, it fires an event to a build analysis function. This function takes different actions if the build is successful or fails. If the build succeeds, a ticket is created for a human to approve it to be pushed to production. Once the ticket is closed, the act of closing is an event that triggers the actual push to production. If the build fails, a bug is filed on the failure, and the event pipeline terminates.
 
-#### Hands On: Implementing a Pipeline for New User Signup
+### Hands On: Implementing a Pipeline for New User Signup
 
 Consider the task of implementing a new user signup flow. When a new user account is created, there are certain things that are always done, such as sending a welcome email. And there are some things that are optionally done, such as registering a user to receive product updates (sometimes known as “spam”) via their email.
 
@@ -223,6 +221,6 @@ def subscribe_user(context):
 
 Factored in this way, each FaaS is simple, containing only a few lines of code and focused on implementing one specific piece of functionality. This microservices-based approach is simple to write but might lead to complexity if we actually had to deploy and manage three different microservices. This is where FaaS can shine, since it makes it trivially easy to host these small code snippets. Additionally, by visualizing our user-creation flow as an event-driven pipeline, it is also straightforward to have a high-level understanding of what exactly happens on user login, simply by following the flow of the context through the various functions in the pipeline.
 
-### Summary
+## Summary
 
 Functions as a service, or FaaS, is a powerful tool for easily hosting simple, scalable applications. As with any tool, the key to using it for maximal value lies in understanding what it is best at. The simplicity of functions as a service comes with restrictions that may limit ways in which your application can develop or libraries that your application can use. However, FaaS can also radically reduce your time to market. As you gain experience with distributed systems, you will see that the ideal design is often a combination of different pieces. Combining FaaS with more flexible infrastructure or IaaS primitives, like the core of the Kubernetes API, often allows you to gain the best of both possible worlds and blend power and flexibility with simplicity and automation for the optimal system design.

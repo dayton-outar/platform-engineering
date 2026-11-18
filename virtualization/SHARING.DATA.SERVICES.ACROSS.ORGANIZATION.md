@@ -1,6 +1,4 @@
-# Chapter 8
-
-## Sharing Data and Services Across an Organization
+# Sharing Data and Services Across an Organization
 
 Source: [Designing.Event-Driven.Systems-2018-8.pdf](./Designing.Event-Driven.Systems-2018-8.pdf), PDF pages 1–11.
 
@@ -34,7 +32,7 @@ The Microservices pattern is unusually opinionated in this regard. It comes down
 
 To better understand this tension, we need to question some core principles of software design—principles that work wonderfully when we’re building a single application, but fare less well when we build software that spans many teams.
 
-### Encapsulation Isn’t Always Your Friend
+## Encapsulation Isn’t Always Your Friend
 
 As software engineers we’re taught to encapsulate. If you’re building a library for other people to use, you’ll carefully pick a contract that suits the functionality you want to expose. If you’re building a service-based system, you might be inclined to follow a similar process. This works well if we can cleanly separate responsibilities between the different services. A single sign-on (SSO) service, for example, has a well-defined role, which is cleanly separated from the roles other services play (Figure 8-1). This clean separation means that, even in the face of rapid requirement churn, it’s unlikely the SSO service will need to change. It exists in a tightly bounded context.
 
@@ -56,7 +54,7 @@ This leads to two fundamental differences between services and shared libraries:
 
 Data sits at the very heart of this problem: most business services inevitably rely heavily on one another’s data. If you’re an online retailer, the stream of orders, the product catalog, or the customer information will find its way into the requirements of many of your services. Each of these services needs broad access to these datasets to do its work, and there is no temporary workaround for not having the data you need. So you need access to shared datasets, but you also want to stay loosely coupled. This turns out to be a pretty hard bargain to strike.
 
-### The Data Dichotomy
+## The Data Dichotomy
 
 Encapsulation encourages us to hide data, but data systems have little to do with encapsulation. In fact, quite the opposite: databases do everything they can to expose the data they hold (Figure 8-2). They come with wonderfully powerful, declarative interfaces that can contort the data they hold into pretty much any shape you might desire. That’s exactly what a data scientist needs for an exploratory investigation, but it’s not so great for managing the spiral of interservice dependencies in a burgeoning service estate.
 
@@ -66,11 +64,11 @@ Encapsulation encourages us to hide data, but data systems have little to do wit
 
 So we find ourselves faced with a conundrum, a dichotomy: databases are about exposing data and making it useful. Services are about hiding it so they can stay decoupled. These two forces are fundamental. They underlie much of what we do, subtly jostling for supremacy in the systems we build.
 
-### What Happens to Systems as They Evolve?
+## What Happens to Systems as They Evolve?
 
 As systems evolve and grow we see the effects of this data dichotomy play out in a couple of different ways.
 
-#### The God Service Problem
+### The God Service Problem
 
 As data services grow they inevitably expose an increasing set of functions, to the point where they start to look like some form of kooky, homegrown database (Figure 8-3).
 
@@ -80,7 +78,7 @@ As data services grow they inevitably expose an increasing set of functions, to 
 
 Now creating something that looks like a kooky, shared database can lead to a set of issues of its own. The more functionality, data, and users data services have, the more tightly coupled they become and the harder (and more expensive) they are to operate and evolve.
 
-#### The REST-to-ETL Problem
+### The REST-to-ETL Problem
 
 A second, often more common, issue when you’re faced with a data service is that it actually becomes preferable to suck the data out so it can be held and manipulated locally (Figure 8-4). There are lots of reasons for this to happen in practice, but some of the main ones are:
 
@@ -108,7 +106,7 @@ So a cyclical pattern of behavior emerges between (a) the drive to centralize da
 
 *Figure 8-5. The cycle of data inadequacy*
 
-### Make Data on the Outside a First-Class Citizen
+## Make Data on the Outside a First-Class Citizen
 
 To address these various issues, we need to think about shared data in a slightly different way. We need to consider it a first-class citizen of the architectures we build. Pat Helland makes this distinction in his paper “Data on the Inside and Data on the Outside.”
 
@@ -138,11 +136,11 @@ A better solution is to use a replayable log like Kafka. This works like a kind 
 
 *Figure 8-8. Callout illustration accompanying the discussion on PDF page 10*
 
-### Don’t Be Afraid to Evolve
+## Don’t Be Afraid to Evolve
 
 When you start a new project, form a new department, or launch a new company, you don’t need to get everything right from the start. Most projects evolve. They start life as monoliths, and later they add distributed components, evolve into microservices, and add event streaming. The important point is when the approach becomes constraining, you change it. But experienced architects know where the tipping point for this lies. Leave it too late, and change can become too costly to schedule. This is closely linked with the concept of fitness functions in evolutionary architectures.[^p11-4]
 
-### Summary
+## Summary
 
 Patterns like microservices are opinionated when it comes to services being independent: services are run by different teams, have different deployment cycles, don’t share code, and don’t share databases. The problem is that replacing this with a web of RPC calls fails to address the question: how do services get access to these islands of data for anything beyond trivial lookups?
 
@@ -152,7 +150,7 @@ This leads to three core conclusions: (1) as architectures grow and systems beco
 
 This approach can keep data across many services in sync, through a loosely coupled interface, giving them the freedom to slice, dice, enrich, and evolve data locally.
 
-### Notes
+## Notes
 
 [^p2-1]: Tom DeMarco, *Slack: Getting Past Burnout, Busywork, and the Myth of Total Efficiency* (New York: Broadway Books, 2001).
 

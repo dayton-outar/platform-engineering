@@ -1,6 +1,4 @@
-# Chapter 16
-
-## Common Failure Patterns
+# Common Failure Patterns
 
 Source: [Designing.Distributed.Systems-2025-16.pdf](./Designing.Distributed.Systems-2025-16.pdf), PDF pages 1–12.
 
@@ -8,7 +6,7 @@ First-person accounts and opinions in this document reflect the original source 
 
 So far this repository has covered various patterns to help you build your distributed system. This document is going to be a little different. Instead of helping you know what to do, it is intended to help you know what *not* to do. Over numerous years of developing, operating, and debugging systems, certain kinds of problems repeat themselves. These patterns are divided into mistakes that are made in building the systems, as well as common ways in which systems fail. By understanding both what not to do and what to try to prevent, we can learn from these shared mistakes and prevent them from repeating in the future.
 
-### The Thundering Herd
+## The Thundering Herd
 
 The thundering herd derives its name from the metaphor of a bison or other large animal on the prairie. Individually they may be manageable, but when moving together, charging, they are capable of destroying anything they are directed toward. The easiest way to understand the thundering herd is to imagine yourself interacting with a website that is not behaving properly. You attempt to navigate to a particular location, the loading progress bar spins slowly, not making very much progress, eventually you become impatient and you hit the reload button. You may not know it, but you have become the thundering herd.
 
@@ -20,19 +18,19 @@ Exponential backoff is good, but it is imperfect; in addition to exponential bac
 
 The final and most comprehensive way to solve the thundering herd is to add a *circuit breaker* to your client. The circuit breaker is something that trips when error rates exceed some threshold and stops all traffic for a period of time, giving the system time to recover. Finally, to aid in recovery, sometimes it is also necessary to only gradually let traffic back into the system. Many systems can be stable under high load but must be brought up to that load level gradually. Dumping 100% of the traffic on a server all at once can simply reintroduce the thundering herd.
 
-### The Absence of Errors Is an Error
+## The Absence of Errors Is an Error
 
 We will move from problems of too much traffic to problems caused by too little traffic. When building a system, it is common to build monitoring and alerts to fire when there are too many errors in the system. Obviously, too many errors is a problem that requires a person to look into the system, determine the cause of the errors, and restore the service. But what about too few errors? Though it can seem counter-intuitive, some small number of errors is the steady state for most distributed systems. It is generally very hard and not worth the effort to prevent any errors from ever occurring; thus, there is a low level of ambient errors that are handled by retry and other error-correction systems. Consequently, the absence of *any* errors is more likely to indicate a serious problem rather than that everything is awesome.
 
 To understand how this can happen, imagine monitoring a system which adds subtitles to movies that are uploaded to a storage bucket. Whenever a movie is uploaded, the system performs speech to text and translation to add subtitles and then stores the new movie back into the storage bucket. Imagine what happens when the process that uploads movies accidentally loses permissions to upload those movies. If you are only monitoring for conditions where errors are greater than some percentage (say, 10%), then you will never alert for this condition. If the uploader cannot upload movies, then no movies are being processed, so no errors can occur, so your error rate is 0%. But clearly, if your uploader can’t upload movies, your system is broken. Alerting on both too many and too few errors (or too few requests generally) will enable you to catch (and fix) such problems in your systems.
 
-### “Client” and “Expected” Errors
+## “Client” and “Expected” Errors
 
 The next pattern considered is also related to errors in the system, but this time related to ways in which we feel OK ignoring errors. Many systems take in user input and requests for processing. In such systems, it is possible for users (or clients generally) to send requests which are invalid or unprocessable in some way. When calculating the reliability of a service, it’s clearly problematic to treat errors caused by bad client requests as true errors, since the service isn’t in control of what the clients send. While this is true in general, in practice such “not my problem” buckets become convenient places to ignore true system errors. Imagine, for example, something as simple as an authorization error. Certainly a user not being authorized to make a request is a “client” error and doesn’t indicate a problem with reliability. But what if suddenly *all* users are unauthorized? That’s probably a problem with our authorization code. But if you treat all unauthorized errors as “user errors” and you don’t look for anomalies like all users failing authorization, you probably won’t alert when you break your authorization code.
 
 The same thing can be true of “expected” errors. I mentioned in [The Absence of Errors Is an Error](COMMON.FAILURE.PATTERNS.md#the-absence-of-errors-is-an-error) that there’s a certain level of errors that are expected in the system, but for synthetic requests that you create, that’s not true. When monitoring a system, it is also important to monitor real client requests where some small percentage of errors is expected and also to write *synthetic* or system-generated requests, which you control entirely. With synthetic requests, you control both the client and server side of the interactions and, consequently, there should never be any “client” or “expected” errors for those requests. By combining monitoring of real traffic with monitoring of synthetic requests, you can quickly identify situations where your code changes are causing errors which would otherwise be ignored as client errors.
 
-### Versioning Errors
+## Versioning Errors
 
 Whenever you are building software, you are going to need to iterate and make changes to that software; but clients require and expect consistency in how they interact with your systems. If you need to update every client at the exact same time as you update your system, you haven’t actually built a decoupled, distributed system. Any system is made up of the external API that it exposes to clients and the internal in-memory representation of that API. At first glance, it seems that the best solution is to make these two representations the same. If they are different, then translation logic needs to be applied to take the external representation to the internal representation and vice versa. And of course, when you start out, the external and internal representations are identical.
 
@@ -42,7 +40,7 @@ Though the benefits of this separation are often seen in supporting multiple cli
 
 Even though it may seem overly complicated to begin with, building every application with an external (client) version, an internal (in-memory) version, and a storage (on-disk or database) version as well as the logic to translate between them pays significant dividends in decoupling and agility that will benefit your application in the long run.
 
-### The Myth of Optional Components
+## The Myth of Optional Components
 
 Distributed systems are organic systems. We may design them in one way to start, but over time and in reaction to outages, scale challenges, and business changes, they morph and adapt to meet new requirements. One of the most common changes is the addition of caches in various locations to improve performance and reduce load.
 
@@ -54,7 +52,7 @@ One of the most common ways that this manifests is in the difference between a l
 
 Additionally, as discussed in [AI Inference and Serving](AI.INFERENCE.SERVING.md) on caching, local caches are very bad at optimizing memory usage. Consequently, if you ever find yourself adding a local “optional” cache or any other theoretically “optional” component to your system, accept that you are actually making a permanent (and very required) change to your overall distributed system that deserves the attention of any other significant change or refactor.
 
-### Oops, We “Cleaned Up” Everything
+## Oops, We “Cleaned Up” Everything
 
 In any real system, it’s an unfortunate truth that errors occur. Bugs and failures are bound to happen. Given this, it is often important to consider how errors and failures might impact the overall state of the system that we are building. When doing this, it is important to think about more than just the operation of the individual pieces that make up the system, but also to think in terms of how all of these pieces interact together to manage the entire distributed system. Failing to anticipate how these systems might interact together in the presence of a failure is a common cause of severe problems. One of the most severe is a runaway deletion of a system because of some sort of unanticipated interaction effect.
 
@@ -80,7 +78,7 @@ This leads us to the second failing: the process or technical failure in the sys
 
 Such accidentally “we cleaned up everything” scenarios are actually surprisingly common, because as developers we tend to focus on the happy path where everything is working correctly. In that world, the call to the user API can never return a wrong answer. Experience in distributed systems teaches us that we always need to be thinking about a world where things are going right, but also what happens when things go wrong.
 
-### Challenges with the Breadth of Inputs
+## Challenges with the Breadth of Inputs
 
 One of the most disappointing kinds of failures is the failure that slips through all of your testing and goes undetected until a customer notices it. Such failures are frustrating to your customers. “Don’t you test your code?” is a hard question to answer well in such cases. They are equally embarrassing because often they sit in your codebase for a long time before someone notices and/or complains loud enough to get you to notice.
 
@@ -98,7 +96,7 @@ The second solution is to use fully randomized or “fuzzed” data for your inp
 
 The combination of testing previously seen inputs as well as using fuzzed data can help ensure that your new code won’t break existing users and that it is hardened against possible attacks via random or maliciously crafted command inputs.
 
-### Processing Obsolete Work
+## Processing Obsolete Work
 
 We’ve all been faced with an unresponsive computer system: an email system where searching isn’t working, a retail site which refuses to load the next page. This document is full of the many different ways in which systems can fail to operate correctly. Faced with these failing systems, what do we all do? We hit the *reload* button. And thus, an additional way to fail has been created for our services.
 
@@ -118,7 +116,7 @@ The final approach is to explicitly prioritize newer requests over older request
 
 Designing reliable distributed systems means not only designing systems that prevent failures from occurring, but also systems that recover quickly when failures do occur. Users are far more accepting of short outages when the system recovers quickly than prolonged outages where recovery takes a long time, even after the problem is “fixed.”
 
-### The “Second System” Problem
+## The “Second System” Problem
 
 So far we have seen numerous common problems that arise in distributed systems. As you have read through this document, you may have recognized several different problems that are present in your current system. Seeing the possibility of failures, you are eager to improve the system, but how can you do it?
 
@@ -134,6 +132,6 @@ Given that there are probably design problems or technical debt in your distribu
 
 Much like many other aspects of our lives, the urge to throw away the old and build something new, while tempting, is ultimately far less successful than adapting and improving our existing systems to meet the new needs of our businesses and our users.
 
-### Summary
+## Summary
 
 This document is unlike any of the others; instead of discussing how to build, it discusses how *not* to build. Hopefully, seeing the common ways that distributed systems fail helps you find problems in your existing systems and also to build more reliable new systems. Learning from the failures of others prevents you from making these common mistakes in your systems.

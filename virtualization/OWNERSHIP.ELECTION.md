@@ -1,6 +1,4 @@
-# Chapter 10
-
-## Ownership Election
+# Ownership Election
 
 Source: [Designing.Distributed.Systems-2025-10.pdf](./Designing.Distributed.Systems-2025-10.pdf), PDF pages 1–13.
 
@@ -20,7 +18,7 @@ A general diagram of distributed ownership is shown in Figure 10-1. In the diagr
 
 Often, establishing distributed ownership is both the most complicated and most important part of designing a reliable distributed system.
 
-### Determining If You Even Need Leader Election
+## Determining If You Even Need Leader Election
 
 The simplest form of ownership is to just have a single replica of the service. Since there is only one instance running at a time, that instance implicitly owns everything without any need for election. This has advantages of simplifying your application and deployment, but it has disadvantages in terms of downtime and reliability.
 
@@ -42,7 +40,7 @@ Regardless, there are many applications (e.g., background asynchronous processin
 
 The significant downside of just using a singleton is that for the period that the leader is down, your entire application will be unable to process requests. While you may be able to achieve a reasonable uptime measured across a day, for the seconds or minutes that you might be down, your service is completely down. For a system which is interactive, like a game, retail, or banking system, being completely down even for a short period of time will likely lead to significant customer dissatisfaction.
 
-### The Basics of Leader Election
+## The Basics of Leader Election
 
 Imagine that there is a service *Foo* with three replicas: *Foo-1*, *Foo-2*, and *Foo-3*. There is also some object *Bar* that must only be “owned” by one of the replicas (e.g., *Foo-1*) at a time. Often this replica is called the *leader*, hence the term *leader election* used to describe the process of how this leader is selected as well as how a new leader is selected if that leader fails.
 
@@ -77,7 +75,7 @@ In addition to compare-and-swap, the key-value stores allow you to set a time-to
 
 Put together, these functions are sufficient to implement a variety of distributed synchronization primitives.
 
-#### Hands On: Deploying etcd
+### Hands On: Deploying etcd
 
 etcd is a distributed lock server originally developed by CoreOS and now donated to the Cloud Native Computing Foundation (CNCF) and maintained by the community. It is robust and proven in production at high scale, and is used by a variety of projects, including Kubernetes.
 
@@ -98,7 +96,7 @@ helm install my-release oci://registry-1.docker.io/bitnamicharts/etcd
 
 Once the etcd chart is installed, you can use kubectl get pods to see the replicas in your etcd cluster.
 
-#### Implementing Locks
+### Implementing Locks
 
 The simplest form of synchronization is the mutual exclusion lock (a.k.a. mutex). Anyone who has done concurrent programming on a single machine is familiar with locks, and the same concept can be applied to distributed replicas. Instead of local memory and assembly instructions, these distributed locks can be implemented in terms of the distributed key-value stores described previously.
 
@@ -217,7 +215,7 @@ func (Lock l) unlock() {
 
 This ensures that the lock is only unlocked if the TTL has not expired. The lock cannot be unlocked accidentally if someone else has acquired it after the TTL expired. In such a case, the new owner of the lock has to have written a value into the storage system which results in a new resource version, and our attempt to unlock using the old resource version will fail.
 
-#### Hands On: Implementing Locks in etcd
+### Hands On: Implementing Locks in etcd
 
 To implement locks in etcd, you can use a key as the name of the lock and pre-condition writes to ensure that only one lock holder is allowed at a time. For simplicity, we’ll use the etcdctl command line to lock and unlock the lock. In reality, of course, you would want to use a programming language; there are etcd clients for most popular programming languages.
 
@@ -259,7 +257,7 @@ kubectl exec my-etcd-cluster-0000 -- sh -c \
       set --swap-with-value alice my-lock unlocked"
 ```
 
-#### Implementing Ownership
+### Implementing Ownership
 
 While locks are great for establishing temporary ownership of some critical component, sometimes you want to take ownership for the duration of the time that the component is running. For example, in a highly available deployment of Kubernetes, there are multiple replicas of the scheduler but only one replica is actively making scheduling decisions. Further, once it becomes the active scheduler, it remains the active scheduler until that process fails for some reason.
 
@@ -289,7 +287,7 @@ for {
 
 Of course, you need to implement the handleLockLost() function so that it terminates all activity that required the lock in the first place. In a container orchestration system, the easiest way to do this may simply be to terminate the application and let the orchestrator restart it. This is safe, because some other replica has grabbed the lock in the interim, and when the restarted application comes back online it will become a secondary listener waiting for the lock to become free.
 
-#### Hands On: Implementing Leases in etcd
+### Hands On: Implementing Leases in etcd
 
 To see how we implement leases using etcd, we will return to our earlier locking example and add the --ttl=<seconds> flag to our lock create and update calls. The ttl flag defines a time after which the lock that we create is deleted. Because the lock disappears after the ttl expires, instead of creating with the value of *unlocked*, we will assume that the absence of the lock means that it is unlocked. To do this, we use the mk command instead of the set command. etcdctl mk only succeeds if the key does *not* currently exist.
 
@@ -315,7 +313,7 @@ It may seem odd that Alice is continually rewriting her own name into the lock, 
 
 If, for some reason, the TTL expires, then the lock update will fail, and Alice will go back to creating the lock using the etcd mk command, or Bob may also use the mk command to obtain the lock for himself. Bob will likewise need to set and update the lock every 10 seconds to maintain ownership.
 
-### Handling Concurrent Data Manipulation
+## Handling Concurrent Data Manipulation
 
 Even with all of the locking mechanisms we have described, it is still possible for two replicas to simultaneously believe they hold the lock for a very brief period of time. To understand how this can happen, imagine that the original lock holder becomes so overwhelmed that its processor stops running for minutes at a time. This can happen on extremely overscheduled machines. In such a case, the lock will time out and some other replica will own the lock. Now the processor frees up the replica that was the original lock holder. Obviously, the handleLockLost() function will quickly be called, but there will be a brief period where the replica still believes it holds the lock. Although such an event is fairly unlikely, systems need to be built to be robust to such occurrences. The first step to take is to double-check that the lock is still held, using a function like this:
 
@@ -357,6 +355,6 @@ Such sequences of events seem byzantine, but in reality, in any large system the
 
 Ultimately, in designing a distributed ownership system, you have to choose between at-most once processing, which is possible, but requires you to possibly lose availability for a period of time. Or you can have at least once processing, which can provide higher availability, but will occasionally result in double processing of some request. Depending on the type of system you are building, duplicate processing may simply waste some resources (e.g., compute time on a GPU); in which case, if it is infrequent, it is likely acceptable. However, some systems may involve actual transactions (e.g., transferring money between accounts) where you would rather lose availability but preserve consistency. Understanding these trade-offs is a critical part of distributed system design.
 
-### Summary
+## Summary
 
 In this document we have explored one of the most complicated parts of distributed system design, distributed ownership and locks. While parallel concurrent processing is a key part of building reliable, scalable systems, the concurrency also introduces challenges in systems where ownership of specific work is important. Distributed ownership or locks enable pieces of your distributed system to maintain exclusive access to a particular part of the data store or compute operations. Implementing locks involves interacting with consensus-based distributed storage, like etcd or ZooKeeper, with very specific coding patterns. In many languages, code for distributed locks have already been implemented. Since writing this code yourself is a challenge, if there’s already a library for your programming language, it’s a best practice to rely on pre-existing production-grade code. Finally, some simple systems don’t need locks and can get away with using Singletons and in-process concurrency. Such systems trade availability for simplicity.

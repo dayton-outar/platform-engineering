@@ -1,6 +1,4 @@
-# Chapter 6
-
-## Replicated Load-Balanced Services
+# Replicated Load-Balanced Services
 
 Source: [Designing.Distributed.Systems-2025-6.pdf](./Designing.Distributed.Systems-2025-6.pdf), PDF pages 1–13.
 
@@ -8,7 +6,7 @@ First-person accounts and opinions in this document reflect the original source 
 
 The simplest distributed pattern, and one that most are familiar with, is a replicated load-balanced service. In such a service, every server is identical to every other server, and all are capable of supporting traffic from any client. The pattern consists of a scalable number of servers with a load balancer in front of them. The load balancer is typically either completely round-robin or uses some form of session stickiness. This document gives a concrete example of how to deploy such a service in Kubernetes.
 
-### Stateless Services
+## Stateless Services
 
 Stateless services are ones that don’t require saved state to operate correctly. In the simplest stateless applications, even individual requests may be routed to separate instances of the service (see Figure 6-1). Examples of stateless services include things like static content servers and complex middleware systems that receive and aggregate responses from numerous different backend systems.
 
@@ -26,11 +24,11 @@ As services grow larger, they are also replicated to support additional users. *
 
 *Figure 6-2. Horizontal scaling of a replicated stateless application*
 
-#### Readiness Probes for Load Balancing
+### Readiness Probes for Load Balancing
 
 Of course, simply replicating your service and adding a load balancer is only part of a complete pattern for stateless replicated serving. When designing a replicated service, it is equally important to build and deploy a readiness probe to inform the load balancer. We have discussed how health probes can be used by a container orchestration system to determine when an application needs to be restarted. In contrast, a *readiness probe* determines when an application is ready to serve user requests. The reason for the differentiation is that many applications require some time to become initialized before they are ready to serve. They may need to connect to databases, load plugins, or download serving files from the network. In all of these cases, the containers are *alive*, but they are not *ready*. When building an application for a replicated service pattern, be sure to include a special URL that implements this readiness check.
 
-#### Hands On: Creating a Replicated Service in Kubernetes
+### Hands On: Creating a Replicated Service in Kubernetes
 
 The instructions below give a concrete example of how to deploy a stateless replicated service behind a load balancer. These directions use the Kubernetes container orchestrator, but the pattern can be implemented on top of a number of different container orchestrators.
 
@@ -103,7 +101,7 @@ Once you have the configuration file, you can create the dictionary service with
 kubectl create -f dictionary-service.yaml
 ```
 
-### Session Tracked Services
+## Session Tracked Services
 
 The previous examples of the stateless replicated pattern routed requests from all users to all replicas of a service. While this ensures an even distribution of load and fault tolerance, it is not always the preferred solution. Often there are reasons for wanting to ensure that a particular user’s requests always end up on the same machine. Sometimes this is because you are caching that user’s data in memory, so landing on the same machine ensures a higher cache hit rate. Sometimes it is because the interaction is long-running in nature, so some amount of state is maintained between requests. Regardless of the reason, an adaption of the stateless replicated service pattern is to use session tracked services, which ensure that all requests for a single user map to the same replica, as illustrated in Figure 6-3.
 
@@ -121,11 +119,11 @@ Generally speaking, this session tracking is performed by hashing the source and
 
 Often, session tracking is accomplished via a *consistent hashing function*. The benefit of a consistent hashing function becomes evident when the service is scaled up or down. Obviously, when the number of replicas changes, the mapping of a particular user to a replica may change. Consistent hashing functions minimize the number of users that actually change which replica they are mapped to, reducing the impact of scaling on your application.
 
-### Application-Layer Replicated Services
+## Application-Layer Replicated Services
 
 In all of the preceding examples, the replication and load balancing takes place in the network layer of the service. The load balancing is independent of the actual protocol that is being spoken over the network, beyond TCP/IP. However, many applications use HTTP as the protocol for speaking with each other, and knowledge of the application protocol that is being spoken enables further refinements to the replicated stateless serving pattern for additional functionality.
 
-### Introducing a Caching Layer
+## Introducing a Caching Layer
 
 Sometimes the code in your stateless service is still expensive despite being stateless. It might make queries to a database to service requests or do a significant amount of rendering or data mixing to service the request. In such a world, a caching layer can make a great deal of sense. A cache exists between your stateless application and the end-user request. The simplest form of caching for web applications is a caching web proxy. The caching proxy is simply an HTTP server that maintains the correct responses to user requests in memory. If two users request the same web page or API call, only one request will go to your backend; the other will be serviced out of memory in the cache. This is illustrated in Figure 6-4.
 
@@ -135,7 +133,7 @@ Sometimes the code in your stateless service is still expensive despite being st
 
 For our purposes, we will use Varnish, an open source web cache.
 
-#### Deploying Your Cache
+### Deploying Your Cache
 
 The simplest way to deploy the web cache is alongside each instance of your web server using the sidecar pattern (see Figure 6-5).
 
@@ -155,7 +153,7 @@ Though this approach is simple, it has some disadvantages, namely that you will 
 
 *Figure 6-10. Callout illustration accompanying the discussion on PDF page 7*
 
-#### Hands On: Deploying the Caching Layer
+### Hands On: Deploying the Caching Layer
 
 The dictionary-server service we built earlier distributes traffic to the dictionary server and is discoverable as the DNS name dictionary-server. This pattern is illustrated in Figure 6-7.
 
@@ -249,11 +247,11 @@ which you can create with:
 kubectl create -f varnish-service.yaml
 ```
 
-### Expanding the Caching Layer
+## Expanding the Caching Layer
 
 Now that we have inserted a caching layer into our stateless replicated service, let’s look at what this layer can provide beyond standard caching. HTTP reverse proxies like Varnish are generally pluggable and can provide a number of advanced features that are useful beyond caching.
 
-#### Rate Limiting and Denial-of-Service Defense
+### Rate Limiting and Denial-of-Service Defense
 
 Few of us build sites with the expectation that we will encounter a denial-of-service attack. But as more and more of us build APIs, a denial of service can come simply from a developer misconfiguring a client or a site-reliability engineer accidentally running a load test against a production installation. Thus, it makes sense to add general denial-of-service defense via rate limiting to the caching layer. Most HTTP reverse proxies like Varnish have capabilities along this line. In particular, Varnish has a throttle module that can be configured to provide throttling based on IP address and request path, as well as whether or not a user is logged in.
 
@@ -267,7 +265,7 @@ When a user hits the rate limit, the server will return the 429 error code indic
 
 *Figure 6-11. Callout illustration accompanying the discussion on PDF page 10*
 
-#### SSL Termination
+### SSL Termination
 
 In addition to performing caching for performance, one of the other common tasks performed by the edge layer is SSL termination. Even if you plan on using SSL for communication between layers in your cluster, you should still use different certificates for the edge and your internal services. Indeed, each individual internal service should use its own certificate to ensure that each layer can be rolled out independently. Unfortunately, the Varnish web cache can’t be used for SSL termination, but fortunately, the nginx application can. Thus, we want to add a third layer to our stateless application pattern, which will be a replicated layer of nginx servers that will handle SSL termination for HTTPS traffic and forward traffic on to our Varnish cache. HTTP traffic continues to travel to the Varnish web cache, and Varnish forwards traffic on to our web application, as shown in Figure 6-8.
 
@@ -275,7 +273,7 @@ In addition to performing caching for performance, one of the other common tasks
 
 *Figure 6-8. Complete replicated stateless serving example*
 
-#### Hands On: Deploying nginx and SSL Termination
+### Hands On: Deploying nginx and SSL Termination
 
 The following instructions describe how to add a replicated SSL terminating nginx to the replicated service and cache that we previously deployed.
 
@@ -395,7 +393,7 @@ kubectl get services
 
 You should then be able to access the service with your web browser.
 
-### Summary
+## Summary
 
 This document began with a simple pattern for replicated stateless services. Then we saw how this pattern grows with two additional replicated load-balanced layers to provide caching for performance and SSL termination for secure web serving. This complete pattern for stateless replicated serving is shown in Figure 6-8.
 

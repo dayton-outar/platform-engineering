@@ -1,6 +1,4 @@
-# Chapter 6
-
-## Processing Events with Stateful Functions
+# Processing Events with Stateful Functions
 
 Source: [Designing.Event-Driven.Systems-2018-6.pdf](./Designing.Event-Driven.Systems-2018-6.pdf), PDF pages 1–8.
 
@@ -32,7 +30,7 @@ But streaming approaches also inherit some of the downsides. Purely functional l
 
 In the next section we’ll look more closely at why statefulness, in the context of stream processing, matters.
 
-### Making Services Stateful
+## Making Services Stateful
 
 There is a well-held mantra that statelessness is good, and for good reason. Stateless services start instantly (no data load required) and can be scaled out linearly, cookie-cutter-style.
 
@@ -46,7 +44,7 @@ Sometimes this style of stateless processing happens naturally; other times impl
 
 This should seem a bit counterintuitive. Why would you want to make a service stateful? Another way to look at this is as an advanced form of caching that better suits data-intensive workloads. To make this clearer, let’s look at three examples —one that uses database lookups, one that is event-driven but stateless, and one that is event-driven but stateful.
 
-#### The Event-Driven Approach
+### The Event-Driven Approach
 
 Say we have an email service that listens to an event stream of orders and then sends confirmation emails to users once they complete a purchase. This requires information about both the order as well as the associated payment. Such an email service might be created in a number of different ways. Let’s start by assuming it’s a simple event-driven service (i.e., no use of a streaming API, as in Figure 6-1). It might react to order events, then look up the corresponding payment. Or it might do the reverse: reacting to payments, then looking up the corresponding order. Let’s assume the former.
 
@@ -60,7 +58,7 @@ So a single event stream is processed, and lookups that pull in any required dat
 
 - The payment and order are created at about the same time, so one might arrive before the other. This means that if the order arrives in the email service before the payment is available in the database, then we’d have to either block and poll until it becomes available or, worse, skip the email processing completely.
 
-#### The Pure (Stateless) Streaming Approach
+### The Pure (Stateless) Streaming Approach
 
 A streaming system comes at this problem from a slightly different angle. The streams are buffered until both events arrive, and can be joined together (Figure 6-2).
 
@@ -74,7 +72,7 @@ The second point turns out to be particularly important. When you’re working w
 
 Finally, note that this approach isn’t, strictly speaking, stateless. The buffer actually makes the email service stateful, albeit just a little. When Kafka Streams restarts, before it does any processing, it will reload the contents of each buffer. This is important for achieving deterministic results. For example, the output of a join operation is dependent on the contents of the opposing buffer when a message arrives.
 
-#### The Stateful Streaming Approach
+### The Stateful Streaming Approach
 
 Alas, the data flowing through the various event streams isn’t always enough— sometimes you need lookups or enrichments. For example, the email service would need access to the customer’s email address. There will be no recent event for this (unless you happened to be very lucky and the customer just updated their details). So you’d have to look up the email address in the customer service via, say, a REST call (Figure 6-3).
 
@@ -110,7 +108,7 @@ But in the streaming approach, data is constantly pushed into the UI (Figure 6-5
 
 *Figure 6-5. Stateful stream processing is used to materialize data inside a web server so that the UI can access it locally for better performance, in this case via a scrollable grid*
 
-#### The Practicalities of Being Stateful
+### The Practicalities of Being Stateful
 
 Being stateful comes with some challenges: when a new node starts, it must load all stateful components (i.e., state stores) before it can start processing messages, and in the worst case this reload can take some time. To help with this problem, Kafka Streams provides three mechanisms for making being stateful a bit more practical:
 
@@ -128,12 +126,12 @@ Kafka Streams uses intermediary topics, which can be reset and rederived using t
 
 *Figure 6-6. Callout illustration accompanying the discussion on PDF page 8*
 
-### Summary
+## Summary
 
 This document covers three different ways of doing event-based processing: the simple event-driven approach, where you process a single event stream one message at a time; the streaming approach, which joins different event streams together; and finally, the stateful streaming approach, which turns streams into tables and stores data in the log.
 
 So instead of pushing the state problem down a layer into a database, stateful stream processors, like Kafka’s Streams API, are proudly stateful. They make data available wherever it is required. This increases performance and autonomy. No remote calls needed!
 
-### Notes
+## Notes
 
 [^p8-1]: See *http://bit.ly/2GaCRZO* and *http://bit.ly/2IUPHJa*.

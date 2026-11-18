@@ -1,12 +1,10 @@
-# Chapter 10
-
-## Web Security for Developers-2020
+# Web Security for Developers-2020
 
 Source: [Web.Security.for.Developers-2020-10.pdf](Web.Security.for.Developers-2020-10.pdf) — 10 PDF pages.
 
 First-person accounts and opinions in this document are those of the original source author.
 
-### Session Hijacking
+## Session Hijacking
 
 ![Figure 10-1: Chapter-opening artwork](/.attachments/10-1-Web.Security.for.Developers-2020-10.png)
 
@@ -20,7 +18,7 @@ Session hijacking vulnerabilities are generally a bigger risk than the authentic
 
 In this document, you’ll first look at how websites implement session management. Then you’ll learn about the three ways hackers hijack sessions: cookie theft, session fixation, and taking advantage of weak session IDs.
 
-### How Sessions Work
+## How Sessions Work
 
 To understand how an attacker hijacks a session, you first need to understand what happens when a user and a web server open a session.
 
@@ -32,7 +30,7 @@ Besides the username, the web server typically stores other *session state* alon
 
 Now that we understand what happens when users and web servers open a session, let’s look at how websites implement these sessions. There are two common implementations, typically described as server-side sessions and client-side sessions. Let’s review how these methods work, so you can see where the vulnerabilities occur.
 
-### Server-Side Sessions
+## Server-Side Sessions
 
 In a traditional model of session management, the web server keeps the session state in memory, and both the web server and browser pass the session identifier back and forth. This is called a *server-side session*. Listing 10-1 shows the Ruby on Rails implementation of server-side sessions.
 
@@ -75,7 +73,7 @@ That means that at authentication time, only *one* of the web servers will know 
 
 Typically, this requires writing session state to a shared cache or to a database with every request, and having each web server read that cached session state when a new HTTP request comes through. Both of these are time- and resource-consuming operations that can limit the responsiveness of sites with large userbases, since each user added to the website adds a significant load to the session store.
 
-### Client-Side Sessions
+## Client-Side Sessions
 
 Because server-side sessions have proven difficult to scale for large sites, web server developers invented client-side sessions. A web server implementing *client-side sessions* passes all session state in the cookie, instead of passing back just the session ID in the `Set-Cookie` header. The server serializes session state to text before the session state is set in the HTTP header. Often, web servers encode the session state as JavaScript Object Notation (JSON)—and deserialize it when returning it to the server. Listing 10-2 shows an example of Ruby on Rails implementing a client-side session.
 
@@ -105,11 +103,11 @@ Another, slightly more lightweight approach to securing session cookies is to ad
 
 Signing cookies rather than encrypting them still allows a nosy user to read the session data in a browser debugger. Bear this in mind if you’re storing data about a user—like tracking information—that you might not want them to see!
 
-### How Attackers Hijack Sessions
+## How Attackers Hijack Sessions
 
 Now that we’ve discussed sessions and how websites implement them, let’s look at how attackers hijack sessions. Attackers use three main methods to hijack sessions: cookie theft, session fixation, and taking advantage of weak session IDs.
 
-### Cookie Theft
+## Cookie Theft
 
 With the use of cookies being so widespread nowadays, attackers normally achieve session hijacking by stealing the value of a `Cookie` header from an authenticated user. Attackers usually steal cookies by using one of three techniques: injecting malicious JavaScript into a site as the user interacts with it (cross-site scripting), sniffing network traffic in order to intercept HTTP headers (a man-in-the-middle attack), or triggering unintended HTTP requests to the site when they’ve already authenticated (cross-site request forgery).
 
@@ -123,7 +121,7 @@ Set-Cookie: session_id=278283910977381992837; HttpOnly; Secure; SameSite=Lax
 
 Let’s review the three techniques of cookie theft, as well as the keywords that can mitigate them.
 
-### Cross-Site Scripting
+## Cross-Site Scripting
 
 Attackers often use *cross-site scripting* (which we discussed in detail in [Cross Site Scripting Attacks](CROSS.SITE.SCRIPTING.ATTACKS.md)) to steal session cookies. An attacker will try to use JavaScript injected into a user’s browser to read the user’s cookies and send them to an external web server that the attacker controls. The attacker will then *harvest* these cookies as they appear in the web server’s log file, and then cut and paste the cookie values into a browser session—or more likely, add them to a script—to perform actions under the hacked user’s session.
 
@@ -137,7 +135,7 @@ Set-Cookie: session_id=278283910977381992837; HttpOnly
 
 There’s rarely a good reason to allow client-side JavaScript access to cookies, so there are very few downsides to this approach.
 
-### Man-in-the-Middle Attacks
+## Man-in-the-Middle Attacks
 
 An attacker can also steal cookies by using a *man-in-the-middle attack*: the attacker finds a way to sit between the browser and the web server and read network traffic as it passes back and forth. To protect against cookie theft via man-in-the-middle attacks, your website should use HTTPS.
 
@@ -151,7 +149,7 @@ Set-Cookie: session_id=278283910977381992837; Secure
 
 Most web servers are configured to respond to both HTTP and HTTPS, but will redirect HTTP URLs to the HTTPS equivalent. Marking your cookies as `Secure` will keep the browser from transmitting the cookie data until the redirect has occurred.
 
-### Cross-Site Request Forgery
+## Cross-Site Request Forgery
 
 The final way an attacker can hijack sessions is via *cross-site request forgery* (detailed in [Cross Site Request Forgery Attacks](CROSS.SITE.REQUEST.FORGERY.ATTACKS.md)). An attacker using CSRF doesn’t need to get access to a user’s session cookie. Instead, they simply need to trick the victim into clicking a link to your site. If the user already has a session open on your site, the browser will send their session cookie along with the HTTP request triggered by the link, which might result in the user inadvertently performing a sensitive action (such as Liking an item the hacker is attempting to promote).
 
@@ -175,7 +173,7 @@ Set-Cookie: session_id=278283910977381992837; SameSite=Lax
 
 This `SameSite=Lax` setting instructs the browser to attach cookies to inbound `GET` requests, while stripping them from other request types. Because websites usually perform sensitive actions (such as writing content or sending messages) through `POST`, `PUT`, or `DELETE` requests, an attacker can’t trick a victim into performing these types of sensitive actions.
 
-### Session Fixation
+## Session Fixation
 
 In the early history of the internet, many browsers didn’t implement cookies, so web servers found other ways to pass session IDs. The most popular way of doing this was by *URL rewriting*—appending the session ID to each URL the user visited. To this day, the *Java Servlet Specification* describes how developers can add session IDs to the end of the URL when cookies aren’t available. Listing 10-8 shows an example of a URL rewritten to include a session ID.
 
@@ -203,7 +201,7 @@ If your web server supports URL rewriting as a means of session tracking, you sh
 
 *Listing 10-9: Specifying the session tracking to use the* `COOKIE` *mode in Apache Tomcat 7.0 will disable URL rewriting.*
 
-### Taking Advantage of Weak Session IDs
+## Taking Advantage of Weak Session IDs
 
 As we’ve already discussed, if an attacker gets access to a session ID, they can hijack a user’s session. They can do this by stealing a session cookie or by fixating a session ahead of time for servers that support URL rewriting. However, a more brute-force method is to simply *guess* the session ID. Because session IDs are typically just numbers, if these numbers are sufficiently small or predictable, an attacker can write a script to enumerate potential session IDs and test them against the web server until they find a valid session.
 
@@ -213,7 +211,7 @@ Early versions of the standard Apache Tomcat server were found to be vulnerable 
 
 Consult your web server’s documentation and ensure that it uses large session IDs that can’t be guessed, generated by a strong random number generation algorithm. Because security researchers frequently discover weak session ID algorithms before attackers can exploit them, make sure to also stay on top of security advisories, which will tell you when you need to patch vulnerabilities in your web stack.
 
-### Summary
+## Summary
 
 When a website successfully authenticates a user, the browser and the server open a session between them. Session state can be stored on the server side, or stored on the client side as an encrypted or digitally signed cookie.
 

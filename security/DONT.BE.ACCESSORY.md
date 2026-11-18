@@ -1,12 +1,10 @@
-# Chapter 16
-
-## Web Security for Developers-2020
+# Web Security for Developers-2020
 
 Source: [Web.Security.for.Developers-2020-16.pdf](Web.Security.for.Developers-2020-16.pdf) — 9 PDF pages.
 
 First-person accounts and opinions in this document are those of the original source author.
 
-### Don’t Be an Accessory
+## Don’t Be an Accessory
 
 ![Figure 16-1: Chapter-opening artwork](/.attachments/16-1-Web.Security.for.Developers-2020-16.png)
 
@@ -24,7 +22,7 @@ You saw in [XML Attacks](XML.ATTACKS.md) how hackers can use vulnerabilities in 
 
 Finally, you will look at the risk of malware being installed on your servers for use in a *botnet*. You may unknowingly be hosting zombie code that can be controlled remotely by an attacker!
 
-### Email Fraud
+## Email Fraud
 
 Email is sent using the *Simple Mail Transfer Protocol (SMTP)*. One major oversight in the original design of SMTP is that it does not have a mechanism for authentication: the sender of an email is able to attach *any* email address they want in the `From` header, and until relatively recently, there was no way for the receiving agent to verify that the sender is who they claim to be.
 
@@ -38,7 +36,7 @@ Thankfully, mail service providers have developed sophisticated algorithms for d
 
 Your website and organization likely send email from a custom domain, so the onus is on *you* to prevent your email from being marked as spam and to protect your users from malicious email that pretends to be from your domain. You have a couple of ways to do this: by implementing a Sender Policy Framework and by using DomainKeys Identified Mail when you generate email.
 
-### Implement a Sender Policy Framework
+## Implement a Sender Policy Framework
 
 Implementing a *Sender Policy Framework (SPF)* entails whitelisting the IP addresses that are authorized to send email from your web domain in the DNS. Because SMTP sits on top of the TCP, the IP address that an email is sent from cannot be spoofed in the same way as the `From` header. By explicitly whitelisting IP addresses in your domain name records, mail receiving agents will be able to verify that incoming mail originated from a permitted source.
 
@@ -52,7 +50,7 @@ v=spf1[1] ip4:192.0.2.0/24 ip4:198.51.100.123[2] a[3] -all[4]
 
 This record would be added as a *.txt* record in your domain name records. In this syntax, the `v=` argument [1] defines the version of SPF used. The `ip4` [2] and `a` [3] flags specify the systems permitted to send messages for the given domain: in this case, a range of IP addresses, and the IP address corresponding to the domain (indicated by the `a` flag) itself. The `-all` flag [4] at the end of the record tells mail providers that if the preceding mechanisms did not match, the message should be rejected.
 
-### Implement DomainKeys Identified Mail
+## Implement DomainKeys Identified Mail
 
 *DomainKeys* can be used to generate a digital signature for outgoing mail, to prove an email was legitimately sent from your domain and that it wasn’t modified in transit. *DomainKeys Identified Mail (DKIM)* uses public-key cryptography, signing outgoing messages from a domain with a private key and allowing recipients to validate the signature by using a public key hosted in DNS. Only the sender knows the private signing key, so only they can generate legitimate signatures. A mail receiving agent will recalculate the signature by combining the email’s content and the public signing key hosted on your domain. If the recalculated signature does not match the signature attached to the mail, the email will be rejected.
 
@@ -66,13 +64,13 @@ k=rsa;[1] p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDmzRmJRQxLEuyYiyMg4suA[2]
 
 In this example, `k` indicates the key type [1], and `p` is the public key used to recalculate the signature [2].
 
-### Securing Your Email: Practical Steps
+## Securing Your Email: Practical Steps
 
 Your organization likely generates email from multiple locations. Email sent to a user in response to their actions on your website—called transactional email—will be triggered by your web server software, and often is generated via email services such as SendGrid or Mailgun. Email written by hand will be sent either by a webmail service (for example, Gmail) or from email server software hosted on your network (for example, Microsoft Exchange or Postfix). Your team may also be using email marketing or newsletter services such as Mailchimp or TinyLetter to send email.
 
 Consult the documentation of your service providers or email server to see how to generate and add the DNS entries needed to implement SPF and DKIM. In fact, you may *already* be using DKIM, because many transactional email and marketing services require you to add the relevant DNS entries when you sign up to the service. As you lock down IP ranges and domains as part of your SPF implementation, remember to consider *all* the software that is sending email from your domain!
 
-### Disguising Malicious Links in Email
+## Disguising Malicious Links in Email
 
 Spam algorithms look for malicious links in email, and to support this, webmail providers keep up-to-date blacklists of domains that are known to be harmful. Scanning for links to such domains is a common and effective way to block dangerous email.
 
@@ -80,13 +78,13 @@ As such, scammers have had to come up with new tricks to disguise harmful links,
 
 Hackers have found a subtler way to disguise malicious links in email. If your website can be used to disguise a link to an arbitrary URL on the internet—if you implement an *open redirect* anywhere on your site—you may be helping hackers disguise malicious links in the same way as a URL- shortening service. Not only are you making your users vulnerable to phishing scams, but the *genuine* email you send is liable to be blacklisted by spam-detection algorithms.
 
-### Open Redirects
+## Open Redirects
 
 In HTTP, a *redirect* occurs when a web server responds with a `301` (temporary redirect) or `302` (permanent redirect) response code, and supplies a URL that the browser should navigate to instead. One of the most common uses of redirects is to send an unauthenticated user to the login page if they attempt to visit a site. In this scenario, the site typically issues a second redirect *back* to the original URL after the user has authenticated themselves.
 
 To enable this second redirect, the web server has to remember the original destination as the user logs in. Frequently, this is done by encoding the final destination URL within a query parameter in the login URL. If a hacker can encode an arbitrary URL in this query parameter—in other words, if the second redirect can send the user to a whole different website on the internet—you have what is known as an *open redirect*.
 
-### Preventing Open Redirects
+## Preventing Open Redirects
 
 Most sites won’t ever need to redirect to an external URL. If any part of your website encodes a URL within another URL for the purpose of redirecting the user to that destination, you should make sure that these encoded URLs are *relative* URLs rather than *absolute* URLs: encoded links should point within your site, rather than externally.
 
@@ -104,13 +102,13 @@ This pattern [1] states that the URL must begin with a forward slash, and the fo
 
 Another approach to preventing open redirects is to avoid encoding URLs within query parameters *altogether*. If you are encoding a URL for an eventual redirect following login, consider dropping the URL in a temporary cookie instead of a query parameter. An attacker is unable to forge a cookie in a victim’s browser quite as easily, so you will close the door to abusive linking.
 
-### Other Considerations
+## Other Considerations
 
 Some types of websites do require external links to be posted by users. For instance, if you run a social news site, your users will often post links to external URLs. If this applies to your site, use the *Google Safe Browsing* API to check each URL against a blacklist of harmful sites.
 
 After you have secured your email and redirect code, it’s important to make sure your web pages can’t be wrapped in other people’s malicious websites. Let’s look at how to protect your users against clickjacking attacks.
 
-### Clickjacking
+## Clickjacking
 
 HTML permits a web page to contain another web page, by using an `<iframe>` tag. This allows content from different web domains to be mixed in a controlled fashion, because JavaScript running on the page within the frame cannot access the containing page. The `<iframe>` tags are commonly used to embed third-party content in a web page—OAuth and CAPTCHA widgets often use them to secure cookies.
 
@@ -118,7 +116,7 @@ As with anything useful on the internet, hackers have found ways to abuse `<ifra
 
 This click-hijacking—*clickjacking*—has been used in a variety of ways. In some cases, victims have been tricked into switching on their webcam so the attacker can watch them remotely. Another variation of this technique is *likejacking*, whereby a victim is tricked into liking something on Facebook without their knowledge. Selling likes on the dark web for promotional purposes is a big money-spinner for a hacker.
 
-### Preventing Clickjacking
+## Preventing Clickjacking
 
 If you run a website, you should make sure your site isn’t used as bait in a clickjacking attack. Most sites never need to be hosted in `<iframe>` tags, so you should tell the browser that directly. Modern browsers support the `Content` `-Security-Policy` header that allows the response from the server to specify that the page should have no `frame-ancestors`, as shown in Listing 16-4.
 
@@ -148,7 +146,7 @@ Content-Security-Policy: frame-ancestors example.com google.com
 
 Now that you’ve looked at how to protect against clickjacking, let’s see how attackers will try to launch malicious network requests from your server.
 
-### Server-Side Request Forgery
+## Server-Side Request Forgery
 
 Hackers making malicious HTTP requests often seek to disguise where those requests are launched from. For instance, denial-of-service attacks— covered in [Denial Of Service Attacks](DENIAL.OF.SERVICE.ATTACKS.md)—are more effective when coming from many different IP addresses. If your web server makes outgoing HTTP requests, and a hacker can control which URLs those requests are sent to, you are vulnerable to a server-side request forgery (SSRF) attack, and a hacker can use your server to send malicious requests.
 
@@ -158,7 +156,7 @@ Typically, SSRF vulnerabilities occur when the outbound URL of an HTTP request s
 
 Hackers will also check to see if any part of your site accepts XML content, and use XML external entity attacks in an attempt to commit SSRF. [Xml Attacks](XML.ATTACKS.md) discussed this attack vector.
 
-### Protecting Against Server-Side Forgery
+## Protecting Against Server-Side Forgery
 
 You can protect yourself against server-side forgery at several levels. The first, and most important step, is to audit any parts of your code that make outbound HTTP requests. You will almost always know ahead of time which domains need to be invoked as part of API calls, so the construction of URLs for API calls should use web domains recorded in your configuration or code rather than coming from the client. One way of ensuring this is to use the *software development kit (SDK)* that is usually made freely available with most APIs.
 
@@ -166,13 +164,13 @@ Because you should be following the practice of defense in depth—protecting yo
 
 Finally, consider employing penetration testing to detect SSRF vulnerabilities in your code. This can be done by employing an external team to find vulnerabilities in your website or by using an automated online tool to do the same. Effectively, you will be using the same tools that hackers use to detect vulnerabilities, before they get the chance to do so themselves.
 
-### Botnets
+## Botnets
 
 Hackers are always looking for spare computing power to power their attacks. If a hacker manages to compromise your server, they will frequently install a *bot*—a piece of malware that they can control using remote commands. Most bots operate as part of a peer-to-peer network of individual bots—a *botnet*— that communicate with each other by using an encrypted protocol.
 
 Bots are often used to infect regular consumer devices like laptops. Managing to install a bot on a server is big prize, however, because significantly more computing power will be available to the bot. Scammers will pay a good price on the dark web for access keys that allow them to control botnets. They commonly use this spare computing power to mine bitcoin or commit *click fraud*—that is, artificially inflate page-view numbers of websites. Botnets are also used to generate spam email or to commit denial-ofservice attacks (covered in [Denial Of Service Attacks](DENIAL.OF.SERVICE.ATTACKS.md)).
 
-### Protecting Against Malware Infection
+## Protecting Against Malware Infection
 
 Clearly, you want to avoid having any bot malware installed on the server. [Injection Attacks](INJECTION.ATTACKS.md) discussed command injection and file upload vulnerabilities that could allow a hacker to install a bot on your server. Make sure you follow that document’s advice to secure such vulnerabilities.
 
@@ -180,7 +178,7 @@ Additionally, you should also proactively protect your servers from infections. 
 
 If you are using virtualized services or containers, you have an advantage here: any rebuild of the system will typically wipe away malicious software that was installed. Rebuilding from an image periodically will do a lot to keep your system safe from bot infestations.
 
-### Summary
+## Summary
 
 Avoid being an accessory to attacks on others on the internet by doing the following:
 

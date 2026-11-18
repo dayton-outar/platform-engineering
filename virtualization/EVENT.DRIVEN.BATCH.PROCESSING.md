@@ -1,6 +1,4 @@
-# Chapter 12
-
-## Event-Driven Batch Processing
+# Event-Driven Batch Processing
 
 Source: [Designing.Distributed.Systems-2025-12.pdf](./Designing.Distributed.Systems-2025-12.pdf), PDF pages 1–15.
 
@@ -16,11 +14,11 @@ The most straightforward application of this type of system simply chains the ou
 
 *Figure 12-1. This workflow combines copying work into multiple queues (Stage 2a, 2b), parallel processing of those queues, and combining the result back into a single queue (Stage 3)*
 
-### Patterns of Event-Driven Processing
+## Patterns of Event-Driven Processing
 
 Beyond the simple work queue described in [Work Queue Systems](WORK.QUEUE.SYSTEMS.md), there are a number of patterns for linking work queues together. The simplest pattern—one where the output of a single queue becomes the input to a second queue—is straightforward enough that we won’t cover it here. We will describe patterns that involve the coordination of multiple different queues or the modification of the output of one or more work queues.
 
-#### Copier
+### Copier
 
 The first pattern for coordinating work queues is a copier. The job of a copier is to take a single stream of work items and duplicate it out into two or more identical streams. This pattern is useful when there are multiple different pieces of work to be done on the same work item. An example of this might be rendering a video. When rendering a video, there are a variety of different formats that are useful, depending on where the video is intended to be shown. There might be a 4K high-resolution format for playing off of a hard drive, a 1080-pixel rendering for digital streaming, a low-resolution format for streaming to mobile users on slow networks, and an animated GIF thumbnail for displaying in a movie-picking user interface. All of these work items can be modeled as separate work queues for each render, but the input to each work item is identical. An illustration of the copier pattern applied to transcoding is shown in Figure 12-2.
 
@@ -30,7 +28,7 @@ The first pattern for coordinating work queues is a copier. The job of a copier 
 
 The copy pattern can also be used to trade additional computational power for increased reliability or performance. Imagine that you have a worker processing work that usually takes one second to run, but occasionally takes one minute (60x slowdown). If you process every work item twice and take whichever result completes first, you are much less likely to be impacted by this slowdown. Similarly, if your worker crashes 1% of the time, you can go from a two-nines (99% reliable) system to a four-nines (99.99% reliable) simply by processing every item twice. Obviously, in both cases, doing the engineering work to improve the system is a better long-term solution. But sometimes as a temporary workaround, or in situations where the engineering work isn’t possible, it’s useful to be able to just throw resources at the problem.
 
-#### Filter
+### Filter
 
 The second pattern for event-driven batch processing is a filter. The role of a filter is to reduce a stream of work items to a smaller stream of work items by filtering out work items that don’t meet particular criteria. As an example of this, consider setting up a batch workflow that handles new users signing up for a service. Some set of those users will have ticked the checkbox that indicates that they wish to be contacted via email for promotions and other information. In such a workflow, you can filter the set of newly signed-up users to only be those who have explicitly opted into being contacted.
 
@@ -40,7 +38,7 @@ Ideally you would compose a filter work queue source as an ambassador that wraps
 
 *Figure 12-3. An example of a filter pattern that removes all odd-numbered work items*
 
-#### Splitter
+### Splitter
 
 Sometimes you don’t want to just filter things out by dropping them on the floor, but rather you have two different kinds of input present in your set of work items, and you want to divide them into two separate work queues without dropping any of them. For this task, you want to use a splitter. The role of a splitter is to evaluate some criteria—just like a filter—but instead of eliminating input, the splitter sends different inputs to different queues based on that criteria.
 
@@ -50,7 +48,7 @@ An example of an application of the splitter pattern is processing online orders
 
 *Figure 12-4. An example of the batch splitter pattern splitting shipping notifications into two different queues*
 
-#### Sharder
+### Sharder
 
 A slightly more generic form of splitter is a sharder. As in [Sharded Services](SHARDED.SERVICES.md), the role of a sharder in a workflow is to divide up a single queue into an evenly divided collection of work items based upon some sort of *sharding function*. There are several different reasons why you might consider sharding your workflow. One of the first is for reliability. If you shard your work queue, then the failure of a single workflow due to a bad update, infrastructure failure, or other problem only affects a fraction of your service.
 
@@ -70,7 +68,7 @@ This is illustrated in Figure 12-6.
 
 *Figure 12-6. When one work queue is unhealthy, the remaining work spills over to a different queue*
 
-#### Merger
+### Merger
 
 The last pattern for event-driven or workflow batch systems is a *merger*. A merger is the opposite of a copier; the job of a merger is to take two different work queues and turn them into a single work queue. Suppose, for example, that you have a large number of different source repositories all adding new commits at the same time. You want to take each of these commits and perform a build-and-test for it. It is not scalable to create a separate build infrastructure for each source repository. We can model each of the different source repositories as a separate work queue source that provides a set of commits. We can transform all of these different work queue inputs into a single merged set of inputs using a merger adapter. This merged stream of commits is then the single source to the build system that performs the actual build. The merger is another great example of the adapter pattern, though in this case, the adapter is actually adapting multiple running source containers into a single merged source.
 
@@ -80,7 +78,7 @@ This multiadapter pattern is shown in Figure 12-7.
 
 *Figure 12-7. Using multiple levels of containers to adapt multiple independent work queues into a single shared queue*
 
-### Hands On: Building an Event-Driven Flow for New User Signup
+## Hands On: Building an Event-Driven Flow for New User Signup
 
 A concrete example of a workflow helps show how these patterns can be put together to form a complete operating system. The problem this example will consider is a new user signup flow.
 
@@ -102,7 +100,7 @@ The remainder of this workflow is shown in Figure 12-9.
 
 *Figure 12-9. The user notification and welcome email work queue*
 
-### Publisher/Subscriber Infrastructure
+## Publisher/Subscriber Infrastructure
 
 We have seen a variety of abstract patterns for linking together different event-driven batch processing patterns. But when it comes time to actually build such a system, we need to figure out how to manage the stream of data that passes through the event-driven workflow. The simplest thing to do would be to simply write each element in the work queue to a particular directory on a local filesystem, and then have each stage monitor that directory for input. But of course doing this with a local filesystem limits our workflow to operating on a single node. We can introduce a network filesystem to distribute files to multiple nodes, but this introduces increasing complexity both in our code and in the deployment of the batch workflow.
 
@@ -110,7 +108,7 @@ Instead, a popular approach to building a workflow like this is to use a publish
 
 At this point, most public clouds feature a pub/sub API such as Azure’s EventGrid or Amazon’s Simple Queue Service. Additionally, the open source Kafka project provides a very popular pub/sub implementation that you can run on your own hardware as well as on cloud virtual machines. For the remainder of this overview of pub/sub APIs, we’ll use Kafka for our examples, but they are relatively simple to port to alternate pub/sub APIs.
 
-### Hands On: Deploying Kafka
+## Hands On: Deploying Kafka
 
 There are obviously many ways to deploy Kafka, and one of the easiest ways is to run it as a container using a Kubernetes cluster and the Helm package manager.
 
@@ -172,19 +170,19 @@ Of course, running these command lines only gives you a taste of how to communic
 
 This section has shown how installing Kafka into your Kubernetes cluster can dramatically simplify the task of building a work queue-based system.
 
-### Resiliency and Performance in Work Queues
+## Resiliency and Performance in Work Queues
 
 So far in this document, we have designed workflows to optimize the design of the work queue to match the problem being addressed by the work queue. This is an important part of engineering. The clearer the design of the system matches the task, the easier it is to understand, update, and extend. However, an additional critical part of engineering is anticipating and designing systems for both the performance and reliability requirements of the users.
 
 So far, in all of the designs we have assumed that all of the work in the system is roughly identical and each piece of work is equally reliable. Unfortunately, in the real world, neither one of these assumptions is typically true. Unless your system is very, very unusual, it contains a mix of different work. Different videos, different emails, different builds—work queues are constantly dealing with similar but different individual pieces of work.
 
-#### Work Stealing
+### Work Stealing
 
 The net result of this is that some pieces of work take longer than other pieces of work. Sometimes this is inherent (that movie is just larger), but often it is because of design decisions in our code which are better or worse fits for a specific work item. We may have optimized our code for lots of files and few directories, and the work item might be the opposite: deep directory trees with relatively few files. Oftentimes the latency of individual work items might not matter; if they generally land on different queues via something like sharding, the overall average times generally work out. But unfortunately, sometimes this average performance doesn’t work out, and all of the slow items end up on one queue. When this happens, the inputs to the queue pile up and latency increases, much like a slow checkout lane in a grocery store. Just like in the grocery store, the best option is to move from the slow lane to a lane with a shorter line. This algorithm is called “work stealing.”
 
 The basic algorithm for work stealing says that for any worker, as long as that worker has work on their queue, the work on the queue is performed as you would expect. When there is no work on a worker’s queue, instead of sleeping until more work arrives, the worker takes work off of the back of the longest queue of any other worker. In this way, the maximum length of any work queue is kept to a minimum since workers with shorter work queues remove work from workers with longer queues. Work is taken from the back of the queue because that removal can be done safely without worrying about whether the work may be performed by multiple workers.
 
-#### Errors, Priority, and Retry
+### Errors, Priority, and Retry
 
 The other problems that can occur in a work queue system come when there are errors processing the work itself. The first problem that can happen is if your worker crashes in the middle of processing the work. In the worst case, the work that was being removed from the queue is lost. Fortunately, most queue systems have semantics where the message being processed is initially removed from the queue for processing. This initial removal hides the message from other workers, but it doesn’t actually remove it from the queue. When the work has been processed, a second “completed” message is sent to the queue, which permanently removes the work from the queue. Typically a message queue has a timeout after which, if the work has not been “completed,” the work item is returned to the head of the queue for other workers to pick it up.
 
@@ -198,6 +196,6 @@ Unfortunately, requeuing work for processing introduces additional problems. To 
 
 To address this problem of a backlog, it is often useful to actually have two queues of work items. The first queue is used for all work items which have never had an attempt made at processing. The second queue is the “retry” queue, which is used for any message which has had at least one (unsuccessful) attempt at processing. Using this dual queue approach, in the above situation, there will be a lot of work piled up in the retry queue waiting for processing, but new work is no longer standing at the back of the line of retries. It has an equal chance of being processed along with the retry work. This two-queue approach is an example of a general priority queue approach, where different work queues have different priority and work is taken off the higher priority queue until it is empty, and then the next highest priority queue, etc. This can ensure that performance goes to where it is needed most to achieve latency goals.
 
-### Summary
+## Summary
 
 This document has introduced the idea of a workflow. Workflows combine multiple work queues together into an orchestration of work to achieve some more complex objective. Multiple patterns for building workflows, from copying, to filtering, sharding, and merging were introduced. Finally, the important considerations of both performance and reliability in the face of slow work and worker crashes was examined. Using these patterns and error handling approaches, any complex work can be broken into an easily reasoned-about and constructed workflow for processing data reliably and efficiently.

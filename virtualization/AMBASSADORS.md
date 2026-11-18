@@ -1,6 +1,4 @@
-# Chapter 4
-
-## Ambassadors
+# Ambassadors
 
 Source: [Designing.Distributed.Systems-2025-4.pdf](./Designing.Distributed.Systems-2025-4.pdf), PDF pages 1–9.
 
@@ -16,7 +14,7 @@ The value of the ambassador pattern is twofold. First, as with the other single-
 
 The rest of this document provides a number of examples of using the ambassador pattern to implement a series of real-world applications.
 
-### Using an Ambassador to Shard a Service
+## Using an Ambassador to Shard a Service
 
 Sometimes the data that you want to store in a storage layer becomes too big for a single machine to handle. In such situations, you need to *shard* your storage layer. Sharding splits up the layer into multiple disjoint pieces, each hosted by a separate machine. This document focuses on a single-node pattern for adapting an existing service to talk to a sharded service that exists somewhere in the world. It does not discuss how the sharded service came to exist. Sharding and a multinode sharded service design pattern are discussed in great detail in [Sharded Services](SHARDED.SERVICES.md). A diagram of a sharded service is shown in Figure 4-2.
 
@@ -32,7 +30,7 @@ When adapting an existing application to a sharded backend, you can introduce an
 
 The net result of applying the ambassador pattern to sharded services is a separation of concerns between the application container, which simply knows it needs to talk to a storage service and discovers that service on localhost, and the sharding ambassador proxy, which only contains the code necessary to perform appropriate sharding. As with all good single-node patterns, this ambassador can be reused between many different applications. Or, as we’ll see in the following hands-on example, an off-the shelf open source implementation can be used for the ambassador, speeding up the development of the overall distributed system.
 
-#### Hands On: Implementing a Sharded Redis
+### Hands On: Implementing a Sharded Redis
 
 Redis is a fast key-value store that can be used as a cache or for more persistent storage. In this example, we’ll be using it as a cache. We’ll begin by deploying a sharded Redis service to a Kubernetes cluster. We’ll use the StatefulSet API object to deploy it, since it will give us unique DNS names for each shard that we can use when configuring the proxy.
 
@@ -138,7 +136,7 @@ spec:
 
 This pod defines the ambassador; then the specific user’s application container can be injected to complete the pod.
 
-### Using an Ambassador for Service Brokering
+## Using an Ambassador for Service Brokering
 
 When trying to render an application portable across multiple environments (e.g., public cloud, physical data center, or private cloud), one of the primary challenges is service discovery and configuration. To understand what this means, imagine a frontend that relies on a MySQL database to store its data. In the public cloud, this MySQL service might be provided as software as a service (SaaS), whereas in a private cloud it might be necessary to dynamically spin up a new virtual machine or container running MySQL.
 
@@ -148,7 +146,7 @@ Consequently, building a portable application requires that the application know
 
 *Figure 4-3. A service broker ambassador creating a MySQL service*
 
-### Using an Ambassador to Do Experimentation or Request Splitting
+## Using an Ambassador to Do Experimentation or Request Splitting
 
 A final example application of the ambassador pattern is to perform experimentation or other forms of request splitting. In many production systems, it is advantageous to be able to perform request splitting, where some fraction of all requests are not serviced by the main production service but rather are redirected to a different implementation of the service. Most often, this is used to perform experiments with new beta versions of the service to determine if the new version of the software is reliable or comparable in performance to the currently deployed version.
 
@@ -158,7 +156,7 @@ Given the previous examples, it is straightforward to see how a request-splittin
 
 This separation of concerns keeps the code in each container slim and focused, and the modular factoring of the application ensures that the request-splitting ambassador can be reused for a variety of different applications and settings.
 
-#### Hands On: Implementing 10% Experiments
+### Hands On: Implementing 10% Experiments
 
 To implement our request-splitting experiment, we’re going to use the nginx web server. nginx is a powerful, richly featured open source server. To configure nginx as the ambassador, we’ll use the following configuration (note that this is for HTTP but it could easily be adapted for HTTPS as well):
 
@@ -261,6 +259,6 @@ spec:
 
 You can add a second (or third, or fourth) container to the pod to take advantage of the ambassador.
 
-### Summary
+## Summary
 
 Ambassadors are a key way to simplify life for application developers. They can encapsulate complex logic that is necessary for scale or reliability, such as sharding, and provide a simplified interface which makes such a complex system easy to use. For platform engineers, ambassadors can be an important tool in constructing a powerful platform that is easy to use.

@@ -1,6 +1,4 @@
-# Chapter 2
-
-## The Origins of Streaming
+# The Origins of Streaming
 
 Source: [Designing.Event-Driven.Systems-2018-2.pdf](./Designing.Event-Driven.Systems-2018-2.pdf), PDF pages 1–4.
 

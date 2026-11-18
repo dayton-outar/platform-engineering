@@ -1,12 +1,10 @@
-# Chapter 15
-
-## Web Security for Developers-2020
+# Web Security for Developers-2020
 
 Source: [Web.Security.for.Developers-2020-15.pdf](Web.Security.for.Developers-2020-15.pdf) — 8 PDF pages.
 
 First-person accounts and opinions in this document are those of the original source author.
 
-### XML Attacks
+## XML Attacks
 
 ![Figure 15-1: Chapter-opening artwork](/.attachments/15-1-Web.Security.for.Developers-2020-15.png)
 
@@ -40,7 +38,7 @@ and clinical advice on maintaining everyone's favorite joint.</description>
 
 The popularity of this data format, especially in the early days of the web, means that XML *parsing*—the process of turning an XML file into in-memory code objects—has been implemented in every browser and web server of the past few decades. Unfortunately, XML parsers are a common target for hackers. Even if your site doesn’t handle XML by design, your web server may parse the data format by default. This document shows how XML parsers can be attacked and how to defuse these attacks.
 
-### The Uses of XML
+## The Uses of XML
 
 Much like HTML, XML encloses data items between tags and allows tags to be embedded within one another. The author of an XML document can choose semantically meaningful tag names so that the XML document is self-describing. Because XML is very readable, the data format was widely adopted to encode data for consumption by other applications.
 
@@ -50,7 +48,7 @@ In the past decade, some of these applications have started using bettersuited, 
 
 XML vulnerabilities generally occur during the validation process. Let’s take a minute to discuss what validation means in the context of parsing an XML document.
 
-### Validating XML
+## Validating XML
 
 Since the author of an XML file is able to choose which tag names are used in the document, any application reading the data needs to know which tags to expect and in what order they will appear. The expected structure of an XML document is often described by a formal grammar against which the document can be *validated*.
 
@@ -58,7 +56,7 @@ A *grammar* file dictates to a parser which sequences of characters are valid ex
 
 XML has two major ways of describing the expected structure of an XML document. A *document type definition (DTD) file* resembles the *Bachus–Naur Form (BNF)* notation often used to describe programming language grammars. An *XML Schema Definition (XSD)* file is a more modern, more expressive alternative, capable of describing a wider set of XML documents; in this case, the grammar itself is described in an XML file. Both methods of XML validation are widely supported by XML parsers. However, DTDs contain a couple of features that can expose the parser to attack, so that’s what we’ll focus on.
 
-### Document Type Definitions
+## Document Type Definitions
 
 A DTD file describes the structure of an XML file by specifying the tags, subtags, and types of data expected in a document. Listing 15-2 shows a DTD file describing the expected structure of the `<catalog>` and `<book>` tags in Listing 15-1.
 
@@ -80,7 +78,7 @@ This DTD describes that the top-level `<catalog>` tag is expected to contain zer
 
 DTDs can be included within an XML document to make the document self-validating. However, a parser that supports such *inline* DTDs is vulnerable to attack—because a malicious user uploading such an XML document has control over the contents of the DTD, rather than it being supplied by the parser itself. Hackers have used inline DTDs to exponentially increase the amount of server memory a document consumes during parsing (an XML bomb), and access to other files on the server (an XML external entity attack). Let’s see how these attacks work.
 
-### XML Bombs
+## XML Bombs
 
 An *XML bomb* uses an inline DTD to explode the memory usage of an XML parser. This will take a web server offline by exhausting all the memory available to the server and causing it to crash.
 
@@ -147,7 +145,7 @@ Exhausting the memory available to the XML parser will take your web server offl
 
 XML parsers that accept inline DTDs are also vulnerable to a sneakier type of attack that takes advantage of entity definitions in a different manner.
 
-### XML External Entity Attacks
+## XML External Entity Attacks
 
 DTDs can include content from external files. If an XML parser is configured to process inline DTDs, an attacker can use these *external entity declarations* to explore the local filesystem or to trigger network requests from the web server itself.
 
@@ -168,31 +166,31 @@ According to the XML 1.0 specification, a parser is expected to read the content
 
 The URL referenced by the external entity declaration can use various network protocols, depending on the prefix. Our example DTD uses the *http://* prefix, which will cause the parser to make an HTTP request. The XML specification also supports reading local files on disk, using the file:// prefix. For this reason, external entity definitions are a security *disaster*.
 
-### How Hackers Exploit External Entities
+## How Hackers Exploit External Entities
 
 When an XML parser throws an error, the error message will often include the contents of the XML document being parsed. Knowing this, hackers use external entity declarations to read files on a server. A maliciously crafted XML file might include a reference to a file such as *file://etc/passwd* on a Linux system, for instance. When this external file is inserted into the XML document by the parser, the XML becomes malformed—so parsing fails. The parser then dutifully includes the contents of the file in the error response, allowing the hacker to view the sensitive data within the referenced file. Using this technique, hackers can read sensitive files on a vulnerable web server that contain passwords and other confidential information.
 
 External entities can also be used to commit *server-side request forgery (SSRF)* attacks, whereby an attacker triggers malicious HTTP requests from your server. A naïvely configured XML parser will make a network request whenever it encounters an external entity URL with a network protocol prefix. Being able to trick your web server into making a network request on a URL of their choosing is a boon for an attacker! Hackers have used this feature to probe internal networks, to launch denial-of-service attacks on third parties, and to disguise malicious URL calls. You will learn more about the risks around SSRF attacks in [Dont Be Accessory](DONT.BE.ACCESSORY.md).
 
-### Securing Your XML Parser
+## Securing Your XML Parser
 
 This is a simple fix to protect your parser from XML attacks: disable the processing of inline DTDs in your configuration. DTDs are a legacy technology, and inline DTDs are a bad idea, period. In fact, many modern XML parsers are hardened by default, meaning out of the box they disable features that allow the parser to be attacked, so you might be protected already. If you are unsure, you should check what (if any) XML parsing technology you are using.
 
 The following sections describe how to secure your XML parser in some of the major web programming languages. Even if you think your code doesn’t parse XML, the third-party dependencies you use likely use XML in some form. Make sure you analyze your entire dependency tree to see what libraries are loaded into memory when your web server starts up.
 
-### Python
+## Python
 
 The `defusedxml` library explicitly rejects inline DTDs and is a drop-in replacement for Python’s standard XML parsing library. Use this module in place of Python’s standard library.
 
-### Ruby
+## Ruby
 
 The de facto standard for parsing XML in Ruby is the `Nokogiri` library. This library has been hardened to XML attacks since version 1.5.4, so make sure your code uses that version or higher for parsing.
 
-### Node.js
+## Node.js
 
 Node.js has a variety of modules for parsing XML, including `xml2js`, `parse-xml`, and `node-xml`. Most of them omit processing of DTDs by design, so make sure to consult the documentation for the parser you use.
 
-### Java
+## Java
 
 Java has a variety of methods of parsing XML. Parsers that adhere to Java specifications typically initiate parsing via the class `javax.xml.parsers.Document` `BuilderFactory`. Listing 15-7 illustrates how to configure secure XML parsing in this class wherever it is instantiated, using the `XMLConstants.FEATURE_SECURE` `_PROCESSING` feature.
 
@@ -203,7 +201,7 @@ factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 
 *Listing 15-7: Securing a Java XML parsing library*
 
-### .NET
+## .NET
 
 .NET has a variety of methods of parsing XML, all contained in the `System` `.Xml` namespace. `XmlDictionaryReader`, `XmlNodeReader`, and `XmlReader` are safe by default, as are `System.Xml.Linq.XElement` and `System.Xml.Linq.XDocument`. `System` `.Xml.XmlDocument`, `System.Xml.XmlTextReader`, and `System.Xml.XPath.XPathNavigator` have been secured since .NET version 4.5.2. If you are using an earlier version of .NET, you should switch to a secure parser, or disable the processing of inline DTDs. Listing 15-8 shows how to do this by setting the `ProhibitDtd` attribute flag.
 
@@ -214,13 +212,13 @@ reader.ProhibitDtd = true;
 
 *Listing 15-8: Disabling processing of inline DTDs in .NET*
 
-### Other Considerations
+## Other Considerations
 
 The threat of external entity attacks illustrates the importance of following the *principle of least privilege*, which states that software components and processes should be granted the minimal set of permissions required to perform their tasks. There is rarely a good reason for an XML parser to make outbound network requests: consider locking down outbound network requests for your web server as a whole. If you do need outbound network access—for example, if your server code calls third-party APIs—you should whitelist the domains of those APIs in your firewall rules.
 
 Similarly, it’s important to restrict the directories on disk that your web server can access. On the Linux operating system, this can be achieved by running your web server process in a `chroot` jail that ignores any attempts by the running process to change its root directory. On the Windows operating system, you should manually whitelist the directories that the web server can access.
 
-### Summary
+## Summary
 
 Extensible Markup Language (XML) is a flexible data format widely used to exchange machine-readable data on the internet. Your XML parser may be vulnerable to attack if it is configured to accept and process inline document type definitions (DTDs). XML bombs use inline DTDs to explode the parser’s memory use, potentially crashing your web server. XML external entity attacks reference local files or network addresses, and can be used to trick the parser into revealing sensitive information or make malicious network requests. Make sure you use a hardened XML parser that disables inline DTD parsing.
 

@@ -1,10 +1,10 @@
 # Learning Kubernetes
 
-### Kubernetes Guide
+## Kubernetes Guide
 
 **Kubernetes (K8s)** is an open-source container orchestration platform designed to automate the deployment, scaling, and management of containerized applications. While Docker helps to package and run individual containers, Kubernetes manages containers across a cluster of machines, ensuring high availability, scaling, and failover.
 
-#### **Key Concepts**
+### **Key Concepts**
 
 1. **Cluster**:
    - **Master (Control Plane)**: Manages the overall cluster by handling scheduling, state management, and API communication.
@@ -31,11 +31,11 @@
 
 ---
 
-### Kubernetes Cheat Sheet
+## Kubernetes Cheat Sheet
 
 ---
 
-#### **Cluster Management**
+### **Cluster Management**
 
 - **Get cluster info**
   ```bash
@@ -59,7 +59,7 @@
 
 ---
 
-#### **Pods**
+### **Pods**
 
 - **List Pods in all namespaces**
   ```bash
@@ -83,7 +83,7 @@
 
 ---
 
-#### **Services**
+### **Services**
 
 - **List all services**
   ```bash
@@ -102,7 +102,7 @@
 
 ---
 
-#### **Deployments**
+### **Deployments**
 
 - **Create a deployment**
   ```bash
@@ -126,7 +126,7 @@
 
 ---
 
-#### **Logs & Debugging**
+### **Logs & Debugging**
 
 - **View Pod logs**
   ```bash
@@ -150,7 +150,7 @@
 
 ---
 
-#### **Configuration**
+### **Configuration**
 
 - **View current config (context, cluster, user)**
   ```bash
@@ -169,7 +169,7 @@
 
 ---
 
-#### **Namespaces**
+### **Namespaces**
 
 - **List all namespaces**
   ```bash
@@ -188,7 +188,7 @@
 
 ---
 
-#### **Persistent Storage**
+### **Persistent Storage**
 
 - **Create a PersistentVolume (PV)**
   ```bash

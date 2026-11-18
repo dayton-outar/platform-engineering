@@ -1,12 +1,10 @@
-# Chapter 15
-
-## Building Streaming Services
+# Building Streaming Services
 
 Source: [Designing.Event-Driven.Systems-2018-15.pdf](./Designing.Event-Driven.Systems-2018-15.pdf), PDF pages 1–12.
 
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
-### An Order Validation Ecosystem
+## An Order Validation Ecosystem
 
 Having developed a basic understanding of Kafka Streams, now let’s look at the techniques needed to build a small streaming services application. We will base this document around a simple order processing workflow that validates and processes orders in response to HTTP requests, mapping the synchronous world of a standard REST interface to the asynchronous world of events, and back again.
 
@@ -24,7 +22,7 @@ Starting from the lefthand side of the Figure 15-1, the REST interface provides 
 
 The inventory service both validates orders and reserves inventory for the purchase—an interesting problem, as it involves tying reads and writes together atomically. We look at this in detail later in this document.
 
-### Join-Filter-Process
+## Join-Filter-Process
 
 Most streaming systems implement the same broad pattern where a set of streams is prepared, and then work is performed one event at a time. This involves three steps:
 
@@ -36,7 +34,7 @@ Most streaming systems implement the same broad pattern where a set of streams i
 
 This pattern is seen in most services but is probably best demonstrated by the email service, which joins orders, payments, and customers, forwarding the result to a function that sends an email. The pattern can be implemented in either Kafka Streams or KSQL equivalently.
 
-### Event-Sourced Views in Kafka Streams
+## Event-Sourced Views in Kafka Streams
 
 To allow users to perform a HTTP GET, and potentially retrieve historical orders, the orders service creates a queryable event-sourced view. (See [The Event-Sourced View](EVENT.SOURCING.CQRS.STATEFUL.PATTERNS.md#the-event-sourced-view).) This works by pushing orders into a set of state stores partitioned over the three instances of the Orders view, allowing load and storage to be spread between them.
 
@@ -56,13 +54,13 @@ There are actually two parts to this. The first is the query, which defines what
 
 The second part is to expose the state store(s) over an HTTP endpoint, which is simple enough, but when running with multiple instances requests must be routed to the correct partition and instance for a certain key. Kafka Streams includes a metadata service that does this for you.
 
-### Collapsing CQRS with a Blocking Read
+## Collapsing CQRS with a Blocking Read
 
 The orders service implements a blocking HTTP GET so that clients can read their own writes. This technique is used to collapse the asynchronous nature of the CQRS pattern. So, for example, if a client wants to perform a write operation, immediately followed by a read, the event might not have propagated to the view, meaning they would either get an error or an incorrect value.
 
 One solution is to block the GET operation until the event arrives (or a configured timeout passes), collapsing the asynchronicity of the CQRS pattern so that it appears synchronous to the client. This technique is essentially long polling. The orders service, in the example code, implements this technique using nonblocking IO.
 
-### Scaling Concurrent Operations in Streaming Systems
+## Scaling Concurrent Operations in Streaming Systems
 
 The inventory service is interesting because it needs to implement several specialist techniques to ensure it works accurately and consistently. The service performs a simple operation: when a user purchases an iPad, it makes sure there are enough iPads available for the order to be fulfilled, then physically reserves a number of them so no other process can take them (Figure 15-3). This is a little trickier than it may seem initially, as the operation involves managing atomic state across topics. Specifically:
 
@@ -129,7 +127,7 @@ Long reserved = store.get(order.getProduct());
 
 Writing to the store also partakes in Kafka’s transactions, discussed in [Transactions, but Not as We Know Them](TRANSACTIONS.md).
 
-### Rekey to Join
+## Rekey to Join
 
 We can apply exactly the same technique used in the previous section, for partitioning writes, to partitioning reads (e.g., to do a join). Say we want to join a stream of orders (keyed by OrderId) to a table of warehouse inventory (keyed by ProductId), as we do in Figure 15-3. The join will have to use the ProductId.
 
@@ -141,7 +139,7 @@ As mentioned earlier, this data redistribution step is called a *rekey*, and dat
 
 *Figure 15-6. To perform a join between orders and warehouse inventory by ProductId, orders are repartitioned by ProductId, ensuring that for each product all corresponding orders will be on the same instance*
 
-### Repartitioning and Staged Execution
+## Repartitioning and Staged Execution
 
 Real-world systems are often more complex. One minute we’re performing a join, the next we’re aggregating by customer or materializing data in a view, with each operation requiring a different data distribution profile. Different operations like these chain together in a pipeline. The inventory service provides a good example of this. It uses a rekey operation to distribute data by ProductId. Once complete, it has to be rekeyed back to OrderId so it can be added to the Orders view (Figure 15-7). (The Orders view is destructive—that is, old versions of an order will be replaced by newer ones—so it’s important that the stream be keyed by OrderId so that no data is lost.)
 
@@ -151,7 +149,7 @@ Real-world systems are often more complex. One minute we’re performing a join,
 
 There are limitations to this approach, though. *The keys used to partition the event streams must be invariant if ordering is to be guaranteed*. So in this particular case it means the keys, ProductId and OrderId, on each order must remain fixed across all messages that relate to that order. Typically, this is a fairly easy thing to manage at a domain level (for example, by enforcing that, should a user want to change the product they are purchasing, a brand new order must be created).
 
-### Waiting for N Events
+## Waiting for N Events
 
 Another relatively common use case in business systems is to wait for *N* events to occur. This is trivial if each event is located in a different topic—it’s simply a three-way join—but if events arrive on a single topic, it requires a little more thought.
 
@@ -163,11 +161,11 @@ The orders service, in the example discussed earlier in this document (Figure 15
 
 3. Filter the output for the required count.
 
-### Reflecting on the Design
+## Reflecting on the Design
 
 Any distributed system comes with a baseline cost. This should go without saying. The solution described here provides good scalability and resiliency properties, but will always be more complex to implement and run than a simple, single-process application designed to perform the same logic. You should always carefully weigh the tradeoff between better nonfunctional properties and simplicity when designing a system. Having said that, a real system will inevitably be more complex, with more moving parts, so the pluggability and extensibility of this style of system can provide a worthy return against the initial upfront cost.
 
-### A More Holistic Streaming Ecosystem
+## A More Holistic Streaming Ecosystem
 
 In this final section we take a brief look at a larger ecosystem (Figure 15-8) that pulls together some of the main elements discussed in this repository thus far, outlining how each service contributes, and the implementation patterns each might use:
 
@@ -215,7 +213,7 @@ A set of stream processors manages creating latest/versioned topics where releva
 
 The Confluent Schema Registry provides runtime validation of schemas and their compatibility.
 
-### Summary
+## Summary
 
 When we build services using a streaming platform, some will be stateless—simple functions that take an input, perform a business operation, and produce an output. Some will be stateful, but read only, as in event-sourced views. Others will need to both read and write state, either entirely inside the Kafka ecosystem (and hence wrapped in Kafka’s transactional guarantees), or by calling out to other services or databases. One of the most attractive properties of a stateful stream processing API is that all of these options are available, allowing us to trade the operational ease of stateless approaches for the data processing capabilities of stateful ones.
 
@@ -225,7 +223,7 @@ There is also a mindset shift that comes with the streaming model, one that is i
 
 In this document we looked at a very simple system that processes orders. We did this with a set of small streaming microservices that implement the Event Collaboration pattern we discussed in [Events: A Basis for Collaboration](EVENTS.BASIS.COLLABORATION.md). Finally, we looked at how we can create a larger architecture using the broader range of patterns discussed in this repository.
 
-### Notes
+## Notes
 
 [^p1-1]: In this case we choose to use a separate topic, Order Validations, but we might also choose to update the Orders topic directly using the single-writer-per-transition approach discussed in [Consistency and Concurrency in Event-Driven Systems](CONSISTENCY.CONCURRENCY.EVENT.DRIVEN.SYSTEMS.md).
 

@@ -1,6 +1,4 @@
-# Chapter 7
-
-## Web Security for Developers-2020
+# Web Security for Developers-2020
 
 Source: [Web.Security.for.Developers-2020-7.pdf](Web.Security.for.Developers-2020-7.pdf) — 11 PDF pages.
 
@@ -12,7 +10,7 @@ You can mitigate the risks around all types of injection attacks by following th
 
 In [Cross Site Request Forgery Attacks](CROSS.SITE.REQUEST.FORGERY.ATTACKS.md), you’ll look at how hackers can use JavaScript vulnerabilities to attack your website.
 
-### Cross-Site Scripting Attacks
+## Cross-Site Scripting Attacks
 
 ![Figure 7-4: Chapter-opening artwork](/.attachments/7-4-Web.Security.for.Developers-2020-7.png)
 
@@ -24,7 +22,7 @@ JavaScript can read or modify any part of a web page, so there’s a lot an atta
 
 Cross-site scripting is a remarkably common type of attack, and the dangers it poses are clear. This document presents the three most common types of cross-site scripting attacks and explains how to protect against them.
 
-### Stored Cross-Site Scripting Attacks
+## Stored Cross-Site Scripting Attacks
 
 Websites routinely generate and render HTML using information stored in a database. Retail websites will store product information in a database, and social media sites will store user conversations. Websites will take content from the database according to the URL the user has navigated to, and interpolate it into the page to produce the finished HTML.
 
@@ -48,7 +46,7 @@ A rogue `alert()` dialog is more of an annoyance than a genuine threat, but atta
 
 Comment threads aren’t the only place that can exhibit this type of vulnerability. *Any* user-controlled content is a potential avenue of attack that you need to secure. Attackers have performed cross-site scripting attacks by injecting malicious script tags into usernames, profile pages, and online reviews, for example. Let’s look at a couple of straightforward protections you should implement.
 
-### Mitigation 1: Escape HTML Characters
+## Mitigation 1: Escape HTML Characters
 
 To prevent stored cross-site scripting attacks, you need to escape all dynamic content coming from a datastore so that the browser knows to treat it as the *content* of HTML tags, as opposed to raw HTML. *Escaping* content in the browser means replacing control characters in the HTML with their corresponding *entity encoding*, as illustrated in Table 7-1.
 
@@ -98,7 +96,7 @@ In order to write raw, unescaped HTML (and hence be vulnerable to XSS attacks), 
 
 All secure templating languages follow the same design principle: the templating engine implicitly escapes dynamic content unless the developer explicitly chooses to construct raw HTML. Make sure you understand how escaping works in your templates, and check that dynamic content is securely escaped during code reviews! In particular, if you have helper functions or methods that construct raw HTML for injection into templates, check to see that an attacker can’t abuse their inputs to commit cross-site scripting attacks.
 
-### Mitigation 2: Implement a Content Security Policy
+## Mitigation 2: Implement a Content Security Policy
 
 Modern browsers allow websites to set a *content security policy*, which you can use to lock down JavaScript execution on your site. Cross-site scripting attacks rely on an attacker being able to run malicious scripts on a victim’s web page, usually by injecting `<script>` tags somewhere within the `<html>` tag of a page, also known as *inline* JavaScript. The example hack illustrated in Figure 7-2 uses inline JavaScript, written out as the text of a comment.
 
@@ -136,7 +134,7 @@ If you collect all these violation reports in a log file, your development team 
 
 You should set a content security policy in addition to escaping HTML, since it’ll protect your users effectively! It’s difficult for an attacker to find an instance of unescaped content *and* to smuggle a malicious script onto your whitelisted domains. We call using multiple layers of defense for the same vulnerability defense in depth, as you learned in [Injection Attacks](INJECTION.ATTACKS.md); this will be a theme throughout this repository.
 
-### Reflected Cross-Site Scripting Attacks
+## Reflected Cross-Site Scripting Attacks
 
 Rogue JavaScript in the database isn’t the only vector for cross-site scripting attacks. If your site takes part of an HTTP request and displays it back in a rendered web page, your rendering code needs to protect against attacks that inject malicious JavaScript via the HTTP request. We call this type of attack a *reflected cross-site scripting* attack.
 
@@ -146,7 +144,7 @@ Now, if Google were a less secure company, it’d be possible to replace the *ca
 
 Thankfully, Google employs more than a few security experts, so if you attempt to insert `<script>` tags into its search results, the server won’t execute the JavaScript. In the past, hackers *have* discovered reflected cross-site scripting vulnerabilities in the Google Apps admin interface found at *https://admin.google.com*, so it goes to show that even big companies get caught out. If you want any chance of keeping your users safe, you need to protect against this attack vector.
 
-### Mitigation: Escape Dynamic Content from HTTP Requests
+## Mitigation: Escape Dynamic Content from HTTP Requests
 
 You mitigate reflected cross-site scripting vulnerabilities the same way you mitigate stored cross-site scripting vulnerabilities: by escaping control characters in dynamic content that the website interpolates into HTML pages. Whether dynamic content comes from the backend database or the HTTP request, you need to escape it in the same way.
 
@@ -156,7 +154,7 @@ Common target areas for reflected cross-site scripting attacks are search pages 
 
 Before we close this document, let’s look at one more type of cross-site scripting attack.
 
-### DOM-Based Cross-Site Scripting Attacks
+## DOM-Based Cross-Site Scripting Attacks
 
 Defusing most cross-site scripting attacks means inspecting and securing server-side code; however, the increasing popularity of rich frameworks for client-side code has led to the rise of *DOM-based cross-site scripting*, whereby attackers smuggle malicious JavaScript into a user’s web page via the URI fragment.
 
@@ -188,7 +186,7 @@ Unfortunately, this means that URI fragments aren’t available to any server-si
 
 DOM-based cross-site scripting is a relatively new form of attack, but is particularly dangerous because the injection of code happens completely on the client side, and can’t be detected by examining web server logs! This means you need to be keenly aware of the vulnerability when doing code reviews, and know how to mitigate it.
 
-### Mitigation: Escaping Dynamic Content from URI Fragments
+## Mitigation: Escaping Dynamic Content from URI Fragments
 
 Any JavaScript code executing in the browser that takes part of the URI fragment and constructs HTML is prone to DOM-based cross-site scripting attacks. This means you need to take care to *escape* anything taken from a URI fragment before interpolating that value in HTML with the client-side code, just as you would with server-side code.
 
@@ -207,7 +205,7 @@ function MyComponent() {
 
 Consider switching to a modern JavaScript framework if your client-side JavaScript code is complex. It should make the codebase more manageable and security considerations much more apparent. And as always, be sure to set an appropriate content security policy.
 
-### Summary
+## Summary
 
 In this document, you learned about cross-site scripting attacks, whereby an attacker injects JavaScript into the pages of your site when users view them. Attackers usually inject malicious JavaScript into dynamic content that comes from a database, from the HTTP request, or from the URI fragment. You can defeat cross-site scripting attacks by escaping any HTML control characters in dynamic content, and by setting a content security policy that prevents the execution of inline JavaScript.
 

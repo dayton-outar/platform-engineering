@@ -54,71 +54,71 @@ See below the web security checklist,
 
 Before releasing an application into production, ensuring its security is critical to protect users, the organisation, and data integrity. Penetration testing (pen-testing) is a vital part of this process, simulating real-world attacks to identify vulnerabilities that could be exploited by malicious actors. By testing the robustness of the application, organisations can mitigate potential threats, improving both security and reliability. Here are some key aspects to consider during penetration testing:
 
-### 1\. Validation, Sanitization: Improper Input Validation
+## 1\. Validation, Sanitization: Improper Input Validation
 
 Input validation is crucial to prevent injection attacks, where attackers exploit poorly validated input fields to execute malicious code. Improper input validation can allow attackers to inject SQL commands, modify queries, or execute arbitrary code. Penetration testing helps identify weak validation mechanisms and ensures that all user inputs are properly sanitised to avoid such risks.
 
-### 2\. Validation, Sanitization: Handling XSS (Cross-Site Scripting)
+## 2\. Validation, Sanitization: Handling XSS (Cross-Site Scripting)
 
 Cross-Site Scripting (XSS) is a type of attack where an attacker injects malicious scripts into web pages viewed by other users. This can lead to session hijacking, defacement, and other security breaches. Pen-testing is vital in detecting XSS vulnerabilities by analysing how the application handles input and output, especially when rendering user-provided data on a webpage. Ensuring proper validation and sanitization of input is key to mitigating XSS attacks.
 
-### 3\. Session Management: Session Fixation Vulnerability
+## 3\. Session Management: Session Fixation Vulnerability
 
 Session fixation occurs when an attacker is able to set or hijack a user's session ID before they log in, allowing the attacker to take over the session once authentication is complete. Penetration testing evaluates the application’s session management mechanisms, ensuring that session IDs are regenerated after successful authentication and that sessions are properly invalidated on logout.
 
-### 4\. Business Logic: External-Facing Administrative Portal
+## 4\. Business Logic: External-Facing Administrative Portal
 
 Applications often have administrative portals that must be restricted to authorised personnel. A common vulnerability is an external-facing administrative portal with weak access controls. Penetration testing can identify gaps in business logic that might allow unauthorised access to administrative features, exposing critical controls and data to attackers. Proper testing ensures that only authenticated and authorised users have access to sensitive administrative areas.
 
-### 5\. Access Controls: Insecure Design and Implementation
+## 5\. Access Controls: Insecure Design and Implementation
 
 Insecure access control mechanisms can lead to unauthorised data access or privilege escalation attacks. Penetration testing evaluates the security design and implementation of access controls, ensuring that users only have access to the resources necessary for their roles. It verifies that higher-privilege areas, such as administrative portals, are protected and not easily breached through insecure design.
 
-### 6\. Access Controls: Privilege Escalation of Administration Portal
+## 6\. Access Controls: Privilege Escalation of Administration Portal
 
 Privilege escalation occurs when an attacker gains higher-level access than what they are authorised for. Testing for privilege escalation ensures that even authenticated users cannot elevate their privileges to administrative levels without proper authorization. This protects sensitive features, data, and functionalities from unauthorised access and misuse.
 
-### 7\. Auditing and Logging: Insufficient Logging and Monitoring
+## 7\. Auditing and Logging: Insufficient Logging and Monitoring
 
 Logging and monitoring are essential for detecting and responding to security incidents. Insufficient logging and monitoring can prevent administrators from identifying security breaches in a timely manner. Penetration testing helps assess the adequacy of audit trails, ensuring that suspicious activities are logged and that proper alerts are generated for monitoring possible attacks.
 
-### 8\. Authentication: Insufficient Verification of Account
+## 8\. Authentication: Insufficient Verification of Account
 
 Weak authentication mechanisms can expose an application to brute-force attacks, credential stuffing, and unauthorised access. Penetration testing validates the robustness of authentication mechanisms, ensuring multi-factor authentication (MFA) is in place and that proper account verification methods are implemented. It ensures that user accounts are not easily compromised due to weak or insufficient authentication procedures.
 
-### 9\. Session Management: Session ID Doesn't Change
+## 9\. Session Management: Session ID Doesn't Change
 
 A common security issue is the failure to regenerate session IDs after login or significant events, such as password changes. Without session ID regeneration, an attacker could exploit the existing session to hijack a user’s session after authentication. Pen-testing evaluates how the application manages session IDs, ensuring that they are securely generated, rotated, and invalidated to prevent hijacking.
 
-### 10\. Configuration: Weak Password Change Controls
+## 10\. Configuration: Weak Password Change Controls
 
 Password change mechanisms need to be secure to prevent attackers from hijacking accounts. Weak password change controls, such as not requiring current password input or not enforcing strong password policies, are common vulnerabilities. Penetration testing assesses the strength of password change workflows, ensuring that users are required to confirm their identity and that password complexity is enforced.
 
-### 11\. Configuration: Cookies Without Secure Flag Set
+## 11\. Configuration: Cookies Without Secure Flag Set
 
 The secure flag ensures that cookies are only transmitted over HTTPS connections, preventing them from being intercepted over insecure networks. Penetration testing ensures that cookies are properly configured with the secure flag, protecting session data from being stolen during transmission. It also checks for the HttpOnly flag to prevent client-side scripts from accessing cookies.
 
-### 12\. Information Disclosure: Backend Technology Information Disclosure
+## 12\. Information Disclosure: Backend Technology Information Disclosure
 
 Leaking information about the underlying backend technology (e.g., database type, software versions) provides attackers with critical information for crafting targeted attacks. Penetration testing helps identify such information disclosure vulnerabilities, ensuring that error messages and headers do not reveal unnecessary technical details that could assist an attacker.
 
-### 13\. Configuration: Prevent Directory Structure Exposure
+## 13\. Configuration: Prevent Directory Structure Exposure
 
 This vulnerability allows attackers to list directories and file names within certain web servers by exploiting the tilde character in requests. Penetration testing helps identify if the server is vulnerable to directory structure exposure attacks and ensures that directory listings and file names are properly hidden from unauthorised users.
 
-### 14\. Configuration: Sensitive Pages Could Be Cached
+## 14\. Configuration: Sensitive Pages Could Be Cached
 
 If sensitive pages are cached by the browser or intermediary servers, an attacker could access cached content after a user has logged out or left the session. Penetration testing verifies that sensitive pages are configured with appropriate headers to prevent caching (e.g., Cache-Control: no-store), ensuring that confidential data is not left accessible.
 
-### 15\. Configuration: HTTP Strict Transport Security (HSTS) Not Implemented
+## 15\. Configuration: HTTP Strict Transport Security (HSTS) Not Implemented
 
 HSTS forces browsers to only use HTTPS when communicating with a web application, preventing protocol downgrade attacks and cookie hijacking over insecure connections. Penetration testing ensures that HSTS is implemented and configured correctly to provide a robust defence against man-in-the-middle attacks.
 
-### 16\. Configuration: Cookies With Missing, Inconsistent, or Contradictory Properties
+## 16\. Configuration: Cookies With Missing, Inconsistent, or Contradictory Properties
 
 Improperly configured cookies can expose the application to various security threats. Penetration testing ensures that cookies have consistent properties and are properly configured with attributes such as Secure, HttpOnly, SameSite, and Path to protect against cross-site attacks and session hijacking.
 
-### Conclusion
+## Conclusion
 
 Penetration testing is an essential component of an application’s security lifecycle. It enables organisations to identify vulnerabilities, strengthen defences, and reduce the risk of data breaches before deploying an application into production. By addressing critical aspects such as input validation, session management, access controls, and configuration issues, pen-testing enhances the security and resilience of applications, safeguarding both users and organisations against potential threats.
 
