@@ -38,7 +38,7 @@ The goal is to make reliable software delivery easier through consistent environ
 
 ## Management, Principles, and Practices
 
-The following collections provide the service management and Site Reliability Engineering (SRE) foundations for building and operating a reliable platform. Each README links to the full set of chapters and their references.
+The following collections provide the service management and Site Reliability Engineering (SRE) foundations for building and operating a reliable platform.
 
 - **[Management: Service Management and SRE Teams](./management/README.md)** covers service requirements, planning, resiliency, launches, conversions, disaster recovery, and customer support. It also explores SRE training, interrupt management, operational overload, collaboration, and engagement models. Use this collection to understand platform service ownership and how teams support their users.
 - **[Principles: Site Reliability Engineering Principles](./principles/README.md)** covers risk, service level objectives, toil reduction, monitoring distributed systems, automation, release engineering, and simplicity. These principles help platform teams balance delivery speed with reliability and reduce recurring operational work.
