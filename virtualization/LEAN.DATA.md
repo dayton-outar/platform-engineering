@@ -4,11 +4,13 @@
 
 Source: [Designing.Event-Driven.Systems-2018-10.pdf](./Designing.Event-Driven.Systems-2018-10.pdf), PDF pages 1–7.
 
+First-person accounts and opinions in this document reflect the original source authors’ perspective.
+
 Lean data is a simple idea: rather than collecting and curating large datasets, applications carefully select small, lean ones—just the data they need at a point in time—which are pushed from a central event store into caches, or stores they control. The resulting lightweight views are propped up by operational processes that make rederiving those views practical.
 
 ### If Messaging Remembers, Databases Don’t Have To
 
-One interesting consequence of using event streams as a source of truth (see Chapter 9) is that any data you extract from the log doesn’t need to be stored reliably. If it is lost you can always go back for more. So if the messaging layer remembers, downstream databases don’t have to (Figure 10-1). This means you can, if you choose, regenerate a database or event-sourced view completely from the log. This might seem a bit strange. Why might you want to do that?
+One interesting consequence of using event streams as a source of truth (see [Event Streams as a Shared Source of Truth](EVENT.STREAMS.SHARED.SOURCE.TRUTH.md)) is that any data you extract from the log doesn’t need to be stored reliably. If it is lost you can always go back for more. So if the messaging layer remembers, downstream databases don’t have to (Figure 10-1). This means you can, if you choose, regenerate a database or event-sourced view completely from the log. This might seem a bit strange. Why might you want to do that?
 
 In the context of traditional messaging, ETL (extract, transform, load) pipelines, and the like, the messaging layer is ephemeral, and users write all messages to a database once the messages have been read. After all, they may never see them again. There are a few problems that result from this. Architectures become comparably heavyweight, with a large number of applications and services retaining copies of a large proportion of the company’s data. At a macro level, as time passes, all these copies tend to diverge from one another and data quality issues start to creep in.
 
@@ -22,22 +24,20 @@ Today, issues like these have been largely solved within as-a-service cultures t
 
 Streaming encourages a similar approach, but for data. Event-sourced views are kept lean and can be rederived from the log in a deterministic way. The view could be a cache, a Kafka Streams state store, or a full-blown database. But for this to work, we need to deal with a problem. Loading data can be quite slow. In the next section we look at ways to keep this manageable.
 
-<!-- Source: Designing.Event-Driven.Systems-2018-10.pdf, PDF page 2. -->
 ![Figure 10-1. If the messaging system can store data, then the views or databases it feeds don’t have to](/.attachments/10-1-Designing.Event-Driven.Systems-2018-10.png)
 
 *Figure 10-1. If the messaging system can store data, then the views or databases it feeds don’t have to*
 
 ### Take Only the Data You Need, Nothing More
 
-If datasets are stored in Kafka, when you pull data into your service you can pick out just the pieces you need. This minimizes the size of the resulting views and allows them to be reshaped so that they are read-optimized. This is analogous to the way materialized views are used in relational databases to optimize for reads except, unlike in a relational database, writes and reads are decoupled. (See “Materialized Views” on page 62 in Chapter 7.)
+If datasets are stored in Kafka, when you pull data into your service you can pick out just the pieces you need. This minimizes the size of the resulting views and allows them to be reshaped so that they are read-optimized. This is analogous to the way materialized views are used in relational databases to optimize for reads except, unlike in a relational database, writes and reads are decoupled. (See [Materialized Views](EVENT.SOURCING.CQRS.STATEFUL.PATTERNS.md#materialized-views).)
 
-The inventory service, discussed in Chapter 15, makes a good example. It reads inventory messages that include lots of information about the various products stored in the warehouse. When the service reads each message it throws away the vast majority of the document, stripping it back to just two fields: the product ID and the number of items in stock.
+The inventory service, discussed in [Building Streaming Services](BUILDING.STREAMING.SERVICES.md), makes a good example. It reads inventory messages that include lots of information about the various products stored in the warehouse. When the service reads each message it throws away the vast majority of the document, stripping it back to just two fields: the product ID and the number of items in stock.
 
 Reducing the breadth of the view keeps the dataset small and loosely coupled. By keeping the dataset small you can store more rows in the available memory or disk, and performance will typically improve as a result. Coupling is reduced too, since should the schema change, it is less likely that the service will store affected fields.
 
 > If messaging remembers, derived views can be refined to contain only the data that is absolutely necessary. You can always go back for more.
 
-<!-- Source: Designing.Event-Driven.Systems-2018-10.pdf, PDF page 3. -->
 ![Figure 10-3. Callout illustration accompanying the discussion on PDF page 3](/.attachments/10-3-Designing.Event-Driven.Systems-2018-10.png)
 
 *Figure 10-3. Callout illustration accompanying the discussion on PDF page 3*
@@ -50,7 +50,7 @@ The obvious drawback of lean data is that, should you need more data, you need t
 
 #### Kafka Streams
 
-If you create event-sourced views with Kafka Streams, view regeneration is par for the course. Views are either tables, which are a direct materialization of a Kafka topic, or state stores, which are populated with the result of some declarative transformation, defined in JVM code or KSQL. Both of these are automatically rebuilt if the disk within the service is lost (or removed) or if the Streams Reset tool is invoked.[^p3-1] We discussed how Kafka Streams manages statefulness in more detail in the section “The Practicalities of Being Stateful” on page 52 in Chapter 6.
+If you create event-sourced views with Kafka Streams, view regeneration is par for the course. Views are either tables, which are a direct materialization of a Kafka topic, or state stores, which are populated with the result of some declarative transformation, defined in JVM code or KSQL. Both of these are automatically rebuilt if the disk within the service is lost (or removed) or if the Streams Reset tool is invoked.[^p3-1] We discussed how Kafka Streams manages statefulness in more detail in the section [The Practicalities of Being Stateful](PROCESSING.EVENTS.STATEFUL.FUNCTIONS.md#the-practicalities-of-being-stateful).
 
 #### Databases and Caches
 
@@ -66,7 +66,7 @@ Because worst-case regeneration time is the limiting factor, it helps to pick a 
 
 #### Handling the Impracticalities of Data Movement
 
-Rebuilding an event-sourced view may still be a relatively long-winded process (minutes or even hours![^p4-2]). Because of this lead time, when releasing new software, developers typically regenerate views in advance (or in parallel), with the switch from old view to new view happening when the view is fully caught up. This is essentially the same approach taken by stateful stream processing applications that use Kafka Streams.
+Rebuilding an event-sourced view may still be a relatively long-winded process (minutes or even hours![^p4-2]). Because of this lead time, when releasing new software, developers typically regenerate views in advance (or in parallel), with the switch from old view to new view happening when the view is fully caught up. This is essentially the same approach taken by *stateful* stream processing applications that use Kafka Streams.
 
 The pattern works well for simple services that need small- to medium-sized datasets, say, to drive rules engines. Working with larger datasets means slower load times. If you need to rebuild terabyte-sized datasets in a single instance of a highly indexed, disk-resident database, this load time could well be prohibitively long. But in many common cases, memory-based solutions that have fast write times, or horizontal scaling, will keep ingestion fast.
 
@@ -74,7 +74,6 @@ The pattern works well for simple services that need small- to medium-sized data
 
 Operators typically lose trust in tools that are not regularly used. This is even more true when those scripts operate on data (database rollback scripts are notorious). So when you move from environment to environment, as part of your development workflow, it’s often best to recreate views directly from the log rather than copying database files from environment to environment as you might in a traditional database workflow (Figure 10-2).
 
-<!-- Source: Designing.Event-Driven.Systems-2018-10.pdf, PDF page 5. -->
 ![Figure 10-2. Data is replicated to a UAT environment where views are regenerated from source](/.attachments/10-2-Designing.Event-Driven.Systems-2018-10.png)
 
 *Figure 10-2. Data is replicated to a UAT environment where views are regenerated from source*
@@ -101,12 +100,12 @@ Streaming platforms help address these problems in a slightly different way. Fir
 
 ### Summary
 
-So when it comes to data, we should be unequivocal about the shared facts of our system. They are the very essence of our business, after all. Lean practices encourage us to stay close to these shared facts, a process where we manufacture views that are specifically optimized to the problem space at hand. This keeps them lightweight and easier to regenerate, leveraging a similar mindset to that developed in Command Sourcing and Event Sourcing, which we discussed in Chapter 7. So while these facts may be evolved over time, applied in different ways, or recast to different contexts, they will always tie back to a single source of truth.
+So when it comes to data, we should be unequivocal about the shared facts of our system. They are the very essence of our business, after all. Lean practices encourage us to stay close to these shared facts, a process where we manufacture views that are specifically optimized to the problem space at hand. This keeps them lightweight and easier to regenerate, leveraging a similar mindset to that developed in Command Sourcing and Event Sourcing, which we discussed in [Event Sourcing, CQRS, and Other Stateful Patterns](EVENT.SOURCING.CQRS.STATEFUL.PATTERNS.md). So while these facts may be evolved over time, applied in different ways, or recast to different contexts, they will always tie back to a single source of truth.
 
 ### Notes
 
-[^p3-1]: See http://bit.ly/2GaCRZO and http://bit.ly/2IUPHJa.
+[^p3-1]: See *http://bit.ly/2GaCRZO* and *http://bit.ly/2IUPHJa*.
 
 [^p4-2]: As a yardstick, RocksDB (which Kafka Streams uses) will bulk-load ~10M 500 KB objects per minute (roughly GbE speed). Badger will do ~4M × 1K objects a minute per SSD. Postgres will bulk-load ~1M rows per minute.
 
-[^p5-3]: We assume the datasets have been migrated forward using a technique like dual-schema upgrade window, discussed in “Handling Schema Change and Breaking Backward Compatibility” on page 124 in Chapter 13.
+[^p5-3]: We assume the datasets have been migrated forward using a technique like dual-schema upgrade window, discussed in [Handling Schema Change and Breaking Backward Compatibility](EVOLVING.SCHEMAS.DATA.OVER.TIME.md#handling-schema-change-and-breaking-backward-compatibility).

@@ -4,15 +4,14 @@
 
 Source: [Fundamentals.of.Software.Architecture-2020-13.pdf](./Fundamentals.of.Software.Architecture-2020-13.pdf), PDF pages 1–16.
 
-Service-based architecture is a hybrid of the microservices architecture style and is considered one of the most pragmatic architecture styles, mostly due to its architectural flexibility. Although service-based architecture is a distributed architecture, it doesn’t have the same level of complexity and cost as other distributed architectures, such as microservices or event-driven architecture, making it a very popular choice for many business-related applications.
+*Service-based* architecture is a hybrid of the microservices architecture style and is considered one of the most pragmatic architecture styles, mostly due to its architectural flexibility. Although service-based architecture is a distributed architecture, it doesn’t have the same level of complexity and cost as other distributed architectures, such as microservices or event-driven architecture, making it a very popular choice for many business-related applications.
 
 ### Topology
 
 The basic topology of service-based architecture follows a distributed macro layered structure consisting of a separately deployed user interface, separately deployed remote coarse-grained services, and a monolithic database. This basic topology is illustrated in Figure 13-1.
 
-Services within this architecture style are typically coarse-grained “portions of an application” (usually called domain services) that are independent and separately deployed. Services are typically deployed in the same manner as any monolithic application would be (such as an EAR file, WAR file, or assembly) and as such do not require containerization (although you could deploy a domain service in a container such as Docker). Because the services typically share a single monolithic database, the number of services within an application context generally range between 4 and 12 services, with the average being about 7 services.
+Services within this architecture style are typically coarse-grained “portions of an application” (usually called *domain services*) that are independent and separately deployed. Services are typically deployed in the same manner as any monolithic application would be (such as an EAR file, WAR file, or assembly) and as such do not require containerization (although you could deploy a domain service in a container such as Docker). Because the services typically share a single monolithic database, the number of services within an application context generally range between 4 and 12 services, with the average being about 7 services.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-13.pdf, PDF page 2. -->
 ![Figure 13-1. Basic topology of the service-based architecture style](/.attachments/13-1-Fundamentals.of.Software.Architecture-2020-13.png)
 
 *Figure 13-1. Basic topology of the service-based architecture style*
@@ -21,27 +20,24 @@ In most cases there is only a single instance of each domain service within a se
 
 Services are accessed remotely from a user interface using a remote access protocol. While REST is typically used to access services from the user interface, messaging, remote procedure call (RPC), or even SOAP could be used as well. While an API layer consisting of a proxy or gateway can be used to access services from the user interface (or other external requests), in most cases the user interface accesses the services directly using a service locator pattern embedded within the user interface, API gateway, or proxy.
 
-One important aspect of service-based architecture is that it typically uses a centrally shared database. This allows services to leverage SQL queries and joins in the same way a traditional monolithic layered architecture would. Because of the small number of services (4 to 12), database connections are not usually an issue in service-based architecture. Database changes, however, can be an issue. The section “Database Partitioning” on page 169 describes techniques for addressing and managing database change within a service-based architecture.
+One important aspect of service-based architecture is that it typically uses a centrally shared database. This allows services to leverage SQL queries and joins in the same way a traditional monolithic layered architecture would. Because of the small number of services (4 to 12), database connections are not usually an issue in service-based architecture. Database changes, however, can be an issue. The section [Database Partitioning](SERVICE.BASED.ARCHITECTURE.md#database-partitioning) describes techniques for addressing and managing database change within a service-based architecture.
 
 ### Topology Variants
 
 Many topology variants exist within the service-based architecture style, making this perhaps one of the most flexible architecture styles. For example, the single monolithic user interface, as illustrated in Figure 13-1, can be broken apart into user interface domains, even to a level matching each domain service. These user interface variants are illustrated in Figure 13-2.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-13.pdf, PDF page 3. -->
 ![Figure 13-2. User interface variants](/.attachments/13-2-Fundamentals.of.Software.Architecture-2020-13.png)
 
 *Figure 13-2. User interface variants*
 
 Similarly, opportunities may exist to break apart a single monolithic database into separate databases, even going as far as domain-scoped databases matching each domain service (similar to microservices). In these cases it is important to make sure the data in each separate database is not needed by another domain service. This avoids interservice communication between domain services (something to definitely avoid with service-based architecture) and also the duplication of data between databases. These database variants are illustrated in Figure 13-3.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-13.pdf, PDF page 4. -->
 ![Figure 13-3. Database variants](/.attachments/13-3-Fundamentals.of.Software.Architecture-2020-13.png)
 
 *Figure 13-3. Database variants*
 
 Finally, it is also possible to add an API layer consisting of a reverse proxy or gateway between the user interface and services, as shown in Figure 13-4. This is a good practice when exposing domain service functionality to external systems or when consolidating shared cross-cutting concerns and moving them outside of the user interface (such as metrics, security, auditing requirements, and service discovery).
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-13.pdf, PDF page 5. -->
 ![Figure 13-4. Adding an API layer between the user interface and domain services](/.attachments/13-4-Fundamentals.of.Software.Architecture-2020-13.png)
 
 *Figure 13-4. Adding an API layer between the user interface and domain services*
@@ -50,7 +46,6 @@ Finally, it is also possible to add an API layer consisting of a reverse proxy o
 
 Because domain services in a service-based architecture are generally coarse-grained, each domain service is typically designed using a layered architecture style consisting of an API facade layer, a business layer, and a persistence layer. Another popular design approach is to domain partition each domain service using sub-domains similar to the modular monolith architecture style. Each of these design approaches is illustrated in Figure 13-5.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-13.pdf, PDF page 6. -->
 ![Figure 13-5. Domain service design variants](/.attachments/13-5-Fundamentals.of.Software.Architecture-2020-13.png)
 
 *Figure 13-5. Domain service design variants*
@@ -67,23 +62,20 @@ Domain services, being coarse-grained, allow for better data integrity and consi
 
 Although not required, services within a service-based architecture usually share a single, monolithic database due to the small number of services (4 to 12) within a given application context. This database coupling can present an issue with respect to database table schema changes. If not done properly, a table schema change can potentially impact every service, making database changes a very costly task in terms of effort and coordination.
 
-Within a service-based architecture, the shared class files representing the database table schemas (usually referred to as entity objects) reside in a custom shared library used by all the domain services (such as a JAR file or DLL). Shared libraries might also contain SQL code. The practice of creating a single shared library of entity objects is the least effective way of implementing service-based architecture. Any change to the database table structures would also require a change to the single shared library containing all of the corresponding entity objects, thus requiring a change and redeployment to every service, regardless of whether or not the services actually access the changed table. Shared library versioning can help address this issue, but nevertheless, with a single shared library it is difficult to know which services are actually impacted by the table change without manual, detailed analysis. This single shared library scenario is illustrated in Figure 13-6.
+Within a service-based architecture, the shared class files representing the database table schemas (usually referred to as *entity objects*) reside in a custom shared library used by all the domain services (such as a JAR file or DLL). Shared libraries might also contain SQL code. The practice of creating a single shared library of entity objects is the least effective way of implementing service-based architecture. Any change to the database table structures would also require a change to the single shared library containing all of the corresponding entity objects, thus requiring a change and redeployment to every service, regardless of whether or not the services actually access the changed table. Shared library versioning can help address this issue, but nevertheless, with a single shared library it is difficult to know which services are actually impacted by the table change without manual, detailed analysis. This single shared library scenario is illustrated in Figure 13-6.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-13.pdf, PDF page 8. -->
 ![Figure 13-6. Using a single shared library for database entity objects](/.attachments/13-6-Fundamentals.of.Software.Architecture-2020-13.png)
 
 *Figure 13-6. Using a single shared library for database entity objects*
 
 One way to mitigate the impact and risk of database changes is to logically partition the database and manifest the logical partitioning through federated shared libraries. Notice in Figure 13-7 that the database is logically partitioned into five separate domains (common, customer, invoicing, order, and tracking). Also notice that there are five corresponding shared libraries used by the domain services matching the logical partitions in the database. Using this technique, changes to a table within a particular logical domain (in this case, invoicing) match the corresponding shared library containing the entity objects (and possibly SQL as well), impacting only those services using that shared library, which in this case is the invoicing service. No other services are impacted by this change.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-13.pdf, PDF page 9. -->
 ![Figure 13-7. Using multiple shared libraries for database entity objects](/.attachments/13-7-Fundamentals.of.Software.Architecture-2020-13.png)
 
 *Figure 13-7. Using multiple shared libraries for database entity objects*
 
-Notice in Figure 13-7 the use of the common domain and the corresponding common_entities_lib shared library used by all services. This is a relatively common occurrence. These tables are common to all services, and as such, changes to these tables require coordination of all services accessing the shared database. One way to mitigate changes to these tables (and corresponding entity objects) is to lock the common entity objects in the version control system and restrict change access to only the database team. This helps control change and emphasizes the significance of changes to the common tables used by all services.
+Notice in Figure 13-7 the use of the *common* domain and the corresponding common_entities_lib shared library used by all services. This is a relatively common occurrence. These tables are common to all services, and as such, changes to these tables require coordination of all services accessing the shared database. One way to mitigate changes to these tables (and corresponding entity objects) is to lock the common entity objects in the version control system and restrict change access to only the database team. This helps control change and emphasizes the significance of changes to the common tables used by all services.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-13.pdf, PDF page 9. -->
 ![Figure 13-11. Callout illustration accompanying the discussion on PDF page 9](/.attachments/13-11-Fundamentals.of.Software.Architecture-2020-13.png)
 
 *Figure 13-11. Callout illustration accompanying the discussion on PDF page 9*
@@ -92,13 +84,12 @@ Notice in Figure 13-7 the use of the common domain and the corresponding common_
 
 ### Example Architecture
 
-To illustrate the flexibility and power of the service-based architecture style, consider the real-world example of an electronic recycling system used to recycle old electronic devices (such as an iPhone or Galaxy cell phone). The processing flow of recycling old electronic devices works as follows: first, the customer asks the company (via a website or kiosk) how much money they can get for the old electronic device (called quoting). If satisfied, the customer will send the electronic device to the recycling company, which in turn will receive the physical device (called receiving). Once received, the recycling company will then assess the device to determine if the device is in good working condition or not (called assessment). If the device is in good working condition, the company will send the customer the money promised for the device (called accounting). Through this process, the customer can go to the website at any time to check on the status of the item (called item status). Based on the assessment, the device is then recycled by either safely destroying it or reselling it (called recycling). Finally, the company periodically runs ad hoc and scheduled financial and operational reports based on recycling activity (called reporting).
+To illustrate the flexibility and power of the service-based architecture style, consider the real-world example of an electronic recycling system used to recycle old electronic devices (such as an iPhone or Galaxy cell phone). The processing flow of recycling old electronic devices works as follows: first, the customer asks the company (via a website or kiosk) how much money they can get for the old electronic device (called *quoting*). If satisfied, the customer will send the electronic device to the recycling company, which in turn will receive the physical device (called *receiving*). Once received, the recycling company will then assess the device to determine if the device is in good working condition or not (called *assessment*). If the device is in good working condition, the company will send the customer the money promised for the device (called *accounting*). Through this process, the customer can go to the website at any time to check on the status of the item (called *item status*). Based on the assessment, the device is then recycled by either safely destroying it or reselling it (called *recycling*). Finally, the company periodically runs ad hoc and scheduled financial and operational reports based on recycling activity (called *reporting*).
 
 Figure 13-8 illustrates this system using a service-based architecture. Notice how each domain area identified in the prior description is implemented as a separately deployed independent domain service. Scalability can be achieved by only scaling those services needing higher throughput (in this case, the customer-facing Quoting service and ItemStatus service). The other services do not need to scale, and as such only require a single service instance.
 
-Also notice in how the user interface applications are federated into their respective domains: Customer Facing, Receiving, and Recycling and Accounting. This federation allows for fault tolerance of the user interface, scalability, and security (external customers have no network path to internal functionality). Finally, notice in this example that there are two separate physical databases: one for external customer-facing operations, and one for internal operations. This allows the internal data and operations to reside in a separate network zone from the external operations (denoted by the vertical line), providing much better security access restrictions and data protection. One-way access through the firewall allows internal services to access and update the customer-facing information, but not vice versa. Alternatively, depending on the database being used, internal table mirroring and table synchronization could also be used.
+Also notice in how the user interface applications are federated into their respective domains: *Customer Facing*, *Receiving*, and *Recycling and Accounting*. This federation allows for fault tolerance of the user interface, scalability, and security (external customers have no network path to internal functionality). Finally, notice in this example that there are two separate physical databases: one for external customer-facing operations, and one for internal operations. This allows the internal data and operations to reside in a separate network zone from the external operations (denoted by the vertical line), providing much better security access restrictions and data protection. One-way access through the firewall allows internal services to access and update the customer-facing information, but not vice versa. Alternatively, depending on the database being used, internal table mirroring and table synchronization could also be used.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-13.pdf, PDF page 11. -->
 ![Figure 13-8. Electronics recycling example using service-based architecture](/.attachments/13-8-Fundamentals.of.Software.Architecture-2020-13.png)
 
 *Figure 13-8. Electronics recycling example using service-based architecture*
@@ -107,18 +98,16 @@ This example illustrates many of the benefits of the service-based architecture 
 
 ### Architecture Characteristics Ratings
 
-A one-star rating in the characteristics ratings table in Figure 13-9 means the specific architecture characteristic isn’t well supported in the architecture, whereas a five-star rating means the architecture characteristic is one of the strongest features in the architecture style. The definition for each characteristic identified in the scorecard can be found in Chapter 4.
+A one-star rating in the characteristics ratings table in Figure 13-9 means the specific architecture characteristic isn’t well supported in the architecture, whereas a five-star rating means the architecture characteristic is one of the strongest features in the architecture style.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-13.pdf, PDF page 12. -->
 ![Figure 13-9. Service-based architecture characteristics ratings](/.attachments/13-9-Fundamentals.of.Software.Architecture-2020-13.png)
 
 *Figure 13-9. Service-based architecture characteristics ratings*
 
-Service-based architecture is a domain-partitioned architecture, meaning that the structure is driven by the domain rather than a technical consideration (such as presentation logic or persistence logic). Consider the prior example of the electronic recycling application. Each service, being a separately deployed unit of software, is scoped to a specific domain (such as item assessment). Changes made within this domain only impact the specific service, the corresponding user interface, and the corresponding database. Nothing else needs to be modified to support a specific assessment change.
+Service-based architecture is a *domain-partitioned* architecture, meaning that the structure is driven by the domain rather than a technical consideration (such as presentation logic or persistence logic). Consider the prior example of the electronic recycling application. Each service, being a separately deployed unit of software, is scoped to a specific domain (such as item assessment). Changes made within this domain only impact the specific service, the corresponding user interface, and the corresponding database. Nothing else needs to be modified to support a specific assessment change.
 
-Being a distributed architecture, the number of quanta can be greater than or equal to one. Even though there may be anywhere from 4 to 12 separately deployed services, if those services all share the same database or user interface, that entire system would be only a single quantum. However, as illustrated in “Topology Variants” on page 165, both the user interface and database can be federated, resulting in multiple quanta within the overall system. In the electronics recycling example, the system contains two quanta, as illustrated in Figure 13-10: one for the customer-facing portion of the application containing a separate customer user interface, database, and set of services (Quoting and Item Status); and one for the internal operations of receiving, assessing, and recycling the electronic device. Notice that even though the internal operations quantum contains separately deployed services and two separate user interfaces, they all share the same database, making the internal operations portion of the application a single quantum.
+Being a distributed architecture, the number of quanta can be greater than or equal to one. Even though there may be anywhere from 4 to 12 separately deployed services, if those services all share the same database or user interface, that entire system would be only a single quantum. However, as illustrated in [Topology Variants](SERVICE.BASED.ARCHITECTURE.md#topology-variants), both the user interface and database can be federated, resulting in multiple quanta within the overall system. In the electronics recycling example, the system contains two quanta, as illustrated in Figure 13-10: one for the customer-facing portion of the application containing a separate customer user interface, database, and set of services (Quoting and Item Status); and one for the internal operations of receiving, assessing, and recycling the electronic device. Notice that even though the internal operations quantum contains separately deployed services and two separate user interfaces, they all share the same database, making the internal operations portion of the application a single quantum.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-13.pdf, PDF page 13. -->
 ![Figure 13-10. Separate quanta in a service-based architecture](/.attachments/13-10-Fundamentals.of.Software.Architecture-2020-13.png)
 
 *Figure 13-10. Separate quanta in a service-based architecture*
@@ -135,7 +124,7 @@ Service-based architectures tend to be more reliable than other distributed arch
 
 ### When to Use This Architecture Style
 
-The flexibility of this architecture style (see “Topology Variants” on page 165) combined with the number of three-star and four-star architecture characteristics ratings make service-based architecture one of the most pragmatic architecture styles available. While there are certainly other distributed architecture styles that are much more powerful, some companies find that power comes at too steep of a price, while others find that they quite simply don’t need that much power. It’s like having the power, speed, and agility of a Ferrari used only for driving back and forth to work in rush-hour traffic at 50 kilometers per hour—sure it looks cool, but what a waste of resources and money!
+The flexibility of this architecture style (see [Topology Variants](SERVICE.BASED.ARCHITECTURE.md#topology-variants)) combined with the number of three-star and four-star architecture characteristics ratings make service-based architecture one of the most pragmatic architecture styles available. While there are certainly other distributed architecture styles that are much more powerful, some companies find that power comes at too steep of a price, while others find that they quite simply don’t need that much power. It’s like having the power, speed, and agility of a Ferrari used only for driving back and forth to work in rush-hour traffic at 50 kilometers per hour—sure it looks cool, but what a waste of resources and money!
 
 Service-based architecture is also a natural fit when doing domain-driven design. Because services are coarse-grained and domain-scoped, each domain fits nicely into a separately deployed domain service. Each service in service-based architecture encompasses a particular domain (such as recycling in the electronic recycling application), therefore compartmentalizing that functionality into a single unit of software, making it easier to apply changes to that domain.
 

@@ -4,6 +4,8 @@
 
 Source: [Designing.Event-Driven.Systems-2018-13.pdf](./Designing.Event-Driven.Systems-2018-13.pdf), PDF pages 1–7.
 
+First-person accounts and opinions in this document reflect the original source authors’ perspective.
+
 Schemas are the APIs used by event-driven services, so a publisher and subscriber need to agree on exactly how a message is formatted. This creates a logical coupling between sender and receiver based on the schema they both share. In the same way that request-driven services make use of service discovery technology to discover APIs, event-driven technologies need some mechanism to discover what topics are available, and what data (i.e., schema) they provide.
 
 There are a fair few options available for schema management: Protobuf and JSON Schema are both popular, but most projects in the Kafka space use Avro. For central schema management and verification, Confluent has an open source Schema Registry that provides a central repository for Avro schemas.
@@ -12,7 +14,7 @@ There are a fair few options available for schema management: Protobuf and JSON 
 
 Schemas provide a contract that defines what a message should look like. This is pretty intuitive. Importantly, though, most schema technologies provide a mechanism for validating whether a message in a new schema is backward-compatible with previous versions (or vice versa). This property is essential. (Don’t use Java serialization or any non-evolvable format across services that change independently.)
 
-Say you added a “return code” field to the schema for an order; this would be a backward-compatible change. Programs running with the old schema would still be able to read messages, but they wouldn’t see the “return code” field (termed forward compatibility). Programs with the new schema would be able to read the whole message, with the “return code” field included (termed backward compatibility).
+Say you added a “return code” field to the schema for an order; this would be a backward-compatible change. Programs running with the old schema would still be able to read messages, but they wouldn’t see the “return code” field (termed *forward compatibility*). Programs with the new schema would be able to read the whole message, with the “return code” field included (termed *backward compatibility*).
 
 Unfortunately, you can’t move or remove fields from a schema in a compatible way, although it’s typically possible to synthesize a move with a clone. The data will be duplicated in two places until such time as a breaking change can be released.
 
@@ -20,7 +22,6 @@ This ability to evolve a schema with additive changes that don’t break old pro
 
 The Confluent Schema Registry can be used to police this approach. The Schema Registry provides a mapping between topics in Kafka and the schema they use (Figure 13-1). It also enforces compatibility rules before messages are added. So the Schema Registry will check every message sent to Kafka for Avro compatibility, ensuring that incompatible messages will fail on publication.
 
-<!-- Source: Designing.Event-Driven.Systems-2018-13.pdf, PDF page 2. -->
 ![Figure 13-1. Calling out to the Schema Registry to validate schema compatibility when reading and writing orders in the orders service](/.attachments/13-1-Designing.Event-Driven.Systems-2018-13.png)
 
 *Figure 13-1. Calling out to the Schema Registry to validate schema compatibility when reading and writing orders in the orders service*
@@ -45,14 +46,13 @@ As we discussed in the previous section, most of the time backward compatibility
 
 All four approaches achieve the same goal: to give services a window in which they can upgrade. The last two options make it easier to port historic messages from the v1 to the v2 topics, as the Kafka Streams job will do this automatically if it is started from offset 0. This makes it better suited to long-retention topics such as those used in Event Sourcing use cases.
 
-<!-- Source: Designing.Event-Driven.Systems-2018-13.pdf, PDF page 4. -->
 ![Figure 13-2. Dual Schema Upgrade Window: the same data coexists in two topics, with different schemas, so there is a window during which services can upgrade](/.attachments/13-2-Designing.Event-Driven.Systems-2018-13.png)
 
 *Figure 13-2. Dual Schema Upgrade Window: the same data coexists in two topics, with different schemas, so there is a window during which services can upgrade*
 
 Services continue in this dual-topic mode until fully migrated to the v2 topic, at which point the v1 topic can be archived or deleted as appropriate.
 
-As an aside, we discussed the single writer principle in Chapter 11. One of the reasons for applying this approach is that it makes schema upgrades simpler. If we had three different services writing orders, it would be much harder to schedule a non-backward-compatible upgrade without a conjoined release.
+As an aside, we discussed the single writer principle in [Consistency and Concurrency in Event-Driven Systems](CONSISTENCY.CONCURRENCY.EVENT.DRIVEN.SYSTEMS.md). One of the reasons for applying this approach is that it makes schema upgrades simpler. If we had three different services writing orders, it would be much harder to schedule a non-backward-compatible upgrade without a conjoined release.
 
 ### Collaborating over Schema Change
 
@@ -64,7 +64,7 @@ The best approach I’ve seen for this is to use GitHub. This works well because
 
 Schemas aren’t always enough to ensure downstream applications will work. There is nothing to prevent a semantic error—for example, an unexpected character, invalid country code, negative quantity, or even invalid bytes (say due to corruption)—from causing a process to stall. Such errors will typically hold up processing until the issue is fixed, which can be unacceptable in some environments.
 
-Traditional messaging systems often include a related concept called a dead letter queue,[^p5-1] which is used to hold messages that can’t be sent, for example, because they cannot be routed to a destination queue. The concept doesn’t apply in the same way to Kafka, but it is possible for consumers to not be able to read a message, either for semantic reasons or due to the message payload being invalid (e.g., the CRC check failing, on read, as the message has become corrupted).
+Traditional messaging systems often include a related concept called a *dead letter queue*,[^p5-1] which is used to hold messages that can’t be sent, for example, because they cannot be routed to a destination queue. The concept doesn’t apply in the same way to Kafka, but it is possible for consumers to not be able to read a message, either for semantic reasons or due to the message payload being invalid (e.g., the CRC check failing, on read, as the message has become corrupted).
 
 Some implementers choose to create a type of dead letter queue of their own in a separate topic. If a consumer cannot read a message for whatever reason, it is placed on this error queue so processing can continue. Later the error queue can be reprocessed.
 
@@ -94,10 +94,10 @@ Some teams prefer to do this by convention, but you can apply a stricter segrega
 
 ### Summary
 
-In this chapter we looked at a collection of somewhat disparate issues that affect event-driven systems. We considered the problem of schema change: something that is inevitable in the real-world. Often this can be managed simply by evolving the schema with a format like Avro or Protobuf that supports backward compatibility. At other times evolution will not be possible and the system will have to undergo a non-backward-compatible change. The dual-schema upgrade window is one way to handle this.
+In this document we looked at a collection of somewhat disparate issues that affect event-driven systems. We considered the problem of schema change: something that is inevitable in the real-world. Often this can be managed simply by evolving the schema with a format like Avro or Protobuf that supports backward compatibility. At other times evolution will not be possible and the system will have to undergo a non-backward-compatible change. The dual-schema upgrade window is one way to handle this.
 
 Then we briefly looked at handling unreadable messages as well as how data can be deleted. For many users deleting data won’t be an issue–it will simply age out of the log–but for those that keep data for longer periods this typically becomes important.
 
 ### Notes
 
-[^p5-1]: See https://www.rabbitmq.com/dlx.html and https://ibm.co/2ui3rKO.
+[^p5-1]: See *https://www.rabbitmq.com/dlx.html* and *https://ibm.co/2ui3rKO*.

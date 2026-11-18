@@ -4,9 +4,10 @@
 
 Source: [Designing.Distributed.Systems-2025-3.pdf](./Designing.Distributed.Systems-2025-3.pdf), PDF pages 1–10.
 
-The first single-node pattern is the sidecar pattern. The sidecar pattern is a single-node pattern made up of two containers. The first is the application container. It contains the core logic for the application. Without this container, the application would not exist. In addition to the application container, there is a sidecar container. The role of the sidecar is to augment and improve the application container, often without the application container’s knowledge. In its simplest form, a sidecar container can be used to add functionality to a container that might otherwise be difficult to improve. Sidecar containers are coscheduled onto the same machine via an atomic container group, such as the pod API object in Kubernetes. In addition to being scheduled on the same machine, the application container and sidecar container share a number of resources, including parts of the filesystem, hostname, and network, and many other namespaces. A generic image of this sidecar pattern is shown in Figure 3-1.
+First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
-<!-- Source: Designing.Distributed.Systems-2025-3.pdf, PDF page 1. -->
+The first single-node pattern is the sidecar pattern. The sidecar pattern is a single-node pattern made up of two containers. The first is the *application container*. It contains the core logic for the application. Without this container, the application would not exist. In addition to the application container, there is a *sidecar container*. The role of the sidecar is to augment and improve the application container, often without the application container’s knowledge. In its simplest form, a sidecar container can be used to add functionality to a container that might otherwise be difficult to improve. Sidecar containers are coscheduled onto the same machine via an atomic *container group*, such as the pod API object in Kubernetes. In addition to being scheduled on the same machine, the application container and sidecar container share a number of resources, including parts of the filesystem, hostname, and network, and many other namespaces. A generic image of this sidecar pattern is shown in Figure 3-1.
+
 ![Figure 3-1. The generic sidecar pattern](/.attachments/3-1-Designing.Distributed.Systems-2025-3.png)
 
 *Figure 3-1. The generic sidecar pattern*
@@ -21,7 +22,6 @@ The application of the sidecar pattern to this situation is straightforward. The
 
 At the same time, this nginx service can terminate HTTPS traffic on the external IP address of the pod and proxy that traffic to the legacy web application (see Figure 3-2). Since this unencrypted traffic is only sent via the local loopback adapter inside the container group, the network security team is satisfied that the data is safe. Likewise, by using the sidecar pattern, the team has modernized a legacy application without having to figure out how to rebuild a new application to serve HTTPS. A similar form of this pattern can also be used to add automatic certificate rotation, or even authentication and authorization to legacy web applications that may not be easy to modify.
 
-<!-- Source: Designing.Distributed.Systems-2025-3.pdf, PDF page 2. -->
 ![Figure 3-2. The HTTPS sidecar](/.attachments/3-2-Designing.Distributed.Systems-2025-3.png)
 
 *Figure 3-2. The HTTPS sidecar*
@@ -32,7 +32,6 @@ Simply proxying traffic into an existing application is not the only use for a s
 
 Similar to the case of HTTPS, new applications can be written with the expectation that configuration is a dynamic property that should be obtained using a cloud API, but adapting and updating an existing application can be significantly more challenging. Fortunately, the sidecar pattern again can be used to provide new functionality that augments a legacy application without changing the existing application. For the sidecar pattern shown in Figure 3-3, there again are two containers: the container that is the serving application and the container that is the configuration manager. The two containers are grouped together into a pod, where they share a directory between themselves. This shared directory is where the configuration file is maintained.
 
-<!-- Source: Designing.Distributed.Systems-2025-3.pdf, PDF page 3. -->
 ![Figure 3-3. A sidecar example of managing a dynamic configuration](/.attachments/3-3-Designing.Distributed.Systems-2025-3.png)
 
 *Figure 3-3. A sidecar example of managing a dynamic configuration*
@@ -65,7 +64,7 @@ $ docker run --pid=container:${APP_ID} \
     /server --addr=0.0.0.0:8080
 ```
 
-This will launch the topz sidecar in the same PID namespace as the application container. Note that you may need to change the port that the sidecar uses for serving if your application container is also running on port 8080. Once the sidecar is running, you can visit http://localhost:8080/topz to get a complete readout of the processes that are running in the application container and their resource usage.
+This will launch the topz sidecar in the same PID namespace as the application container. Note that you may need to change the port that the sidecar uses for serving if your application container is also running on port 8080. Once the sidecar is running, you can visit *http://localhost:8080/topz* to get a complete readout of the processes that are running in the application container and their resource usage.
 
 You can mix this sidecar with any other existing container to easily get a view into how the container is using its resources via a web interface.
 
@@ -89,14 +88,13 @@ Obviously, this script could be more complex, pulling from a specific branch ins
 
 The Node.js application and Git synchronization sidecar are coscheduled and deployed together to implement our simple PaaS (Figure 3-4). Once deployed, every time new code is pushed to a Git repository, the code is automatically updated by the sidecar and reloaded by the server.
 
-<!-- Source: Designing.Distributed.Systems-2025-3.pdf, PDF page 6. -->
 ![Figure 3-4. A simple sidecar-based PaaS](/.attachments/3-4-Designing.Distributed.Systems-2025-3.png)
 
 *Figure 3-4. A simple sidecar-based PaaS*
 
 ### Designing Sidecars for Modularity and Reusability
 
-In all of the examples of sidecars that we have detailed throughout this chapter, one of the most important themes is that every one was a modular, reusable artifact. To be successful, the sidecar should be reusable across a wide variety of applications and deployments. By achieving modular reuse, sidecars can dramatically speed up the building of your application.
+In all of the examples of sidecars that we have detailed throughout this document, one of the most important themes is that every one was a modular, reusable artifact. To be successful, the sidecar should be reusable across a wide variety of applications and deployments. By achieving modular reuse, sidecars can dramatically speed up the building of your application.
 
 However, this modularity and reusability, just like achieving modularity in high-quality software development, requires focus and discipline. In particular, you need to focus on developing three areas:
 
@@ -112,7 +110,7 @@ Once you follow these common approaches, you will develop sidecars that can be r
 
 Parameterizing your containers is the most important thing you can do to make your containers modular and reusable regardless of whether they are sidecars or not, though sidecars and other add-on containers are especially important to parameterize.
 
-What do I mean when I say “parameterize”? Consider your container as a function in your program. How many parameters does it have? Each parameter represents an input that can customize a generic container to a specific situation. Consider, for example, the SSL add-on sidecar deployed previously. To be generally useful, it likely needs at least two parameters: the first is the name of the certificate being used to provide SSL, and the other is the port of the “legacy” application server running on localhost. Without these parameters, it is hard to imagine this sidecar container being usable for a broad array of applications. Similar parameters exist for all of the other sidecars described in this chapter.
+What do I mean when I say “parameterize”? Consider your container as a function in your program. How many parameters does it have? Each parameter represents an input that can customize a generic container to a specific situation. Consider, for example, the SSL add-on sidecar deployed previously. To be generally useful, it likely needs at least two parameters: the first is the name of the certificate being used to provide SSL, and the other is the port of the “legacy” application server running on localhost. Without these parameters, it is hard to imagine this sidecar container being usable for a broad array of applications. Similar parameters exist for all of the other sidecars described in this document.
 
 Now that we know the parameters we want to expose, how do we actually expose them to users, and how do we consume them inside the container. There are two ways in which such parameters can be passed to your container: through environment variables or the command line. Though either is feasible, I have a general preference for passing parameters via environment variables. An example of passing such parameters to a sidecar container is:
 
@@ -134,7 +132,7 @@ In your container, you would use those variables to configure an nginx.conf file
 
 Given that you are parameterizing your containers, it is obvious that your containers are defining a “function” that is called whenever the container is executed. This function is clearly a part of the API that is defined by your container, but there are other parts to this API as well, including calls that the container will make to other services as well as traditional HTTP or other APIs that the container provides.
 
-As you think about defining modular, reusable containers, it is important to realize that all aspects of how your container interacts with its world are part of the API defined by that reusable container. As in the world of microservices, these microcontainers rely on APIs to ensure that there is a clean separation between the main application container and the sidecar. Additionally, the API exists to ensure that all consumers of the sidecar will continue to work correctly as subsequent versions are released. Likewise, having a clean API for a sidecar enables the sidecar developer to move more quickly since they have a clear definition (and hopefully unit tests) for the services they provide as a part of the sidecar.
+As you think about defining modular, reusable containers, it is important to realize that all aspects of how your container interacts with its world are part of the API defined by that reusable container. As in the world of microservices, these *microcontainers* rely on APIs to ensure that there is a clean separation between the main application container and the sidecar. Additionally, the API exists to ensure that all consumers of the sidecar will continue to work correctly as subsequent versions are released. Likewise, having a clean API for a sidecar enables the sidecar developer to move more quickly since they have a clear definition (and hopefully unit tests) for the services they provide as a part of the sidecar.
 
 To see a concrete example of why this API surface area is important, consider the configuration management sidecar we discussed earlier. A useful configuration for this sidecar might be UPDATE_FREQUENCY, which indicates how often the configuration should be synchronized with the filesystem. It is clear that if, at some later time, the name of the parameter is changed to UPDATE_PERIOD, this change would be a violation of the sidecar’s API and clearly would break it for some users.
 
@@ -181,4 +179,4 @@ The names for these labels are drawn from the schema established by the Open Con
 
 ### Summary
 
-Over the course of this chapter, we’ve introduced the sidecar pattern for combining containers on a single machine. In the sidecar pattern, a sidecar container augments and extends an application container to add functionality. Sidecars can be used to update existing legacy applications when changing the application is too costly. Likewise, they can be used to create modular utility containers that standardize implementations of common functionality. These utility containers can be reused in a large number of applications, increasing consistency and reducing the cost of developing each application. Subsequent chapters introduce other single-node patterns that demonstrate other uses for modular, reusable containers.
+Over the course of this document, we’ve introduced the sidecar pattern for combining containers on a single machine. In the sidecar pattern, a sidecar container augments and extends an application container to add functionality. Sidecars can be used to update existing legacy applications when changing the application is too costly. Likewise, they can be used to create modular utility containers that standardize implementations of common functionality. These utility containers can be reused in a large number of applications, increasing consistency and reducing the cost of developing each application. [Ambassadors](AMBASSADORS.md) and [Adapters](ADAPTERS.md) demonstrate other uses for modular, reusable containers.

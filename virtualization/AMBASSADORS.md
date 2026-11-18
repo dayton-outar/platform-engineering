@@ -4,31 +4,31 @@
 
 Source: [Designing.Distributed.Systems-2025-4.pdf](./Designing.Distributed.Systems-2025-4.pdf), PDF pages 1–9.
 
-Chapter 3 introduced the sidecar pattern, where one container augments a pre-existing container to add functionality. This chapter introduces the ambassador pattern, where an ambassador container brokers interactions between the application container and the rest of the world. As with other single-node patterns, the two containers are tightly linked in a symbiotic pairing that is scheduled to a single machine. A canonical diagram of this pattern is shown in Figure 4-1.
+First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
-<!-- Source: Designing.Distributed.Systems-2025-4.pdf, PDF page 1. -->
+[The Sidecar Pattern](SIDECAR.PATTERN.md) introduced the sidecar pattern, where one container augments a pre-existing container to add functionality. This document introduces the ambassador pattern, where an ambassador container brokers interactions between the application container and the rest of the world. As with other single-node patterns, the two containers are tightly linked in a symbiotic pairing that is scheduled to a single machine. A canonical diagram of this pattern is shown in Figure 4-1.
+
 ![Figure 4-1. Generic ambassador pattern](/.attachments/4-1-Designing.Distributed.Systems-2025-4.png)
 
 *Figure 4-1. Generic ambassador pattern*
 
 The value of the ambassador pattern is twofold. First, as with the other single-node patterns, there is inherent value in building modular, reusable containers. The separation of concerns makes the containers easier to build and maintain. Likewise, the ambassador container can be reused with a number of different application containers. This reuse speeds up application development because the container’s code can be reused in a number of places. Additionally, the implementation is both more consistent and of a higher quality because it is built once and used in many different contexts.
 
-The rest of this chapter provides a number of examples of using the ambassador pattern to implement a series of real-world applications.
+The rest of this document provides a number of examples of using the ambassador pattern to implement a series of real-world applications.
 
 ### Using an Ambassador to Shard a Service
 
-Sometimes the data that you want to store in a storage layer becomes too big for a single machine to handle. In such situations, you need to shard your storage layer. Sharding splits up the layer into multiple disjoint pieces, each hosted by a separate machine. This chapter focuses on a single-node pattern for adapting an existing service to talk to a sharded service that exists somewhere in the world. It does not discuss how the sharded service came to exist. Sharding and a multinode sharded service design pattern are discussed in great detail in Chapter 7. A diagram of a sharded service is shown in Figure 4-2.
+Sometimes the data that you want to store in a storage layer becomes too big for a single machine to handle. In such situations, you need to *shard* your storage layer. Sharding splits up the layer into multiple disjoint pieces, each hosted by a separate machine. This document focuses on a single-node pattern for adapting an existing service to talk to a sharded service that exists somewhere in the world. It does not discuss how the sharded service came to exist. Sharding and a multinode sharded service design pattern are discussed in great detail in [Sharded Services](SHARDED.SERVICES.md). A diagram of a sharded service is shown in Figure 4-2.
 
-<!-- Source: Designing.Distributed.Systems-2025-4.pdf, PDF page 2. -->
 ![Figure 4-2. A generic sharded service](/.attachments/4-2-Designing.Distributed.Systems-2025-4.png)
 
 *Figure 4-2. A generic sharded service*
 
 When deploying a sharded service, one question that arises is how to integrate it with the frontend or middleware code that stores data. Clearly there needs to be logic that routes a particular request to a particular shard, but often it is difficult to retrofit such a sharded client into existing source code that expects to connect to a single storage backend. Additionally, sharded services make it difficult to share configuration between development environments (where there is often only a single storage shard) and production environments (where there are often many storage shards).
 
-One approach is to build all of the sharding logic into the sharded service itself. In this approach, the sharded service also has a stateless load balancer that directs traffic to the appropriate shard. Effectively, this load balancer is a distributed ambassador as a service. This makes a client-side ambassador unnecessary at the expense of a more complicated deployment for the sharded service. The alternative is to integrate a single-node ambassador on the client side to route traffic to the appropriate shard. This makes deploying the client somewhat more complicated but simplifies the deployment of the sharded service. As is always the case with trade-offs, it is up to the particulars of your specific application to determine which approach makes the most sense. Some factors to consider include where team lines fall in your architecture, as well as where you are writing code versus simply deploying off-the-shelf software. Ultimately, either choice is valid. The section “Hands On: Implementing a Sharded Redis” on page 33 describes how to use the single-node ambassador pattern for client-side sharding.
+One approach is to build all of the sharding logic into the sharded service itself. In this approach, the sharded service also has a stateless load balancer that directs traffic to the appropriate shard. Effectively, this load balancer is a distributed ambassador as a service. This makes a client-side ambassador unnecessary at the expense of a more complicated deployment for the sharded service. The alternative is to integrate a single-node ambassador on the client side to route traffic to the appropriate shard. This makes deploying the client somewhat more complicated but simplifies the deployment of the sharded service. As is always the case with trade-offs, it is up to the particulars of your specific application to determine which approach makes the most sense. Some factors to consider include where team lines fall in your architecture, as well as where you are writing code versus simply deploying off-the-shelf software. Ultimately, either choice is valid. The section [Hands On: Implementing a Sharded Redis](AMBASSADORS.md#hands-on-implementing-a-sharded-redis) describes how to use the single-node ambassador pattern for client-side sharding.
 
-When adapting an existing application to a sharded backend, you can introduce an ambassador container that contains all of the logic needed to route requests to the appropriate storage shard. Thus, your frontend or middleware application only connects to what appears to be a single storage backend running on localhost. However, this server is in fact actually a sharding ambassador proxy, which receives all of the requests from your application code, sends a request to the appropriate storage shard, and then returns the result to your application. This use of an ambassador is diagrammed in Figure 4-3.
+When adapting an existing application to a sharded backend, you can introduce an ambassador container that contains all of the logic needed to route requests to the appropriate storage shard. Thus, your frontend or middleware application only connects to what appears to be a single storage backend running on localhost. However, this server is in fact actually a *sharding ambassador proxy*, which receives all of the requests from your application code, sends a request to the appropriate storage shard, and then returns the result to your application. This use of an ambassador is diagrammed in Figure 4-3.
 
 The net result of applying the ambassador pattern to sharded services is a separation of concerns between the application container, which simply knows it needs to talk to a storage service and discovers that service on localhost, and the sharding ambassador proxy, which only contains the code necessary to perform appropriate sharding. As with all good single-node patterns, this ambassador can be reused between many different applications. Or, as we’ll see in the following hands-on example, an off-the shelf open source implementation can be used for the ambassador, speeding up the development of the overall distributed system.
 
@@ -60,7 +60,7 @@ spec:
           name: redis
 ```
 
-Save this to a file named redis-shards.yaml, and you can deploy this with kubectl create -f redis-shards.yaml. This will create three containers running redis. You can see these by running kubectl get pods; you should see sharded-redis-[0,1,2].
+Save this to a file named *redis-shards.yaml*, and you can deploy this with kubectl create -f redis-shards.yaml. This will create three containers running redis. You can see these by running kubectl get pods; you should see sharded-redis-[0,1,2].
 
 Of course, just running the replicas isn’t sufficient; we also need names by which we can refer to the replicas. In this case, we’ll use a Kubernetes Service, which will create DNS names for the replicas we have created. The Service looks like this:
 
@@ -80,7 +80,7 @@ spec:
     app: redis
 ```
 
-Save this to a file named redis-service.yaml and deploy with kubectl create -f redis-service.yaml. You should now have DNS entries for sharded-redis-0.redis, sharded-redis-1.redis, etc. We can use these names to configure twemproxy. twemproxy is a lightweight, highly performant proxy for memcached and Redis, which was originally developed by Twitter and is open source and available on GitHub. We can configure twemproxy to point to the replicas we created by using the following configuration:
+Save this to a file named *redis-service.yaml* and deploy with kubectl create -f redis-service.yaml. You should now have DNS entries for sharded-redis-0.redis, sharded-redis-1.redis, etc. We can use these names to configure twemproxy. twemproxy is a lightweight, highly performant proxy for memcached and Redis, which was originally developed by Twitter and is open source and available on GitHub. We can configure twemproxy to point to the replicas we created by using the following configuration:
 
 ```text
 redis:
@@ -142,9 +142,8 @@ This pod defines the ambassador; then the specific user’s application containe
 
 When trying to render an application portable across multiple environments (e.g., public cloud, physical data center, or private cloud), one of the primary challenges is service discovery and configuration. To understand what this means, imagine a frontend that relies on a MySQL database to store its data. In the public cloud, this MySQL service might be provided as software as a service (SaaS), whereas in a private cloud it might be necessary to dynamically spin up a new virtual machine or container running MySQL.
 
-Consequently, building a portable application requires that the application know how to introspect its environment and find the appropriate MySQL service to connect to. This process is called service discovery, and the system that performs this discovery and linking is commonly called a service broker. As with previous examples, the ambassador pattern enables a system to separate the logic of the application container from the logic of the service broker ambassador. The application simply always connects to an instance of the service (e.g., MySQL) running on localhost. It is the responsibility of the service broker ambassador to introspect its environment and broker the appropriate connection. This process is shown in Figure 4-3.
+Consequently, building a portable application requires that the application know how to introspect its environment and find the appropriate MySQL service to connect to. This process is called *service discovery*, and the system that performs this discovery and linking is commonly called a *service broker*. As with previous examples, the ambassador pattern enables a system to separate the logic of the application container from the logic of the service broker ambassador. The application simply always connects to an instance of the service (e.g., MySQL) running on localhost. It is the responsibility of the service broker ambassador to introspect its environment and broker the appropriate connection. This process is shown in Figure 4-3.
 
-<!-- Source: Designing.Distributed.Systems-2025-4.pdf, PDF page 6. -->
 ![Figure 4-3. A service broker ambassador creating a MySQL service](/.attachments/4-3-Designing.Distributed.Systems-2025-4.png)
 
 *Figure 4-3. A service broker ambassador creating a MySQL service*
@@ -188,7 +187,6 @@ http {
 
 > As with the previous discussion of sharded services, it’s also possible to deploy the experiment framework as a separate microservice in front of your application instead of integrating it as a part of your client pods. Of course, by doing this you are introducing another service that needs to be maintained, scaled, monitored, etc. If experimentation is likely to be a longstanding component in your architecture, this might be worthwhile. If it is used more occasionally, then a client-side ambassador might make more sense.
 
-<!-- Source: Designing.Distributed.Systems-2025-4.pdf, PDF page 7. -->
 ![Figure 4-4. Callout illustration accompanying the discussion on PDF page 7](/.attachments/4-4-Designing.Distributed.Systems-2025-4.png)
 
 *Figure 4-4. Callout illustration accompanying the discussion on PDF page 7*

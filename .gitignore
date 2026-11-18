@@ -1,5 +1,3 @@
-*.pdf
-
 .vscode
 .vagrant
 wordpress
@@ -7,14 +5,3 @@ wordpress
 /Vagrantfile
 /bash-cookbook
 /bash-simple-scripts
-
-PLAN.md
-ROOT.EXTRACTION.RECORD.md
-70.330.EXTRACTION.RECORD.md
-RESTRUCTURING.RECORD.md
-EXTRACTION*.md
-CHAPTER-STRUCTURE.md
-FORMATTING.PLAN.md
-TOC.README.md
-formatting-todo.txt
-extraction-prompt.txt

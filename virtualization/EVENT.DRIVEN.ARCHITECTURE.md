@@ -4,48 +4,46 @@
 
 Source: [Fundamentals.of.Software.Architecture-2020-14.pdf](./Fundamentals.of.Software.Architecture-2020-14.pdf), PDF pages 1–32.
 
-The event-driven architecture style is a popular distributed asynchronous architecture style used to produce highly scalable and high-performance applications. It is also highly adaptable and can be used for small applications and as well as large, complex ones. Event-driven architecture is made up of decoupled event processing components that asynchronously receive and process events. It can be used as a standalone architecture style or embedded within other architecture styles (such as an event-driven microservices architecture).
+First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
-Most applications follow what is called a request-based model (illustrated in Figure 14-1). In this model, requests made to the system to perform some sort of action are send to a request orchestrator. The request orchestrator is typically a user interface, but it can also be implemented through an API layer or enterprise service bus. The role of the request orchestrator is to deterministically and synchronously direct the request to various request processors. The request processors handle the request, either retrieving or updating information in a database.
+The *event-driven* architecture style is a popular distributed asynchronous architecture style used to produce highly scalable and high-performance applications. It is also highly adaptable and can be used for small applications and as well as large, complex ones. Event-driven architecture is made up of decoupled event processing components that asynchronously receive and process events. It can be used as a standalone architecture style or embedded within other architecture styles (such as an event-driven microservices architecture).
+
+Most applications follow what is called a *request-based* model (illustrated in Figure 14-1). In this model, requests made to the system to perform some sort of action are send to a *request orchestrator*. The request orchestrator is typically a user interface, but it can also be implemented through an API layer or enterprise service bus. The role of the request orchestrator is to deterministically and synchronously direct the request to various *request processors*. The request processors handle the request, either retrieving or updating information in a database.
 
 A good example of the request-based model is a request from a customer to retrieve their order history for the past six months. Retrieving order history information is a data-driven, deterministic request made to the system for data within a specific context, not an event happening that the system must react to.
 
 An event-based model, on the other hand, reacts to a particular situation and takes action based on that event. An example of an event-based model is submitting a bid for a particular item within an online auction. Submitting the bid is not a request made to the system, but rather an event that happens after the current asking price is announced. The system must respond to this event by comparing the bid to others received at the same time to determine who is the current highest bidder.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-14.pdf, PDF page 2. -->
 ![Figure 14-1. Request-based model](/.attachments/14-1-Fundamentals.of.Software.Architecture-2020-14.png)
 
 *Figure 14-1. Request-based model*
 
 ### Topology
 
-There are two primary topologies within event-driven architecture: the mediator topology and the broker topology. The mediator topology is commonly used when you require control over the workflow of an event process, whereas the broker topology is used when you require a high degree of responsiveness and dynamic control over the processing of an event. Because the architecture characteristics and implementation strategies differ between these two topologies, it is important to understand each one to know which is best suited for a particular situation.
+There are two primary topologies within event-driven architecture: the *mediator topology* and the *broker topology*. The mediator topology is commonly used when you require control over the workflow of an event process, whereas the broker topology is used when you require a high degree of responsiveness and dynamic control over the processing of an event. Because the architecture characteristics and implementation strategies differ between these two topologies, it is important to understand each one to know which is best suited for a particular situation.
 
 ### Broker Topology
 
 The broker topology differs from the mediator topology in that there is no central event mediator. Rather, the message flow is distributed across the event processor components in a chain-like broadcasting fashion through a lightweight message broker (such as RabbitMQ, ActiveMQ, HornetQ, and so on). This topology is useful when you have a relatively simple event processing flow and you do not need central event orchestration and coordination.
 
-There are four primary architecture components within the broker topology: an initiating event, the event broker, an event processor, and a processing event. The initiating event is the initial event that starts the entire event flow, whether it be a simple event like placing a bid in an online auction or more complex events in a health benefits system like changing a job or getting married. The initiating event is sent to an event channel in the event broker for processing. Since there is no mediator component in the broker topology managing and controlling the event, a single event processor accepts the initiating event from the event broker and begins the processing of that event. The event processor that accepted the initiating event performs a specific task associated with the processing of that event, then asynchronously advertises what it did to the rest of the system by creating what is called a processing event. This processing event is then asynchronously sent to the event broker for further processing, if needed. Other event processors listen to the processing event, react to that event by doing something, then advertise through a new processing event what they did. This process continues until no one is interested in what a final event processor did. Figure 14-2 illustrates this event processing flow.
+There are four primary architecture components within the broker topology: an initiating event, the event broker, an event processor, and a processing event. The *initiating event* is the initial event that starts the entire event flow, whether it be a simple event like placing a bid in an online auction or more complex events in a health benefits system like changing a job or getting married. The initiating event is sent to an event channel in the *event broker* for processing. Since there is no mediator component in the broker topology managing and controlling the event, a single *event processor* accepts the initiating event from the event broker and begins the processing of that event. The event processor that accepted the initiating event performs a specific task associated with the processing of that event, then asynchronously advertises what it did to the rest of the system by creating what is called a *processing event*. This processing event is then asynchronously sent to the event broker for further processing, if needed. Other event processors listen to the processing event, react to that event by doing something, then advertise through a new processing event what they did. This process continues until no one is interested in what a final event processor did. Figure 14-2 illustrates this event processing flow.
 
 The event broker component is usually federated (meaning multiple domain-based clustered instances), where each federated broker contains all of the event channels used within the event flow for that particular domain. Because of the decoupled asynchronous fire-and-forget broadcasting nature of the broker topology, topics (or topic exchanges in the case of AMQP) are usually used in the broker topology using a publish-and-subscribe messaging model.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-14.pdf, PDF page 3. -->
 ![Figure 14-2. Broker topology](/.attachments/14-2-Fundamentals.of.Software.Architecture-2020-14.png)
 
 *Figure 14-2. Broker topology*
 
 It is always a good practice within the broker topology for each event processor to advertise what it did to the rest of the system, regardless of whether or not any other event processor cares about what that action was. This practice provides architectural extensibility if additional functionality is required for the processing of that event. For example, suppose as part of a complex event process, as illustrated in Figure 14-3, an email is generated and sent to a customer notifying them of a particular action taken. The Notification event processor would generate and send the email, then advertise that action to the rest of the system through a new processing event sent to a topic. However, in this case, no other event processors are listening for events on that topic, and as such the message simply goes away.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-14.pdf, PDF page 4. -->
 ![Figure 14-3. Notification event is sent but ignored](/.attachments/14-3-Fundamentals.of.Software.Architecture-2020-14.png)
 
 *Figure 14-3. Notification event is sent but ignored*
 
-This is a good example of architectural extensibility. While it may seem like a waste of resources sending messages that are ignored, it is not. Suppose a new requirement comes along to analyze emails that have been sent to customers. This new event processor can be added to the overall system with minimal effort because the email information is available via the email topic to the new analyzer without having to add any additional infrastructure or apply any changes to other event processors.
+This is a good example of *architectural extensibility*. While it may seem like a waste of resources sending messages that are ignored, it is not. Suppose a new requirement comes along to analyze emails that have been sent to customers. This new event processor can be added to the overall system with minimal effort because the email information is available via the email topic to the new analyzer without having to add any additional infrastructure or apply any changes to other event processors.
 
-To illustrate how the broker topology works, consider the processing flow in a typical retail order entry system, as illustrated in Figure 14-4, where an order is placed for an item (say, a book like this one). In this example, the OrderPlacement event processor receives the initiating event (PlaceOrder), inserts the order in a database table, and returns an order ID to the customer. It then advertises to the rest of the system that it created an order through an order-created processing event. Notice that three event processors are interested in that event: the Notification event processor, the Payment event processor, and the Inventory event processor. All three of these event processors perform their tasks in parallel.
+To illustrate how the broker topology works, consider the processing flow in a typical retail order entry system, as illustrated in Figure 14-4, where an order is placed for an item (say, a book). In this example, the OrderPlacement event processor receives the initiating event (PlaceOrder), inserts the order in a database table, and returns an order ID to the customer. It then advertises to the rest of the system that it created an order through an order-created processing event. Notice that three event processors are interested in that event: the Notification event processor, the Payment event processor, and the Inventory event processor. All three of these event processors perform their tasks in parallel.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-14.pdf, PDF page 5. -->
 ![Figure 14-4. Example of the broker topology](/.attachments/14-4-Fundamentals.of.Software.Architecture-2020-14.png)
 
 *Figure 14-4. Example of the broker topology*
@@ -64,10 +62,9 @@ While performance, responsiveness, and scalability are all great benefits of the
 
 The ability to restart a business transaction (recoverability) is also something not supported with the broker topology. Because other actions have asynchronously been taken through the initial processing of the initiating event, it is not possible to resubmit the initiating event. No component in the broker topology is aware of the state or even owns the state of the original business request, and therefore no one is responsible in this topology for restarting the business transaction (the initiating event) and knowing where it left off. The advantages and disadvantages of the broker topology are summarized in Table 14-1.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-14.pdf, PDF page 7. -->
 *Table 14-1. Trade-offs of the broker topology*
 
-| Advantages | Disadvantages |
+| **Advantages** | **Disadvantages** |
 | --- | --- |
 | Highly decoupled event processors | Workflow control |
 | High scalability | Error handling |
@@ -81,7 +78,6 @@ The mediator topology of event-driven architecture addresses some of the shortco
 
 Like in the broker topology, the initiating event is the event that starts the whole eventing process. Unlike the broker topology, the initiating event is sent to an initiating event queue, which is accepted by the event mediator. The event mediator only knows the steps involved in processing the event and therefore generates corresponding processing events that are sent to dedicated event channels (usually queues) in a point-to-point messaging fashion. Event processors then listen to dedicated event channels, process the event, and usually respond back to the mediator that they have completed their work. Unlike the broker topology, event processors within the mediator topology do not advertise what they did to the rest of the system. The mediator topology is illustrated in Figure 14-5.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-14.pdf, PDF page 8. -->
 ![Figure 14-5. Mediator topology](/.attachments/14-5-Fundamentals.of.Software.Architecture-2020-14.png)
 
 *Figure 14-5. Mediator topology*
@@ -98,7 +94,6 @@ It is important to know the types of events that will be processed through the m
 
 Given that it’s rare to have all events of one class of complexity, we recommend classifying events as simple, hard, or complex and having every event always go through a simple mediator (such as Apache Camel or Mule). The simple mediator can then interrogate the classification of the event, and based on that classification, handle the event itself or forward it to another, more complex, event mediator. In this manner, all types of events can be effectively processed by the type of mediator needed for that event. This mediator delegation model is illustrated in Figure 14-6.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-14.pdf, PDF page 10. -->
 ![Figure 14-6. Delegating the event to the appropriate type of event mediator](/.attachments/14-6-Fundamentals.of.Software.Architecture-2020-14.png)
 
 *Figure 14-6. Delegating the event to the appropriate type of event mediator*
@@ -107,7 +102,6 @@ Notice in Figure 14-6 that the Simple Event Mediator generates and sends a proce
 
 To illustrate how the mediator topology works, consider the same retail order entry system example described in the prior broker topology section, but this time using the mediator topology. In this example, the mediator knows the steps required to process this particular event. This event flow (internal to the mediator component) is illustrated in Figure 14-7.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-14.pdf, PDF page 11. -->
 ![Figure 14-7. Mediator steps for placing an order](/.attachments/14-7-Fundamentals.of.Software.Architecture-2020-14.png)
 
 *Figure 14-7. Mediator steps for placing an order*
@@ -116,49 +110,43 @@ In keeping with the prior example, the same initiating event (PlaceOrder) is sen
 
 Once the initiating event has been received, the Customer mediator generates a create-order processing event and sends this message to the order-placement-queue (see Figure 14-8). The OrderPlacement event processor accepts this event and validates and creates the order, returning to the mediator an acknowledgement along with the order ID. At this point the mediator might send that order ID back to the customer, indicating that the order was placed, or it might have to continue until all the steps are complete (this would be based on specific business rules about order placement).
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-14.pdf, PDF page 12. -->
 ![Figure 14-8. Step 1 of the mediator example](/.attachments/14-8-Fundamentals.of.Software.Architecture-2020-14.png)
 
 *Figure 14-8. Step 1 of the mediator example*
 
 Now that step 1 is complete, the mediator now moves to step 2 (see Figure 14-9) and generates three messages at the same time: email-customer, apply-payment, and adjust-inventory. These processing events are all sent to their respective queues. All three event processors receive these messages, perform their respective tasks, and notify the mediator that the processing has been completed. Notice that the mediator must wait until it receives acknowledgement from all three parallel processes before moving on to step 3. At this point, if an error occurs in one of the parallel event processors, the mediator can take corrective action to fix the problem (this is discussed later in this section in more detail).
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-14.pdf, PDF page 13. -->
 ![Figure 14-9. Step 2 of the mediator example](/.attachments/14-9-Fundamentals.of.Software.Architecture-2020-14.png)
 
 *Figure 14-9. Step 2 of the mediator example*
 
 Once the mediator gets a successful acknowledgment from all of the event processors in step 2, it can move on to step 3 to fulfill the order (see Figure 14-10). Notice once again that both of these events (fulfill-order and order-stock) can occur simultaneously. The OrderFulfillment and Warehouse event processors accept these events, perform their work, and return an acknowledgement to the mediator.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-14.pdf, PDF page 14. -->
 ![Figure 14-10. Step 3 of the mediator example](/.attachments/14-10-Fundamentals.of.Software.Architecture-2020-14.png)
 
 *Figure 14-10. Step 3 of the mediator example*
 
 Once these events are complete, the mediator then moves on to step 4 (see Figure 14-11) to ship the order. This step generates another email-customer processing event with specific information about what to do (in this case, notify the customer that the order is ready to be shipped), as well as a ship-order event.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-14.pdf, PDF page 15. -->
 ![Figure 14-11. Step 4 of the mediator example](/.attachments/14-11-Fundamentals.of.Software.Architecture-2020-14.png)
 
 *Figure 14-11. Step 4 of the mediator example*
 
 Finally, the mediator moves to step 5 (see Figure 14-12) and generates another contextual email-customer event to notify the customer that the order has been shipped. At this point the workflow is done, and the mediator marks the initiating event flow complete and removes all state associated with the initiating event.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-14.pdf, PDF page 16. -->
 ![Figure 14-12. Step 5 of the mediator example](/.attachments/14-12-Fundamentals.of.Software.Architecture-2020-14.png)
 
 *Figure 14-12. Step 5 of the mediator example*
 
 The mediator component has knowledge and control over the workflow, something the broker topology does not have. Because the mediator controls the workflow, it can maintain event state and manage error handling, recoverability, and restart capabilities. For example, suppose in the prior example the payment was not applied due to the credit card being expired. In this case the mediator receives this error condition, and knowing the order cannot be fulfilled (step 3) until payment is applied, stops the workflow and records the state of the request in its own persistent datastore. Once payment is eventually applied, the workflow can be restarted from where it left off (in this case, the beginning of step 3).
 
-Another inherent difference between the broker and mediator topology is how the processing events differ in terms of their meaning and how they are used. In the broker topology example in the previous section, the processing events were published as events that had occurred in the system (such as order-created, payment-applied, and email-sent). The event processors took some action, and other event processors react to that action. However, in the mediator topology, processing occurrences such as place-order, send-email, and fulfill-order are commands (things that need to happen) as opposed to events (things that have already happened). Also, in the mediator topology, a command must be processed, whereas an event can be ignored in the broker topology.
+Another inherent difference between the broker and mediator topology is how the processing events differ in terms of their meaning and how they are used. In the broker topology example in the previous section, the processing events were published as events that had occurred in the system (such as order-created, payment-applied, and email-sent). The event processors took some action, and other event processors react to that action. However, in the mediator topology, processing occurrences such as place-order, send-email, and fulfill-order are *commands* (things that need to happen) as opposed to *events* (things that have already happened). Also, in the mediator topology, a command must be processed, whereas an event can be ignored in the broker topology.
 
 While the mediator topology addresses the issues associated with the broker topology, there are some negatives associated with the mediator topology. First of all, it is very difficult to declaratively model the dynamic processing that occurs within a complex event flow. As a result, many workflows within the mediator only handle the general processing, and a hybrid model combining both the mediator and broker topologies is used to address the dynamic nature of complex event processing (such as out-of-stock conditions or other nontypical errors). Furthermore, although the event processors can easily scale in the same manner as the broker topology, the mediator must scale as well, something that occasionally produces a bottleneck in the overall event processing flow. Finally, event processors are not as highly decoupled in the mediator topology as with the broker topology, and performance is not as good due to the mediator controlling the processing of the event. These trade-offs are summarized in Table 14-2.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-14.pdf, PDF page 17. -->
 *Table 14-2. Trade-offs of the mediator topology*
 
-| Advantages | Disadvantages |
+| **Advantages** | **Disadvantages** |
 | --- | --- |
 | Workflow control | More coupling of event processors |
 | Error handling | Lower scalability |
@@ -174,26 +162,24 @@ The event-driven architecture style offers a unique characteristic over other ar
 
 Consider the example illustrated in Figure 14-13 where a user is posting a comment on a website for a particular product review. Assume the comment service in this example takes 3,000 milliseconds to post the comment because it goes through several parsing engines: a bad word checker to check for unacceptable words, a grammar checker to make sure that the sentence structures are not saying something abusive, and finally a context checker to make sure the comment is about a particular product and not just a political rant. Notice in Figure 14-13 that the top path utilizes a synchronous RESTful call to post the comment: 50 milliseconds in latency for the service to receive the post, 3,000 milliseconds to post the comment, and 50 milliseconds in network latency to respond back to the user that the comment was posted. This creates a response time for the user of 3,100 milliseconds to post a comment. Now look at the bottom path and notice that with the use of asynchronous messaging, the response time from the end user’s perspective for posting a comment on the website is only 25 milliseconds (as opposed to 3,100 milliseconds). It still takes 3,025 milliseconds to post the comment (25 milliseconds to receive the message and 3,000 milliseconds to post the comment), but from the end user’s perspective it’s already been done.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-14.pdf, PDF page 18. -->
 ![Figure 14-13. Synchronous versus asynchronous communication](/.attachments/14-13-Fundamentals.of.Software.Architecture-2020-14.png)
 
 *Figure 14-13. Synchronous versus asynchronous communication*
 
-This is a good example of the difference between responsiveness and performance. When the user does not need any information back (other than an acknowledgement or a thank you message), why make the user wait? Responsiveness is all about notifying the user that the action has been accepted and will be processed momentarily, whereas performance is about making the end-to-end process faster. Notice that nothing was done to optimize the way the comment service processes the text—in both cases it is still taking 3,000 milliseconds. Addressing performance would have been optimizing the comment service to run all of the text and grammar parsing engines in parallel with the use of caching and other similar techniques. The bottom example in Figure 14-13 addresses the overall responsiveness of the system but not the performance of the system.
+This is a good example of the difference between *responsiveness* and *performance*. When the user does not need any information back (other than an acknowledgement or a thank you message), why make the user wait? Responsiveness is all about notifying the user that the action has been accepted and will be processed momentarily, whereas performance is about making the end-to-end process faster. Notice that nothing was done to optimize the way the comment service processes the text—in both cases it is still taking 3,000 milliseconds. Addressing *performance* would have been optimizing the comment service to run all of the text and grammar parsing engines in parallel with the use of caching and other similar techniques. The bottom example in Figure 14-13 addresses the overall responsiveness of the system but not the performance of the system.
 
 The difference in response time between the two examples in Figure 14-13 from 3,100 milliseconds to 25 milliseconds is staggering. There is one caveat. On the synchronous path shown on the top of the diagram, the end user is guaranteed that the comment has been posted. However, on the bottom path there is only the acknowledgement of the post, with a future promise that eventually the comment will get posted. From the end user’s perspective, the comment has been posted. But what happens if the user had typed a bad word in the comment? In this case the comment would be rejected, but there is no way to get back to the end user. Or is there? In this example, assuming the user is registered with the website (which to post a comment they would have to be), a message could be sent to the user indicating a problem with the comment and some suggestions on how to repair it. This is a simple example. What about a more complicated example where the purchase of some stock is taking place asynchronously (called a stock trade) and there is no way to get back to the user?
 
-The main issue with asynchronous communications is error handling. While responsiveness is significantly improved, it is difficult to address error conditions, adding to the complexity of the event-driven system. The next section addresses this issue with a pattern of reactive architecture called the workflow event pattern.
+The main issue with asynchronous communications is error handling. While responsiveness is significantly improved, it is difficult to address error conditions, adding to the complexity of the event-driven system. The next section addresses this issue with a pattern of reactive architecture called the *workflow event* pattern.
 
 ### Error Handling
 
 The workflow event pattern of reactive architecture is one way of addressing the issues associated with error handling in an asynchronous workflow. This pattern is a reactive architecture pattern that addresses both resiliency and responsiveness. In other words, the system can be resilient in terms of error handling without an impact to responsiveness.
 
-The workflow event pattern leverages delegation, containment, and repair through the use of a workflow delegate, as illustrated in Figure 14-14. The event producer asynchronously passes data through a message channel to the event consumer. If the event consumer experiences an error while processing the data, it immediately delegates that error to the workflow processor and moves on to the next message in the event queue. In this way, overall responsiveness is not impacted because the next message is immediately processed. If the event consumer were to spend the time trying to figure out the error, then it is not reading the next message in the queue, therefore impacting the responsiveness not only of the next message, but all other messages waiting in the queue to be processed.
+The workflow event pattern leverages delegation, containment, and repair through the use of a *workflow delegate*, as illustrated in Figure 14-14. The event producer asynchronously passes data through a message channel to the event consumer. If the event consumer experiences an error while processing the data, it immediately delegates that error to the *workflow processor* and moves on to the next message in the event queue. In this way, overall responsiveness is not impacted because the next message is immediately processed. If the event consumer were to spend the time trying to figure out the error, then it is not reading the next message in the queue, therefore impacting the responsiveness not only of the next message, but all other messages waiting in the queue to be processed.
 
 Once the workflow processor receives an error, it tries to figure out what is wrong with the message. This could be a static, deterministic error, or it could leverage some machine learning algorithms to analyze the message to see some anomaly in the data. Either way, the workflow processor programmatically (without human intervention) makes changes to the original data to try and repair it, and then sends it back to the originating queue. The event consumer sees this message as a new one and tries to process it again, hopefully this time with some success. Of course, there are many times when the workflow processor cannot determine what is wrong with the message. In these cases the workflow processor sends the message off to another queue, which is then received in what is usually called a “dashboard,” an application that looks similar to the Microsoft’s Outlook or Apple’s Mail. This dashboard usually resides on the desktop of a person of importance, who then looks at the message, applies manual fixes to it, and then resubmits it to the original queue (usually through a reply-to message header variable).
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-14.pdf, PDF page 20. -->
 ![Figure 14-14. Workflow event pattern of reactive architecture](/.attachments/14-14-Fundamentals.of.Software.Architecture-2020-14.png)
 
 *Figure 14-14. Workflow event pattern of reactive architecture*
@@ -258,7 +244,6 @@ trade placed: 1533G658HD8,BUY,AAPL,2654
 trade placed: 2WE35HF6DHF,BUY,AAPL,8756 <-- this was the original trade in error
 ```
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-14.pdf, PDF page 22. -->
 ![Figure 14-15. Error handling with the workflow event pattern](/.attachments/14-15-Fundamentals.of.Software.Architecture-2020-14.png)
 
 *Figure 14-15. Error handling with the workflow event pattern*
@@ -277,18 +262,16 @@ To illustrate the issues associated with data loss within event-driven architect
 
 3. Event Processor B is unable to persist the message to the database due to some data error.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-14.pdf, PDF page 23. -->
 ![Figure 14-16. Where data loss can happen within an event-driven architecture](/.attachments/14-16-Fundamentals.of.Software.Architecture-2020-14.png)
 
 *Figure 14-16. Where data loss can happen within an event-driven architecture*
 
-Each of these areas of data loss can be mitigated through basic messaging techniques. Issue 1 (the message never makes it to the queue) is easily solved by leveraging persistent message queues, along with something called synchronous send. Persisted message queues support what is known as guaranteed delivery. When the message broker receives the message, it not only stores it in memory for fast retrieval, but also persists the message in some sort of physical data store (such as a filesystem or database). If the message broker goes down, the message is physically stored on disk so that when the message broker comes back up, the message is available for processing. Synchronous send does a blocking wait in the message producer until the broker has acknowledged that the message has been persisted. With these two basic techniques there is no way to lose a message between the event producer and the queue because the message is either still with the message producer or persisted within the queue.
+Each of these areas of data loss can be mitigated through basic messaging techniques. Issue 1 (the message never makes it to the queue) is easily solved by leveraging persistent message queues, along with something called *synchronous send*. Persisted message queues support what is known as guaranteed delivery. When the message broker receives the message, it not only stores it in memory for fast retrieval, but also persists the message in some sort of physical data store (such as a filesystem or database). If the message broker goes down, the message is physically stored on disk so that when the message broker comes back up, the message is available for processing. Synchronous send does a blocking wait in the message producer until the broker has acknowledged that the message has been persisted. With these two basic techniques there is no way to lose a message between the event producer and the queue because the message is either still with the message producer or persisted within the queue.
 
-Issue 2 (Event Processor B de-queues the next available message and crashes before it can process the event) can also be solved using a basic technique of messaging called client acknowledge mode. By default, when a message is de-queued, it is immediately removed from the queue (something called auto acknowledge mode). Client acknowledge mode keeps the message in the queue and attaches the client ID to the message so that no other consumers can read the message. With this mode, if Event Processor B crashes, the message is still preserved in the queue, preventing message loss in this part of the message flow.
+Issue 2 (Event Processor B de-queues the next available message and crashes before it can process the event) can also be solved using a basic technique of messaging called *client acknowledge mode*. By default, when a message is de-queued, it is immediately removed from the queue (something called *auto acknowledge* mode). Client acknowledge mode keeps the message in the queue and attaches the client ID to the message so that no other consumers can read the message. With this mode, if Event Processor B crashes, the message is still preserved in the queue, preventing message loss in this part of the message flow.
 
-Issue 3 (Event Processor B is unable to persist the message to the database due to some data error) is addressed through leveraging ACID (atomicity, consistency, isolation, durability) transactions via a database commit. Once the database commit happens, the data is guaranteed to be persisted in the database. Leveraging something called last participant support (LPS) removes the message from the persisted queue by acknowledging that processing has been completed and that the message has been persisted. This guarantees the message is not lost during the transit from Event Processor A all the way to the database. These techniques are illustrated in Figure 14-17.
+Issue 3 (Event Processor B is unable to persist the message to the database due to some data error) is addressed through leveraging ACID (atomicity, consistency, isolation, durability) transactions via a database commit. Once the database commit happens, the data is guaranteed to be persisted in the database. Leveraging something called *last participant support* (LPS) removes the message from the persisted queue by acknowledging that processing has been completed and that the message has been persisted. This guarantees the message is not lost during the transit from Event Processor A all the way to the database. These techniques are illustrated in Figure 14-17.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-14.pdf, PDF page 24. -->
 ![Figure 14-17. Preventing data loss within an event-driven architecture](/.attachments/14-17-Fundamentals.of.Software.Architecture-2020-14.png)
 
 *Figure 14-17. Preventing data loss within an event-driven architecture*
@@ -297,7 +280,6 @@ Issue 3 (Event Processor B is unable to persist the message to the database due 
 
 One of the other unique characteristics of event-driven architecture is the capability to broadcast events without knowledge of who (if anyone) is receiving the message and what they do with it. This technique, which is illustrated in Figure 14-18, shows that when a producer publishes a message, that same message is received by multiple subscribers.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-14.pdf, PDF page 25. -->
 ![Figure 14-18. Broadcasting events to other event processors](/.attachments/14-18-Fundamentals.of.Software.Architecture-2020-14.png)
 
 *Figure 14-18. Broadcasting events to other event processors*
@@ -306,16 +288,15 @@ Broadcasting is perhaps the highest level of decoupling between event processors
 
 ### Request-Reply
 
-So far in this chapter we’ve dealt with asynchronous requests that don’t need an immediate response from the event consumer. But what if an order ID is needed when ordering a book? What if a confirmation number is needed when booking a flight? These are examples of communication between services or event processors that require some sort of synchronous communication.
+So far in this document we’ve dealt with asynchronous requests that don’t need an immediate response from the event consumer. But what if an order ID is needed when ordering a book? What if a confirmation number is needed when booking a flight? These are examples of communication between services or event processors that require some sort of synchronous communication.
 
-In event-driven architecture, synchronous communication is accomplished through request-reply messaging (sometimes referred to as pseudosynchronous communications). Each event channel within request-reply messaging consists of two queues: a request queue and a reply queue. The initial request for information is asynchronously sent to the request queue, and then control is returned to the message producer. The message producer then does a blocking wait on the reply queue, waiting for the response. The message consumer receives and processes the message and then sends the response to the reply queue. The event producer then receives the message with the response data. This basic flow is illustrated in Figure 14-19.
+In event-driven architecture, synchronous communication is accomplished through *request-reply* messaging (sometimes referred to as *pseudosynchronous communications*). Each event channel within request-reply messaging consists of two queues: a request queue and a reply queue. The initial request for information is asynchronously sent to the request queue, and then control is returned to the message producer. The message producer then does a blocking wait on the reply queue, waiting for the response. The message consumer receives and processes the message and then sends the response to the reply queue. The event producer then receives the message with the response data. This basic flow is illustrated in Figure 14-19.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-14.pdf, PDF page 26. -->
 ![Figure 14-19. Request-reply message processing](/.attachments/14-19-Fundamentals.of.Software.Architecture-2020-14.png)
 
 *Figure 14-19. Request-reply message processing*
 
-There are two primary techniques for implementing request-reply messaging. The first (and most common) technique is to use a correlation ID contained in the message header. A correlation ID is a field in the reply message that is usually set to the message ID of the original request message. This technique, as illustrated in Figure 14-20, works as follows, with the message ID indicated with ID, and the correlation ID indicated with CID:
+There are two primary techniques for implementing request-reply messaging. The first (and most common) technique is to use a *correlation ID* contained in the message header. A correlation ID is a field in the reply message that is usually set to the message ID of the original request message. This technique, as illustrated in Figure 14-20, works as follows, with the message ID indicated with ID, and the correlation ID indicated with CID:
 
 1. The event producer sends a message to the request queue and records the unique message ID (in this case ID 124). Notice that the correlation ID (CID) in this case is null.
 
@@ -329,12 +310,11 @@ There are two primary techniques for implementing request-reply messaging. The f
 
 6. The event producer receives the message because the correlation ID (124) matches the message selector from step 2.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-14.pdf, PDF page 27. -->
 ![Figure 14-20. Request-reply message processing using a correlation ID](/.attachments/14-20-Fundamentals.of.Software.Architecture-2020-14.png)
 
 *Figure 14-20. Request-reply message processing using a correlation ID*
 
-The other technique used to implement request-reply messaging is to use a temporary queue for the reply queue. A temporary queue is dedicated to the specific request, created when the request is made and deleted when the request ends. This technique, as illustrated in Figure 14-21, does not require a correlation ID because the temporary queue is a dedicated queue only known to the event producer for the specific request. The temporary queue technique works as follows:
+The other technique used to implement request-reply messaging is to use a *temporary queue* for the reply queue. A temporary queue is dedicated to the specific request, created when the request is made and deleted when the request ends. This technique, as illustrated in Figure 14-21, does not require a correlation ID because the temporary queue is a dedicated queue only known to the event producer for the specific request. The temporary queue technique works as follows:
 
 1. The event producer creates a temporary queue (or one is automatically created, depending on the message broker) and sends a message to the request queue, passing the name of the temporary queue in the reply-to header (or some other agreed-upon custom attribute in the message header).
 
@@ -344,7 +324,6 @@ The other technique used to implement request-reply messaging is to use a tempor
 
 4. The event processor receives the message and deletes the temporary queue.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-14.pdf, PDF page 28. -->
 ![Figure 14-21. Request-reply message processing using a temporary queue](/.attachments/14-21-Fundamentals.of.Software.Architecture-2020-14.png)
 
 *Figure 14-21. Request-reply message processing using a temporary queue*
@@ -357,10 +336,9 @@ The request-based model and event-based model are both viable approaches for des
 
 Understanding the trade-offs with the event-based model also helps decide which one is the best fit. Table 14-3 lists the advantages and disadvantages of the event-based model of event-driven architecture.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-14.pdf, PDF page 29. -->
 *Table 14-3. Trade-offs of the event-driven model*
 
-| Advantages over request-based | Trade-offs |
+| **Advantages over request-based** | **Trade-offs** |
 | --- | --- |
 | Better response to dynamic user content | Only supports eventual consistency |
 | Better scalability and elasticity | Less control over processing flow |
@@ -378,11 +356,10 @@ Adding event-driven architecture to any architecture style helps remove bottlene
 
 ### Architecture Characteristics Ratings
 
-A one-star rating in the characteristics ratings table in Figure 14-22 means the specific architecture characteristic isn’t well supported in the architecture, whereas a five-star rating means the architecture characteristic is one of the strongest features in the architecture style. The definition for each characteristic identified in the scorecard can be found in Chapter 4.
+A one-star rating in the characteristics ratings table in Figure 14-22 means the specific architecture characteristic isn’t well supported in the architecture, whereas a five-star rating means the architecture characteristic is one of the strongest features in the architecture style.
 
 Event-driven architecture is primarily a technically partitioned architecture in that any particular domain is spread across multiple event processors and tied together through mediators, queues, and topics. Changes to a particular domain usually impact many event processors, mediators, and other messaging artifacts, hence why event-driven architecture is not domain partitioned.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-14.pdf, PDF page 30. -->
 ![Figure 14-22. Event-driven architecture characteristics ratings](/.attachments/14-22-Fundamentals.of.Software.Architecture-2020-14.png)
 
 *Figure 14-22. Event-driven architecture characteristics ratings*
@@ -391,8 +368,8 @@ The number of quanta within event-driven architecture can vary from one to many 
 
 To illustrate this point, consider the example where one event processor sends a request to another event processor to place an order. The first event processor must wait for an order ID from the other event processor to continue. If the second event processor that places the order and generates an order ID is down, the first event processor cannot continue. Therefore, they are part of the same architecture quantum and share the same architectural characteristics, even though they are both sending and receiving asynchronous messages.
 
-Event-driven architecture gains five stars for performance, scalability, and fault tolerance, the primary strengths of this architecture style. High performance is achieved through asynchronous communications combined with highly parallel processing. High scalability is realized through the programmatic load balancing of event processors (also called competing consumers). As the request load increases, additional event processors can be programmatically added to handle the additional requests. Fault tolerance is achieved through highly decoupled and asynchronous event processors that provide eventual consistency and eventual processing of event workflows. Providing the user interface or an event processor making a request does not need an immediate response, promises and futures can be leveraged to process the event at a later time if other downstream processors are not available.
+Event-driven architecture gains five stars for performance, scalability, and fault tolerance, the primary strengths of this architecture style. High performance is achieved through asynchronous communications combined with highly parallel processing. High scalability is realized through the programmatic load balancing of event processors (also called *competing consumers*). As the request load increases, additional event processors can be programmatically added to handle the additional requests. Fault tolerance is achieved through highly decoupled and asynchronous event processors that provide eventual consistency and eventual processing of event workflows. Providing the user interface or an event processor making a request does not need an immediate response, promises and futures can be leveraged to process the event at a later time if other downstream processors are not available.
 
-Overall simplicity and testability rate relatively low with event-driven architecture, mostly due to the nondeterministic and dynamic event flows typically found within this architecture style. While deterministic flows within the request-based model are relatively easy to test because the paths and outcomes are generally known, such is not the case with the event-driven model. Sometimes it is not known how event processors will react to dynamic events, and what messages they might produce. These “event tree diagrams” can be extremely complex, generating hundreds to even thousands of scenarios, making it very difficult to govern and test.
+Overall *simplicity* and *testability* rate relatively low with event-driven architecture, mostly due to the nondeterministic and dynamic event flows typically found within this architecture style. While deterministic flows within the request-based model are relatively easy to test because the paths and outcomes are generally known, such is not the case with the event-driven model. Sometimes it is not known how event processors will react to dynamic events, and what messages they might produce. These “event tree diagrams” can be extremely complex, generating hundreds to even thousands of scenarios, making it very difficult to govern and test.
 
 Finally, event-driven architectures are highly evolutionary, hence the five-star rating. Adding new features through existing or new event processors is relatively straightforward, particularly in the broker topology. By providing hooks via published messages in the broker topology, the data is already made available, hence no changes are required in the infrastructure or existing event processors to add that new functionality.

@@ -4,18 +4,19 @@
 
 Source: [Designing.Distributed.Systems-2025-5.pdf](./Designing.Distributed.Systems-2025-5.pdf), PDF pages 1–9.
 
-In the preceding chapters, we saw how the sidecar pattern can extend and augment existing application containers. We also saw how ambassadors can alter and broker how an application container communicates with the external world. This chapter describes the final single-node pattern: the adapter pattern. In the adapter pattern, the adapter container is used to modify the interface of the application container so that it conforms to some predefined interface that is expected of all applications. For example, an adapter might ensure that an application implements a consistent monitoring interface. Or it might ensure that log files are always written to stdout or any number of other conventions.
+First-person accounts and opinions in this document reflect the original source authors’ perspective.
+
+[The Sidecar Pattern](SIDECAR.PATTERN.md) explains how to extend and augment existing application containers. [Ambassadors](AMBASSADORS.md) explains how to alter and broker an application container’s communication with the external world. This document describes the final single-node pattern: the *adapter* pattern. In the adapter pattern, the *adapter container* is used to modify the interface of the *application container* so that it conforms to some predefined interface that is expected of all applications. For example, an adapter might ensure that an application implements a consistent monitoring interface. Or it might ensure that log files are always written to stdout or any number of other conventions.
 
 Real-world application development is a heterogeneous, hybrid exercise. Some parts of your application might be written from scratch by your team, some supplied by vendors, and some might consist entirely of off-the-shelf open source or proprietary software that you consume as precompiled binary. The net effect of this heterogeneity is that any real-world application you deploy will have been written in a variety of languages, with a variety of conventions for logging, monitoring, and other common services.
 
 Yet, to effectively monitor and operate your application, you need common interfaces. When each application provides metrics using a different format and interface, it is very difficult to collect all of those metrics in a single place for visualization and alerting. This is where the adapter pattern is relevant. Like other single-node patterns, the adapter pattern is made up of modular containers. Different application containers can present many different monitoring interfaces while the adapter container adapts this heterogeneity to present a consistent interface. This enables you to deploy a single tool that expects this single interface. Figure 5-1 illustrates this general pattern.
 
-<!-- Source: Designing.Distributed.Systems-2025-5.pdf, PDF page 2. -->
 ![Figure 5-1. The generic adapter pattern](/.attachments/5-1-Designing.Distributed.Systems-2025-5.png)
 
 *Figure 5-1. The generic adapter pattern*
 
-The remainder of this chapter gives several different applications of the adapter pattern.
+The remainder of this document gives several different applications of the adapter pattern.
 
 ### Monitoring
 
@@ -80,7 +81,6 @@ Fortunately, as with monitoring, the adapter pattern can help provide a modular,
 
 > One question that often comes up when considering adapter patterns is: why not simply modify the application container itself? If you are the developer responsible for the application container, then this might actually be a good solution. Adapting your code or your container to implement a consistent interface can work well. However, in many cases we are reusing a container produced by another party. In such cases, deriving a slightly modified image that we have to maintain (patch, rebase, etc.) is significantly more expensive than developing an adapter container that can run alongside the other party’s image. Additionally, decoupling the adapter into its own container allows for the possibility of sharing and reuse, which isn’t possible when you modify the application container.
 
-<!-- Source: Designing.Distributed.Systems-2025-5.pdf, PDF page 5. -->
 ![Figure 5-2. Callout illustration accompanying the discussion on PDF page 5](/.attachments/5-2-Designing.Distributed.Systems-2025-5.png)
 
 *Figure 5-2. Callout illustration accompanying the discussion on PDF page 5*

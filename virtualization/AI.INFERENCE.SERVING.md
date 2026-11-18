@@ -4,9 +4,11 @@
 
 Source: [Designing.Distributed.Systems-2025-15.pdf](./Designing.Distributed.Systems-2025-15.pdf), PDF pages 1–7.
 
+First-person accounts and opinions in this document reflect the original source authors’ perspective.
+
 In the last few years, AI has become a key part of many different types of applications. Though the basics of neural networks and machine learning have been around for decades, in the last decade advances in deep learning and large language models (LLMs) have created a phase shift in the quality of models and the applications that are possible for AI. More crucially, these systems have captured the imagination of application developers all over the world who see limitless ways to apply LLMs to their particular business domains.
 
-AI and machine learning is a complex topic that can take years to master, but fortunately, with the assistance of libraries and pre-built models, it takes significantly less time to begin to incorporate intelligence into your application. This chapter does not attempt to make you an AI expert, but it can serve as an introduction to the concepts and approaches for using AI in your system.
+AI and machine learning is a complex topic that can take years to master, but fortunately, with the assistance of libraries and pre-built models, it takes significantly less time to begin to incorporate intelligence into your application. This document does not attempt to make you an AI expert, but it can serve as an introduction to the concepts and approaches for using AI in your system.
 
 ### The Basics of AI Systems
 
@@ -22,11 +24,11 @@ Many cloud providers provide inference as a service. Such solutions can make it 
 
 For LLMs, the final part of inference is the prompt itself. When you chat with an LLM, it may seem as if your query text is sent directly to the model, but in most cases it is wrapped as part of a larger text that is called the prompt. The prompt provides context and instructions to the model that are not included in your specific query. For example, a prompt might add your location or other personalization information that is known about you to your query. The structure of the prompt is critical in getting good responses from an LLM. The act of creating a good prompt is known as prompt engineering. In addition to the examples above, prompt engineering can be used to add additional data from traditional data sources and to ensure that the responses from the model adhere to your application’s requirements for accuracy and stability.
 
-“The Basics of AI Systems” on page 171 described the components of an AI application. The following sections will get into more details about how the application can be built.
+[The Basics of AI Systems](AI.INFERENCE.SERVING.md#the-basics-of-ai-systems) described the components of an AI application. The following sections will get into more details about how the application can be built.
 
 ### Hosting a Model
 
-Building a model is a large, complex task that could fill an entire book (or more) and is thus outside of the scope for this chapter. Even if you are interested in doing your own training or fine-tuning, you are encouraged to begin by using pretrained models so that you can get a sense for how well AI works with your application. Not every application is a great fit for the current state of AI models, and thus, before investing the time, energy, and money in training, it makes sense to evaluate your overall approach.
+Building a model is a large, complex task that could fill an entire book (or more) and is thus outside of the scope for this document. Even if you are interested in doing your own training or fine-tuning, you are encouraged to begin by using pretrained models so that you can get a sense for how well AI works with your application. Not every application is a great fit for the current state of AI models, and thus, before investing the time, energy, and money in training, it makes sense to evaluate your overall approach.
 
 When you are looking to host a model, the first thing to consider is the computational requirements of the model and your application. If your application is going to be used interactively by a user, the latency of the responses is critical to the quality of the application. Generally, users begin to notice latency at 250 milliseconds and start turning away and doing other tasks when latency reaches more than a few seconds. Thus, in interactive inference, performance is critical.
 
@@ -62,7 +64,7 @@ Users interacting with AI systems expect that they are capable of understanding 
 
 With RAG, the user’s prompt is augmented with traditional queries to provide the necessary context to correctly deliver an answer to the user’s input. Consider, for example, the query:
 
-> Prompt: Who is the closest friend to my current location?
+> *Prompt*: Who is the closest friend to my current location?
 
 It is clear that a generic LLM has no knowledge of either who the person’s friends are, nor their current location. We need RAG to solve this problem.
 
@@ -70,7 +72,7 @@ When implementing a system with RAG, in addition to the user’s prompt, the sys
 
 The results of these two traditional queries are combined with the user’s prompt and then sent to the model. An example RAG prompt might look something like:
 
-> Prompt: Given a set of friends with ${address} and a current ${location}, who is the closest friend to the current location?
+> *Prompt*: Given a set of friends with ${address} and a current ${location}, who is the closest friend to the current location?
 
 We can see how the personalized and up-to-date information provided by the RAG retrievals are combined with the user prompt to provide the LLM with sufficient information to correctly respond to the user.
 
@@ -88,7 +90,7 @@ Thus, to correctly test our AI applications, we have to consider their performan
 
 But then to actually implement such a test, we need a way to assess the quality of a response. This task itself can be a challenge. Obviously, it is far too expensive to have humans evaluate the quality of each response—some automated solution is required. Fortunately, LLMs themselves can be used for some of this evaluation. Just like you used the model to answer the user’s input, you can likewise ask the model if the answer it gave is a high-quality answer. Your prompt looks something like:
 
-> Prompt: Given the following input: ${input} is the response: ${response} a high-quality response?
+> *Prompt*: Given the following input: ${input} is the response: ${response} a high-quality response?
 
 This approach may seem like giving the inmates control of the asylum, but it actually works well in many cases.
 
@@ -98,4 +100,4 @@ AI changes the way we build applications, and thus, also changes the way those a
 
 ### Summary
 
-In just a few years, AI has transformed both our imagination of what our applications could be, as well as our users’ expectations for how they can interact with those applications. However, at the end of the day, AI inference is just another function that is provided by a distributed system and delivered to our users. This chapter provides an introduction to the core concepts and techniques for building AI applications that will enable anyone familiar with distributed systems to augment their distributed applications with AI.
+In just a few years, AI has transformed both our imagination of what our applications could be, as well as our users’ expectations for how they can interact with those applications. However, at the end of the day, AI inference is just another function that is provided by a distributed system and delivered to our users. This document provides an introduction to the core concepts and techniques for building AI applications that will enable anyone familiar with distributed systems to augment their distributed applications with AI.

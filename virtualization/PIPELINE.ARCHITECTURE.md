@@ -4,7 +4,7 @@
 
 Source: [Fundamentals.of.Software.Architecture-2020-11.pdf](./Fundamentals.of.Software.Architecture-2020-11.pdf), PDF pages 1–6.
 
-One of the fundamental styles in software architecture that appears again and again is the pipeline architecture (also known as the pipes and filters architecture). As soon as developers and architects decided to split functionality into discrete parts, this pattern followed. Most developers know this architecture as this underlying principle behind Unix terminal shell languages, such as Bash and Zsh.
+One of the fundamental styles in software architecture that appears again and again is the *pipeline* architecture (also known as the *pipes and filters* architecture). As soon as developers and architects decided to split functionality into discrete parts, this pattern followed. Most developers know this architecture as this underlying principle behind Unix terminal shell languages, such as Bash and Zsh.
 
 Developers in many functional programming languages will see parallels between language constructs and elements of this architecture. In fact, many tools that utilize the MapReduce programming model follow this basic topology. While these examples show a low-level implementation of the pipeline architecture style, it can also be used for higher-level business applications.
 
@@ -12,7 +12,6 @@ Developers in many functional programming languages will see parallels between l
 
 The topology of the pipeline architecture consists of pipes and filters, illustrated in Figure 11-1.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-11.pdf, PDF page 1. -->
 ![Figure 11-1. Basic topology for pipeline architecture](/.attachments/11-1-Fundamentals.of.Software.Architecture-2020-11.png)
 
 *Figure 11-1. Basic topology for pipeline architecture*
@@ -21,31 +20,31 @@ The pipes and filters coordinate in a specific fashion, with pipes forming one-w
 
 #### Pipes
 
-Pipes in this architecture form the communication channel between filters. Each pipe is typically unidirectional and point-to-point (rather than broadcast) for performance reasons, accepting input from one source and always directing output to another. The payload carried on the pipes may be any data format, but architects favor smaller amounts of data to enable high performance.
+*Pipes* in this architecture form the communication channel between filters. Each pipe is typically unidirectional and point-to-point (rather than broadcast) for performance reasons, accepting input from one source and always directing output to another. The payload carried on the pipes may be any data format, but architects favor smaller amounts of data to enable high performance.
 
 #### Filters
 
-Filters are self-contained, independent from other filters, and generally stateless. Filters should perform one task only. Composite tasks should be handled by a sequence of filters rather than a single one.
+*Filters* are self-contained, independent from other filters, and generally stateless. Filters should perform one task only. Composite tasks should be handled by a sequence of filters rather than a single one.
 
 Four types of filters exist within this architecture style:
 
-Producer
+*Producer*
 
-The starting point of a process, outbound only, sometimes called the source.
+The starting point of a process, outbound only, sometimes called the *source*.
 
-Transformer
+*Transformer*
 
-Accepts input, optionally performs a transformation on some or all of the data, then forwards it to the outbound pipe. Functional advocates will recognize this feature as map.
+Accepts input, optionally performs a transformation on some or all of the data, then forwards it to the outbound pipe. Functional advocates will recognize this feature as *map*.
 
-Tester
+*Tester*
 
-Accepts input, tests one or more criteria, then optionally produces output, based on the test. Functional programmers will recognize this as similar to reduce.
+Accepts input, tests one or more criteria, then optionally produces output, based on the test. Functional programmers will recognize this as similar to *reduce*.
 
-Consumer
+*Consumer*
 
 The termination point for the pipeline flow. Consumers sometimes persist the final result of the pipeline process to a database, or they may display the final results on a user interface screen.
 
-The unidirectional nature and simplicity of each of the pipes and filters encourages compositional reuse. Many developers have discovered this ability using shells. A famous story from the blog “More Shell, Less Egg” illustrates just how powerful these abstractions are. Donald Knuth was asked to write a program to solve this text handling problem: read a file of text, determine the n most frequently used words, and print out a sorted list of those words along with their frequencies. He wrote a program consisting of more than 10 pages of Pascal, designing (and documenting) a new algorithm along the way. Then, Doug McIlroy demonstrated a shell script that would easily fit within a Twitter post that solved the problem more simply, elegantly, and understandably (if you understand shell commands):
+The unidirectional nature and simplicity of each of the pipes and filters encourages compositional reuse. Many developers have discovered this ability using shells. A famous story from the blog “More Shell, Less Egg” illustrates just how powerful these abstractions are. Donald Knuth was asked to write a program to solve this text handling problem: read a file of text, determine the *n* most frequently used words, and print out a sorted list of those words along with their frequencies. He wrote a program consisting of more than 10 pages of Pascal, designing (and documenting) a new algorithm along the way. Then, Doug McIlroy demonstrated a shell script that would easily fit within a Twitter post that solved the problem more simply, elegantly, and understandably (if you understand shell commands):
 
 ```text
         tr -cs A-Za-z '\n' |
@@ -64,7 +63,6 @@ The pipeline architecture pattern appears in a variety of applications, especial
 
 To illustrate how the pipeline architecture can be used, consider the following example, as illustrated in Figure 11-2, where various service telemetry information is sent from services via streaming to Apache Kafka.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-11.pdf, PDF page 3. -->
 ![Figure 11-2. Pipeline architecture example](/.attachments/11-2-Fundamentals.of.Software.Architecture-2020-11.png)
 
 *Figure 11-2. Pipeline architecture example*
@@ -75,11 +73,10 @@ This example shows the extensibility properties of the pipeline architecture. Fo
 
 ### Architecture Characteristics Ratings
 
-A one-star rating in the characteristics ratings table Figure 11-3 means the specific architecture characteristic isn’t well supported in the architecture, whereas a five-star rating means the architecture characteristic is one of the strongest features in the architecture style. The definition for each characteristic identified in the scorecard can be found in Chapter 4.
+A one-star rating in the characteristics ratings table Figure 11-3 means the specific architecture characteristic isn’t well supported in the architecture, whereas a five-star rating means the architecture characteristic is one of the strongest features in the architecture style.
 
 The pipeline architecture style is a technically partitioned architecture due to the partitioning of application logic into filter types (producer, tester, transformer, and consumer). Also, because the pipeline architecture is usually implemented as a monolithic deployment, the architectural quantum is always one.
 
-<!-- Source: Fundamentals.of.Software.Architecture-2020-11.pdf, PDF page 5. -->
 ![Figure 11-3. Pipeline architecture characteristics ratings](/.attachments/11-3-Fundamentals.of.Software.Architecture-2020-11.png)
 
 *Figure 11-3. Pipeline architecture characteristics ratings*

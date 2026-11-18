@@ -4,15 +4,16 @@
 
 Source: [Designing.Distributed.Systems-2025-10.pdf](./Designing.Distributed.Systems-2025-10.pdf), PDF pages 1–13.
 
-The previous patterns that we have seen have been about distributing requests in order to scale requests per second, the state being served, or the time to process a request. This final chapter on multinode serving patterns is about how you scale assignment. In many different systems, there is a notion of ownership where a specific process owns a specific task. We have previously seen this in the context of sharded and hot-sharded systems where specific instances owned specific sections of the sharded key space.
+First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
-In the context of a single process on a single server, you have likely already learned how to manage concurrency using primitives like locks or mutexes that are present in modern programming languages. A lock establishes ownership within the context of a single application running on a single machine because it uses storage in the memory of that machine and primitives in the processor and operating system to establish exclusive access. Even in the context of a single machine, concurrency can be challenging to implement, and mistakes in concurrency are at the root of some of the most challenging bugs you may encounter.
+The previous patterns that we have seen have been about distributing requests in order to scale requests per second, the state being served, or the time to process a request. This document on multinode serving patterns is about how you scale assignment. In many different systems, there is a notion of *ownership* where a specific process owns a specific task. We have previously seen this in the context of sharded and hot-sharded systems where specific instances owned specific sections of the sharded key space.
+
+In the context of a single process on a single server, you have likely already learned how to manage concurrency using primitives like *locks* or *mutexes* that are present in modern programming languages. A lock establishes ownership within the context of a single application running on a single machine because it uses storage in the memory of that machine and primitives in the processor and operating system to establish exclusive access. Even in the context of a single machine, concurrency can be challenging to implement, and mistakes in concurrency are at the root of some of the most challenging bugs you may encounter.
 
 Unfortunately, restricting ownership to a single application limits scalability, since the task can’t be replicated, and reliability, since if the task fails, it is unavailable for a period of time. If you want to build a large-scale reliable system that requires ownership, you need to build distributed locks. Distributed locks introduce additional complexity since you cannot rely on shared memory or processors between different containers in your distributed system.
 
 A general diagram of distributed ownership is shown in Figure 10-1. In the diagram, there are three replicas that could be the owner or leader. Initially, the first replica is the leader. Then that replica fails, and replica number three then becomes the leader. Finally, replica number one recovers and returns to the group, but replica three remains as the leader/owner.
 
-<!-- Source: Designing.Distributed.Systems-2025-10.pdf, PDF page 2. -->
 ![Figure 10-1. A leader election protocol in operation: initially the first leader is selected, but when it fails, the third leader takes over](/.attachments/10-1-Designing.Distributed.Systems-2025-10.png)
 
 *Figure 10-1. A leader election protocol in operation: initially the first leader is selected, but when it fails, the third leader takes over*
@@ -43,9 +44,9 @@ The significant downside of just using a singleton is that for the period that t
 
 ### The Basics of Leader Election
 
-Imagine that there is a service Foo with three replicas: Foo-1, Foo-2, and Foo-3. There is also some object Bar that must only be “owned” by one of the replicas (e.g., Foo-1) at a time. Often this replica is called the leader, hence the term leader election used to describe the process of how this leader is selected as well as how a new leader is selected if that leader fails.
+Imagine that there is a service *Foo* with three replicas: *Foo-1*, *Foo-2*, and *Foo-3*. There is also some object *Bar* that must only be “owned” by one of the replicas (e.g., *Foo-1*) at a time. Often this replica is called the *leader*, hence the term *leader election* used to describe the process of how this leader is selected as well as how a new leader is selected if that leader fails.
 
-There are two ways to implement this leader election. This first is to implement a distributed consensus algorithm like Paxos or RAFT, but the complexity of these algorithms make them beyond the scope of this book and not worthwhile to implement. Implementing one of these algorithms is akin to implementing locks on top of assembly code compare-and-swap instructions. It’s an interesting exercise for an undergraduate computer science course, but it is not something that is generally worth doing in practice.
+There are two ways to implement this leader election. This first is to implement a distributed consensus algorithm like Paxos or RAFT, but the complexity of these algorithms make them beyond the scope of this repository and not worthwhile to implement. Implementing one of these algorithms is akin to implementing locks on top of assembly code compare-and-swap instructions. It’s an interesting exercise for an undergraduate computer science course, but it is not something that is generally worth doing in practice.
 
 Fortunately, there are a large number of distributed key-value stores that have implemented such consensus algorithms for you. At a general level, these systems provide a replicated, reliable data store and the primitives necessary to build more complicated locking and election abstractions on top. Examples of these distributed stores include etcd, ZooKeeper, and Consul. The basic primitives that these systems provide is the ability to perform a compare-and-swap operation for a particular key. Compare-and-swap atomically writes a new value if the existing value matches the expected value. If the value doesn’t match, it returns false. If the value doesn’t exist and currentValue is not null, it returns an error. If you haven’t seen compare-and-swap before, it is basically an atomic operation that looks like this:
 
@@ -171,28 +172,27 @@ func (Lock l) simpleLock() boolean {
 
 > When using distributed locks, it is critical to ensure that any processing you do doesn’t last longer than the TTL of the lock. One good practice is to set a watchdog timer when you acquire the lock. The watchdog contains an assertion that will crash your program if the TTL of the lock expires before you have called unlock. If you don’t do this, you may perform computation when you have lost the lock.
 
-<!-- Source: Designing.Distributed.Systems-2025-10.pdf, PDF page 7. -->
 ![Figure 10-3. Callout illustration accompanying the discussion on PDF page 7](/.attachments/10-3-Designing.Distributed.Systems-2025-10.png)
 
 *Figure 10-3. Callout illustration accompanying the discussion on PDF page 7*
 
 By adding TTL to our locks, we have actually introduced a bug into our unlock function. Consider the following scenario:
 
-1. Process-1 obtains the lock with TTL t.
+1. Process-1 obtains the lock with TTL *t*.
 
-2. Process-1 runs really slowly for some reason, for longer than t.
+2. Process-1 runs really slowly for some reason, for longer than *t*.
 
 3. The lock expires.
 
 4. Process-2 acquires the lock, since Process-1 has lost it due to TTL.
 
-5. Process-1 finishes and calls unlock.
+5. Process-1 finishes and calls *unlock*.
 
 6. Process-3 acquires the lock.
 
 At this point, Process-1 believes that it has unlocked the lock that it held at the beginning; it doesn’t understand that it has actually lost the lock due to TTL, and in fact unlocked the lock held by Process-2. Then Process-3 comes along and also grabs the lock. Now both Process-2 and Process-3 believe they own the lock, which means that your system likely has unexpected failures or data corruption.
 
-Fortunately, the key-value store provides a resource version for every write that is performed. Whenever a new write is performed, the resource version changes. We can use this resource version as a precondition for any subsequent write to ensure ordering. Our lock function stores the resource version and uses it in compareAndSwap to ensure that not only is the value as expected, but the resource version is the same as when the lock operation occurred. This changes our simple Lock function to look like this:
+Fortunately, the key-value store provides a *resource version* for every write that is performed. Whenever a new write is performed, the resource version changes. We can use this resource version as a precondition for any subsequent write to ensure ordering. Our lock function stores the resource version and uses it in compareAndSwap to ensure that not only is the value as expected, but the resource version is the same as when the lock operation occurred. This changes our simple Lock function to look like this:
 
 ```text
 func (Lock l) simpleLock() boolean {
@@ -265,9 +265,9 @@ While locks are great for establishing temporary ownership of some critical comp
 
 Obviously, one way to do this would be to extend the TTL for the lock to a very long period (say a week or longer), but this has the significant downside that if the current lock owner fails, a new lock owner wouldn’t be chosen until the TTL expired a week later.
 
-Instead, we need to create a renewable lock, which can be periodically renewed by the owner so that the lock can be retained for an arbitrary period of time.
+Instead, we need to create a *renewable lock*, which can be periodically renewed by the owner so that the lock can be retained for an arbitrary period of time.
 
-We can extend the existing Lock that we defined previously to create a renewable lock, which enables the lock holder to renew the lock:
+We can extend the existing Lock that we defined previously to create a *renewable lock*, which enables the lock holder to renew the lock:
 
 ```text
 func (Lock l) renew() boolean {
@@ -291,7 +291,7 @@ Of course, you need to implement the handleLockLost() function so that it termin
 
 #### Hands On: Implementing Leases in etcd
 
-To see how we implement leases using etcd, we will return to our earlier locking example and add the --ttl=<seconds> flag to our lock create and update calls. The ttl flag defines a time after which the lock that we create is deleted. Because the lock disappears after the ttl expires, instead of creating with the value of unlocked, we will assume that the absence of the lock means that it is unlocked. To do this, we use the mk command instead of the set command. etcdctl mk only succeeds if the key does not currently exist.
+To see how we implement leases using etcd, we will return to our earlier locking example and add the --ttl=<seconds> flag to our lock create and update calls. The ttl flag defines a time after which the lock that we create is deleted. Because the lock disappears after the ttl expires, instead of creating with the value of *unlocked*, we will assume that the absence of the lock means that it is unlocked. To do this, we use the mk command instead of the set command. etcdctl mk only succeeds if the key does *not* currently exist.
 
 Thus, to lock a leased lock, Alice executes:
 
@@ -329,7 +329,6 @@ If this function executes prior to any code that needs to be protected by a lock
 
 This system diagram is shown in Figure 10-2. In the image, shard2 is the owner of the lock, and when a request is sent to the worker, the worker double-checks with the lock server and validates that shard2 is actually the current owner.
 
-<!-- Source: Designing.Distributed.Systems-2025-10.pdf, PDF page 11. -->
 ![Figure 10-2. A worker double-checking to validate that the requester who sent a message is actually the current owner of the shard](/.attachments/10-2-Designing.Distributed.Systems-2025-10.png)
 
 *Figure 10-2. A worker double-checking to validate that the requester who sent a message is actually the current owner of the shard*
@@ -354,10 +353,10 @@ To add one final further complicating wrinkle, it’s always possible that owner
 
 8. Request R1 finally arrives, and shard1 is the current leader, so it is accepted, but this is bad because R2 has already been processed.
 
-Such sequences of events seem byzantine, but in reality, in any large system they occur with disturbing frequency. Fortunately, this is similar to the case described previously, which we resolved with the resource version in etcd. We can do the same thing here. In addition to storing the name of the current owner in etcd, we also send the resource version along with each request. So in the previous example, R1 becomes (R1, Version1). Now when the request is received, the double-check validates both the current owner and the resource version of the request. If either match fails, the request is rejected. This patches up this example.
+Such sequences of events seem byzantine, but in reality, in any large system they occur with disturbing frequency. Fortunately, this is similar to the case described previously, which we resolved with the resource version in etcd. We can do the same thing here. In addition to storing the name of the current owner in etcd, we also send the resource version along with each request. So in the previous example, R1 becomes (R1, Version1). Now when the request is received, the double-check validates both the current owner *and* the resource version of the request. If either match fails, the request is rejected. This patches up this example.
 
 Ultimately, in designing a distributed ownership system, you have to choose between at-most once processing, which is possible, but requires you to possibly lose availability for a period of time. Or you can have at least once processing, which can provide higher availability, but will occasionally result in double processing of some request. Depending on the type of system you are building, duplicate processing may simply waste some resources (e.g., compute time on a GPU); in which case, if it is infrequent, it is likely acceptable. However, some systems may involve actual transactions (e.g., transferring money between accounts) where you would rather lose availability but preserve consistency. Understanding these trade-offs is a critical part of distributed system design.
 
 ### Summary
 
-In this chapter we have explored one of the most complicated parts of distributed system design, distributed ownership and locks. While parallel concurrent processing is a key part of building reliable, scalable systems, the concurrency also introduces challenges in systems where ownership of specific work is important. Distributed ownership or locks enable pieces of your distributed system to maintain exclusive access to a particular part of the data store or compute operations. Implementing locks involves interacting with consensus-based distributed storage, like etcd or ZooKeeper, with very specific coding patterns. In many languages, code for distributed locks have already been implemented. Since writing this code yourself is a challenge, if there’s already a library for your programming language, it’s a best practice to rely on pre-existing production-grade code. Finally, some simple systems don’t need locks and can get away with using Singletons and in-process concurrency. Such systems trade availability for simplicity.
+In this document we have explored one of the most complicated parts of distributed system design, distributed ownership and locks. While parallel concurrent processing is a key part of building reliable, scalable systems, the concurrency also introduces challenges in systems where ownership of specific work is important. Distributed ownership or locks enable pieces of your distributed system to maintain exclusive access to a particular part of the data store or compute operations. Implementing locks involves interacting with consensus-based distributed storage, like etcd or ZooKeeper, with very specific coding patterns. In many languages, code for distributed locks have already been implemented. Since writing this code yourself is a challenge, if there’s already a library for your programming language, it’s a best practice to rely on pre-existing production-grade code. Finally, some simple systems don’t need locks and can get away with using Singletons and in-process concurrency. Such systems trade availability for simplicity.

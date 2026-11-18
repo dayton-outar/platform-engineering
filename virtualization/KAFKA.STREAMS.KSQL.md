@@ -4,9 +4,11 @@
 
 Source: [Designing.Event-Driven.Systems-2018-14.pdf](./Designing.Event-Driven.Systems-2018-14.pdf), PDF pages 1–6.
 
-When it comes to building event-driven services, the Kafka Streams API provides the most complete toolset for handling a distributed, asynchronous world. Kafka Streams is designed to perform streaming computations. We discussed a simple example of such a use case, where we processed app open/close events emitted from mobile phones in Chapter 2. We also touched on its stateful elements in Chapter 6. This led us to three types of services we can build: event-driven, streaming, and stateful streaming.
+First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
-In this chapter we look more closely at this unique tool for stateful stream processing, along with its powerful declarative interface: KSQL.
+When it comes to building event-driven services, the Kafka Streams API provides the most complete toolset for handling a distributed, asynchronous world. Kafka Streams is designed to perform streaming computations. We discussed a simple example of such a use case, where we processed app open/close events emitted from mobile phones in [The Origins of Streaming](ORIGINS.STREAMING.md). We also touched on its stateful elements in [Processing Events with Stateful Functions](PROCESSING.EVENTS.STATEFUL.FUNCTIONS.md). This led us to three types of services we can build: event-driven, streaming, and stateful streaming.
+
+In this document we look more closely at this unique tool for stateful stream processing, along with its powerful declarative interface: KSQL.
 
 ### A Simple Email Service Built with Kafka Streams and KSQL
 
@@ -28,12 +30,10 @@ orders.join(customers, Tuple::new)
 
 > The code for this is available on GitHub.
 
-<!-- Source: Designing.Event-Driven.Systems-2018-14.pdf, PDF page 2. -->
 ![Figure 14-6. Callout illustration accompanying the discussion on PDF page 2](/.attachments/14-6-Designing.Event-Driven.Systems-2018-14.png)
 
 *Figure 14-6. Callout illustration accompanying the discussion on PDF page 2*
 
-<!-- Source: Designing.Event-Driven.Systems-2018-14.pdf, PDF page 2. -->
 ![Figure 14-1. An example email service that joins orders and customers, then sends an email](/.attachments/14-1-Designing.Event-Driven.Systems-2018-14.png)
 
 *Figure 14-1. An example email service that joins orders and customers, then sends an email*
@@ -48,18 +48,16 @@ ksql> CREATE STREAM platinum_emails AS SELECT * FROM orders
 
 Then we implement the emailer as a simple consumer using Kafka’s Node.js API (though a wide number of languages are supported) with KSQL running as a sidecar.
 
-<!-- Source: Designing.Event-Driven.Systems-2018-14.pdf, PDF page 3. -->
 ![Figure 14-2. Executing a streaming operation as a sidecar, with the resulting stream being processed by a Node.js client](/.attachments/14-2-Designing.Event-Driven.Systems-2018-14.png)
 
 *Figure 14-2. Executing a streaming operation as a sidecar, with the resulting stream being processed by a Node.js client*
 
 ### Windows, Joins, Tables, and State Stores
 
-Chapter 6 introduced the notion of holding whole tables inside the Kafka Streams API, making services stateful. Here we look a little more closely at how both streams and tables are implemented, along with some of the other core features.
+[Processing Events with Stateful Functions](PROCESSING.EVENTS.STATEFUL.FUNCTIONS.md) introduced the notion of holding whole tables inside the Kafka Streams API, making services stateful. Here we look a little more closely at how both streams and tables are implemented, along with some of the other core features.
 
 Let’s revisit the email service example once again, where an email is sent to confirm payment of a new order, as pictured in Figure 14-3. We apply a stream-stream join, which waits for corresponding Order and Payment events to both be present in the email service before triggering the email code. The join behaves much like a logical AND.
 
-<!-- Source: Designing.Event-Driven.Systems-2018-14.pdf, PDF page 4. -->
 ![Figure 14-3. A stream-stream join between orders and payments](/.attachments/14-3-Designing.Event-Driven.Systems-2018-14.png)
 
 *Figure 14-3. A stream-stream join between orders and payments*
@@ -70,27 +68,25 @@ Kafka Streams also manages whole tables. Tables are a local manifestation of a c
 
 The nice thing about using a table is that it behaves a lot like tables in a database. So when we join a stream of orders to a table of customers, there is no need to worry about retention periods, windows, or other such complexities. Figure 14-4 shows a three-way join between orders, payments, and customers, where customers are represented as a table.
 
-<!-- Source: Designing.Event-Driven.Systems-2018-14.pdf, PDF page 4. -->
 ![Figure 14-4. A three-way join between two streams and a table](/.attachments/14-4-Designing.Event-Driven.Systems-2018-14.png)
 
 *Figure 14-4. A three-way join between two streams and a table*
 
 There are actually two types of table in Kafka Streams: KTables and Global KTables. With just one instance of a service running, these behave equivalently. However, if we scaled our service out—so it had four instances running in parallel—we’d see slightly different behaviors. This is because Global KTables are broadcast: each service instance gets a complete copy of the entire table. Regular KTables are partitioned: the dataset is spread over all service instances.
 
-Whether a table is broadcast or partitioned affects the way it can perform joins. With a Global KTable, because the whole table exists on every node, we can join to any attribute we wish, much like a foreign key join in a database. This is not true in a KTable. Because it is partitioned, it can be joined only by its primary key, just like you have to use the primary key when you join two streams. So to join a KTable or stream by an attribute that is not its primary key, we must perform a repartition. This is discussed in “Rekey to Join” on page 145 in Chapter 15.
+Whether a table is broadcast or partitioned affects the way it can perform joins. With a Global KTable, because the whole table exists on every node, we can join to any attribute we wish, much like a foreign key join in a database. This is not true in a KTable. Because it is partitioned, it can be joined only by its primary key, just like you have to use the primary key when you join two streams. So to join a KTable or stream by an attribute that is not its primary key, we must perform a repartition. This is discussed in [Rekey to Join](BUILDING.STREAMING.SERVICES.md#rekey-to-join).
 
 So, in short, Global KTables work well as lookup tables or star joins but take up more space on disk because they are broadcast. KTables let you scale your services out when the dataset is larger, but may require that data be rekeyed.[^p5-1]
 
-The final use of the state store is to save information, just like we might write data to a regular database (Figure 14-5). Anything we save can be read back again later, say after a restart. So we might expose an Admin interface to our email service that provides statistics on emails that have been sent. We could store, these stats in a state store and they’ll be saved locally as well as being backed up to Kafka, using what’s called a changelog topic, inheriting all of Kafka’s durability guarantees.
+The final use of the state store is to save information, just like we might write data to a regular database (Figure 14-5). Anything we save can be read back again later, say after a restart. So we might expose an Admin interface to our email service that provides statistics on emails that have been sent. We could store, these stats in a state store and they’ll be saved locally as well as being backed up to Kafka, using what’s called a *changelog topic*, inheriting all of Kafka’s durability guarantees.
 
-<!-- Source: Designing.Event-Driven.Systems-2018-14.pdf, PDF page 5. -->
 ![Figure 14-5. Using a state store to keep application-specific state within the Kafka Streams API as well as backed up in Kafka](/.attachments/14-5-Designing.Event-Driven.Systems-2018-14.png)
 
 *Figure 14-5. Using a state store to keep application-specific state within the Kafka Streams API as well as backed up in Kafka*
 
 ### Summary
 
-This chapter provided a brief introduction to streams, tables, and state stores: three of the most important elements of a streaming application. Streams are infinite and we process them a record at a time. Tables represent a whole dataset, materialized locally, which we can join to much like a database table. State stores behave like dedicated databases which we can read and write to directly with any information we might wish to store. These features are of course just the tip of the iceberg, and both Kafka Streams and KSQL provide a far broader set of features, some of which we explore in Chapter 15, but they all build on these base concepts.
+This document provided a brief introduction to streams, tables, and state stores: three of the most important elements of a streaming application. Streams are infinite and we process them a record at a time. Tables represent a whole dataset, materialized locally, which we can join to much like a database table. State stores behave like dedicated databases which we can read and write to directly with any information we might wish to store. These features are of course just the tip of the iceberg, and both Kafka Streams and KSQL provide a far broader set of features, some of which we explore in [Building Streaming Services](BUILDING.STREAMING.SERVICES.md), but they all build on these base concepts.
 
 ### Notes
 

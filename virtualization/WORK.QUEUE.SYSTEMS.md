@@ -4,18 +4,18 @@
 
 Source: [Designing.Distributed.Systems-2025-11.pdf](./Designing.Distributed.Systems-2025-11.pdf), PDF pages 1–12.
 
-The simplest form of batch processing is a work queue. In a work queue system, there is a batch of work to be performed. Each piece of work is wholly independent of the other and can be processed without any interactions. Generally, the goals of the work queue system are to ensure that each piece of work is processed within a certain amount of time. Workers are scaled up or scaled down to ensure that the work can be handled. An illustration of a generic work queue is shown in Figure 11-1.
+First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
-<!-- Source: Designing.Distributed.Systems-2025-11.pdf, PDF page 1. -->
+The simplest form of batch processing is a *work queue*. In a work queue system, there is a batch of work to be performed. Each piece of work is wholly independent of the other and can be processed without any interactions. Generally, the goals of the work queue system are to ensure that each piece of work is processed within a certain amount of time. Workers are scaled up or scaled down to ensure that the work can be handled. An illustration of a generic work queue is shown in Figure 11-1.
+
 ![Figure 11-1. A generic work queue](/.attachments/11-1-Designing.Distributed.Systems-2025-11.png)
 
 *Figure 11-1. A generic work queue*
 
 ### A Generic Work Queue System
 
-The work queue is an ideal way to demonstrate the power of distributed system patterns. Most of the logic in the work queue is wholly independent of the actual work being done, and in many cases the delivery of the work can be performed in an independent manner as well. To illustrate this point, consider the work queue illustrated in Figure 11-1. If we take a look at it again and identify functionality that can be provided by a shared set of library containers, it becomes apparent that most of the implementation of a containerized work queue can be shared across a wide variety of users, as shown in Figure 11-2.
+The work queue is an ideal way to demonstrate the power of distributed system patterns. Most of the logic in the work queue is wholly independent of the actual work being done, and in many cases the delivery of the work can be performed in an independent manner as well. To illustrate this point, consider the work queue illustrated in Figure 11-1. If we take a look at it again and identify functionality that can be provided by a shared set of *library containers*, it becomes apparent that most of the implementation of a containerized work queue can be shared across a wide variety of users, as shown in Figure 11-2.
 
-<!-- Source: Designing.Distributed.Systems-2025-11.pdf, PDF page 2. -->
 ![Figure 11-2. The same work queue as shown in Figure 11-1, but this time using reusable containers; the reusable system containers are shown in white, while the user-supplied container is shown in the darker shaded boxes](/.attachments/11-2-Designing.Distributed.Systems-2025-11.png)
 
 *Figure 11-2. The same work queue as shown in Figure 11-1, but this time using reusable containers; the reusable system containers are shown in white, while the user-supplied container is shown in the darker shaded boxes*
@@ -26,7 +26,6 @@ Building a reusable container-based work queue requires the definition of interf
 
 To operate, every work queue needs a collection of work items that need processing. There are many different sources of work items for the work queue, depending on the specific application of the work queue. However, once the set of items has been obtained, the actual operation of the work queue is quite generic. Consequently, we can separate the application-specific queue source logic from the generic queue processing logic. Given the previously defined patterns of container groups, this can be seen as an example of the ambassador pattern defined previously. The generic work queue container is the primary application container, and the application-specific source container is the ambassador that proxies the generic work queue’s requests out to the concrete definition of the work queue out in the real world. This container group is illustrated in Figure 11-3.
 
-<!-- Source: Designing.Distributed.Systems-2025-11.pdf, PDF page 3. -->
 ![Figure 11-3. The work queue container group](/.attachments/11-3-Designing.Distributed.Systems-2025-11.png)
 
 *Figure 11-3. The work queue container group*
@@ -37,18 +36,17 @@ Interestingly, while the ambassador container is clearly application-specific, t
 
 Given this coordination between the generic work-queue manager and the application-specific ambassador, we need a formal definition of the interface between the two containers. Though there are a variety of different protocols, an HTTP RESTful API is both the easiest to implement as well as the de facto standard for such an interface. The coordinating work queue expects the ambassador to implement the following URLs:
 
-- GET http://localhost/api/v1/items
+- GET *http://localhost/api/v1/items*
 
-- GET http://localhost/api/v1/items/<item-name>
+- GET *http://localhost/api/v1/items/<item-name>*
 
-> You might wonder why we include a v1 in the API definition. Will there ever be a v2 of this interface? It may not seem logical, but it costs very little to version your API when you initially define it. Refactoring versioning onto an API without it, on the other hand, is very expensive. Consequently, it is a best practice to always add versions to your APIs even if you’re not sure they will ever change. Better safe than sorry.
+> You might wonder why we include a *v1* in the API definition. Will there ever be a *v2* of this interface? It may not seem logical, but it costs very little to version your API when you initially define it. Refactoring versioning onto an API without it, on the other hand, is very expensive. Consequently, it is a best practice to always add versions to your APIs even if you’re not sure they will ever change. Better safe than sorry.
 
-<!-- Source: Designing.Distributed.Systems-2025-11.pdf, PDF page 3. -->
 ![Figure 11-6. Callout illustration accompanying the discussion on PDF page 3](/.attachments/11-6-Designing.Distributed.Systems-2025-11.png)
 
 *Figure 11-6. Callout illustration accompanying the discussion on PDF page 3*
 
-The /items/ URL returns a complete list of all items:
+The */items/* URL returns a complete list of all items:
 
 ```text
 {
@@ -62,7 +60,7 @@ The /items/ URL returns a complete list of all items:
 }
 ```
 
-The /items/<item-name> URL provides the details for a specific item:
+The */items/<item-name>* URL provides the details for a specific item:
 
 ```text
 {
@@ -83,9 +81,8 @@ The item details are obtained from this API, and the item.data field is passed a
 
 Once a particular work item has been obtained by the work queue manager, it needs to be processed by a worker. This is the second container interface in our generic work queue. This container and interface are slightly different than the previous work queue source interface for a few reasons. The first is that it is a one-off API: a single call is made to begin the work, and no other API calls are made throughout the life of the worker container. Secondly, the worker container is not inside a container group with the work queue manager. Instead, it is launched via a container orchestration API and scheduled to its own container group. This means that the work queue manager has to make a remote call to the worker container in order to start work. It also means that we may need to be more careful about security to prevent a malicious user in our cluster from injecting extra work into the system.
 
-With the work queue source API, we used a simple HTTP-based API for sending items back to the work queue manager. This was because we needed to make repeated calls to the API, and security wasn’t a concern since everything was running on localhost. With the worker container, we only need to make a single call, and we want to ensure that other users in the system can’t accidentally or maliciously add work to our workers. Consequently, for the worker container, we will use a file-based API. Namely, when the worker container is created, it will receive an environment variable named WORK_ITEM_FILE; this will point to a file in the container’s local filesystem, where the data field from a work item has been written to a file. Concretely, as you will see below, this API can be implemented via a Kubernetes ConfigMap object that can be mounted into a container group as a file, as illustrated in Figure 11-4.
+With the work queue source API, we used a simple HTTP-based API for sending items back to the work queue manager. This was because we needed to make repeated calls to the API, and security wasn’t a concern since everything was running on localhost. With the worker container, we only need to make a single call, and we want to ensure that other users in the system can’t accidentally or maliciously add work to our workers. Consequently, for the worker container, we will use a file-based API. Namely, when the worker container is created, it will receive an environment variable named *WORK_ITEM_FILE*; this will point to a file in the container’s local filesystem, where the data field from a work item has been written to a file. Concretely, as you will see below, this API can be implemented via a Kubernetes ConfigMap object that can be mounted into a container group as a file, as illustrated in Figure 11-4.
 
-<!-- Source: Designing.Distributed.Systems-2025-11.pdf, PDF page 5. -->
 ![Figure 11-4. The work queue worker API](/.attachments/11-4-Designing.Distributed.Systems-2025-11.png)
 
 *Figure 11-4. The work queue worker API*
@@ -276,17 +273,16 @@ If, instead, a new work item arrives on average once every minute and it takes a
 
 Finally, consider a system in which a work item arrives every minute and each item takes two minutes to process. In such a system, we are always losing ground. The queue of work will grow without bound, and the latency of any one item in the queue will grow toward infinity (and our users will become very frustrated).
 
-Thus, we can keep track of both of these metrics for our work queue, and the average time between work items over an extended period of time (# work items / 24 hours) will give us the interarrival time for new work. We can also keep track of the average latency, the time to process any one item once we start working on it, not counting any time spent waiting in the queue. To have a stable work queue, we need to adjust the number of resources so that latency is less than the interarrival time of new items. If we are processing work items in parallel, we also divide the processing time for a work item by the parallelism. For example, if each item takes one minute to process but we process four items in parallel, the effective time to process one item is 15 seconds, and thus we can sustain an interarrival period of 16 or more seconds.
+Thus, we can keep track of both of these metrics for our work queue, and the average time between work items over an extended period of time (# work items / 24 hours) will give us the *interarrival time* for new work. We can also keep track of the average *latency*, the time to process any one item once we start working on it, not counting any time spent waiting in the queue. To have a stable work queue, we need to adjust the number of resources so that latency is less than the interarrival time of new items. If we are processing work items in parallel, we also divide the processing time for a work item by the parallelism. For example, if each item takes one minute to process but we process four items in parallel, the effective time to process one item is 15 seconds, and thus we can sustain an interarrival period of 16 or more seconds.
 
 This approach makes it fairly straightforward to build an autoscaler to dynamically size up our work queue. Sizing down the work queue is somewhat trickier, but you can use the same math as well as a heuristic for the amount of spare capacity for the safety margin you want to maintain. For example, you can reduce the parallelism until the processing time for an item is 90% of the interarrival time for new items. While in some cases it is more efficient to build your own scaler, many times it is better to use an open source solution. That is where the Kubernetes Event-Driven Autoscaling (KEDA) project is useful. KEDA provides numerous different event-based scalers, which can be used to scale your application. KEDA supports event sources ranging from files on disk to events in pub/sub systems and many more.
 
 ### The Multiworker Pattern
 
-One of the themes of this book has been the use of containers for encapsulation and reuse of code. The same holds true for the work queue patterns described in this chapter. In addition to the patterns for reusing containers for driving the work queue itself, you can also reuse multiple different containers to compose a worker implementation. Suppose, for example, that you have three different types of work that you want to perform on a particular work queue item. For example, you might want to detect faces in an image, tag those faces with identities, and then blur the faces in the image. You could write a single worker to perform this complete set of tasks, but this would be a bespoke solution that would not be reusable the next time you want to identify something else, such as cars, yet still provide the same blurring.
+One of the themes of this repository has been the use of containers for encapsulation and reuse of code. The same holds true for the work queue patterns described in this document. In addition to the patterns for reusing containers for driving the work queue itself, you can also reuse multiple different containers to compose a worker implementation. Suppose, for example, that you have three different types of work that you want to perform on a particular work queue item. For example, you might want to detect faces in an image, tag those faces with identities, and then blur the faces in the image. You could write a single worker to perform this complete set of tasks, but this would be a bespoke solution that would not be reusable the next time you want to identify something else, such as cars, yet still provide the same blurring.
 
-To achieve this kind of code reuse, the multiworker pattern is something of a specialization of the adapter pattern described in previous chapters. In this case, the multiworker pattern transforms a collection of different worker containers into a single unified container that implements the worker interface, yet delegates the actual work to a collection of different reusable containers. This process is illustrated in Figure 11-5.
+To achieve this kind of code reuse, the *multiworker pattern* is something of a specialization of the [adapter pattern](ADAPTERS.md). In this case, the multiworker pattern transforms a collection of different worker containers into a single unified container that implements the worker interface, yet delegates the actual work to a collection of different reusable containers. This process is illustrated in Figure 11-5.
 
-<!-- Source: Designing.Distributed.Systems-2025-11.pdf, PDF page 11. -->
 ![Figure 11-5. The multiworker aggregator pattern as a group of containers](/.attachments/11-5-Designing.Distributed.Systems-2025-11.png)
 
 *Figure 11-5. The multiworker aggregator pattern as a group of containers*
@@ -295,4 +291,4 @@ Because of this code reuse, the composition of multiple different worker contain
 
 ### Summary
 
-This chapter begins the discussion of batch systems by introducing workflows. A workflow is a sequence of discrete actions which, when put together in a sequence, achieve some goal like the processing of an order or the machine-learning analysis of a video. This chapter showed how containers can be used to build modular workflows with sidecar containers providing workflow orchestration while application containers supply the specific processing necessary for your workflow. Workflow is a key part of most distributed batch systems. Its generic pattern is easy to adapt and extend to meet the specific needs of your workload.
+This document begins the discussion of batch systems by introducing *workflows*. A workflow is a sequence of discrete actions which, when put together in a sequence, achieve some goal like the processing of an order or the machine-learning analysis of a video. This document showed how containers can be used to build modular workflows with sidecar containers providing workflow orchestration while application containers supply the specific processing necessary for your workflow. Workflow is a key part of most distributed batch systems. Its generic pattern is easy to adapt and extend to meet the specific needs of your workload.

@@ -4,6 +4,8 @@
 
 Source: [Designing.Event-Driven.Systems-2018-12.pdf](./Designing.Event-Driven.Systems-2018-12.pdf), PDF pages 1–11.
 
+First-person accounts and opinions in this document reflect the original source authors’ perspective.
+
 Kafka ships with built-in transactions, in much the same way that most relational databases do. The implementation is quite different, as we will see, but the goal is similar: to ensure that our programs create predictable and repeatable results, even when things fail.
 
 Transactions do three important things in a services context:
@@ -14,7 +16,7 @@ Transactions do three important things in a services context:
 
 - Because Kafka Streams uses state stores, and state stores are backed by a Kafka topic, when we save data to the state store, then send a message to another service, we can wrap the whole thing in a transaction. This property turns out to be particularly useful.
 
-In this chapter we delve into transactions, looking at the problems they solve, how we should make use of them, and how they actually work under the covers.
+In this document we delve into transactions, looking at the problems they solve, how we should make use of them, and how they actually work under the covers.
 
 ### The Duplicates Problem
 
@@ -22,7 +24,6 @@ Any service-based architecture is itself a distributed system, a field renowned 
 
 One issue with this is that retries can result in duplicate processing, and this can cause very real problems. Taking a payment twice from someone’s account will lead to an incorrect balance (Figure 12-1). Adding duplicate tweets to a user’s feed will lead to a poor user experience. The list goes on.
 
-<!-- Source: Designing.Event-Driven.Systems-2018-12.pdf, PDF page 2. -->
 ![Figure 12-1. The UI makes a call to the payment service, which calls an external payment provider; the payment service fails before returning to the UI; as the UI did not get a response, it eventually times out and retries the call; the user’s account could be debited twice](/.attachments/12-1-Designing.Event-Driven.Systems-2018-12.png)
 
 *Figure 12-1. The UI makes a call to the payment service, which calls an external payment provider; the payment service fails before returning to the UI; as the UI did not get a response, it eventually times out and retries the call; the user’s account could be debited twice*
@@ -41,13 +42,12 @@ The result of this is that most event-driven systems end up deduplicating on eve
 
 But if you think about it, this is no more an application layer concern than ordering of messages, arranging redelivery, or any of the other benefits that come with TCP. We choose TCP over UDP (User Datagram Protocol) because we want to program at a higher level of abstraction, where delivery, ordering, and so on are handled for us. So we’re left wondering why these issues of duplication have leaked up into the application layer. Isn’t this something our infrastructure should solve for us?
 
-Transactions in Kafka allow the creation of long chains of services, where the processing of each step in the chain is wrapped in exactly-once guarantees. This reduces duplicates, which means services are easier to program and, as we’ll see later in this chapter, transactions let us tie streams and state together when we implement storage either through Kafka Streams state stores or using the Event Sourcing design pattern. All this happens automatically if you are using the Kafka Streams API.
+Transactions in Kafka allow the creation of long chains of services, where the processing of each step in the chain is wrapped in exactly-once guarantees. This reduces duplicates, which means services are easier to program and, as we’ll see later in this document, transactions let us tie streams and state together when we implement storage either through Kafka Streams state stores or using the Event Sourcing design pattern. All this happens automatically if you are using the Kafka Streams API.
 
 The bad news is that this isn’t some magic fairy dust that sprinkles exactly-onceness over your entire system. Your system will involve many different parts, some based on Kafka, some based on other technologies, the latter of which won’t be covered by the guarantee.
 
-But it does sprinkle exactly-onceness over the Kafka bits, the interactions between your services (Figure 12-2). This frees services from the need to deduplicate data coming in and pick appropriate keys for data going out. So we can happily chain services together, inside an event-driven workflow, without these additional concerns. This turns out to be quite empowering.
+But it *does* sprinkle exactly-onceness over the Kafka bits, the interactions between your services (Figure 12-2). This frees services from the need to deduplicate data coming in and pick appropriate keys for data going out. So we can happily chain services together, inside an event-driven workflow, without these additional concerns. This turns out to be quite empowering.
 
-<!-- Source: Designing.Event-Driven.Systems-2018-12.pdf, PDF page 4. -->
 ![Figure 12-2. Kafka’s transactions provide guarantees for communication performed through Kafka, but not beyond it](/.attachments/12-2-Designing.Event-Driven.Systems-2018-12.png)
 
 *Figure 12-2. Kafka’s transactions provide guarantees for communication performed through Kafka, but not beyond it*
@@ -68,7 +68,6 @@ producer.sendOffsetsToTransaction(offsets(consumer))
 producer.endTransaction()
 ```
 
-<!-- Source: Designing.Event-Driven.Systems-2018-12.pdf, PDF page 5. -->
 ![Figure 12-3. A single message operation is in fact two operations: a send and an acknowledge, which must be performed atomically to avoid duplication](/.attachments/12-3-Designing.Event-Driven.Systems-2018-12.png)
 
 *Figure 12-3. A single message operation is in fact two operations: a send and an acknowledge, which must be performed atomically to avoid duplication*
@@ -79,14 +78,13 @@ If you are using the Kafka Streams API, no extra code is required. You simply en
 
 As Kafka is a broker, there are actually two opportunities for duplication. Sending a message to Kafka might fail before an acknowledgment is sent back to the client, with a subsequent retry potentially resulting in a duplicate message. On the other side, the process reading from Kafka might fail before offsets are committed, meaning that the same message might be read a second time when the process restarts (Figure 12-4).
 
-<!-- Source: Designing.Event-Driven.Systems-2018-12.pdf, PDF page 5. -->
 ![Figure 12-4. Message brokers provide two opportunities for failure—one when sending to the broker, and one when reading from it](/.attachments/12-4-Designing.Event-Driven.Systems-2018-12.png)
 
 *Figure 12-4. Message brokers provide two opportunities for failure—one when sending to the broker, and one when reading from it*
 
 So idempotence is required in the broker to ensure duplicates cannot be created in the log. Idempotence, in this context, is just deduplication. Each producer is given an identifier, and each message is given a sequence number. The combination of the two uniquely defines each batch of messages sent. The broker uses this unique sequence number to work out if a message is already in the log and discards it if it is. This is a significantly more efficient approach than storing every key you’ve ever seen in a database.
 
-On the read side, we might simply deduplicate (e.g., in a database). But Kafka’s transactions actually provide a broader guarantee, more akin to transactions in a database, tying all messages sent together in a single atomic commit. So idempotence is built into the broker, and then an atomic commit is layered on top.
+On the read side, we might simply deduplicate (e.g., in a database). But Kafka’s transactions actually provide a broader guarantee, more akin to transactions in a database, tying all messages sent together in a single *atomic commit*. So idempotence is built into the broker, and then an atomic commit is layered on top.
 
 ### How Kafka’s Transactions Work Under the Covers
 
@@ -100,7 +98,6 @@ Begin markers are sent down both.[^p6-1] We then send our messages. Finally, whe
 
 Now the aim of a transaction is to ensure only “committed” data is seen by downstream programs. To make this work, when a consumer sees a Begin marker it starts buffering internally. Messages are held up until the Commit marker arrives. Then, and only then, are the messages presented to the consuming program. This buffering ensures that consumers only ever read committed data.
 
-<!-- Source: Designing.Event-Driven.Systems-2018-12.pdf, PDF page 7. -->
 ![Figure 12-5. Conceptual model of transactions in Kafka](/.attachments/12-5-Designing.Event-Driven.Systems-2018-12.png)
 
 *Figure 12-5. Conceptual model of transactions in Kafka*
@@ -115,18 +112,16 @@ In reality, there are many subtle details to this implementation, particularly a
 
 ### Store State and Send Events Atomically
 
-As we saw in Chapter 7, Kafka can be used to store data in the log, with the most common means being a state store (a disk-resident hash table, held inside the API, and backed by a Kafka topic) in Kafka Streams. As a state store gets its durability from a Kafka topic, we can use transactions to tie writes to the state store and writes to other output topics together. This turns out to be an extremely powerful pattern because it mimics the tying of messaging and databases together atomically, something that traditionally required painfully slow protocols like XA.
+As we saw in [Event Sourcing, CQRS, and Other Stateful Patterns](EVENT.SOURCING.CQRS.STATEFUL.PATTERNS.md), Kafka can be used to store data in the log, with the most common means being a state store (a disk-resident hash table, held inside the API, and backed by a Kafka topic) in Kafka Streams. As a state store gets its durability from a Kafka topic, we can use transactions to tie writes to the state store and writes to other output topics together. This turns out to be an extremely powerful pattern because it mimics the tying of messaging and databases together atomically, something that traditionally required painfully slow protocols like XA.
 
 > The database used by Kafka Streams is a state store. Because state stores are backed by Kafka topics, transactions let us tie messages we send and state we save in state stores together, atomically.
 
-<!-- Source: Designing.Event-Driven.Systems-2018-12.pdf, PDF page 8. -->
 ![Figure 12-7. Callout illustration accompanying the discussion on PDF page 8](/.attachments/12-7-Designing.Event-Driven.Systems-2018-12.png)
 
 *Figure 12-7. Callout illustration accompanying the discussion on PDF page 8*
 
 Imagine we extend the previous example so our validation service keeps track of the balance as money is deposited. So if the balance is currently $50, and we deposit $5 more, then the balance should go to $55. We record that $5 was deposited, but we also store this current balance, $55, by writing it to a state store (or directly to a compacted topic). See Figure 12-6.
 
-<!-- Source: Designing.Event-Driven.Systems-2018-12.pdf, PDF page 8. -->
 ![Figure 12-6. Three messages are sent atomically: a deposit, a balance update, and the acknowledgment](/.attachments/12-6-Designing.Event-Driven.Systems-2018-12.png)
 
 *Figure 12-6. Three messages are sent atomically: a deposit, a balance update, and the acknowledgment*
@@ -139,11 +134,11 @@ What’s powerful about this example is that it blends concepts of both messagin
 
 People have been building both event- and request-driven systems for decades, simply by making their processes idempotent with identifiers and databases. But implementing idempotence comes with some challenges. While defining the ID of an order is relatively obvious, not all streams of events have such a clear concept of identity. If we had a stream of events representing the average account balance per region per hour, we could come up with a suitable key, but you can imagine it would be a lot more brittle and error-prone.
 
-Also, transactions encapsulate the concept of deduplication entirely inside your service. You don’t muddy the waters seen by other services downstream with any duplicates you might create. This makes the contract of each service clean and encapsulated. Idempotence, on the other hand, relies on every service that sits downstream correctly implementing deduplication, which clearly makes their contract more complex and error-prone.
+Also, transactions encapsulate the concept of deduplication entirely inside your service. You don’t muddy the waters seen by other services downstream with any duplicates you might create. This makes the contract of each service clean and encapsulated. Idempotence, on the other hand, relies on every service that sits downstream *correctly* implementing deduplication, which clearly makes their contract more complex and error-prone.
 
 ### What Can’t Transactions Do?
 
-There are a few limitations or potential misunderstandings of transactions that are worth noting. First, they work only in situations where both the input and the output go through Kafka. If you are calling an external service (e.g., via HTTP), updating a database, writing to stdout, or anything other than writing to and from the Kafka broker, transactional guarantees won’t apply and calls can be duplicated. So, much like using a transactional database, transactions work only when you are using Kafka.
+There are a few limitations or potential misunderstandings of transactions that are worth noting. First, they work only in situations where both the input and the output go through Kafka. If you are calling an *external* service (e.g., via HTTP), updating a database, writing to stdout, or anything other than writing *to* and *from* the Kafka broker, transactional guarantees won’t apply and calls can be duplicated. So, much like using a transactional database, transactions work only when you are using Kafka.
 
 Also akin to accessing a database, transactions commit when messages are sent, so once they are committed there is no way to roll them back, even if a subsequent transaction downstream fails. So if the UI sends a transactional message to the orders service and the orders service fails while sending messages of its own, any messages the orders service sent would be rolled back, but there is no way to roll back the transaction in the UI. If you need multiservice transactions, consider implementing sagas.
 
@@ -155,7 +150,7 @@ But while there is full support for individual producers and consumers, transact
 
 ### Making Use of Transactions in Your Services
 
-In Chapter 5 we described a design pattern known as Event Collaboration. In this pattern messages move from service to service, creating a workflow. It’s initiated with an Order Requested event and it ends with Order Complete. In between, several different services get involved, moving the workflow forward.
+In [Events: A Basis for Collaboration](EVENTS.BASIS.COLLABORATION.md) we described a design pattern known as Event Collaboration. In this pattern messages move from service to service, creating a workflow. It’s initiated with an Order Requested event and it ends with Order Complete. In between, several different services get involved, moving the workflow forward.
 
 Transactions are important in complex workflows like this because the end-to-end principle is hard to apply. Without them, deduplication would need to happen in every service. Moreover, building a reliable streaming application without transactions turns out to be pretty tough. There are a couple of reasons for this: (a) Streams applications make use of many intermediary topics, and deduplicating them after each step is a burden (and would be near impossible in KSQL), (b) the DSL provides a range of one-to-many operations (e.g., flatMap()), which are hard to manage idempotently without the transactions API. Kafka’s transactions feature resolves these issues, along with atomically tying stream processing with the storing of intermediary state in state stores.
 

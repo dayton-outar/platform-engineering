@@ -4,6 +4,8 @@
 
 Source: [Designing.Event-Driven.Systems-2018-6.pdf](./Designing.Event-Driven.Systems-2018-6.pdf), PDF pages 1–8.
 
+First-person accounts and opinions in this document reflect the original source authors’ perspective.
+
 Imperative styles of programming are some of the oldest of all, and their popularity persists for good reason. Procedures execute sequentially, spelling out a story on the page and altering the program’s state as they do so.
 
 As mainstream applications became distributed in the 1980s and 1990s, the same mindset was applied to this distributed domain. Approaches like Corba and EJB (Enterprise JavaBeans) raised the level of abstraction, making distributed programming more accessible. History has not always judged these so well. EJB, while touted as a panacea of its time, fell quickly by the wayside as systems creaked with the pains of tight coupling and the misguided notion that the network was something that should be abstracted away from the programmer.
@@ -18,7 +20,7 @@ There is a similarly useful analogy with functional programming. As with the dat
 
 - Streaming naturally lends itself to creating cached datasets and keeping them up to date. This makes it well suited to systems where data and code are separated by the network, notably data processing and GUIs.
 
-- Streaming systems are more resilient than traditional approaches, as high availability is built into the runtime and programs execute in a lossless manner (see the discussion of Event Sourcing in Chapter 7).
+- Streaming systems are more resilient than traditional approaches, as high availability is built into the runtime and programs execute in a lossless manner (see the discussion of Event Sourcing in [Event Sourcing, CQRS, and Other Stateful Patterns](EVENT.SOURCING.CQRS.STATEFUL.PATTERNS.md)).
 
 - Streaming functions are typically easier to reason about than regular programs. Pure functions are free from side effects. Stateful functions are not, but do avoid shared mutable state.
 
@@ -26,7 +28,7 @@ There is a similarly useful analogy with functional programming. As with the dat
 
 - Programs are written at a higher level of abstraction, making them more comprehensible.
 
-But streaming approaches also inherit some of the downsides. Purely functional languages must negotiate an impedance mismatch when interacting with more procedural or stateful elements like filesystems or the network. In a similar vein, streaming systems must often translate to the request-response style of REST or RPCs and back again. This has led some implementers to build systems around a functional core, which processes events asynchronously, wrapped in an imperative shell, used to marshal to and from outward-facing request-response interfaces. The “functional core, imperative shell” pattern keeps the key elements of the system both flexible and scalable, encouraging services to avoid side effects and express their business logic as simple functions chained together through the log.
+But streaming approaches also inherit some of the downsides. Purely functional languages must negotiate an impedance mismatch when interacting with more procedural or stateful elements like filesystems or the network. In a similar vein, streaming systems must often translate to the request-response style of REST or RPCs and back again. This has led some implementers to build systems around a *functional core*, which processes events asynchronously, wrapped in an *imperative shell*, used to marshal to and from outward-facing request-response interfaces. The “functional core, imperative shell” pattern keeps the key elements of the system both flexible and scalable, encouraging services to avoid side effects and express their business logic as simple functions chained together through the log.
 
 In the next section we’ll look more closely at why statefulness, in the context of stream processing, matters.
 
@@ -36,11 +38,11 @@ There is a well-held mantra that statelessness is good, and for good reason. Sta
 
 Web servers are a good example: to increase their capacity for generating dynamic content, we can scale a web tier horizontally, simply by adding new servers. So why would we want anything else? The rub is that most applications aren’t really stateless. A web server needs to know what pages to render, what sessions are active, and more. It solves these problems by keeping the state in a database. So the database is stateful and the web server is stateless. The state problem has just been pushed down a layer. But as traffic to the website increases, it usually leads programmers to cache state locally, and local caching leads to cache invalidation strategies, and a spiral of coherence issues typically ensues.
 
-Streaming platforms approach this problem of where state should live in a slightly different way. First, recall that events are also facts, converging toward the stream processor like conveyor belts on an assembly line. So, for many use cases, the events that trigger a process into action contain all the data the program needs, much like the dataflow programs just discussed. If you’re validating the contents of an order, all you need is its event stream.
+Streaming platforms approach this problem of where state should live in a slightly different way. First, recall that events are also facts, converging toward the stream processor like conveyor belts on an assembly line. So, for many use cases, the events that trigger a process into action contain *all the data the program needs*, much like the dataflow programs just discussed. If you’re validating the contents of an order, all you need is its event stream.
 
 Sometimes this style of stateless processing happens naturally; other times implementers deliberately enrich events in advance, to ensure they have all the data they need for the job at hand. But enrichments inevitably mean looking things up, usually in a database.
 
-Stateful stream processing engines, like Kafka’s Streams API, go a step further: they ensure all the data a computation needs is loaded into the API ahead of time, be it events or any tables needed to do lookups or enrichments. In many cases this makes the API, and hence the application, stateful, and if it were restarted for some reason it would need to reacquire that state before it could proceed.
+*Stateful* stream processing engines, like Kafka’s Streams API, go a step further: they ensure all the data a computation needs is loaded into the API ahead of time, be it events or any tables needed to do lookups or enrichments. In many cases this makes the API, and hence the application, stateful, and if it were restarted for some reason it would need to reacquire that state before it could proceed.
 
 This should seem a bit counterintuitive. Why would you want to make a service stateful? Another way to look at this is as an advanced form of caching that better suits data-intensive workloads. To make this clearer, let’s look at three examples —one that uses database lookups, one that is event-driven but stateless, and one that is event-driven but stateful.
 
@@ -48,7 +50,6 @@ This should seem a bit counterintuitive. Why would you want to make a service st
 
 Say we have an email service that listens to an event stream of orders and then sends confirmation emails to users once they complete a purchase. This requires information about both the order as well as the associated payment. Such an email service might be created in a number of different ways. Let’s start by assuming it’s a simple event-driven service (i.e., no use of a streaming API, as in Figure 6-1). It might react to order events, then look up the corresponding payment. Or it might do the reverse: reacting to payments, then looking up the corresponding order. Let’s assume the former.
 
-<!-- Source: Designing.Event-Driven.Systems-2018-6.pdf, PDF page 4. -->
 ![Figure 6-1. A simple event-driven service that looks up the data it needs as it processes messages](/.attachments/6-1-Designing.Event-Driven.Systems-2018-6.png)
 
 *Figure 6-1. A simple event-driven service that looks up the data it needs as it processes messages*
@@ -63,7 +64,6 @@ So a single event stream is processed, and lookups that pull in any required dat
 
 A streaming system comes at this problem from a slightly different angle. The streams are buffered until both events arrive, and can be joined together (Figure 6-2).
 
-<!-- Source: Designing.Event-Driven.Systems-2018-6.pdf, PDF page 5. -->
 ![Figure 6-2. A stateless streaming service that joins two streams at runtime](/.attachments/6-2-Designing.Event-Driven.Systems-2018-6.png)
 
 *Figure 6-2. A stateless streaming service that joins two streams at runtime*
@@ -78,19 +78,17 @@ Finally, note that this approach isn’t, strictly speaking, stateless. The buff
 
 Alas, the data flowing through the various event streams isn’t always enough— sometimes you need lookups or enrichments. For example, the email service would need access to the customer’s email address. There will be no recent event for this (unless you happened to be very lucky and the customer just updated their details). So you’d have to look up the email address in the customer service via, say, a REST call (Figure 6-3).
 
-<!-- Source: Designing.Event-Driven.Systems-2018-6.pdf, PDF page 6. -->
 ![Figure 6-3. A stateless streaming service that looks up reference data in another service at runtime](/.attachments/6-3-Designing.Event-Driven.Systems-2018-6.png)
 
 *Figure 6-3. A stateless streaming service that looks up reference data in another service at runtime*
 
 This is of course a perfectly valid approach (in fact, many production systems do exactly this), but a stateful stream processing system can make a further optimization. It uses the same process of local buffering used to handle potential delays in the orders and payments topics, but instead of buffering for just a few minutes, it preloads the whole customer event stream from Kafka into the email service, where it can be used to look up historic values (Figure 6-4).
 
-<!-- Source: Designing.Event-Driven.Systems-2018-6.pdf, PDF page 6. -->
 ![Figure 6-4. A stateful streaming service that replicates the Customers topic into a local table, held inside the Kafka Streams API](/.attachments/6-4-Designing.Event-Driven.Systems-2018-6.png)
 
 *Figure 6-4. A stateful streaming service that replicates the Customers topic into a local table, held inside the Kafka Streams API*
 
-So now the email service is both buffering recent events, as well as creating a local lookup table. (The mechanics of this are discussed in more detail in Chapter 14.) This final, fully stateful approach comes with disadvantages:
+So now the email service is both buffering recent events, as well as creating a local lookup table. (The mechanics of this are discussed in more detail in [Kafka Streams and KSQL](KAFKA.STREAMS.KSQL.md).) This final, fully stateful approach comes with disadvantages:
 
 - The service is now stateful, meaning for an instance of the email service to operate it needs the relevant customer data to be present. This means, in the worst case, loading the full dataset on startup.
 
@@ -108,7 +106,6 @@ In a traditional, stateless model, each row on the screen would require a call t
 
 But in the streaming approach, data is constantly pushed into the UI (Figure 6-5). So you might define a query for the data displayed in the grid, something like select * from orders, payments, customers where.... The API executes it over the incoming event streams, stores the result locally, and keeps it up to date. So streaming behaves a bit like a decoratively defined cache.
 
-<!-- Source: Designing.Event-Driven.Systems-2018-6.pdf, PDF page 7. -->
 ![Figure 6-5. Stateful stream processing is used to materialize data inside a web server so that the UI can access it locally for better performance, in this case via a scrollable grid](/.attachments/6-5-Designing.Event-Driven.Systems-2018-6.png)
 
 *Figure 6-5. Stateful stream processing is used to materialize data inside a web server so that the UI can access it locally for better performance, in this case via a scrollable grid*
@@ -125,19 +122,18 @@ Being stateful comes with some challenges: when a new node starts, it must load 
 
 Kafka Streams uses intermediary topics, which can be reset and rederived using the Streams Reset tool.[^p8-1]
 
-> An event-driven application uses a single input stream to drive its work. A streaming application blends one or more input streams into one or more output streams. A stateful streaming application also recasts streams to tables (used to do enrichments) and stores intermediary state in the log, so it internalizes all the data it needs.
+> An *event-driven application* uses a single input stream to drive its work. A *streaming application* blends one or more input streams into one or more output streams. A *stateful streaming application* also recasts streams to tables (used to do enrichments) and stores intermediary state in the log, so it internalizes all the data it needs.
 
-<!-- Source: Designing.Event-Driven.Systems-2018-6.pdf, PDF page 8. -->
 ![Figure 6-6. Callout illustration accompanying the discussion on PDF page 8](/.attachments/6-6-Designing.Event-Driven.Systems-2018-6.png)
 
 *Figure 6-6. Callout illustration accompanying the discussion on PDF page 8*
 
 ### Summary
 
-This chapter covers three different ways of doing event-based processing: the simple event-driven approach, where you process a single event stream one message at a time; the streaming approach, which joins different event streams together; and finally, the stateful streaming approach, which turns streams into tables and stores data in the log.
+This document covers three different ways of doing event-based processing: the simple event-driven approach, where you process a single event stream one message at a time; the streaming approach, which joins different event streams together; and finally, the stateful streaming approach, which turns streams into tables and stores data in the log.
 
 So instead of pushing the state problem down a layer into a database, stateful stream processors, like Kafka’s Streams API, are proudly stateful. They make data available wherever it is required. This increases performance and autonomy. No remote calls needed!
 
 ### Notes
 
-[^p8-1]: See http://bit.ly/2GaCRZO and http://bit.ly/2IUPHJa.
+[^p8-1]: See *http://bit.ly/2GaCRZO* and *http://bit.ly/2IUPHJa*.
