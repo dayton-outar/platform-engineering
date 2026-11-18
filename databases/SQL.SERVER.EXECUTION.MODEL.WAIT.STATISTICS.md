@@ -1,14 +1,10 @@
-# Chapter 2
-
-## SQL Server Execution Model and Wait Statistics
-
-Source: [SQL.Server.Advanced.Troubleshooting.and.Performance.Tuning-2022-2.pdf](./SQL.Server.Advanced.Troubleshooting.and.Performance.Tuning-2022-2.pdf), printed pages 27–44.
+# SQL Server Execution Model and Wait Statistics
 
 It is impossible to troubleshoot SQL Server instances without understanding its execution model. You need to know how SQL Server runs tasks and manages resources if you want to detect bottlenecks in the system.
 
 This guide covers SQL Server’s architecture and execution model, the Wait Statistics troubleshooting technique, and dynamic management views used during troubleshooting. It concludes with Resource Governor, which you can configure to segregate different workloads in the system.
 
-### SQL Server: High-Level Architecture
+## SQL Server: High-Level Architecture
 
 As you know, SQL Server is a very complex product that consists of dozens of components and subsystems. It is impossible to cover all of them here, but in this section, you’ll get a high-level overview. Figure 2-1 groups these components and subsystems into several categories. Let’s talk about them.
 
@@ -36,7 +32,7 @@ From a troubleshooting standpoint, you’ll see very little difference between S
 
 Let’s look at SQLOS in more detail.
 
-### SQLOS and the Execution Model
+## SQLOS and the Execution Model
 
 Database servers are expected to handle a large number of user requests, and SQL Server is no exception. On a very high level, SQL Server assigns those requests to separate threads, executing the requests simultaneously. Except in cases when the server is idle, the number of active threads exceeds the number of CPUs in the system, and efficient scheduling is the key to good server performance.
 
@@ -94,7 +90,7 @@ If an item is missing a UPC code, a cashier sends a store worker to do a price c
 
 Of course, SQL Server’s execution is much more efficient than a real-life store, where customers must wait patiently in line for the price check to complete. (A customer at the end of the RUNNABLE queue would probably wish for such efficiency!)
 
-### Wait Statistics
+## Wait Statistics
 
 With the exception of initialization and cleanup, a task spends its time switching between RUNNING, SUSPENDED, and RUNNABLE states, as shown in Figure 2-2. The total execution time will include time in the RUNNING state, when the task is actually executed; time in the RUNNABLE state, when the task is waiting for the scheduler (CPU) to execute; and time in the SUSPENDED state, when the task is waiting for resources.
 
@@ -217,11 +213,11 @@ Before interpreting a list of common waits, understand the dependencies between 
 
 The following sections cover dynamic management views related to SQLOS and the SQL Server execution model. For query-focused troubleshooting, see [Inefficient Queries](./INEFFICIENT.QUERIES.md).
 
-### Execution Model–Related Dynamic Management Views
+## Execution Model–Related Dynamic Management Views
 
 SQL Server comes with a very large number of dynamic management views. For details on all of them, consult the Microsoft documentation. This section focuses on a small subset useful during troubleshooting.
 
-#### sys.dm_os_wait_stats
+### sys.dm_os_wait_stats
 
 As described in [Wait Statistics](#wait-statistics), the sys.dm_os_wait_stats view provides information about waits in the system. It tells you how many times the wait occurs (waiting_task_count) along with cumulative times for resource waits (resource_wait_time_ms) and signal waits (signal_wait_time_ms). The resource wait time indicates how long a task was in the SUSPENDED queue as it waited for the resource. The signal wait time indicates how long the CPU was in the RUNNABLE queue after the resource wait time was over.
 
@@ -253,7 +249,7 @@ One approach is to clear the waits a few days before starting troubleshooting. I
 
 As another option, you can collect two separate snapshots of wait statistics and calculate the delta between them.
 
-#### sys.dm_exec_session_wait_stats
+### sys.dm_exec_session_wait_stats
 
 Starting with SQL Server 2016, you can look at waits on the session level, using the sys.dm_exec_session_wait_stats view. This is extremely useful when you need to troubleshoot the performance of long-running queries or slow stored procedures in the system. This view will show you the waits that occurred during execution and will help you pinpoint bottlenecks and areas to research.
 
@@ -261,7 +257,7 @@ The columns and data in this view are similar to those in sys.dm_os_wait_stats; 
 
 You may notice that the data is not always updated for currently running statements. You need to wait until a query completes for the data to become available.
 
-#### sys.dm_os_waiting_tasks
+### sys.dm_os_waiting_tasks
 
 The sys.dm_os_waiting_tasks view shows a list of tasks that are *currently* waiting in the SUSPENDED queue. This view is handy when the server is overloaded or unresponsive and you want to understand why sessions were suspended. It is also very helpful when you troubleshoot concurrency issues and active blocking in the system, because it shows the session ID of the blocker for the task.
 
@@ -289,7 +285,7 @@ Information on the resource the task is waiting for.
 
 You may have more than one row per session in the output when you deal with parallel execution plans.
 
-#### sys.dm_exec_requests
+### sys.dm_exec_requests
 
 The sys.dm_exec_requests view provides detailed information on each request that is executing on the server. This gives you a great at-a-glance snapshot of what is happening now and allows you to pinpoint most CPU- or I/O-intensive queries *currently* running in the system.
 
@@ -391,7 +387,7 @@ OPTION (RECOMPILE, MAXDOP 1);
 
 > Getting a query execution plan with the sys.dm_exec_text_query_plan function is expensive. Comment it out if your server is running under heavy CPU load.
 
-#### sys.dm_os_schedulers
+### sys.dm_os_schedulers
 
 The sys.dm_os_schedulers view provides information about schedulers in the system. You can use it to get information about schedulers’ distribution across NUMA nodes, and to analyze metrics from individual schedulers.
 
@@ -420,7 +416,7 @@ The current_tasks_count and runnable_tasks_count columns provide the number of t
 
 Many other columns in the view provide scheduler-specific statistics, such as status, number of workers and tasks in various states, number of context switches, CPU consumption, and a few others. Check the documentation for more details.
 
-### Resource Governor Overview
+## Resource Governor Overview
 
 *Resource Governor* is an Enterprise Edition feature that allows you to segregate and throttle different workloads on the server. Remember to check whether Resource Governor is configured in the system you are troubleshooting, as an incorrect configuration can seriously impact server throughput.
 
@@ -448,7 +444,7 @@ In conclusion, Resource Governor is good in use cases where you need to segregat
 
 Consider different technologies when you need to segregate a different workload in the Always On Availability Groups setup. The readable secondaries may provide better scalability in the long term. Also, when you need to segregate workloads from multiple databases running on a single SQL Server instance, it’s usually better to split the databases across multiple instances, and potentially virtualize them.
 
-### Summary
+## Summary
 
 SQLOS is the vital subsystem responsible for scheduling and resource management in SQL Server. At startup, it creates schedulers—one per logical CPU—and allocates the pool of worker threads to each scheduler to manage. User and system tasks are assigned to the worker threads, which perform the actual work.
 
@@ -458,7 +454,7 @@ Be careful when analyzing waits; don’t jump to immediate conclusions. Many per
 
 Continue with [Inefficient Queries](./INEFFICIENT.QUERIES.md) to identify queries that contribute to resource bottlenecks.
 
-#### Troubleshooting Checklist
+### Troubleshooting Checklist
 
 - [ ] Look at the waits in the system. Make sure the wait statistics are representative.
 

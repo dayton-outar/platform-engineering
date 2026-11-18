@@ -1,14 +1,10 @@
-# Chapter 4
-
-## Inefficient Queries
-
-Source: [SQL.Server.Advanced.Troubleshooting.and.Performance.Tuning-2022-4.pdf](./SQL.Server.Advanced.Troubleshooting.and.Performance.Tuning-2022-4.pdf), printed pages 69–103.
+# Inefficient Queries
 
 Inefficient queries exist in every system. They impact performance in many ways, most notably by increasing I/O load, CPU usage, and blocking. It is essential to detect and optimize them.
 
 This guide discusses inefficient queries and their potential impact on your system, and provides guidelines for detecting them, starting with an approach that uses plan cache–based execution statistics. It also covers Extended Events, SQL Traces, and the Query Store, and ends with a few thoughts on third-party monitoring tools. For background on scheduling and resource bottlenecks, see [SQL Server Execution Model and Wait Statistics](./SQL.SERVER.EXECUTION.MODEL.WAIT.STATISTICS.md).
 
-### The Impact of Inefficient Queries
+## The Impact of Inefficient Queries
 
 Most systems have opportunities to benefit from query optimization.
 
@@ -30,7 +26,7 @@ High disk throughput, blocking, or high CPU load are reasons to prioritize query
 
 Fortunately, query optimization does not require an all-or-nothing approach! You can achieve dramatic performance improvements by optimizing just a handful of frequently executed queries. Let’s look at a few methods for detecting them.
 
-### Plan Cache–Based Execution Statistics
+## Plan Cache–Based Execution Statistics
 
 In most cases, SQL Server caches and reuses execution plans for queries. For each plan in the cache, it also maintains execution statistics, including the number of times the query ran, the cumulative CPU time, and the I/O load. You can use this information to quickly pinpoint the most resource-intensive queries for optimization.
 
@@ -453,7 +449,7 @@ Finally, it is worth mentioning that SQL Server may cache thousands of execution
 
 Troubleshooting based on plan cache–based execution statistics has several limitations, and you may miss some queries. Nevertheless, it is a great starting point. Most importantly, the data is collected automatically, and you can access it immediately, without setting up additional monitoring tools.
 
-### Extended Events and SQL Traces
+## Extended Events and SQL Traces
 
 SQL Traces and Extended Events (xEvents) allow you to capture various events in a system for analysis and troubleshooting in real time. You can also use them to capture long-running and expensive queries, including those that don’t cache execution plans and are therefore missed by the sys.dm_exec_query_stats view.
 
@@ -659,7 +655,7 @@ When capturing a workload into the ring_buffer target, keep an important limitat
 
 Again: *beware of the overhead that xEvents and SQL Traces introduce in systems*. Do *not* create and run those sessions permanently. In many cases, you can get enough troubleshooting data by enabling the session or trace for just a few minutes.
 
-### Query Store
+## Query Store
 
 Both [plan cache–based execution statistics](#plan-cachebased-execution-statistics) and [Extended Events and SQL Traces](#extended-events-and-sql-traces) have limitations. Plan cache–based data may miss some queries; SQL Traces and xEvents require you to perform complex analysis of the output and may have significant performance overhead in busy systems.
 
@@ -725,7 +721,7 @@ Finally, apply the latest SQL Server updates, especially if you are using SQL Se
 
 You can work with the Query Store in two ways: through the graphics UI in SSMS or by querying dynamic management views directly. Let’s look at the UI first.
 
-#### Query Store SSMS Reports
+### Query Store SSMS Reports
 
 After you enable the Query Store in the database, you’ll see a *Query Store* folder in the *Object Explorer* (Figure 4-5). The number of reports in the folder will depend on the versions of SQL Server and SSMS in your system. The rest of this section will walk you through the seven reports shown in Figure 4-5.
 
@@ -733,7 +729,7 @@ After you enable the Query Store in the database, you’ll see a *Query Store* f
 
 *Figure 4-5. Query Store reports in SSMS*
 
-##### Regressed Queries
+#### Regressed Queries
 
 This report, shown in Figure 4-6, shows queries whose performance has regressed over time. You can configure the time frame and regression criteria (such as disk operations, CPU consumption, and number of executions) for analysis.
 
@@ -747,7 +743,7 @@ The *Force Plan* button allows you to force a selected plan for the query. It ca
 
 The Regressed Queries report is a great tool for troubleshooting issues related to parameter sniffing and fixing them quickly by forcing specific execution plans.
 
-##### Top Resource Consuming Queries
+#### Top Resource Consuming Queries
 
 This report (Figure 4-7) allows you to detect the most resource-intensive queries in the system. While it works similarly to the data provided by the sys.dm_exec_query_stats view, it does not depend on the plan cache. You can customize the metrics used for data sorting and the time interval.
 
@@ -755,7 +751,7 @@ This report (Figure 4-7) allows you to detect the most resource-intensive querie
 
 *Figure 4-7. Top Resource Consuming Queries report*
 
-##### Overall Resource Consumption
+#### Overall Resource Consumption
 
 This report shows the workload’s statistics and resource usage over the specified time intervals. It allows you to detect and analyze spikes in resource usage and drill down to the queries that introduce such spikes. Figure 4-8 shows the output of the report.
 
@@ -763,25 +759,25 @@ This report shows the workload’s statistics and resource usage over the specif
 
 *Figure 4-8. Overall Resource Consumption report*
 
-##### Queries With High Variation
+#### Queries With High Variation
 
 This report allows you to pinpoint queries with high performance variation. You can use it to detect anomalies in the workload, along with possible performance regressions.
 
-##### Queries With Forced Plans
+#### Queries With Forced Plans
 
 This report shows you the queries that have an execution plan forced in the system.
 
-##### Query Wait Statistics
+#### Query Wait Statistics
 
 This report allows you to detect queries with high waits. The data is grouped by several categories (such as CPU, disk, and blocking), depending on the wait type. You can see details on wait mapping in the Microsoft documentation.
 
-##### Tracked Queries
+#### Tracked Queries
 
 Finally, the Tracked Queries report allows you to monitor execution plans and statistics for individual queries. It provides similar information to the Regressed Queries and Top Resource Consuming Queries reports, at the scope of individual queries.
 
 These reports will give you a large amount of data for analysis. However, in some cases, you’ll want to use T-SQL and work with the Query Store data directly. Let’s look at how you can accomplish this.
 
-#### Working with Query Store DMVs
+### Working with Query Store DMVs
 
 The Query Store dynamic management views are highly normalized, as shown in Figure 4-9. Execution statistics are tracked for each execution plan and grouped by collection intervals, which are defined by the INTERVAL_LENGTH_MINUTES setting. The default interval of 60 minutes is acceptable in most cases.
 
@@ -953,7 +949,7 @@ As you can see, the possibilities are endless. Use the Query Store if you can af
 
 Finally, the DBCC CLONEDATABASE command allows you to generate a schema-only clone of the database and use it to investigate performance problems. By default, a clone will include Query Store data. You can restore it and perform an analysis on another server to reduce overhead in production.
 
-### Third-Party Tools
+## Third-Party Tools
 
 As you’ve now seen, SQL Server provides a very rich and extensive set of tools to locate inefficient queries. Nevertheless, you may also benefit from monitoring tools developed by other vendors. Most will provide you with a list of the most resource-intensive queries for analysis and optimization. Many will also give you the baseline, which you can use to analyze trends and detect regressed queries.
 
@@ -971,7 +967,7 @@ Finally, consider the security implications of your choice of tools. Many tools 
 
 In the end, choose the approach that best allows you to pinpoint inefficient queries and that works best with your system. Remember that query optimization will help in any system.
 
-### Summary
+## Summary
 
 Inefficient queries impact SQL Server’s performance and can overload the disk subsystem. Even in systems that have enough memory to cache data in the buffer pool, those queries burn CPU, increase blocking, and affect the customer experience.
 
@@ -987,7 +983,7 @@ Finally, you can use third-party monitoring tools to find inefficient queries. R
 
 Use [Wait Statistics](./SQL.SERVER.EXECUTION.MODEL.WAIT.STATISTICS.md#wait-statistics) alongside these query metrics to prioritize tuning work.
 
-#### Troubleshooting Checklist
+### Troubleshooting Checklist
 
 - [ ] Get the list of inefficient queries from the sys.dm_exec_query_stats view. Sort the data according to your troubleshooting strategy (CPU, I/O, and so forth).
 

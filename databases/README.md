@@ -17,6 +17,8 @@ In summary, DBMS is essential in DevOps for maintaining data integrity, integrat
 Herein are cheat sheets and scripts for:
 
 - [Microsoft SQL Server](./mssql-server/)
+  - [SQL Server Execution Model and Wait Statistics](./SQL.SERVER.EXECUTION.MODEL.WAIT.STATISTICS.md)
+  - [Inefficient Queries](./INEFFICIENT.QUERIES.md)
 - [MySQL](./mysql-server/)
 - [Postgres SQL](./postgresql-server/)
 
@@ -27,15 +29,6 @@ Herein are cheat sheets and scripts for:
 3. PostgreSQL: Up and Running by Regina Obe and Leo Hsu
 4. Oracle PL/SQL Programming by Steven Feuerstein
 
-Start with SQL Server’s execution model, scheduling, and wait statistics to understand resource bottlenecks. Then learn to identify inefficient queries using execution statistics, Extended Events, SQL Traces, and the Query Store. The cheat sheets and scripts linked above provide separate database-specific references.
-
-## Table of Contents
-
-### SQL Server Troubleshooting and Performance Tuning
-
-1. [SQL Server Execution Model and Wait Statistics](./SQL.SERVER.EXECUTION.MODEL.WAIT.STATISTICS.md)
-2. [Inefficient Queries](./INEFFICIENT.QUERIES.md)
-
 ## References
 
-Korotkevitch, Dmitri. *[SQL Server Advanced Troubleshooting and Performance Tuning: Best Practices and Techniques](https://www.oreilly.com/library/view/sql-server-advanced/9781098101916/)*. 1st ed. O’Reilly Media, 2022. ISBN 9781098101916 (electronic edition).
+Korotkevitch, Dmitri. *[SQL Server Advanced Troubleshooting and Performance Tuning: Best Practices and Techniques](https://www.oreilly.com/library/view/sql-server-advanced/9781098101916/)*. O’Reilly Media, 2022.
