@@ -1,8 +1,4 @@
-# Chapter 4
-
-## Service Level Objectives
-
-Source: [Site.Reliability.Engineering-2016-4.pdf](./Site.Reliability.Engineering-2016-4.pdf), printed pages 37–47.
+# Service Level Objectives
 
 The Google practices and case studies below reflect the source’s 2016 account.
 
@@ -17,11 +13,11 @@ Google’s SRE teams use intuition, experience, and an understanding of what use
 
 This guide describes a framework for metric modeling, selection, and analysis. The examples use a service that searches Shakespeare’s works to make the metrics concrete.
 
-### Service Level Terminology
+## Service Level Terminology
 
 Many readers are likely familiar with the concept of an SLA, but the terms *SLI* and *SLO* are also worth careful definition, because in common use, the term *SLA* is overloaded and has taken on a number of meanings depending on context. Google’s SRE teams prefer to separate those meanings for clarity.
 
-#### Indicators
+### Indicators
 
 An SLI is a service level *indicator*—a carefully defined quantitative measure of some aspect of the level of service that is provided.
 
@@ -31,7 +27,7 @@ Ideally, the SLI directly measures a service level of interest, but sometimes on
 
 Another kind of SLI important to SREs is *availability*, or the fraction of the time that a service is usable. It is often defined in terms of the fraction of well-formed requests that succeed, sometimes called *yield*. (*Durability*—the likelihood that data will be retained over a long period of time—is equally important for data storage systems.) Although 100% availability is impossible, near-100% availability is often readily achievable, and the industry commonly expresses high-availability values in terms of the number of “nines” in the availability percentage. For example, availabilities of 99% and 99.999% can be referred to as “2 nines” and “5 nines” availability, respectively, and the current published target for Google Compute Engine availability is “three and a half nines”—99.95% availability.
 
-#### Objectives
+### Objectives
 
 An SLO is a *service level objective*: a target value or range of values for a service level that is measured by an SLI. A natural structure for SLOs is thus *SLI ≤ target* or *lower bound ≤ SLI ≤ upper bound*. For example, Google’s SRE teams might decide that they will return Shakespeare search results “quickly,” adopting an SLO that Google’s average search request latency should be less than 100 milliseconds.
 
@@ -43,7 +39,7 @@ Again, this is more subtle than it might at first appear, in that those two SLIs
 
 Choosing and publishing SLOs to users sets expectations about how a service will perform. This strategy can reduce unfounded complaints to service owners about, for example, the service being slow. Without an explicit SLO, users often develop their own beliefs about desired performance, which may be unrelated to the beliefs held by the people designing and operating the service. This dynamic can lead to both over-reliance on the service, when users incorrectly believe that a service will be more available than it actually is (as happened with Chubby: see [The Global Chubby Planned Outage](#the-global-chubby-planned-outage)), and under-reliance, when prospective users believe a system is flakier and less reliable than it actually is.
 
-#### The Global Chubby Planned Outage
+### The Global Chubby Planned Outage
 
 ***Written by Marc Alvidrez***
 
@@ -51,7 +47,7 @@ Chubby [Bur06] is Google’s lock service for loosely coupled distributed system
 
 The solution to this Chubby scenario is interesting: SRE makes sure that global Chubby meets, but does not significantly exceed, its service level objective. In any given quarter, if a true failure has not dropped availability below the target, a controlled outage will be synthesized by intentionally taking down the system. In this way, Google’s SRE teams are able to flush out unreasonable dependencies on Chubby shortly after they are added. Doing so forces service owners to reckon with the reality of distributed systems sooner rather than later.
 
-#### Agreements
+### Agreements
 
 Finally, SLAs are service level *agreements*: an explicit or implicit contract with your users that includes consequences of meeting (or missing) the SLOs they contain. The consequences are most easily recognized when they are financial—a rebate or a penalty—but they can take other forms. An easy way to tell the difference between an SLO and an SLA is to ask “what happens if the SLOs aren’t met?”: if there is no explicit consequence, then you are almost certainly looking at an SLO.[^1]
 
@@ -61,11 +57,11 @@ Google Search is an example of an important service that doesn’t have an SLA f
 
 So much for the theory—now for the experience.
 
-### Indicators in Practice
+## Indicators in Practice
 
 Given that Google’s SRE teams have made the case for *why* choosing appropriate metrics to measure your service is important, how do you go about identifying what metrics are meaningful to your service or system?
 
-#### What Do You and Your Users Care About?
+### What Do You and Your Users Care About?
 
 You shouldn’t use every metric you can track in your monitoring system as an SLI; an understanding of what your users want from the system will inform the judicious selection of a few indicators. Choosing too many indicators makes it hard to pay the right level of attention to the indicators that matter, while choosing too few may leave significant behaviors of your system unexamined. Google’s SRE teams typically find that a handful of representative indicators are enough to evaluate and reason about a system’s health.
 
@@ -79,11 +75,11 @@ Services tend to fall into a few broad categories in terms of the SLIs they find
 
 - All systems should care about *correctness*: was the right answer returned, the right data retrieved, the right analysis done? Correctness is important to track as an indicator of system health, even though it’s often a property of the data in the system rather than the infrastructure *per se*, and so usually not an SRE responsibility to meet.
 
-#### Collecting Indicators
+### Collecting Indicators
 
 Many indicator metrics are most naturally gathered on the server side, using a monitoring system such as Borgmon or Prometheus, or with periodic log analysis—for instance, HTTP 500 responses as a fraction of all requests. However, some systems should be instrumented with *client*-side collection, because not measuring behavior at the client can miss a range of problems that affect users but don’t affect server-side metrics. For example, concentrating on the response latency of the Shakespeare search backend might miss poor user latency due to problems with the page’s JavaScript: in this case, measuring how long it takes for a page to become usable in the browser is a better proxy for what the user actually experiences.
 
-#### Aggregation
+### Aggregation
 
 For simplicity and usability, Google’s SRE teams often aggregate raw measurements. This needs to be done carefully.
 
@@ -97,13 +93,13 @@ Most metrics are better thought of as *distributions* rather than averages. For 
 
 Using percentiles for indicators allows you to consider the shape of the distribution and its differing attributes: a high-order percentile, such as the 99th or 99.9th, shows you a plausible worst-case value, while using the 50th percentile (also known as the median) emphasizes the typical case. The higher the variance in response times, the more the typical user experience is affected by long-tail behavior, an effect exacerbated at high load by queuing effects. User studies have shown that people typically prefer a slightly slower system to one with high variance in response time, so some SRE teams focus only on high percentile values, on the grounds that if the 99.9th percentile behavior is good, then the typical experience is certainly going to be.
 
-#### A Note on Statistical Fallacies
+### A Note on Statistical Fallacies
 
 Google’s SRE teams generally prefer to work with percentiles rather than the mean (arithmetic average) of a set of values.  Doing so makes it possible to consider the long tail of data points, which often have significantly different (and more interesting) characteristics than the average.  Because of the artificial nature of computing systems, data points are often skewed—for instance, no request can have a response in less than 0 ms, and a timeout at 1,000 ms means that there can be no successful responses with values greater than the timeout. As a result, they cannot assume that the mean and the median are the same—or even close to each other!
 
 Do not assume that data is normally distributed without verifying it first, in case some standard intuitions and approximations don’t hold. For example, if the distribution is not what’s expected, a process that takes action when it sees outliers (e.g., restarting a server with high request latencies) may do this too often, or not often enough.
 
-#### Standardize Indicators
+### Standardize Indicators
 
 Google’s SRE teams recommend that you standardize on common definitions for SLIs so that you don’t have to reason about them from first principles each time. Any feature that conforms to the standard definition templates can be omitted from the specification of an individual SLI, e.g.:
 
@@ -121,11 +117,11 @@ Google’s SRE teams recommend that you standardize on common definitions for SL
 
 To save effort, build a set of reusable SLI templates for each common metric; these also make it simpler for everyone to understand what a specific SLI means.
 
-### Objectives in Practice
+## Objectives in Practice
 
 Start by thinking about (or finding out!) what your users care about, not what you can measure. Often, what your users care about is difficult or impossible to measure, so you’ll end up approximating users’ needs in some way. However, if you simply start with what’s easy to measure, you’ll end up with less useful SLOs. As a result, Google’s SRE teams have sometimes found that working from desired objectives backward to specific indicators works better than choosing indicators and then coming up with targets.
 
-#### Defining Objectives
+### Defining Objectives
 
 For maximum clarity, SLOs should specify how they’re measured and the conditions under which they’re valid. For instance, Google’s SRE teams might say the following (the second line is the same as the first, but relies on the SLI defaults of the previous section to remove redundancy):
 
@@ -153,7 +149,7 @@ The rate at which SLOs are missed is a useful indicator for the user-perceived h
 
 The SLO violation rate can be compared against the error budget (see [Motivation for Error Budgets](./EMBRACING.RISK.md#motivation-for-error-budgets)), with the gap used as an input to the process that decides when to roll out new releases.
 
-#### Choosing Targets
+### Choosing Targets
 
 Choosing targets (SLOs) is not a purely technical activity because of the product and business implications, which should be reflected in both the SLIs and SLOs (and maybe SLAs) that are selected. Similarly, it may be necessary to trade off certain product attributes against others within the constraints posed by staffing, time to market, hardware availability, and funding. While SRE should be part of this conversation, and advise on the risks and viability of different options, Google’s SRE teams have learned a few lessons that can help make this a more productive discussion:
 
@@ -179,7 +175,7 @@ You can always refine SLO definitions and targets over time as you learn about a
 
 SLOs can—and should—be a major driver in prioritizing work for SREs and product developers, because they reflect what users care about. A good SLO is a helpful, legitimate forcing function for a development team. But a poorly thought-out SLO can result in wasted work if a team uses heroic efforts to meet an overly aggressive SLO, or a bad product if the SLO is too lax. SLOs are a massive lever: use them wisely.
 
-#### Control Measures
+### Control Measures
 
 SLIs and SLOs are crucial elements in the control loops used to manage systems:
 
@@ -193,7 +189,7 @@ SLIs and SLOs are crucial elements in the control loops used to manage systems:
 
 For example, if step 2 shows that request latency is increasing, and will miss the SLO in a few hours unless something is done, step 3 might include testing the hypothesis that the servers are CPU-bound, and deciding to add more of them to spread the load. Without the SLO, you wouldn’t know whether (or when) to take action.
 
-#### SLOs Set Expectations
+### SLOs Set Expectations
 
 Publishing SLOs sets expectations for system behavior. Users (and potential users) often want to know what they can expect from a service in order to understand whether it’s appropriate for their use case. For instance, a team wanting to build a photo-sharing website might want to avoid using a service that promises very strong durability and low cost in exchange for slightly lower availability, though the same service might be a perfect fit for an archival records management system.
 
@@ -209,11 +205,11 @@ Users build on the reality of what you offer, rather than what you say you’ll 
 
 Understanding how well a system is meeting its expectations helps decide whether to invest in making the system faster, more available, and more resilient. Alternatively, if the service is doing fine, perhaps staff time should be spent on other priorities, such as paying off technical debt, adding new features, or introducing other products.
 
-### Agreements in Practice
+## Agreements in Practice
 
 Crafting an SLA requires business and legal teams to pick appropriate consequences and penalties for a breach. SRE’s role is to help them understand the likelihood and difficulty of meeting the SLOs contained in the SLA. Much of the advice on SLO construction is also applicable for SLAs. It is wise to be conservative in what you advertise to users, as the broader the constituency, the harder it is to change or delete SLAs that prove to be unwise or difficult to work with.
 
-### Notes
+## Notes
 
 [^1]: Most people really mean SLO when they say “SLA.” One giveaway: if somebody talks about an “SLA violation,” they are almost always talking about a missed SLO. A real SLA violation might trigger a court case for breach of contract.
 

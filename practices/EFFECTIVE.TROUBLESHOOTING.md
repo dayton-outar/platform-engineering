@@ -1,8 +1,4 @@
-# Chapter 12
-
-## Effective Troubleshooting
-
-Source: [Site.Reliability.Engineering-2016-12.pdf](./Site.Reliability.Engineering-2016-12.pdf), PDF pages 1–18.
+# Effective Troubleshooting
 
 The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
 
@@ -22,7 +18,7 @@ Novices are often tripped up when troubleshooting because the exercise ideally d
 
 Let’s look at a general model of the troubleshooting process. Readers with expertise in troubleshooting may quibble with our definitions and process; if your method is effective for you, there’s no reason not to stick with it.
 
-### Theory
+## Theory
 
 Formally, we can think of the troubleshooting process as an application of the hypothetico-deductive method:[^p2-2] given a set of observations about a system and a theoretical basis for understanding system behavior, we iteratively hypothesize potential causes for the failure and try to test those hypotheses.
 
@@ -34,7 +30,7 @@ In an idealized model such as that in Figure 12-1, we’d start with a problem r
 
 We can then test our hypotheses in one of two ways. We can compare the observed state of the system against our theories to find confirming or disconfirming evidence. Or, in some cases, we can actively “treat” the system—that is, change the system in a controlled way—and observe the results. This second approach refines our understanding of the system’s state and possible cause(s) of the reported problems. Using either of these strategies, we repeatedly test until a root cause is identified, at which point we can then take corrective action to prevent a recurrence and write a postmortem. Of course, fixing the proximate cause(s) needn’t always wait for root-causing or postmortem writing.
 
-#### Common Pitfalls
+### Common Pitfalls
 
 Ineffective troubleshooting sessions are plagued by problems at the Triage, Examine, and Diagnose steps, often because of a lack of deep system understanding. The following are common pitfalls to avoid:
 
@@ -50,21 +46,21 @@ Fixing the first and second common pitfalls is a matter of learning the system i
 
 Understanding failures in our reasoning process is the first step to avoiding them and becoming more effective in solving problems. A methodical approach to knowing what we do know, what we don’t know, and what we need to know, makes it simpler and more straightforward to figure out what’s gone wrong and how to fix it.
 
-### In Practice
+## In Practice
 
 In practice, of course, troubleshooting is never as clean as our idealized model suggests it should be. There are some steps that can make the process less painful and more productive for both those experiencing system problems and those responding to them.
 
-#### Problem Report
+### Problem Report
 
 Every problem starts with a problem report, which might be an automated alert or one of your colleagues saying, “The system is slow.” An effective report should tell you the *expected* behavior, the *actual* behavior, and, if possible, how to reproduce the behavior.[^p4-8] Ideally, the reports should have a consistent form and be stored in a searchable location, such as a bug tracking system. Here, our teams often have customized forms or small web apps that ask for information that’s relevant to diagnosing the particular systems they support, which then automatically generate and route a bug. This may also be a good point at which to provide tools for problem reporters to try self-diagnosing or self-repairing common issues on their own.
 
 It’s common practice at Google to open a bug for every issue, even those received via email or instant messaging. Doing so creates a log of investigation and remediation activities that can be referenced in the future. Many teams discourage reporting problems directly to a person for several reasons: this practice introduces an additional step of transcribing the report into a bug, produces lower-quality reports that aren’t visible to other members of the team, and tends to concentrate the problem-solving load on a handful of team members that the reporters happen to know, rather than the person currently on duty (see also [Dealing with Interrupts](../management/DEALING.WITH.INTERRUPTS.md)).
 
-#### Shakespeare Has a Problem
+### Shakespeare Has a Problem
 
 You’re on-call for the Shakespeare search service and receive an alert, Shakespeare-BlackboxProbe_SearchFailure: your black-box monitoring hasn’t been able to find search results for “the forms of things unknown” for the past five minutes. The alerting system has filed a bug—with links to the black-box prober’s recent results and to the playbook entry for this alert—and assigned it to you. Time to spring into action!
 
-#### Triage
+### Triage
 
 Once you receive a problem report, the next step is to figure out what to do about it. Problems can vary in severity: an issue might affect only one user under very specific circumstances (and might have a workaround), or it might entail a complete global outage for a service. Your response should be appropriate for the problem’s impact: it’s appropriate to declare an all-hands-on-deck emergency for the latter (see [Managing Incidents](MANAGING.INCIDENTS.md)), but doing so for the former is overkill. Assessing an issue’s severity requires an exercise of good engineering judgment and, often, a degree of calm under pressure.
 
@@ -76,7 +72,7 @@ Novice pilots are taught that their first responsibility in an emergency is to f
 
 This realization is often quite unsettling and counterintuitive for new SREs, particularly those whose prior experience was in product development organizations.
 
-#### Examine
+### Examine
 
 We need to be able to examine what each component in the system is doing in order to understand whether or not it’s behaving correctly.
 
@@ -84,7 +80,7 @@ Ideally, a monitoring system is recording metrics for your system as discussed i
 
 Logging is another invaluable tool. Exporting information about each operation and about system state makes it possible to understand exactly what a process was doing at a given point in time. You may need to analyze system logs across one or many processes. Tracing requests through the whole stack using tools such as Dapper [Sig10] provides a very powerful way to understand how a distributed system is working, though varying use cases imply significantly different tracing designs [Sam14].
 
-#### Logging
+### Logging
 
 Text logs are very helpful for reactive debugging in real time, while storing logs in a structured binary format can make it possible to build tools to conduct retrospective analysis with much more information.
 
@@ -96,7 +92,7 @@ Exposing current state is the third trick in our toolbox. For example, Google se
 
 Finally, you may even need to instrument a client to experiment with, in order to discover what a component is returning in response to requests.
 
-#### Debugging Shakespeare
+### Debugging Shakespeare
 
 Using the link to the black-box monitoring results in the bug, you discover that the prober sends an HTTP GET request to the /api/search endpoint:
 
@@ -127,21 +123,21 @@ The system is set up to send a probe once a minute; over the past 10 minutes, ab
 
 Using curl, you manually send requests to the search endpoint and get a failed response with HTTP response code 502 (Bad Gateway) and no payload. It has an HTTP header, X-Request-Trace, which lists the addresses of the backend servers responsible for responding to that request. With this information, you can now examine those backends to test whether they’re responding appropriately.
 
-#### Diagnose
+### Diagnose
 
 A thorough understanding of the system’s design is decidedly helpful for coming up with plausible hypotheses about what’s gone wrong, but there are also some generic practices that will help even without domain knowledge.
 
-##### Simplify and reduce
+#### Simplify and reduce
 
 Ideally, components in a system have well-defined interfaces and perform known transformations from their input to their output (in our example, given an input search text, a component might return output containing possible matches). It’s then possible to look at the connections *between* components—or, equivalently, at the data flowing between them—to determine whether a given component is working properly. Injecting known test data in order to check that the resulting output is expected (a form of black-box testing) at each step can be especially effective, as can injecting data intended to probe possible causes of errors. Having a solid reproducible test case makes debugging much faster, and it may be possible to use the case in a non-production environment where more invasive or riskier techniques are available than would be possible in production.
 
 Dividing and conquering is a very useful general-purpose solution technique. In a multilayer system where work happens throughout a stack of components, it’s often best to start systematically from one end of the stack and work toward the other end, examining each component in turn. This strategy is also well-suited for use with data processing pipelines. In exceptionally large systems, proceeding linearly may be too slow; an alternative, *bisection*, splits the system in half and examines the communication paths between components on one side and the other. After determining whether one half seems to be working properly, repeat the process until you’re left with a possibly faulty component.
 
-##### Ask “what,” “where,” and “why”
+#### Ask “what,” “where,” and “why”
 
 A malfunctioning system is often still trying to do *something*—just not the thing you want it to be doing. Finding out *what* it’s doing, then asking *why* it’s doing that and *where* its resources are being used or where its output is going can help you understand how things have gone wrong.[^p8-10]
 
-#### Unpacking the Causes of a Symptom
+### Unpacking the Causes of a Symptom
 
 **Symptom**: A Spanner cluster has high latency and RPCs to its servers are timing out.
 
@@ -153,7 +149,7 @@ A malfunctioning system is often still trying to do *something*—just not the t
 
 **Solutions**: Rewrite the regular expression to avoid backtracking. Look in the codebase for similar patterns. Consider using RE2, which does not backtrack and guarantees linear runtime growth with input size.[^p9-11]
 
-##### What touched it last
+#### What touched it last
 
 Systems have inertia: we’ve found that a working computer system tends to remain in motion until acted upon by an external force, such as a configuration change or a shift in the type of load served. Recent changes to a system can be a productive place to start identifying what’s going wrong.[^p9-12]
 
@@ -165,11 +161,11 @@ Well-designed systems should have extensive production logging to track new vers
 
 Manually sending a request to the /api/search endpoint (see [Debugging Shakespeare](EFFECTIVE.TROUBLESHOOTING.md#debugging-shakespeare)) and seeing the failure listing backend servers that handled the response lets you discount the likelihood that the problem is with the API frontend server and with the load balancers: the response probably wouldn’t have included that information if the request hadn’t at least made it to the search backends and failed there. Now you can focus your efforts on the backends—analyzing their logs, sending test queries to see what responses they return, and examining their exported metrics.
 
-##### Specific diagnoses
+#### Specific diagnoses
 
 While the generic tools described previously are helpful across a broad range of problem domains, you will likely find it helpful to build tools and systems to help with diagnosing your particular services. Google SREs spend much of their time building such tools. While many of these tools are necessarily specific to a given system, be sure to look for commonalities between services and teams to avoid duplicating effort.
 
-#### Test and Treat
+### Test and Treat
 
 Once you’ve come up with a short list of possible causes, it’s time to try to find *which* factor is at the root of the actual problem. Using the experimental method, we can try to rule in or rule out our hypotheses. For instance, suppose we think a problem is caused by either a network failure between an application logic server and a database server, or by the database refusing connections. Trying to connect to the database with the same credentials the application logic server uses can refute the second hypothesis, while pinging the database server may be able to refute the first, depending on network topology, firewall rules, and other factors. Following the code and trying to imitate the code flow, step-by-step, may point to exactly what’s going wrong.
 
@@ -189,7 +185,7 @@ Take clear notes of what ideas you had, which tests you ran, and the results you
 
 Particularly when you are dealing with more complicated and drawn-out cases, this documentation may be crucial in helping you remember exactly what happened and prevent having to repeat these steps.[^p11-14] If you performed active testing by changing a system—for instance by giving more resources to a process—making changes in a systematic and documented fashion will help you return the system to its pre-test setup, rather than running in an unknown hodge-podge configuration.
 
-### Negative Results Are Magic
+## Negative Results Are Magic
 
 ***Written by Randall Bosetti***
 
@@ -215,7 +211,7 @@ Do your part by telling everyone about the designs, algorithms, and team workflo
 
 Above all, publish the results you find surprising so that others—including your future self—aren’t surprised.
 
-#### Cure
+### Cure
 
 Ideally, you’ve now narrowed the set of possible causes to one. Next, we’d like to prove that it’s the actual cause. Definitively proving that a given factor *caused* a problem— by reproducing it at will—can be difficult to do in production systems; often, we can only find *probable* causal factors, for the following reasons:
 
@@ -225,7 +221,7 @@ Ideally, you’ve now narrowed the set of possible causes to one. Next, we’d l
 
 Once you’ve found the factors that caused the problem, it’s time to write up notes on what went wrong with the system, how you tracked down the problem, how you fixed the problem, and how to prevent it from happening again. In other words, you need to write a postmortem (although ideally, the system is *alive* at this point!).
 
-### Case Study
+## Case Study
 
 App Engine,[^p14-16] part of Google’s Cloud Platform, is a platform-as-a-service product that allows developers to build services atop Google’s infrastructure. One of our internal customers filed a problem report indicating that they’d recently seen a dramatic increase in latency, CPU usage, and number of running processes needed to serve traffic for their app, a content-management system used to build documentation for developers.[^p14-17] The customer couldn’t find any recent changes to their code that correlated with the increase in resources, and there hadn’t been an increase in traffic to their app (see Figure 12-3), so they were wondering if a change in the App Engine service was responsible.
 
@@ -265,7 +261,7 @@ The app developers added instrumentation to understand where the app was spendin
 
 Some time later, the root cause was found: due to a long-standing bug in the app’s access control system, whenever one specific path was accessed, a whitelist object would be created and stored in the datastore. In the run-up to launch, an automated security scanner had been testing the app for vulnerabilities, and as a side effect, its scan produced thousands of whitelist objects over the course of half an hour. These superfluous whitelist objects then had to be checked on every request to the app, which led to pathologically slow responses—without causing any RPC calls from the app to other services. Fixing the bug and removing those objects returned the app’s performance to expected levels.
 
-### Making Troubleshooting Easier
+## Making Troubleshooting Easier
 
 There are many ways to simplify and speed troubleshooting. Perhaps the most fundamental are:
 
@@ -277,11 +273,11 @@ Ensuring that information is available in a consistent way throughout a system�
 
 Problems in correctly representing the state of reality in a code change or an environment change often lead to a need to troubleshoot. Simplifying, controlling, and logging such changes can reduce the need for troubleshooting, and make it easier when it happens.
 
-### Conclusion
+## Conclusion
 
 We’ve looked at some steps you can take to make the troubleshooting process clear and understandable to novices, so that they, too, can become effective at solving problems. Adopting a systematic approach to troubleshooting—as opposed to relying on luck or experience—can help bound your services’ time to recovery, leading to a better experience for your users.
 
-### Notes
+## Notes
 
 [^p1-1]: Indeed, using only first principles and troubleshooting skills is often an effective way to learn how a system works; see [Accelerating SREs to On-Call and Beyond](../management/ACCELERATING.SRES.ON.CALL.md).
 

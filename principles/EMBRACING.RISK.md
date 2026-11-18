@@ -1,8 +1,4 @@
-# Chapter 3
-
-## Embracing Risk
-
-Source: [Site.Reliability.Engineering-2016-3.pdf](./Site.Reliability.Engineering-2016-3.pdf), printed pages 25–36.
+# Embracing Risk
 
 The Google practices and case studies below reflect the source’s 2016 account.
 
@@ -12,7 +8,7 @@ The Google practices and case studies below reflect the source’s 2016 account.
 
 You might expect Google to try to build 100% reliable services—ones that never fail. It turns out that past a certain point, however, increasing reliability is worse for a service (and its users) rather than better! Extreme reliability comes at a cost: maximizing stability limits how fast new features can be developed and how quickly products can be delivered to users, and dramatically increases their cost, which in turn reduces the numbers of features a team can afford to offer. Further, users typically don’t notice the difference between high reliability and extreme reliability in a service, because the user experience is dominated by less reliable components like the cellular network or the device they are working with. Put simply, a user on a 99% reliable smartphone cannot tell the difference between 99.99% and 99.999% service reliability! With this in mind, rather than simply maximizing uptime, Site Reliability Engineering seeks to balance the risk of unavailability with the goals of rapid innovation and efficient service operations, so that users’ overall happiness—with features, service, and performance—is optimized.
 
-### Managing Risk
+## Managing Risk
 
 Unreliable systems can quickly erode users’ confidence, so Google’s teams want to reduce the chance of system failure. However, experience shows that as they build systems, cost does not increase linearly as reliability increments—an incremental improvement in reliability may cost 100x more than the previous increment. The costliness has two dimensions:
 
@@ -26,7 +22,7 @@ The cost borne by an organization when it allocates engineering resources to bui
 
 In SRE, Google’s teams manage service reliability largely by managing risk. They conceptualize risk as a continuum. They give equal importance to figuring out how to engineer greater reliability into Google systems and identifying the appropriate level of tolerance for the services they run. Doing so allows them to perform a cost/benefit analysis to determine, for example, where on the (nonlinear) risk continuum they should place Search, Ads, Gmail, or Photos. Google’s goal is to explicitly align the risk taken by a given service with the risk the business is willing to bear. They strive to make a service reliable enough, but no *more* reliable than it needs to be. That is, when they set an availability target of 99.99%, they want to exceed it, but not by much: that would waste opportunities to add features to the system, clean up technical debt, or reduce its operational costs. In a sense, they view the availability target as both a minimum and a maximum. The key advantage of this framing is that it unlocks explicit, thoughtful risktaking.
 
-### Measuring Service Risk
+## Measuring Service Risk
 
 As standard practice at Google, Google’s teams are often best served by identifying an objective metric to represent the property of a system they want to optimize. By setting a target, they can assess Google’s current performance and track improvements or degradations over time. For service risk, it is not immediately clear how to reduce all of the potential factors into a single metric. Service failures can have many potential effects, including user dissatisfaction, harm, or loss of trust; direct or indirect revenue loss; brand or reputational impact; and undesirable press coverage. Clearly, some of these factors are very hard to measure. To make this problem tractable and consistent across many types of systems they run, they focus on *unplanned downtime*.
 
@@ -54,13 +50,13 @@ For example, a batch process that extracts, transforms, and inserts the contents
 
 Most often, Google’s teams set quarterly availability targets for a service and track Google’s performance against those targets on a weekly, or even daily, basis. This strategy lets them manage the service to a high-level availability objective by looking for, tracking down, and fixing meaningful deviations as they inevitably arise. See [Service Level Objectives](./SERVICE.LEVEL.OBJECTIVES.md) for more details.
 
-### Risk Tolerance of Services
+## Risk Tolerance of Services
 
 What does it mean to identify the risk tolerance of a service? In a formal environment or in the case of safety-critical systems, the risk tolerance of services is typically built directly into the basic product or service definition. At Google, services’ risk tolerance tends to be less clearly defined.
 
 To identify the risk tolerance of a service, SREs must work with the product owners to turn a set of business goals into explicit objectives to which Google’s teams can engineer. In this case, the business goals they are concerned about have a direct impact on the performance and reliability of the service offered. In practice, this translation is easier said than done. While consumer services often have clear product owners, it is unusual for infrastructure services (e.g., storage systems or a general-purpose HTTP caching layer) to have a similar structure of product ownership. They will discuss the consumer and infrastructure cases in turn.
 
-#### Identifying the Risk Tolerance of Consumer Services
+### Identifying the Risk Tolerance of Consumer Services
 
 Google’s consumer services often have a product team that acts as the business owner for an application. For example, Search, Google Maps, and Google Docs each have their own product managers. These product managers are charged with understanding the users and the business, and for shaping the product for success in the marketplace. When a product team exists, that team is usually the best resource to discuss the reliability requirements for a service. In the absence of a dedicated product team, the engineers building the system often play this role either knowingly or unknowingly.
 
@@ -74,7 +70,7 @@ There are many factors to consider when assessing the risk tolerance of services
 
 - What other service metrics are important to take into account?
 
-##### Target level of availability
+#### Target level of availability
 
 The target level of availability for a given Google service usually depends on the function it provides and how the service is positioned in the marketplace. The following list includes issues to consider:
 
@@ -92,7 +88,7 @@ Consider the requirements of Google Apps for Work. The majority of its users are
 
 YouTube provides a contrasting set of considerations. When Google acquired YouTube, Google’s teams had to decide on the appropriate availability target for the website. In 2006, YouTube was focused on consumers and was in a very different phase of its business lifecycle than Google was at the time. While YouTube already had a great product, it was still changing and growing rapidly. They set a lower availability target for YouTube than for Google’s enterprise products because rapid feature development was correspondingly more important.
 
-##### Types of failures
+#### Types of failures
 
 The expected shape of failures for a given service is another important consideration. How resilient is Google’s business to service downtime? Which is worse for the service: a constant low rate of failures, or an occasional full-site outage? Both types of failure may result in the same absolute number of errors, but may have vastly different impacts on the business.
 
@@ -100,7 +96,7 @@ An illustrative example of the difference between full and partial outages natur
 
 At the other end of services offered by Google, it is sometimes acceptable to have regular outages during maintenance windows. A number of years ago, the Ads Frontend used to be one such service. It is used by advertisers and website publishers to set up, configure, run, and monitor their advertising campaigns. Because most of this work takes place during normal business hours, Google’s teams determined that occasional, regular, scheduled outages in the form of maintenance windows would be acceptable, and they counted these scheduled outages as planned downtime, not unplanned downtime.
 
-##### Cost
+#### Cost
 
 Cost is often the key factor in determining the appropriate availability target for a service. Ads is in a particularly good position to make this trade-off because request successes and failures can be directly translated into revenue gained or lost. In determining the availability target for each service, Google’s teams ask questions such as:
 
@@ -116,7 +112,7 @@ In this case, if the cost of improving availability by one nine is less than $90
 
 It may be harder to set these targets when Google’s teams do not have a simple translation function between reliability and revenue. One useful strategy may be to consider the background error rate of ISPs on the Internet. If failures are being measured from the end-user perspective and it is possible to drive the error rate for the service below the background error rate, those errors will fall within the noise for a given user’s Internet connection. While there are significant differences between ISPs and protocols (e.g., TCP versus UDP, IPv4 versus IPv6), they have measured the typical background error rate for ISPs as falling between 0.01% and 1%.
 
-##### Other service metrics
+#### Other service metrics
 
 Examining the risk tolerance of services in relation to metrics besides availability is often fruitful. Understanding which metrics are important and which metrics aren’t important provides Google’s teams with degrees of freedom when attempting to take thoughtful risks.
 
@@ -126,23 +122,23 @@ AdSense, Google’s ads system that serves contextual ads in response to request
 
 This looser serving latency requirement has allowed Google’s teams to make many smart trade-offs in provisioning (i.e., determining the quantity and locations of serving resources they use), which save them substantial cost over naive provisioning. In other words, given the relative insensitivity of the AdSense service to moderate changes in latency performance, they are able to consolidate serving into fewer geographical locations, reducing Google’s operational overhead.
 
-#### Identifying the Risk Tolerance of Infrastructure Services
+### Identifying the Risk Tolerance of Infrastructure Services
 
 The requirements for building and running infrastructure components differ from the requirements for consumer products in a number of ways. A fundamental difference is that, by definition, infrastructure components have multiple clients, often with varying needs.
 
-##### Target level of availability
+#### Target level of availability
 
 Consider Bigtable [Cha06], a massive-scale distributed storage system for structured data. Some consumer services serve data directly from Bigtable in the path of a user request. Such services need low latency and high reliability. Other teams use Bigtable as a repository for data that they use to perform offline analysis (e.g., MapReduce) on a regular basis. These teams tend to be more concerned about throughput than reliability. Risk tolerance for these two use cases is quite distinct.
 
 One approach to meeting the needs of both use cases is to engineer all infrastructure services to be ultra-reliable. Given the fact that these infrastructure services also tend to aggregate huge amounts of resources, such an approach is usually far too expensive in practice. To understand the different needs of the different types of users, you can look at the desired state of the request queue for each type of Bigtable user.
 
-##### Types of failures
+#### Types of failures
 
 The low-latency user wants Bigtable’s request queues to be (almost always) empty so that the system can process each outstanding request immediately upon arrival. (Indeed, inefficient queuing is often a cause of high tail latency.) The user concerned with offline analysis is more interested in system throughput, so that user wants request queues to never be empty. To optimize for throughput, the Bigtable system should never need to idle while waiting for its next request.
 
 As you can see, success and failure are antithetical for these sets of users. Success for the low-latency user is failure for the user concerned with offline analysis.
 
-##### Cost
+#### Cost
 
 One way to satisfy these competing constraints in a cost-effective manner is to partition the infrastructure and offer it at multiple independent levels of service. In the Bigtable example, Google’s teams can build two types of clusters: low-latency clusters and throughput clusters. The low-latency clusters are designed to be operated and used by services that need low latency and high reliability. To ensure short queue lengths and satisfy more stringent client isolation requirements, the Bigtable system can be provisioned with a substantial amount of slack capacity for reduced contention and increased redundancy. The throughput clusters, on the other hand, can be provisioned to run very hot and with less redundancy, optimizing throughput over latency. In practice, they are able to satisfy these relaxed needs at a much lower cost, perhaps as little as 10–50% of the cost of a low-latency cluster. Given Bigtable’s massive scale, this cost savings becomes significant very quickly.
 
@@ -150,13 +146,13 @@ The key strategy with regards to infrastructure is to deliver services with expl
 
 Note that Google’s teams can run multiple classes of services using identical hardware and software. They can provide vastly different service guarantees by adjusting a variety of service characteristics, such as the quantities of resources, the degree of redundancy, the geographical provisioning constraints, and, critically, the infrastructure software configuration.
 
-##### Example: Frontend infrastructure
+#### Example: Frontend infrastructure
 
 To demonstrate that these risk-tolerance assessment principles do not just apply to storage infrastructure, let’s look at another large class of service: Google’s frontend infrastructure. The frontend infrastructure consists of reverse proxy and load balancing systems running close to the edge of Google’s network. These are the systems that, among other things, serve as one endpoint of the connections from end users (e.g., terminate TCP from the user’s browser). Given their critical role, Google’s teams engineer these systems to deliver an extremely high level of reliability. While consumer services can often limit the visibility of unreliability in backends, these infrastructure systems are not so lucky. If a request never makes it to the application service frontend server, it is lost.
 
 Having identified the risk tolerance of consumer and infrastructure services, use that tolerance level to manage unreliability through error budgets.
 
-### Motivation for Error Budgets
+## Motivation for Error Budgets
 
 ***Written by Mark Roth***[^1]  
 ***Edited by Carmela Quinito***
@@ -183,7 +179,7 @@ It’s a best practice to test a new release on some small subset of a typical w
 
 Usually, preexisting teams have worked out some kind of informal balance between them as to where the risk/effort boundary lies. Unfortunately, one can rarely prove that this balance is optimal, rather than just a function of the negotiating skills of the engineers involved. Nor should such decisions be driven by politics, fear, or hope. (Indeed, Google SRE’s unofficial motto is “Hope is not a strategy.”) Instead, Google’s goal is to define an objective metric, agreed upon by both sides, that can be used to guide the negotiations in a reproducible way. The more data-based the decision can be, the better.
 
-#### Forming Your Error Budget
+### Forming Your Error Budget
 
 In order to base these decisions on objective data, the two teams jointly define a quarterly error budget based on the service’s [service level objective, or SLO](./SERVICE.LEVEL.OBJECTIVES.md#objectives). The error budget provides a clear, objective metric that determines how unreliable the service is allowed to be within a single quarter. This metric removes the politics from negotiations between the SREs and the product developers when deciding how much risk to allow.
 
@@ -199,7 +195,7 @@ Google’s practice is then as follows:
 
 For example, imagine that a service’s SLO is to successfully serve 99.999% of all queries per quarter. This means that the service’s error budget is a failure rate of 0.001% for a given quarter. If a problem causes Google’s teams to fail 0.0002% of the expected queries for the quarter, the problem spends 20% of the service’s quarterly error budget.
 
-#### Benefits
+### Benefits
 
 The main benefit of an error budget is that it provides a common incentive that allows both product development and SRE to focus on finding the right balance between innovation and reliability.
 
@@ -211,7 +207,7 @@ What happens if a network outage or datacenter failure reduces the measured SLO?
 
 The budget also helps to highlight some of the costs of overly high reliability targets, in terms of both inflexibility and slow innovation. If the team is having trouble launching new features, they may elect to loosen the SLO (thus increasing the error budget) in order to increase innovation.
 
-#### Key Insights
+### Key Insights
 
 - Managing service reliability is largely about managing risk, and managing risk can be costly.
 
@@ -219,7 +215,7 @@ The budget also helps to highlight some of the costs of overly high reliability 
 
 - An error budget aligns incentives and emphasizes joint ownership between SRE and product development. Error budgets make it easier to decide the rate of releases and to effectively defuse discussions about outages with stakeholders, and allows multiple teams to reach the same conclusion about production risk without rancor.
 
-### Notes
+## Notes
 
 [^1]: An early version of this section appeared as an article in *;login:* (August 2015, vol. 40, no. 4).
 

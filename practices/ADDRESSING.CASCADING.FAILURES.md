@@ -1,8 +1,4 @@
-# Chapter 22
-
-## Addressing Cascading Failures
-
-Source: [Site.Reliability.Engineering-2016-22.pdf](./Site.Reliability.Engineering-2016-22.pdf), PDF pages 1–26.
+# Addressing Cascading Failures
 
 The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
 
@@ -24,11 +20,11 @@ We’ll use the Shakespeare search service discussed in [Shakespeare: A Sample S
 
 *Figure 22-1. Example production configuration for the Shakespeare search service*
 
-### Causes of Cascading Failures and Designing to Avoid Them
+## Causes of Cascading Failures and Designing to Avoid Them
 
 Well-thought-out system design should take into account a few typical scenarios that account for the majority of cascading failures.
 
-#### Server Overload
+### Server Overload
 
 The most common cause of cascading failures is overload. Most cascading failures described here are either directly due to server overload, or due to extensions or variations of this scenario.
 
@@ -46,7 +42,7 @@ If cluster B fails (Figure 22-3), requests to cluster A increase to 1,200 QPS. T
 
 This reduction in the rate of useful work being done can spread into other failure domains, potentially spreading globally. For example, local overload in one cluster may lead to its servers crashing; in response, the load balancing controller sends requests to other clusters, overloading their servers, leading to a service-wide overload failure. It may not take long for these events to transpire (e.g., on the order of a couple minutes), because the load balancer and task scheduling systems involved may act very quickly.
 
-#### Resource Exhaustion
+### Resource Exhaustion
 
 Running out of a resource can result in higher latency, elevated error rates, or the substitution of lower-quality results. These are in fact desired effects of running out of resources: something eventually needs to give as the load increases beyond what a server can handle.
 
@@ -54,7 +50,7 @@ Depending on what resource becomes exhausted in a server and how the server is b
 
 Different types of resources can be exhausted, resulting in varying effects on servers.
 
-##### CPU
+#### CPU
 
 If there is insufficient CPU to handle the request load, typically all requests become slower. This scenario can result in various secondary effects, including the following:
 
@@ -82,7 +78,7 @@ As a server becomes overloaded, its responses to RPCs from its clients arrive la
 
 As more CPU is used, the chance of spilling on to more cores increases, resulting in decreased usage of local caches and decreased CPU efficiency.
 
-##### Memory
+#### Memory
 
 If nothing else, more in-flight requests consume more RAM from allocating the request, response, and RPC objects. Memory exhaustion can cause the following effects:
 
@@ -98,15 +94,15 @@ A vicious cycle can occur in this scenario: less CPU is available, resulting in 
 
 Reduction in available RAM can reduce application-level cache hit rates, resulting in more RPCs to the backends, which can possibly cause the backends to become overloaded.
 
-##### Threads
+#### Threads
 
 Thread starvation can directly cause errors or lead to health check failures. If the server adds threads as needed, thread overhead can use too much RAM. In extreme cases, thread starvation can also cause you to run out of process IDs.
 
-##### File descriptors
+#### File descriptors
 
 Running out of file descriptors can lead to the inability to initialize network connections, which in turn can cause health checks to fail.
 
-##### Dependencies among resources
+#### Dependencies among resources
 
 Note that many of these resource exhaustion scenarios feed from one another—a service experiencing overload often has a host of secondary symptoms that can look like the root cause, making debugging difficult.
 
@@ -132,7 +128,7 @@ For example, imagine the following scenario:
 
 In situations as complex as the preceding scenario, it’s unlikely that the causal chain will be fully diagnosed during an outage. It might be very hard to determine that the backend crash was caused by a decrease in the cache rate in the frontend, particularly if the frontend and backend components have different owners.
 
-#### Service Unavailability
+### Service Unavailability
 
 Resource exhaustion can lead to servers crashing; for example, servers might crash when too much RAM is allocated to a container. Once a couple of servers crash on overload, the load on the remaining servers can increase, causing them to crash as well. The problem tends to snowball and soon all servers begin to crash-loop. It’s often difficult to escape this scenario because as soon as servers come back online they’re bombarded with an extremely high rate of requests and fail almost immediately.
 
@@ -142,7 +138,7 @@ Similarly, servers can appear unhealthy to the load balancing layer, resulting i
 
 Load balancing policies that avoid servers that have served errors can exacerbate problems further—a few backends serve some errors, so they don’t contribute to the available capacity for the service. This increases the load on the remaining servers, starting the snowball effect.
 
-### Preventing Server Overload
+## Preventing Server Overload
 
 The following list presents strategies for avoiding server overload in rough priority order:
 
@@ -174,7 +170,7 @@ Good capacity planning can reduce the probability that a cascading failure will 
 
 Capacity planning reduces the probability of triggering a cascading failure, but it is not sufficient to protect the service from cascading failures. When you lose major parts of your infrastructure during a planned or unplanned event, no amount of capacity planning may be sufficient to prevent cascading failures. Load balancing problems, network partitions, or unexpected traffic increases can create pockets of high load beyond what was planned. Some systems can grow the number of tasks for your service on demand, which may prevent overload; however, proper capacity planning is still needed.
 
-#### Queue Management
+### Queue Management
 
 Most thread-per-request servers use a queue in front of a thread pool to handle requests. Requests come in, they sit on a queue, and then threads pick requests off the queue and perform the actual work (whatever actions are required by the server). Usually, if the queue is full, the server will reject new requests.
 
@@ -184,7 +180,7 @@ Queued requests consume memory and increase latency. For example, if the queue s
 
 For a system with fairly steady traffic over time, it is usually better to have small queue lengths relative to the thread pool size (e.g., 50% or less), which results in the server rejecting requests early when it can’t sustain the rate of incoming requests. For example, Gmail often uses queueless servers, relying instead on failover to other server tasks when the threads are full. On the other end of the spectrum, systems with “bursty” load for which traffic patterns fluctuate drastically may do better with a queue size based on the current number of threads in use, processing time for each request, and the size and frequency of bursts.
 
-#### Load Shedding and Graceful Degradation
+### Load Shedding and Graceful Degradation
 
 *Load shedding* drops some proportion of load by dropping traffic as the server approaches overload conditions. The goal is to keep the server from running out of RAM, failing health checks, serving with extremely high latency, or any of the other symptoms associated with overload, while still doing as much useful work as it can.
 
@@ -215,7 +211,7 @@ As you evaluate options and deploy, keep the following in mind:
 - Complex load shedding and graceful degradation can cause problems themselves
 - excessive complexity may cause the server to trip into a degraded mode when it is not desired, or enter feedback cycles at undesired times. Design a way to quickly turn off complex graceful degradation or tune parameters if needed. Storing this configuration in a consistent system that each server can watch for changes, such as Chubby, can increase deployment speed, but also introduces its own risks of synchronized failure.
 
-#### Retries
+### Retries
 
 Suppose the code in the frontend that talks to the backend implements retries naively. It retries after encountering a failure and caps the number of backend RPCs per logical request to 10. Consider this code in the frontend, using gRPC in Go:
 
@@ -287,17 +283,17 @@ When issuing automatic retries, keep in mind the following considerations:
 
 In an emergency, it may not be obvious that an outage is due to bad retry behavior. Graphs of retry rates can be an indication of bad retry behavior, but may be confused as a symptom instead of a compounding cause. In terms of mitigation, this is a special case of the insufficient capacity problem, with the additional caveat that you must either fix the retry behavior (usually requiring a code push), reduce load significantly, or cut requests off entirely.
 
-#### Latency and Deadlines
+### Latency and Deadlines
 
 When a frontend sends an RPC to a backend server, the frontend consumes resources waiting for a reply. RPC deadlines define how long a request can wait before the frontend gives up, limiting the time that the backend may consume the frontend’s resources.
 
-##### Picking a deadline
+#### Picking a deadline
 
 It’s usually wise to set a deadline. Setting either no deadline or an extremely high deadline may cause short-term problems that have long since passed to continue to consume server resources until the server restarts.
 
 High deadlines can result in resource consumption in higher levels of the stack when lower levels of the stack are having problems. Short deadlines can cause some more expensive requests to fail consistently. Balancing these constraints to pick a good deadline can be something of an art.
 
-##### Missing deadlines
+#### Missing deadlines
 
 A common theme in many cascading outages is that servers spend resources handling requests that will exceed their deadlines on the client. As a result, resources are spent while no progress is made: you don’t get credit for late assignments with RPCs.
 
@@ -305,7 +301,7 @@ Suppose an RPC has a 10-second deadline, as set by the client. The server is ver
 
 If handling a request is performed over multiple stages (e.g., there are a few callbacks and RPC calls), the server should check the deadline left at each stage before attempting to perform any more work on the request. For example, if a request is split into parsing, backend request, and processing stages, it may make sense to check that there is enough time left to handle the request before each stage.
 
-##### Deadline propagation
+#### Deadline propagation
 
 Rather than inventing a deadline when sending RPCs to backends, servers should employ deadline propagation and cancellation propagation.
 
@@ -331,7 +327,7 @@ There are some exceptions for which servers may wish to continue processing a re
 
 Propagating cancellations avoids the potential RPC leakage that occurs if an initial RPC has a long deadline, but RPCs between deeper layers of the stack have short deadlines and time out. Using simple deadline propagation, the initial RPC continues to use server resources until it eventually times out, despite being unable to make progress.
 
-##### Bimodal latency
+#### Bimodal latency
 
 Suppose that the frontend from the preceding example consists of 10 servers, each with 100 worker threads. This means that the frontend has a total of 1,000 threads of capacity. During usual operation, the frontends perform 1,000 QPS and requests complete in 100 ms. This means that the frontends usually have 100 worker threads occupied out of the 1,000 configured worker threads (1,000 QPS * 0.1 seconds).
 
@@ -351,7 +347,7 @@ The following guidelines can help address this class of problems:
 
 - When using shared resources that can be exhausted by some keyspace, consider either limiting in-flight requests by that keyspace or using other kinds of abuse tracking. Suppose your backend processes requests for different clients that have wildly different performance and request characteristics. You might consider only allowing 25% of your threads to be occupied by any one client in order to provide fairness in the face of heavy load by any single client misbehaving.
 
-### Slow Startup and Cold Caching
+## Slow Startup and Cold Caching
 
 Processes are often slower at responding to requests immediately after starting than they will be in steady state. This slowness can be caused by either or both of the following:
 
@@ -389,7 +385,7 @@ If caching has a significant effect on the service,[^p17-5] you may want to use 
 
 - When adding load to a cluster, slowly increase the load. The initially small request rate warms up the cache; once the cache is warm, more traffic can be added. It’s a good idea to ensure that all clusters carry nominal load and that the caches are kept warm.
 
-#### Always Go Downward in the Stack
+### Always Go Downward in the Stack
 
 In the example Shakespeare service, the frontend talks to a backend, which in turn talks to the storage layer. A problem that manifests in the storage layer can cause problems for servers that talk to it, but fixing the storage layer will usually repair both the backend and frontend layers.
 
@@ -405,19 +401,19 @@ For example, suppose a user has a primary backend and a predetermined hot standb
 
 It’s usually better to avoid intra-layer communication—i.e., possible cycles in the communication path—in the user request path. Instead, have the client do the communication. For example, if a frontend talks to a backend but guesses the wrong backend, the backend should not proxy to the correct backend. Instead, the backend should tell the frontend to retry its request on the correct backend.
 
-### Triggering Conditions for Cascading Failures
+## Triggering Conditions for Cascading Failures
 
 When a service is susceptible to cascading failures, there are several possible disturbances that can initiate the domino effect. This section identifies some of the factors that trigger cascading failures.
 
-#### Process Death
+### Process Death
 
 Some server tasks may die, reducing the amount of available capacity. Tasks might die because of a Query of Death (an RPC whose contents trigger a failure in the process), cluster issues, assertion failures, or a number of other reasons. A very small event (e.g., a couple of crashes or tasks rescheduled to other machines) may cause a service on the brink of falling to break.
 
-#### Process Updates
+### Process Updates
 
 Pushing a new version of the binary or updating its configuration may initiate a cascading failure if a large number of tasks are affected simultaneously. To prevent this scenario, either account for necessary capacity overhead when setting up the service’s update infrastructure, or push off-peak. Dynamically adjusting the number of in-flight task updates based on the volume of requests and available capacity may be a workable approach.
 
-#### New Rollouts
+### New Rollouts
 
 A new binary, configuration changes, or a change to the underlying infrastructure stack can result in changes to request profiles, resource usage and limits, backends, or a number of other system components that can trigger a cascading failure.
 
@@ -425,31 +421,31 @@ During a cascading failure, it’s usually wise to check for recent changes and 
 
 Your service should implement some type of change logging, which can help quickly identify recent changes.
 
-#### Organic Growth
+### Organic Growth
 
 In many cases, a cascading failure isn’t triggered by a specific service change, but because a growth in usage wasn’t accompanied by an adjustment to capacity.
 
-#### Planned Changes, Drains, or Turndowns
+### Planned Changes, Drains, or Turndowns
 
 If your service is multihomed, some of your capacity may be unavailable because of maintenance or outages in a cluster. Similarly, one of the service’s critical dependencies may be drained, resulting in a reduction in capacity for the upstream service due to drain dependencies, or an increase in latency due to having to send the requests to a more distant cluster.
 
-##### Request profile changes
+#### Request profile changes
 
 A backend service may receive requests from different clusters because a frontend service shifted its traffic due to load balancing configuration changes, changes in the traffic mix, or cluster fullness. Also, the average cost to handle an individual payload may have changed due to frontend code or configuration changes. Similarly, the data handled by the service may have changed organically due to increased or differing usage by existing users: for instance, both the number and size of images, *per user*, for a photo storage service tend to increase over time.
 
-##### Resource limits
+#### Resource limits
 
 Some cluster operating systems allow resource overcommitment. CPU is a fungible resource; often, some machines have some amount of slack CPU available, which provides a bit of a safety net against CPU spikes. The availability of this slack CPU differs between cells, and also between machines within the cell.
 
 Depending upon this slack CPU as your safety net is dangerous. Its availability is entirely dependent on the behavior of the other jobs in the cluster, so it might suddenly drop out at any time. For example, if a team starts a MapReduce that consumes a lot of CPU and schedules on many machines, the aggregate amount of slack CPU can suddenly decrease and trigger CPU starvation conditions for unrelated jobs. When performing load tests, make sure that you remain within your committed resource limits.
 
-### Testing for Cascading Failures
+## Testing for Cascading Failures
 
 The specific ways in which a service will fail can be very hard to predict from first principles. This section discusses testing strategies that can detect if services are susceptible to cascading failures.
 
 You should test your service to determine how it behaves under heavy load in order to gain confidence that it won’t enter a cascading failure under various circumstances.
 
-#### Test Until Failure and Beyond
+### Test Until Failure and Beyond
 
 Understanding the behavior of the service under heavy load is perhaps the most important first step in avoiding cascading failures. Knowing how your system behaves when it is overloaded helps to identify what engineering tasks are the most important for long-term fixes; at the very least, this knowledge may help bootstrap the debugging process for on-call engineers when an emergency arises.
 
@@ -477,7 +473,7 @@ If you believe your system has proper protections against being overloaded, cons
 
 - Blackholing various backends
 
-#### Test Popular Clients
+### Test Popular Clients
 
 Understand how large clients use your service. For example, you want to know if clients:
 
@@ -491,7 +487,7 @@ Depending on your service, you may or may not be in control of all the client co
 
 The same principles apply to large internal clients. Stage system failures with the largest clients to see how they react. Ask internal clients how they access your service and what mechanisms they use to handle backend failure.
 
-#### Test Noncritical Backends
+### Test Noncritical Backends
 
 Test your noncritical backends, and make sure their unavailability does not interfere with the critical components of your service.
 
@@ -499,21 +495,21 @@ For example, suppose your frontend has critical and noncritical backends. Often,
 
 In addition to testing behavior when the noncritical backend is unavailable, test how the frontend behaves if the noncritical backend never responds (for example, if it is blackholing requests). Backends advertised as noncritical can still cause problems on frontends when requests have long deadlines. The frontend should not start rejecting lots of requests, running out of resources, or serving with very high latency when a noncritical backend blackholes.
 
-### Immediate Steps to Address Cascading Failures
+## Immediate Steps to Address Cascading Failures
 
 Once you have identified that your service is experiencing a cascading failure, you can use a few different strategies to remedy the situation—and of course, a cascading failure is a good opportunity to use your incident management protocol ([Managing Incidents](MANAGING.INCIDENTS.md)).
 
-#### Increase Resources
+### Increase Resources
 
 If your system is running at degraded capacity and you have idle resources, adding tasks can be the most expedient way to recover from the outage. However, if the service has entered a death spiral of some sort, adding more resources may not be sufficient to recover.
 
-#### Stop Health Check Failures/Deaths
+### Stop Health Check Failures/Deaths
 
 Some cluster scheduling systems, such as Borg, check the health of tasks in a job and restart tasks that are unhealthy. This practice may create a failure mode in which health-checking itself makes the service unhealthy. For example, if half the tasks aren’t able to accomplish any work because they’re starting up and the other half will soon be killed because they’re overloaded and failing health checks, temporarily disabling health checks may permit the system to stabilize until all the tasks are running.
 
 Process health checking (“is this binary responding *at all*?”) and service health checking (“is this binary able to respond to *this class of requests* right now?”) are two conceptually distinct operations. Process health checking is relevant to the cluster scheduler, whereas service health checking is relevant to the load balancer. Clearly distinguishing between the two types of health checks can help avoid this scenario.
 
-#### Restart Servers
+### Restart Servers
 
 If servers are somehow wedged and not making progress, restarting them may help. Try restarting servers when:
 
@@ -525,7 +521,7 @@ If servers are somehow wedged and not making progress, restarting them may help.
 
 Make sure that you identify the source of the cascading failure before you restart your servers. Make sure that taking this action won’t simply shift around load. Canary this change, and make it slowly. Your actions may amplify an existing cascading failure if the outage is actually due to an issue like a cold cache.
 
-#### Drop Traffic
+### Drop Traffic
 
 Dropping load is a big hammer, usually reserved for situations in which you have a true cascading failure on your hands and you cannot fix it by other means. For example, if heavy load causes most servers to crash as soon as they become healthy, you can get the service up and running again by:
 
@@ -543,19 +539,19 @@ Obviously, this tactic will cause a lot of user-visible harm. Whether or not you
 
 It is important to keep in mind that this strategy enables you to recover from a cascading outage once the underlying problem is fixed. If the issue that started the cascading failure is not fixed (e.g., insufficient global capacity), then the cascading failure may trigger shortly after all traffic returns. Therefore, before using this strategy, consider fixing (or at least papering over) the root cause or triggering condition. For example, if the service ran out of memory and is now in a death spiral, adding more memory or tasks should be your first step.
 
-#### Enter Degraded Modes
+### Enter Degraded Modes
 
 Serve degraded results by doing less work or dropping unimportant traffic. This strategy must be engineered into your service, and can be implemented only if you know which traffic can be degraded and you have the ability to differentiate between the various payloads.
 
-#### Eliminate Batch Load
+### Eliminate Batch Load
 
 Some services have load that is important, but not critical. Consider turning off those sources of load. For example, if index updates, data copies, or statistics gathering consume resources of the serving path, consider turning off those sources of load during an outage.
 
-#### Eliminate Bad Traffic
+### Eliminate Bad Traffic
 
 If some queries are creating heavy load or crashes (e.g., queries of death), consider blocking them or eliminating them via other means.
 
-#### Cascading Failure and Shakespeare
+### Cascading Failure and Shakespeare
 
 A documentary about Shakespeare’s works airs in Japan, and explicitly points to our Shakespeare service as an excellent place to conduct further research. Following the broadcast, traffic to our Asian datacenter surges beyond the service’s capacity. This capacity problem is further compounded by a major update to the Shakespeare service that simultaneously occurs in that datacenter.
 
@@ -565,13 +561,13 @@ As a result, some graphs on the service dashboard turn an alarming shade of red 
 
 Afterward, the SRE team writes a postmortem detailing the chain of events, what went well, what could have gone better, and a number of action items to prevent this scenario from occurring again. For example, in the case of a service overload, the GSLB load balancer will redirect some traffic to neighboring datacenters. Also, the SRE team turns on autoscaling, so that the number of tasks automatically increases with traffic, so they don’t have to worry about this type of issue again.
 
-### Closing Remarks
+## Closing Remarks
 
 When systems are overloaded, something needs to give in order to remedy the situation. Once a service passes its breaking point, it is better to allow some user-visible errors or lower-quality results to slip through than try to fully serve every request. Understanding where those breaking points are and how the system behaves beyond them is critical for service owners who want to avoid cascading failures.
 
 Without proper care, some system changes meant to reduce background errors or otherwise improve the steady state can expose the service to greater risk of a full outage. Retrying on failures, shifting load around from unhealthy servers, killing unhealthy servers, adding caches to improve performance or reduce latency: all of these might be implemented to improve the normal case, but can improve the chance of causing a large-scale failure. Be careful when evaluating changes to ensure that one outage is not being traded for another.
 
-### Notes
+## Notes
 
 [^p1-1]: See Wikipedia, “Positive feedback,” *https://en.wikipedia.org/wiki/Positive_feedback*.
 

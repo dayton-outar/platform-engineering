@@ -1,9 +1,6 @@
 # Chapter 25
 
 ## Data Processing Pipelines
-
-Source: [Site.Reliability.Engineering-2016-25.pdf](./Site.Reliability.Engineering-2016-25.pdf), PDF pages 1–12.
-
 The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
 
 ***Written by Dan Dennison***
@@ -12,11 +9,11 @@ The first-person accounts and Google-specific practices below reflect the source
 
 This document focuses on the real-life challenges of managing data processing pipelines of depth and complexity. It considers the frequency continuum between periodic pipelines that run very infrequently through to continuous pipelines that never stop running, and discusses the discontinuities that can produce significant operational problems. A fresh take on the leader-follower model is presented as a more reliable and better-scaling alternative to the periodic pipeline for processing Big Data.
 
-### Origin of the Pipeline Design Pattern
+## Origin of the Pipeline Design Pattern
 
 The classic approach to data processing is to write a program that reads in data, transforms it in some desired way, and outputs new data. Typically, the program is scheduled to run under the control of a periodic scheduling program such as cron. This design pattern is called a *data pipeline*. Data pipelines go as far back as co-routines [Con63], the DTSS communication files [Bul80], the UNIX pipe [McI86], and later, ETL pipelines,[^p1-1] but such pipelines have gained increased attention with the rise of “Big Data,” or “datasets that are so large and so complex that traditional data processing applications are inadequate.”[^p1-2]
 
-### Initial Effect of Big Data on the Simple Pipeline Pattern
+## Initial Effect of Big Data on the Simple Pipeline Pattern
 
 Programs that perform periodic or continuous transformations on Big Data are usually referred to as “simple, one-phase pipelines.”
 
@@ -24,7 +21,7 @@ Given the scale and processing complexity inherent to Big Data, programs are typ
 
 The number of programs chained together in series is a measurement known as the *depth* of a pipeline. Thus, a shallow pipeline may only have one program with a corresponding pipeline depth measurement of one, whereas a deep pipeline may have a pipeline depth in the tens or hundreds of programs.
 
-### Challenges with the Periodic Pipeline Pattern
+## Challenges with the Periodic Pipeline Pattern
 
 Periodic pipelines are generally stable when there are sufficient workers for the volume of data and execution demand is within computational capacity. In addition, instabilities such as processing bottlenecks are avoided when the number of chained jobs and the relative throughput between jobs remain uniform.
 
@@ -32,7 +29,7 @@ Periodic pipelines are useful and practical, and we run them on a regular basis 
 
 However, the collective SRE experience has been that the periodic pipeline model is fragile. We discovered that when a periodic pipeline is first installed with worker sizing, periodicity, chunking technique, and other parameters carefully tuned, performance is initially reliable. However, organic growth and change inevitably begin to stress the system, and problems arise. Examples of such problems include jobs that exceed their run deadline, resource exhaustion, and hanging processing chunks that entail corresponding operational load.
 
-### Trouble Caused By Uneven Work Distribution
+## Trouble Caused By Uneven Work Distribution
 
 The key breakthrough of Big Data is the widespread application of “embarrassingly parallel” [Mol86] algorithms to cut a large workload into chunks small enough to fit onto individual machines. Sometimes chunks require an uneven amount of resources relative to one another, and it is seldom initially obvious why particular chunks require different amounts of resources. For example, in a workload that is partitioned by customer, data chunks for some customers may be much larger than others.
 
@@ -42,7 +39,7 @@ The “hanging chunk” problem can result when resources are assigned due to di
 
 If this problem is detected by engineers or cluster monitoring infrastructure, the response can make matters worse. For example, the “sensible” or “default” response to a hanging chunk is to immediately kill the job and then allow the job to restart, because the blockage may well be the result of nondeterministic factors. However, because pipeline implementations by design usually don’t include checkpointing, work on all chunks is restarted from the beginning, thereby wasting the time, CPU cycles, and human effort invested in the previous cycle.
 
-### Drawbacks of Periodic Pipelines in Distributed Environments
+## Drawbacks of Periodic Pipelines in Distributed Environments
 
 Big Data periodic pipelines are widely used at Google, and so Google’s cluster management solution includes an alternative scheduling mechanism for such pipelines. This mechanism is necessary because, unlike continuously running pipelines, periodic pipelines typically run as lower-priority batch jobs. A lower-priority designation works well in this case because batch work is not sensitive to latency in the same way that Internet-facing web services are. In addition, in order to control cost by maximizing machine workload, Borg (Google’s cluster management system, [Ver15]) assigns batch work to available machines. This priority can result in degraded startup latency, so pipeline jobs can potentially experience open-ended startup delays.
 
@@ -58,13 +55,13 @@ Note where the downward-sloping idle interval line intersects the scheduling del
 
 The solution to this problem is to secure sufficient server capacity for proper operation. However, resource acquisition in a shared, distributed environment is subject to supply and demand. As expected, development teams tend to be reluctant to go through the processes of acquiring resources when the resources must be contributed to a common pool and shared. To resolve this, a distinction between batch scheduling resources versus production priority resources has to be made to rationalize resource acquisition costs.
 
-#### Monitoring Problems in Periodic Pipelines
+### Monitoring Problems in Periodic Pipelines
 
 For pipelines of sufficient execution duration, having real-time information on runtime performance metrics can be as important, if not even more important, than knowing overall metrics. This is because real-time data is important to providing operational support, including emergency response. In practice, the standard monitoring model involves collecting metrics during job execution, and reporting metrics only upon completion. If the job fails during execution, no statistics are provided.
 
 Continuous pipelines do not share these problems because their tasks are constantly running and their telemetry is routinely designed so that real-time metrics are available. Periodic pipelines shouldn’t have inherent monitoring problems, but we have observed a strong association.
 
-#### “Thundering Herd” Problems
+### “Thundering Herd” Problems
 
 Adding to execution and monitoring challenges is the “thundering herd” problem endemic to distributed systems, also discussed in [Distributed Periodic Scheduling with Cron](DISTRIBUTED.PERIODIC.SCHEDULING.CRON.md). Given a large enough periodic pipeline, for each cycle, potentially thousands of workers immediately start work. If there are too many workers or if the workers are misconfigured or invoked by faulty retry logic, the servers on which they run will be overwhelmed, as will the underlying shared cluster services, and any networking infrastructure that was being used will also be overwhelmed.
 
@@ -74,7 +71,7 @@ Human intervention can also contribute to this scenario. Engineers with limited 
 
 Regardless of the source of the “thundering herd” problem, nothing is harder on cluster infrastructure and the SREs responsible for a cluster’s various services than a buggy 10,000 worker pipeline job.
 
-#### Moiré Load Pattern
+### Moiré Load Pattern
 
 Sometimes the thundering herd problem may not be obvious to spot in isolation. A related problem we call “Moiré load pattern” occurs when two or more pipelines run simultaneously and their execution sequences occasionally overlap, causing them to simultaneously consume a common shared resource. This problem can occur even in continuous pipelines, although it is less common when load arrives more evenly.
 
@@ -88,13 +85,13 @@ Moiré load patterns are most apparent in plots of pipeline usage of shared reso
 
 *Figure 25-3. Moiré load pattern in shared infrastructure*
 
-### Introduction to Google Workflow
+## Introduction to Google Workflow
 
 When an inherently one-shot batch pipeline is overwhelmed by business demands for continuously updated results, the pipeline development team usually considers either refactoring the original design to satisfy current demands, or moving to a continuous pipeline model. Unfortunately, business demands usually occur at the least convenient time to refactor the pipeline system into an online continuous processing system. Newer and larger customers who are faced with forcing scaling issues typically also want to include new features, and expect that these requirements adhere to immovable deadlines. In anticipating this challenge, it’s important to ascertain several details at the outset of designing a system involving a proposed data pipeline. Be sure to scope expected growth trajectory,[^p7-3] demand for design modifications, expected additional resources, and expected latency requirements from the business.
 
 Faced with these needs, Google developed a system in 2003 called “Workflow” that makes continuous processing available at scale. Workflow uses the leader-follower (workers) distributed systems design pattern [Sha00] and the system prevalence design pattern.[^p8-4] This combination enables very large-scale transactional data pipelines, ensuring correctness with exactly-once semantics.
 
-#### Workflow as Model-View-Controller Pattern
+### Workflow as Model-View-Controller Pattern
 
 Because of how system prevalence works, it can be useful to think of Workflow as the distributed systems equivalent of the model-view-controller pattern known from user interface development.[^p8-5] As shown in Figure 25-4, this design pattern divides a given software application into three interconnected parts to separate internal representations of information from the ways that information is presented to or accepted from the user.[^p8-6]
 
@@ -108,7 +105,7 @@ Adapting this pattern for Workflow, the *model* is held in a server called “Ta
 
 *Figure 25-5. The model-view-controller design pattern as adapted for Google Workflow*
 
-### Stages of Execution in Workflow
+## Stages of Execution in Workflow
 
 We can increase pipeline depth to any level inside Workflow by subdividing processing into task groups held in the Task Master. Each task group holds the work corresponding to a pipeline stage that can perform arbitrary operations on some piece of data. It’s relatively straightforward to perform mapping, shuffling, sorting, splitting, merging, or any other operation in any stage.
 
@@ -116,7 +113,7 @@ A stage usually has some worker type associated with it. There can be multiple c
 
 The worker consumes work units from a previous stage and produces output units. The output can be an end point or input for some other processing stage. Within the system, it’s easy to guarantee that all work is executed, or at least reflected in permanent state, exactly once.
 
-#### Workflow Correctness Guarantees
+### Workflow Correctness Guarantees
 
 It’s not practical to store *every* detail of the pipeline’s state inside the Task Master, because the Task Master is limited by RAM size. However, a double correctness guarantee persists because the master holds a collection of pointers to uniquely named data, and each work unit has a uniquely held lease. Workers acquire work with a lease and may only commit work from tasks for which they currently possess a valid lease.
 
@@ -144,7 +141,7 @@ At this point, it may occur to you that it would be simpler to forgo the special
 
 For example, the lease obtained by the worker is part of the task itself, requiring a brand new task even for lease changes. If a database is used directly and its transaction logs act like a “journal,” each and every read must be part of a long-running transaction. This configuration is most certainly possible, but terribly inefficient.
 
-### Ensuring Business Continuity
+## Ensuring Business Continuity
 
 Big Data pipelines need to continue processing despite failures of all types, including fiber cuts, weather events, and cascading power grid failures. These types of failures can disable entire datacenters. In addition, pipelines that do not employ system prevalence to obtain strong guarantees about job completion are often disabled and enter an undefined state. This architecture gap makes for a brittle business continuity strategy, and entails costly mass duplication of effort to restore pipelines and data.
 
@@ -158,13 +155,13 @@ To automate failover, a helper binary labeled “stage 1” in Figure 25-6 runs 
 
 *Figure 25-6. An example of distributed data and process flow using Workflow pipelines*
 
-### Summary and Concluding Remarks
+## Summary and Concluding Remarks
 
 Periodic pipelines are valuable. However, if a data processing problem is continuous or will organically grow to become continuous, don’t use a periodic pipeline. Instead, use a technology with characteristics similar to Workflow.
 
 We have found that continuous data processing with strong guarantees, as provided by Workflow, performs and scales well on distributed cluster infrastructure, routinely produces results that users can rely upon, and is a stable and reliable system for the Site Reliability Engineering team to manage and maintain.
 
-### Notes
+## Notes
 
 [^p1-1]: Wikipedia: Extract, transform, load, *http://en.wikipedia.org/wiki/Extract,_transform,_load*
 

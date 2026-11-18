@@ -1,8 +1,4 @@
-# Chapter 19
-
-## Load Balancing at the Frontend
-
-Source: [Site.Reliability.Engineering-2016-19.pdf](./Site.Reliability.Engineering-2016-19.pdf), PDF pages 1–7.
+# Load Balancing at the Frontend
 
 The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
 
@@ -14,7 +10,7 @@ We serve many millions of requests every second and, as you may have already gue
 
 This document focuses on high-level load balancing—how we balance user traffic *between* datacenters. [Load Balancing in the Datacenter](LOAD.BALANCING.DATACENTER.md) explores how Google implements load balancing *inside* a datacenter.
 
-### Power Isn’t the Answer
+## Power Isn’t the Answer
 
 For the sake of argument, let’s assume we have an unbelievably powerful machine and a network that never fails. Would *that* configuration be sufficient to meet Google’s needs? No. Even this configuration would still be limited by the physical constraints associated with our networking infrastructure. For example, the speed of light is a limiting factor on the communication speeds for fiber optic cable, which creates an upper bound on how quickly we can serve data based upon the distance it has to travel. Even in an ideal world, relying on an infrastructure with a single point of failure is a bad idea.
 
@@ -36,7 +32,7 @@ But on the *local* level, inside a given datacenter, we often assume that all ma
 
 Of course, this example presents a vastly simplified picture. In reality, many more considerations factor into optimal load distribution: some requests may be directed to a datacenter that is slightly farther away in order to keep caches warm, or non-interactive traffic may be routed to a completely different region to avoid network congestion. Load balancing, especially for large systems, is anything but straightforward and static. At Google, we’ve approached the problem by load balancing at multiple levels, two of which are described in the following sections. For the sake of presenting a concrete discussion, we’ll consider HTTP requests sent over TCP. Load balancing of stateless services (like DNS over UDP) differs slightly, but most of the mechanisms described here should be applicable to stateless services as well.
 
-### Load Balancing Using DNS
+## Load Balancing Using DNS
 
 Before a client can even send an HTTP request, it often has to look up an IP address using DNS. This provides the perfect opportunity to introduce our first layer of load balancing: *DNS load balancing*. The simplest solution is to return multiple A or AAAA records in the DNS reply and let the client pick an IP address arbitrarily. While conceptually simple and trivial to implement, this solution poses multiple challenges.
 
@@ -74,7 +70,7 @@ This limit sets an upper bound on the number of addresses we can squeeze into a 
 
 To *really* solve the problem of frontend load balancing, this initial level of DNS load balancing should be followed by a level that takes advantage of virtual IP addresses.
 
-### Load Balancing at the Virtual IP Address
+## Load Balancing at the Virtual IP Address
 
 Virtual IP addresses (VIPs) are not assigned to any particular network interface. Instead, they are usually shared across many devices. However, from the user’s perspective, the VIP remains a single, regular IP address. In theory, this practice allows us to hide implementation details (such as the number of machines behind a particular VIP) and facilitates maintenance, because we can schedule upgrades or add more machines to the pool without the user knowing.
 
@@ -102,7 +98,7 @@ Packet encapsulation is a powerful mechanism that provides great flexibility in 
 
 Once the packet reaches the datacenter, fragmentation can be avoided by using a larger MTU within the datacenter; however, this approach requires a network that supports large Protocol Data Units. As with many things at scale, load balancing sounds simple on the surface—load balance early and load balance often—but the difficulty is in the details, both for frontend load balancing and for handling packets once they reach the datacenter.
 
-### Notes
+## Notes
 
 [^p3-1]: See *https://groups.google.com/forum/#!topic/public-dns-announce/67oxFjSLeUM*.
 

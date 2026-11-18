@@ -1,8 +1,4 @@
-# Chapter 8
-
-## Release Engineering
-
-Source: [Site.Reliability.Engineering-2016-8.pdf](./Site.Reliability.Engineering-2016-8.pdf), printed pages 87–95.
+# Release Engineering
 
 The Google practices and case studies below reflect the source’s 2016 account.
 
@@ -15,7 +11,7 @@ Running reliable services requires reliable release processes. Site Reliability 
 
 Release engineering is a specific job function at Google. Release engineers work with software engineers (SWEs) in product development and SREs to define all the steps required to release software—from how the software is stored in the source code repository, to build rules for compilation, to how testing, packaging, and deployment are conducted.
 
-### The Role of a Release Engineer
+## The Role of a Release Engineer
 
 Google is a data-driven company and release engineering follows suit. Google’s release engineers have tools that report on a host of metrics, such as how much time it takes for a code change to be deployed into production (in other words, release velocity) and statistics on what features are being used in build configuration files [Ada15]. Most of these tools were envisioned and developed by release engineers.
 
@@ -23,25 +19,25 @@ Release engineers define best practices for using Google’s tools in order to m
 
 Google has a large number of SREs who are charged with safely deploying products and keeping Google services up and running. In order to make sure Google’s release processes meet business requirements, release engineers and SREs work together to develop strategies for canarying changes, pushing out new releases without interrupting services, and rolling back features that demonstrate problems.
 
-### Philosophy
+## Philosophy
 
 Release engineering is guided by an engineering and service philosophy that’s expressed through four major principles, detailed in the following sections.
 
-#### Self-Service Model
+### Self-Service Model
 
 In order to work at scale, teams must be self-sufficient. Release engineering has developed best practices and tools that allow Google’s product development teams to control and run their own release processes. Although Google has thousands of engineers and products, its teams can achieve a high release velocity because individual teams can decide how often and when to release new versions of their products. Release processes can be automated to the point that they require minimal involvement by the engineers, and many projects are automatically built and released using a combination of Google’s automated build system and Google’s deployment tools. Releases are truly automatic, and only require engineer involvement if and when problems arise.
 
-#### High Velocity
+### High Velocity
 
 User-facing software (such as many components of Google Search) is rebuilt frequently, as Google aims to roll out customer-facing features as quickly as possible. They have embraced the philosophy that frequent releases result in fewer changes between versions. This approach makes testing and troubleshooting easier. Some teams perform hourly builds and then select the version to actually deploy to production from the resulting pool of builds. Selection is based upon the test results and the features contained in a given build. Other teams have adopted a “Push on Green” release model and deploy every build that passes all tests [Kle14].
 
-#### Hermetic Builds
+### Hermetic Builds
 
 Build tools must allow Google’s release engineers to ensure consistency and repeatability. If two people attempt to build the same product at the same revision number in the source code repository on different machines, they expect identical results.[^1] Google’s builds are hermetic, meaning that they are insensitive to the libraries and other software installed on the build machine. Instead, builds depend on known versions of build tools, such as compilers, and dependencies, such as libraries. The build process is self-contained and must not rely on services that are external to the build environment.
 
 Rebuilding older releases when Google’s release engineers need to fix a bug in software that’s running in production can be a challenge. They accomplish this task by rebuilding at the same revision as the original build and including specific changes that were submitted after that point in time. They call this tactic *cherry picking*. Google’s build tools are themselves versioned based on the revision in the source code repository for the project being built. Therefore, a project built last month won’t use this month’s version of the compiler if a cherry pick is required, because that version may contain incompatible or undesired features.
 
-#### Enforcement of Policies and Procedures
+### Enforcement of Policies and Procedures
 
 Several layers of security and access control determine who can perform specific operations when releasing a project. Gated operations include:
 
@@ -59,21 +55,21 @@ Several layers of security and access control determine who can perform specific
 
 Almost all changes to the codebase require a code review, which is a streamlined action integrated into Google’s normal developer workflow. Google’s automated release system produces a report of all changes contained in a release, which is archived with other build artifacts. By allowing SREs to understand what changes are included in a new release of a project, this report can expedite troubleshooting when there are problems with a release.
 
-### Continuous Build and Deployment
+## Continuous Build and Deployment
 
 Google has developed an automated release system called *Rapid*. Rapid is a system that leverages a number of Google technologies to provide a framework that delivers scalable, hermetic, and reliable releases. The following sections describe the software lifecycle at Google and how it is managed using Rapid and other associated tools.
 
-#### Building
+### Building
 
 Blaze[^2] is Google’s build tool of choice. It supports building binaries from a range of languages, including Google’s standard languages of C++, Java, Python, Go, and JavaScript. Engineers use Blaze to define build targets (e.g., the output of a build, such as a JAR file), and to specify the dependencies for each target. When performing a build, Blaze automatically builds the dependency targets.
 
 Build targets for binaries and unit tests are defined in Rapid’s project configuration files. Project-specific flags, such as a unique build identifier, are passed by Rapid to Blaze. All binaries support a flag that displays the build date, the revision number, and the build identifier, which allow Google’s release engineers to easily associate a binary to a record of how it was built.
 
-#### Branching
+### Branching
 
 All code is checked into the main branch of the source code tree (mainline). However, most major projects don’t release directly from the mainline. Instead, Google’s release engineers branch from the mainline at a specific revision and never merge changes from the branch back into the mainline. Bug fixes are submitted to the mainline and then cherry picked into the branch for inclusion in the release. This practice avoids inadvertently picking up unrelated changes submitted to the mainline since the original build occurred. Using this branch and cherry pick method, they know the exact contents of each release.
 
-#### Testing
+### Testing
 
 A continuous test system runs unit tests against the code in the mainline each time a change is submitted, allowing Google’s release engineers to detect build and test failures quickly. Release engineering recommends that the continuous build test targets correspond to the same test targets that gate the project release. They also recommend creating releases at the revision number (version) of the last continuous test build that successfully completed all tests. These measures decrease the chance that subsequent changes made to the mainline will cause failures during the build performed at release time.
 
@@ -81,13 +77,13 @@ During the release process, Google’s release engineers re-run the unit tests u
 
 To complement the continuous test system, Google’s release engineers use an independent testing environment that runs system-level tests on packaged build artifacts. These tests can be launched manually or from Rapid.
 
-#### Packaging
+### Packaging
 
 Software is distributed to Google’s production machines via the Midas Package Manager (MPM) [McN14c]. MPM assembles packages based on Blaze rules that list the build artifacts to include, along with their owners and permissions. Packages are named (e.g., *search/shakespeare/frontend*), versioned with a unique hash, and signed to ensure authenticity. MPM supports applying labels to a particular version of a package. Rapid applies a label containing the build ID, which guarantees that a package can be uniquely referenced using the name of the package and this label.
 
 Labels can be applied to an MPM package to indicate a package’s location in the release process (e.g., dev, canary, or production). If you apply an existing label to a new package, the label is automatically moved from the old package to the new package. For example: if a package is labeled as canary, someone subsequently installing the canary version of that package will automatically receive the newest version of the package with the label canary.
 
-#### Rapid
+### Rapid
 
 Figure 8-1 shows the main components of the Rapid system. Rapid is configured with files called *blueprints*. Blueprints are written in an internal configuration language and are used to define build and test targets, rules for deployment, and administrative information (like project owners). Role-based access control lists determine who can perform specific actions on a Rapid project.
 
@@ -109,7 +105,7 @@ A typical release process proceeds as follows:
 
 Rapid allows Google’s release engineers to manage Google’s release branches and cherry picks; individual cherry pick requests can be approved or rejected for inclusion in a release.
 
-#### Deployment
+### Deployment
 
 Rapid is often used to drive simple deployments directly. It updates the Borg jobs to use newly built MPM packages based on deployment definitions in the blueprint files and specialized task executors.
 
@@ -121,7 +117,7 @@ With Sisyphus, the rollout process can be as simple or complicated as necessary.
 
 Google’s goal is to fit the deployment process to the risk profile of a given service. In development or pre-production environments, Google’s release engineers may build hourly and push releases automatically when all tests pass. For large user-facing services, they may push by starting in one cluster and expand exponentially until all clusters are updated. For sensitive pieces of infrastructure, they may extend the rollout over several days, interleaving them across instances in different geographic regions.
 
-### Configuration Management
+## Configuration Management
 
 Configuration management is one area of particularly close collaboration between release engineers and SREs. Although configuration management may initially seem a deceptively simple problem, configuration changes are a potential source of instability. As a result, Google’s approach to releasing and managing system and service configurations has evolved substantially over time. The 2016 account describes several models for distributing configuration files, as described in the following paragraphs. All schemes involve storing configuration in Google’s primary source code repository and enforcing a strict code review requirement.
 
@@ -139,11 +135,11 @@ Google’s release engineers can leverage MPM’s labeling feature to indicate w
 
 In summary, project owners consider the different options for distributing and managing configuration files and decide which works best on a case-by-case basis.
 
-### Conclusions
+## Conclusions
 
 While this guide describes Google’s approach to release engineering and the ways in which release engineers work and collaborate with SREs, these practices can also be applied more widely.
 
-#### It’s Not Just for Googlers
+### It’s Not Just for Googlers
 
 When equipped with the right tools, proper automation, and well-defined policies, developers and SREs shouldn’t have to worry about releasing software. Releases can be as painless as simply pressing a button.
 
@@ -151,7 +147,7 @@ Most companies deal with the same set of release engineering problems regardless
 
 Google Release Engineers developed custom tools out of necessity because open sourced or vendor-supplied tools don’t work at the scale Google requires. Custom tools allow them to include functionality to support (and even enforce) release process policies. However, these policies must first be defined in order to add appropriate features to Google’s tools, and all companies should take the effort to define their release processes whether or not the processes can be automated and/or enforced.
 
-#### Start Release Engineering at the Beginning
+### Start Release Engineering at the Beginning
 
 Release engineering has often been an afterthought, and this way of thinking must change as platforms and services continue to grow in size and complexity.
 
@@ -161,7 +157,7 @@ It is essential that the developers, SREs, and release engineers work together. 
 
 Individual project teams decide when release engineering becomes involved in a project. Because release engineering is still a relatively young discipline, managers don’t always plan and budget for release engineering in the early stages of a project. Therefore, when considering how to incorporate release engineering practices, be sure that you consider its role as applied to the entire lifecycle of your product or service—particularly the early stages.
 
-### Notes
+## Notes
 
 [^1]: Google uses a monolithic unified source code repository; see [Pot16].
 

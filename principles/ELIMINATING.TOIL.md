@@ -1,8 +1,4 @@
-# Chapter 5
-
-## Eliminating Toil
-
-Source: [Site.Reliability.Engineering-2016-5.pdf](./Site.Reliability.Engineering-2016-5.pdf), printed pages 49–54.
+# Eliminating Toil
 
 The Google practices and case studies below reflect the source’s 2016 account.
 
@@ -15,7 +11,7 @@ Edited by Betsy Beyer***
 
 In SRE, SRE teams want to spend time on long-term engineering project work instead of operational work. Because the term *operational work* may be misinterpreted, they use a specific word: *toil*.
 
-### Toil Defined
+## Toil Defined
 
 Toil is not just “work I don’t like to do.” It’s also not simply equivalent to administrative chores or grungy work. Preferences as to what types of work are satisfying and enjoyable vary from person to person, and some people even enjoy manual, repetitive work. There are also administrative chores that have to get done, but should not be categorized as toil: this is *overhead*. Overhead is often work not directly tied to running a production service, and includes tasks like team meetings, setting and grading goals,[^1] snippets,[^2] and HR paperwork. Grungy work can sometimes have long-term value, and in that case, it’s not toil, either. Cleaning up the entire alerting configuration for your service and removing clutter may be grungy, but it’s not toil.
 
@@ -45,7 +41,7 @@ If your service remains in the same state after you have finished a task, the ta
 
 If the work involved in a task scales up linearly with service size, traffic volume, or user count, that task is probably toil. An ideally managed and designed service can grow by at least one order of magnitude with zero additional work, other than some one-time efforts to add resources.
 
-### Why Less Toil Is Better
+## Why Less Toil Is Better
 
 Google’s SRE organization has an advertised goal of keeping operational work (i.e., toil) below 50% of each SRE’s time. At least 50% of each SRE’s time should be spent on engineering project work that will either reduce future toil or add service features. Feature development typically focuses on improving reliability, performance, or utilization, which often reduces toil as a second-order effect.
 
@@ -53,7 +49,7 @@ Google’s SRE teams share this 50% goal because toil tends to expand if left un
 
 Furthermore, when SRE teams hire new SREs, they promise them that SRE is not a typical Ops organization, quoting the 50% rule just mentioned. They need to keep that promise by not allowing the SRE organization or any subteam within it to devolve into an Ops team.
 
-#### Calculating Toil
+### Calculating Toil
 
 If SRE teams seek to cap the time an SRE spends on toil to 50%, how is that time spent?
 
@@ -63,7 +59,7 @@ Consistent with this data, SREs report that their top source of toil is interrup
 
 Quarterly surveys of Google’s SREs show that the average time spent toiling is about 33%, so SRE teams do much better than the organization’s overall target of 50%. However, the average doesn’t capture outliers: some SREs claim 0% toil (pure development projects with no on-call work) and others claim 80% toil. When individual SREs report excessive toil, it often indicates a need for managers to spread the toil load more evenly across the team and to encourage those SREs to find satisfying engineering projects.
 
-### What Qualifies as Engineering?
+## What Qualifies as Engineering?
 
 Engineering work is novel and intrinsically requires human judgment. It produces a permanent improvement in your service, and is guided by a strategy. It is frequently creative and innovative, taking a design-driven approach to solving a problem—the more generalized, the better. Engineering work helps your team or the SRE organization handle a larger service, or more services, with the same level of staffing.
 
@@ -87,7 +83,7 @@ Administrative work not tied directly to running a service. Examples include hir
 
 Every SRE needs to spend at least 50% of their time on engineering work, when averaged over a few quarters or a year. Toil tends to be spiky, so a steady 50% of time spent on engineering may not be realistic for some SRE teams, and they may dip below that target in some quarters. But if the fraction of time spent on projects averages significantly below 50% over the long haul, the affected team needs to step back and figure out what’s wrong.
 
-### Is Toil Always Bad?
+## Is Toil Always Bad?
 
 Toil doesn’t make everyone unhappy all the time, especially in small amounts. Predictable and repetitive tasks can be quite calming. They produce a sense of accomplishment and quick wins. They can be low-risk and low-stress activities. Some people gravitate toward tasks involving toil and may even enjoy that type of work.
 
@@ -123,11 +119,11 @@ Even if you’re not personally unhappy with toil, your current or future teamma
 
 New hires or transfers who joined SRE with the promise of project work will feel cheated, which is bad for morale.
 
-### Conclusion
+## Conclusion
 
 If SRE teams all commit to eliminate a bit of toil each week with some good engineering, they will steadily clean up their services, and they can shift their collective efforts to engineering for scale, architecting the next generation of services, and building cross-SRE toolchains. Let’s invent more, and toil less.
 
-### Notes
+## Notes
 
 [^1]: Google uses the Objectives and Key Results system, pioneered by Andy Grove at Intel; see [Kla12].
 

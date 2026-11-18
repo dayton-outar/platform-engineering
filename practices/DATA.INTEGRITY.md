@@ -1,8 +1,4 @@
-# Chapter 26
-
-## Data Integrity: What You Read Is What You Wrote
-
-Source: [Site.Reliability.Engineering-2016-26.pdf](./Site.Reliability.Engineering-2016-26.pdf), PDF pages 1–30.
+# Data Integrity: What You Read Is What You Wrote
 
 The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
 
@@ -20,7 +16,7 @@ How long is “too long” for data to be unavailable? As demonstrated by an act
 
 Similar reasoning applies to applications like Google Photos, Drive, Cloud Storage, and Cloud Datastore, because users don’t necessarily draw a distinction between these discrete products (reasoning, “this product is still Google” or “Google, Amazon, whatever; this product is still part of the cloud”). Data loss, data corruption, and extended unavailability are typically indistinguishable to users. Therefore, data integrity applies to all types of data across all services. When considering data integrity, what matters is that *services in the cloud remain accessible to users. User access to data is especially important*.
 
-### Data Integrity’s Strict Requirements
+## Data Integrity’s Strict Requirements
 
 When considering the reliability needs of a given system, it may seem that uptime (service availability) needs are stricter than those of data integrity. For example, users may find an hour of email downtime unacceptable, whereas they may live grumpily with a four-day time window to recover a mailbox. However, there’s a more appropriate way to consider the demands of uptime versus data integrity.
 
@@ -42,7 +38,7 @@ In an alternate universe, suppose the corruption were immediately detected befor
 
 Astonishingly, at least from the user perspective, in this scenario, data integrity is still 100% (or close to 100%) during the accessible lifetime of the object. As demonstrated by this example, *the secret to superior data integrity is proactive detection and rapid repair and recovery.*
 
-#### Choosing a Strategy for Superior Data Integrity
+### Choosing a Strategy for Superior Data Integrity
 
 There are many possible strategies for rapid detection, repair, and recovery of lost data. All of these strategies trade uptime against data integrity with respect to affected users. Some strategies work better than others, and some strategies require more complex engineering investment than others. With so many options available, which strategies should you utilize? The answer depends on your computing paradigm.
 
@@ -90,7 +86,7 @@ In addition, if such an application relies on independent, uncoordinated backups
 
 In consideration of these dependencies and complications, how many resources should be invested in data integrity efforts, and where?
 
-#### Backups Versus Archives
+### Backups Versus Archives
 
 Traditionally, companies “protect” data against loss by investing in backup strategies. However, the real focus of such backup efforts should be data recovery, which distinguishes *real* backups from archives. As is sometimes observed: No one really *wants* to make backups; what people *really* want are *restores*.
 
@@ -110,7 +106,7 @@ It’s also important to consider that because the most recent data is at risk u
 
 Therefore, when formulating a backup strategy, consider how quickly you need to be able to recover from a problem, and how much recent data you can afford to lose.
 
-#### Requirements of the Cloud Environment in Perspective
+### Requirements of the Cloud Environment in Perspective
 
 Cloud environments introduce a unique combination of technical challenges:
 
@@ -134,11 +130,11 @@ Otherwise, sophisticated customers can’t migrate applications to the cloud, an
 
 Problems arise when the preceding API features are used in certain combinations. If the service provider doesn’t solve these problems, then the applications that run into these challenges must identify and solve them independently.
 
-### Google SRE Objectives in Maintaining Data Integrity and Availability
+## Google SRE Objectives in Maintaining Data Integrity and Availability
 
 While SRE’s goal of “maintaining integrity of persistent data” is a good vision, we thrive on concrete objectives with measurable indicators. SRE defines key metrics that we use to set expectations for the capabilities of our systems and processes through tests and to track their performance during an actual event.
 
-#### Data Integrity Is the Means; Data Availability Is the Goal
+### Data Integrity Is the Means; Data Availability Is the Goal
 
 Data integrity refers to the accuracy and consistency of data throughout its lifetime. Users need to know that information will be correct and won’t change in some unexpected way from the time it’s first recorded to the last time it’s observed. But is such assurance enough?
 
@@ -152,7 +148,7 @@ Except, *all was not well*. User data had been preserved, but the data was not a
 
 The moral of this example: From the user’s point of view, data integrity without expected and regular data availability is effectively the same as having no data at all.
 
-#### Delivering a Recovery System, Rather Than a Backup System
+### Delivering a Recovery System, Rather Than a Backup System
 
 Making backups is a classically neglected, delegated, and deferred task of system administration. Backups aren’t a high priority for anyone—they’re an ongoing drain on time and resources, and yield no immediate visible benefit. For this reason, a lack of diligence in implementing a backup strategy is typically met with a sympathetic eye roll. One might argue that, like most measures of protection against low-risk dangers, such an attitude is pragmatic. The fundamental problem with this lackadaisical strategy is that the dangers it entails may be low risk, but they are also high impact. When your service’s data is unavailable, your response can make or break your service, product, and even your company.
 
@@ -162,7 +158,7 @@ Instead of focusing on the thankless job of taking a backup, it’s much more us
 
 - A team practices and demonstrates their ability to meet those SLOs.
 
-#### Types of Failures That Lead to Data Loss
+### Types of Failures That Lead to Data Loss
 
 As illustrated by Figure 26-1, at a very high level, there are 24 distinct types of failures when the 3 factors can occur in any combination. You should consider each of these potential failures when designing a data integrity program. The factors of data integrity failure modes are as follows:
 
@@ -194,11 +190,11 @@ Solving this problem with your own engineers entails sacrificing velocity. Many 
 
 Consider the data recovery options provided by the cloud APIs you are about to use. Trade point-in-time recovery against a tiered strategy if necessary, but don’t resort to not using either! If you can have both features, use both features. Each of these features (or both) will be valuable at some point.
 
-#### Challenges of Maintaining Data Integrity Deep and Wide
+### Challenges of Maintaining Data Integrity Deep and Wide
 
 In designing a data integrity program, it’s important to recognize that *replication and redundancy are not recoverability*.
 
-##### Scaling issues: Fulls, incrementals, and the competing forces of backups and restores
+#### Scaling issues: Fulls, incrementals, and the competing forces of backups and restores
 
 A classic but flawed response to the question “Do you have a backup?” is “We have something even better than a backup—replication!” Replication provides many benefits, including locality of data and protection from a site-specific disaster, but it can’t protect you from many sources of data loss. Datastores that automatically sync multiple replicas guarantee that a corrupt database row or errant delete are pushed to all of your copies, likely before you can isolate the problem.
 
@@ -210,17 +206,17 @@ The forces of data freshness and restore completion compete against comprehensiv
 
 In this scenario, you may lose up to 40 minutes of the most recent data when you restore the latest snapshot. A restore from the filesystem backup might incur hours of missing transactions. Additionally, restoring probably takes as long as backing up, so actually loading the data might take hours. You’d obviously like to have the freshest data back as quickly as possible, but depending on the type of failure, that freshest and most immediately available copy might not be an option.
 
-##### Retention
+#### Retention
 
 Retention—how long you keep copies of your data around—is yet another factor to consider in your data recovery plans.
 
 While it’s likely that you or your customers will quickly notice the sudden emptying of an entire database, it might take days for a more gradual loss of data to attract the right person’s attention. Restoring the lost data in the latter scenario requires snapshots taken further back in time. When reaching back this far, you’ll likely want to merge the restored data with the current state. Doing so significantly complicates the restore process.
 
-### How Google SRE Faces the Challenges of Data Integrity
+## How Google SRE Faces the Challenges of Data Integrity
 
 Similar to our assumption that Google’s underlying systems are prone to failure, we assume that any of our protection mechanisms are also subject to the same forces and can fail in the same ways and at the most inconvenient of times. Maintaining a guarantee of data integrity at large scale, a challenge that is further complicated by the high rate of change of the involved software systems, requires a number of complementary but uncoupled practices, each chosen to offer a high degree of protection on its own.
 
-#### The 24 Combinations of Data Integrity Failure Modes
+### The 24 Combinations of Data Integrity Failure Modes
 
 Given the many ways data can be lost (as described previously), there is no silver bullet that guards against the many combinations of failure modes. Instead, you need defense in depth. Defense in depth comprises multiple layers, with each successive layer of defense conferring protection from progressively less common data loss scenarios. Figure 26-2 illustrates an object’s journey from soft deletion to destruction, and the data recovery strategies that should be employed along this journey to ensure defense in depth.
 
@@ -230,7 +226,7 @@ The first layer is *soft deletion* (or “lazy deletion” in the case of develo
 
 *Figure 26-2. An object’s journey from soft deletion to destruction*
 
-#### First Layer: Soft Deletion
+### First Layer: Soft Deletion
 
 When velocity is high and privacy matters, bugs in applications account for the vast majority of data loss and corruption events. In fact, data deletion bugs may become so common that the ability to undelete data for a limited time becomes the primary line of defense against the majority of otherwise permanent, inadvertent data loss.
 
@@ -262,7 +258,7 @@ What about *revision history*? Some products provide the ability to revert items
 
 At Google, revision history has proven useful in recovering from certain data corruption scenarios, but not in recovering from most data loss scenarios involving accidental deletion, programmatic or otherwise. This is because some revision history implementations treat deletion as a special case in which previous states must be removed, as opposed to mutating an item whose history may be retained for a certain time period. To provide adequate protection against unwanted deletion, apply the lazy and/or soft deletion principles to revision history also.
 
-#### Second Layer: Backups and Their Related Recovery Methods
+### Second Layer: Backups and Their Related Recovery Methods
 
 Backups and data recovery are the second line of defense after soft deletion. The most important principle in this layer is that backups don’t matter; what matters is recovery. The factors supporting successful recovery should drive your backup decisions, not the other way around.
 
@@ -298,7 +294,7 @@ Subsequent tiers take advantage of nearline storage such as dedicated tape libra
 
 It is expensive to move large amounts of data to and from tiers. On the other hand, storage capacity at the later tiers does not contend with growth of the live production storage instances of your service. As a result, backups in these tiers tend to be taken less frequently but retained longer.
 
-#### Overarching Layer: Replication
+### Overarching Layer: Replication
 
 In an ideal world, every storage instance, including the instances containing your backups, would be replicated. During a data recovery effort, the last thing you want is to discover is that your backups themselves lost the needed data or that the datacenter containing the most useful backup is under maintenance.
 
@@ -306,7 +302,7 @@ As the volume of data increases, replication of every storage instance isn’t a
 
 When choosing a system of redundancy, don’t rely upon an infrequently used scheme whose only “tests” of efficacy are your own infrequent data recovery attempts. Instead, choose a popular scheme that’s in common and continual use by many of its users.
 
-#### 1T Versus 1E: Not “Just” a Bigger Backup
+### 1T Versus 1E: Not “Just” a Bigger Backup
 
 Processes and practices applied to volumes of data measured in T (terabytes) don’t scale well to data measured in E (exabytes). Validating, copying, and performing round-trip tests on a few gigabytes of structured data is an interesting problem. However, assuming that you have sufficient knowledge of your schema and transaction model, this exercise doesn’t present any special challenges. You typically just need to procure the machine resources to iterate over your data, perform some validation logic, and delegate enough storage to hold a few copies of your data.
 
@@ -326,11 +322,11 @@ Another way we can reduce the wall time of our copying and verification jobs is 
 
 Between distributing the load horizontally and restricting the work to vertical slices of the data demarcated by time, we can reduce those eight decades of wall time by several orders of magnitude, rendering our restores relevant.
 
-#### Third Layer: Early Detection
+### Third Layer: Early Detection
 
 “Bad” data doesn’t sit idly by, it propagates. References to missing or corrupt data are copied, links fan out, and with every update the overall quality of your datastore goes down. Subsequent dependent transactions and potential data format changes make restoring from a given backup more difficult as the clock ticks. The sooner you know about a data loss, the easier and more complete your recovery can be.
 
-##### Challenges faced by cloud developers
+#### Challenges faced by cloud developers
 
 In high-velocity environments, cloud application and infrastructure services face many data integrity challenges at runtime, such as:
 
@@ -352,7 +348,7 @@ While such algorithms are infallible in theory, their implementations are often 
 
 To complicate this problem, in order to recover from low-grade data corruption or deletion scenarios, we must recover different subsets of data to different restore points using different backups, while changes to code and schema may render older backups ineffective in high-velocity environments.
 
-##### Out-of-band data validation
+#### Out-of-band data validation
 
 To prevent data quality from degrading before users’ eyes, and to detect low-grade data corruption or data loss scenarios before they become unrecoverable, a system of out-of-band checks and balances is needed both within and between an application’s datastores.
 
@@ -394,7 +390,7 @@ Effective out-of-band data validation demands all of the following:
 
 The majority of small engineering teams operating at high velocity can’t afford to design, build, and maintain all of these systems. If they are pressured to do so, the result is often fragile, limited, and wasteful one-offs that fall quickly into disrepair. Therefore, structure your engineering teams such that a central infrastructure team provides a data validation framework for multiple product engineering teams. The central infrastructure team maintains the out-of-band data validation framework, while the product engineering teams maintain the custom business logic at the heart of the validator to keep pace with their evolving products.
 
-#### Knowing That Data Recovery Will Work
+### Knowing That Data Recovery Will Work
 
 When does a light bulb break? When flicking the switch fails to turn on the light? Not always—often the bulb had already failed, and you simply notice the failure at the unresponsive flick of the switch. By then, the room is dark and you’ve stubbed your toe.
 
@@ -426,15 +422,15 @@ Our testing has discovered the aforementioned failures, as well as failures of m
 
 Failures are inevitable. If you wait to discover them when you’re under the gun, facing a real data loss, you’re playing with fire. If testing forces the failures to happen before actual catastrophe strikes, you can fix problems before any harm comes to fruition.
 
-### Case Studies
+## Case Studies
 
 Life imitates art (or in this case, science), and as we predicted, real life has given us unfortunate and inevitable opportunities to put our data recovery systems and processes to the test, under real-world pressure. Two of the more notable and interesting of these opportunities are discussed here.
 
-#### Gmail—February, 2011: Restore from GTape
+### Gmail—February, 2011: Restore from GTape
 
 The first recovery case study we’ll examine was unique in a couple of ways: the number of failures that coincided to bring about the data loss, and the fact that it was the largest use of our last line of defense, the GTape offline backup system.
 
-##### Sunday, February 27, 2011, late in the evening
+#### Sunday, February 27, 2011, late in the evening
 
 The Gmail backup system pager is triggered, displaying a phone number to join a conference call. The event we had long feared—indeed, the reason for the backup system’s existence—has come to pass: Gmail lost a significant amount of user data. Despite the system’s many safeguards and internal checks and redundancies, the data disappeared from Gmail.
 
@@ -460,13 +456,13 @@ One of the most internally celebrated aspects of the Gmail data recovery was the
 
 In short, we always *knew* that adherence to best practices is important, and it was good to see that maxim proven true.
 
-#### Google Music—March 2012: Runaway Deletion Detection
+### Google Music—March 2012: Runaway Deletion Detection
 
 The second failure we’ll examine entails challenges in logistics that are unique to the scale of the datastore being recovered: where do you store over 5,000 tapes, and how do you efficiently (or even feasibly) read that much data from offline media in a reasonable amount of time?
 
-##### Tuesday, March 6th, 2012, mid-afternoon
+#### Tuesday, March 6th, 2012, mid-afternoon
 
-##### Discovering the problem
+#### Discovering the problem
 
 A Google Music user reports that previously unproblematic tracks are being skipped. The team responsible for interfacing with Google Music’s users notifies Google Music engineers. The problem is investigated as a possible media streaming issue.
 
@@ -474,7 +470,7 @@ On March 7th, the investigating engineer discovers that the unplayable track’s
 
 When he finds the cause of the data integrity lapse, he almost has a heart attack: the audio reference was removed by a privacy-protecting data deletion pipeline. This part of Google Music was designed to delete very large numbers of audio tracks in record time.
 
-##### Assessing the damage
+#### Assessing the damage
 
 Google’s privacy policy protects a user’s personal data. As applied to Google Music specifically, our privacy policy means that music files and relevant metadata are removed within reasonable time after users delete them. As the popularity of Google Music soared, the amount of data grew rapidly, so the original deletion implementation needed to be redesigned in 2012 to be more efficient. On February 6th, the updated data deletion pipeline enjoyed its maiden run, to remove relevant metadata. Nothing seemed amiss at the time, so a second stage of the pipeline was allowed to remove the associated audio data too.
 
@@ -484,9 +480,9 @@ Next, manually checking the metadata for millions to billions of files organized
 
 It had been over a month since the buggy data deletion pipeline first ran, and that maiden run itself removed hundreds of thousands of audio tracks that should not have been removed. Was there any hope of getting the data back? If the tracks weren’t recovered, or weren’t recovered fast enough, Google would have to face the music from its users. How could we not have noticed this glitch?
 
-##### Resolving the issue
+#### Resolving the issue
 
-##### Parallel bug identification and recovery efforts.    The first step in resolving the issue was to identify the actual bug, and determine how and why the bug happened. As long as the root cause wasn’t identified and fixed, any recovery efforts would be in vain. We would be under pressure to re-enable the pipeline to respect the requests of users who deleted audio tracks, but doing so would hurt innocent users who would continue to lose store-bought music, or worse, their own painstakingly recorded audio files. The only way to escape the Catch-22[^p25-10] was to fix the issue at its root, and fix it quickly.
+#### Parallel bug identification and recovery efforts.    The first step in resolving the issue was to identify the actual bug, and determine how and why the bug happened. As long as the root cause wasn’t identified and fixed, any recovery efforts would be in vain. We would be under pressure to re-enable the pipeline to respect the requests of users who deleted audio tracks, but doing so would hurt innocent users who would continue to lose store-bought music, or worse, their own painstakingly recorded audio files. The only way to escape the Catch-22[^p25-10] was to fix the issue at its root, and fix it quickly.
 
 Yet there was no time to waste before mounting the recovery effort. The audio tracks themselves were backed up to tape, but unlike our Gmail case study, the encrypted backup tapes for Google Music were trucked to offsite storage locations, because that option offered more space for voluminous backups of users’ audio data. To restore the experience of affected users quickly, the team decided to troubleshoot the root cause while retrieving the offsite backup tapes (a rather time-intensive restore option) in parallel.
 
@@ -500,7 +496,7 @@ Unfortunately, only 436,223 of the approximately 600,000 lost audio tracks were 
 
 Meanwhile, the root cause team had pursued and abandoned a red herring: they initially thought that a storage service on which Google Music depended had provided buggy data that misled the data deletion pipelines to remove the wrong audio data. Upon closer investigation, that theory was proven false. The root cause team scratched their heads and continued their search for the elusive bug.
 
-##### First wave of recovery.    Once the recovery team had identified the backup tapes, the first recovery wave kicked off on March 8th. Requesting 1.5 petabytes of data distributed among thousands of tapes from offsite storage was one matter, but extracting the data from the tapes was quite another. The custom-built tape backup software stack wasn’t designed to handle a single restore operation of such a large size, so the initial recovery was split into 5,475 restore jobs. It would take a human operator typing in one restore command a minute more than three days to request that many restores, and any human operator would no doubt make many mistakes. Just requesting the restore from the tape backup system needed SRE to develop a programmatic solution.[^p26-11]
+#### First wave of recovery.    Once the recovery team had identified the backup tapes, the first recovery wave kicked off on March 8th. Requesting 1.5 petabytes of data distributed among thousands of tapes from offsite storage was one matter, but extracting the data from the tapes was quite another. The custom-built tape backup software stack wasn’t designed to handle a single restore operation of such a large size, so the initial recovery was split into 5,475 restore jobs. It would take a human operator typing in one restore command a minute more than three days to request that many restores, and any human operator would no doubt make many mistakes. Just requesting the restore from the tape backup system needed SRE to develop a programmatic solution.[^p26-11]
 
 By midnight on March 9th, Music SRE finished requesting all 5,475 restores. The tape backup system began working its magic. Four hours later, it spat out a list of 5,337 backup tapes to be recalled from offsite locations. In another eight hours, the tapes arrived at a datacenter in a series of truck deliveries.
 
@@ -512,13 +508,13 @@ By the morning of March 11th, over 99.95% of the restore operation had completed
 
 At that moment, Google Music production pagers sounded due to an unrelated but critical user-affecting production failure—a failure that fully engaged the Google Music team for two days. The data recovery effort resumed on March 13th, when all 436,223 audio tracks were once again made accessible to their users. In just short of 7 days, 1.5 petabytes of audio data had been reinstated to users with the help of offsite tape backups; 5 of the 7 days comprised the actual data recovery effort.
 
-##### Second wave of recovery.    With the first wave of the recovery process behind them, the team shifted its focus to the other 161,000 missing audio files that had been deleted by the bug before they were backed up. The majority of these files were store-bought and promotional tracks, and the original store copies were unaffected by the bug. Such tracks were quickly reinstated so that the affected users could enjoy their music again.
+#### Second wave of recovery.    With the first wave of the recovery process behind them, the team shifted its focus to the other 161,000 missing audio files that had been deleted by the bug before they were backed up. The majority of these files were store-bought and promotional tracks, and the original store copies were unaffected by the bug. Such tracks were quickly reinstated so that the affected users could enjoy their music again.
 
 However, a small portion of the 161,000 audio files had been uploaded by the users themselves. The Google Music Team prompted their servers to request that the Google Music clients of affected users re-upload files dating from March 14th onward.
 
 This process lasted more than a week. Thus concluded the complete recovery effort for the incident.
 
-##### Addressing the root cause
+#### Addressing the root cause
 
 Eventually, the Google Music Team identified the flaw in their refactored data deletion pipeline. To understand this flaw, you first need context about how offline data processing systems evolve on a large scale.
 
@@ -536,27 +532,27 @@ Google Music’s data deletion pipeline was designed with coordination and large
 
 In the wake of the recovery effort, Google Music redesigned its data deletion pipeline to eliminate this type of race condition. In addition, we enhanced production monitoring and alerting systems to detect similar large-scale runaway deletion bugs with the aim of detecting and fixing such issues before users notice any problems.[^p29-12]
 
-### General Principles of SRE as Applied to Data Integrity
+## General Principles of SRE as Applied to Data Integrity
 
 General principles of SRE can be applied to the specifics of data integrity and cloud computing as described in this section.
 
-#### Beginner’s Mind
+### Beginner’s Mind
 
 Large-scale, complex services have inherent bugs that can’t be fully grokked. Never think you understand enough of a complex system to say it won’t fail in a certain way. Trust but verify, and apply defense in depth. (Note: “Beginner’s mind” does *not* suggest putting a new hire in charge of that data deletion pipeline!)
 
-#### Trust but Verify
+### Trust but Verify
 
 Any API upon which you depend won’t work perfectly *all* of the time. It’s a given that regardless of your engineering quality or rigor of testing, the API will have defects. Check the correctness of the most critical elements of your data using out-of-band data validators, even if API semantics suggest that you need not do so. Perfect algorithms may not have perfect implementations.
 
-#### Hope Is Not a Strategy
+### Hope Is Not a Strategy
 
 System components that aren’t continually exercised fail when you need them most. Prove that data recovery works with regular exercise, or data recovery won’t work. Humans lack discipline to continually exercise system components, so automation is your friend. However, when you staff such automation efforts with engineers who have competing priorities, you may end up with temporary stopgaps.
 
-#### Defense in Depth
+### Defense in Depth
 
 Even the most bulletproof system is susceptible to bugs and operator error. In order for data integrity issues to be fixable, services must detect such issues quickly. Every strategy eventually fails in changing environments. The best data integrity strategies are multitiered—multiple strategies that fall back to one another and address a broad swath of scenarios together at reasonable cost.
 
-#### Revisit and Reexamine
+### Revisit and Reexamine
 
 The fact that your data “was safe yesterday” isn’t going to help you tomorrow, or even today. Systems and infrastructure change, and you’ve got to prove that your assumptions and processes remain relevant in the face of progress. Consider the following.
 
@@ -564,7 +560,7 @@ The Shakespeare service has received quite a bit of positive press, and its user
 
 Now a new feature allows users to make text annotations. Suddenly, our dataset can no longer be easily re-created, while the user data is increasingly valuable to our users. Therefore, we need to revisit our replication options—we’re not just replicating for latency and bandwidth, but for data integrity, as well. Therefore, we need to create and test a backup and restore procedure. This procedure is also periodically tested by a DiRT exercise to ensure that we can restore users’ annotations from backups within the time set by the SLO.
 
-### Conclusion
+## Conclusion
 
 Data availability must be a foremost concern of any data-centric system. Rather than focusing on the means to the end, Google SRE finds it useful to borrow a page from test-driven development by proving that our systems can maintain data availability with a predicted maximum down time. The means and mechanisms that we use to achieve this end goal are necessary evils. By keeping our eyes on the goal, we avoid falling into the trap in which “The operation was a success, but the system died.”
 
@@ -572,7 +568,7 @@ Recognizing that not just *anything* can go wrong, but that *everything* will go
 
 As you get better at recovering from any breakage in reasonable time *N*, find ways to whittle down that time through more rapid and finer-grained loss detection, with the goal of approaching *N* = 0. You can then switch from planning recovery to planning prevention, with the aim of achieving the holy grail of *all the data, all the time*. Achieve this goal, and you can sleep on the beach on that well-deserved vacation.
 
-### Notes
+## Notes
 
 [^p3-1]: Atomicity, Consistency, Isolation, Durability; see *https://en.wikipedia.org/wiki/ACID*. SQL databases such as MySQL and PostgreSQL strive to achieve these properties.
 

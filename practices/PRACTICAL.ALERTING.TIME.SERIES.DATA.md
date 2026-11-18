@@ -1,8 +1,4 @@
-# Chapter 10
-
-## Practical Alerting from Time-Series Data
-
-Source: [Site.Reliability.Engineering-2016-10.pdf](./Site.Reliability.Engineering-2016-10.pdf), PDF pages 1–17.
+# Practical Alerting from Time-Series Data
 
 The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
 
@@ -30,11 +26,11 @@ At the scale our systems operate, being alerted for single-machine failures is u
 
 Google’s monitoring systems evolved over the course of 10 years from the traditional model of custom scripts that check responses and alert, wholly separated from visual display of trends, to a new paradigm. This new model made the collection of time-series a first-class role of the monitoring system, and replaced those check scripts with a rich language for manipulating time-series into charts and alerts.
 
-### The Rise of Borgmon
+## The Rise of Borgmon
 
 Shortly after the job scheduling infrastructure Borg [Ver15] was created in 2003, a new monitoring system—Borgmon—was built to complement it.
 
-#### Time-Series Monitoring Outside of Google
+### Time-Series Monitoring Outside of Google
 
 This document describes the architecture and programming interface of an internal monitoring tool that was foundational for the growth and reliability of Google for almost 10 years...but how does that help you, our dear reader?
 
@@ -56,7 +52,7 @@ errors_total 12
 
 A Borgmon can collect from other Borgmon,[^p3-3] so we can build hierarchies that follow the topology of the service, aggregating and summarizing information and discarding some strategically at each level. Typically, a team runs a single Borgmon per cluster, and a pair at the global level. Some very large services shard below the cluster level into many scraper Borgmon, which in turn feed to the cluster-level Borgmon.
 
-### Instrumentation of Applications
+## Instrumentation of Applications
 
 The /varz HTTP handler simply lists all the exported variables in plain text, as space-separated keys and values, one per line. A later extension added a mapped variable, which allows the exporter to define several labels on a variable name, and then export a table of values or a histogram. An example map-valued variable looks like the following, showing 25 HTTP 200 responses and 12 HTTP 500s:
 
@@ -68,11 +64,11 @@ Adding a metric to a program only requires a single declaration in the code wher
 
 In hindsight, it’s apparent that this schemaless textual interface makes the barrier to adding new instrumentation very low, which is a positive for both the software engineering and SRE teams. However, this has a trade-off against ongoing maintenance; the decoupling of the variable definition from its use in Borgmon rules requires careful change management. In practice, this trade-off has been satisfactory because tools to validate and generate rules have been written as well.[^p4-4]
 
-#### Exporting Variables
+### Exporting Variables
 
 Google’s web roots run deep: each of the major languages used at Google has an implementation of the exported variable interface that automagically registers with the HTTP server built into every Google binary by default.[^p4-5] The instances of the variable to be exported allow the server author to perform obvious operations like adding an amount to the current value, setting a key to a specific value, and so forth. The Go expvar library[^p4-6] and its JSON output form have a variant of this API.
 
-### Collection of Exported Data
+## Collection of Exported Data
 
 To find its targets, a Borgmon instance is configured with a list of targets using one of many name resolution methods.[^p4-7] The target list is often dynamic, so using service discovery reduces the cost of maintaining it and allows the monitoring to scale.
 
@@ -92,7 +88,7 @@ These synthetic variables make it easy to write rules to detect if the monitored
 
 It’s interesting that varz is quite dissimilar to SNMP (Simple Networking Monitoring Protocol), which “is designed [...] to have minimal transport requirements and to continue working when most other network applications fail” [Mic03]. Scraping targets over HTTP seems to be at odds with this design principle; however, experience shows that this is rarely an issue.[^p5-8] The system itself is already designed to be robust against network and machine failures, and Borgmon allows engineers to write smarter alerting rules by using the collection failure itself as a signal.
 
-### Storage in the Time-Series Arena
+## Storage in the Time-Series Arena
 
 A service is typically made up of many binaries running as many tasks, on many machines, in many clusters. Borgmon needs to keep all that data organized, while allowing flexible querying and slicing of that data.
 
@@ -108,7 +104,7 @@ In practice, the structure is a fixed-sized block of memory, known as the time-s
 
 Periodically, the in-memory state is archived to an external system known as the Time-Series Database (TSDB). Borgmon can query TSDB for older data and, while slower, TSDB is cheaper and larger than a Borgmon’s RAM.
 
-#### Labels and Vectors
+### Labels and Vectors
 
 As shown in the example time-series in Figure 10-2, time-series are stored as sequences of numbers and timestamps, which are referred to as vectors. Like vectors in linear algebra, these vectors are slices and cross-sections of the multidimensional matrix of data points in the arena. Conceptually the timestamps can be ignored, because the values are inserted in the vector at regular intervals in time—for example, 1 or 10 seconds or 1 minute apart.
 
@@ -182,7 +178,7 @@ This returns the last 10 minutes of history of the time-series that matched the 
 {var=http_requests,job=webserver,instance=host4:80, ...} 0 1 2 3 4 5 6 7 8 9 10
 ```
 
-### Rule Evaluation
+## Rule Evaluation
 
 Borgmon is really just a programmable calculator, with some syntactic sugar that enables it to generate alerts. The data collection and storage components already described are just necessary evils to make that programmable calculator ultimately fit for purpose here as a monitoring system. :)
 
@@ -334,7 +330,7 @@ The output of these rules might look like:[^p11-14]
 
 As mentioned previously, Borgmon rules create new time-series, so the results of the computations are kept in the time-series arena and can be inspected just as the source time-series are. The ability to do so allows for ad hoc querying, evaluation, and exploration as tables or charts. This is a useful feature for debugging while on-call, and if these ad hoc queries prove useful, they can be made permanent visualizations on a service console.
 
-### Alerting
+## Alerting
 
 When an alerting rule is evaluated by a Borgmon, the result is either true, in which case the alert is triggered, or false. Experience shows that alerts can “flap” (toggle their state quickly); therefore, the rules allow a minimum duration for which the alerting rule must be true before the alert is sent. Typically, this duration is set to at least two rule evaluation cycles to ensure no missed collections cause a false alert.
 
@@ -368,7 +364,7 @@ As described in [Monitoring Distributed Systems](../principles/MONITORING.DISTRI
 
 A more comprehensive guide to alert design can be found in [Service Level Objectives](../principles/SERVICE.LEVEL.OBJECTIVES.md).
 
-### Sharding the Monitoring Topology
+## Sharding the Monitoring Topology
 
 A Borgmon can import time-series data from other Borgmon, as well. While one could attempt to collect from all tasks in a service globally, doing so quickly becomes a scaling bottleneck and introduces a single point of failure into the design. Instead, a streaming protocol is used to transmit time-series data between Borgmon, saving CPU time and network bytes compared to the text-based varz format. A typical such deployment uses two or more global Borgmon for top-level aggregation and one Borgmon in each datacenter to monitor all the jobs running at that location. (Google divides the production network into zones for production changes, so having two or more global replicas provides diversity in the face of maintenance and outages for this otherwise single point of failure.)
 
@@ -378,7 +374,7 @@ As shown in Figure 10-3, more complicated deployments shard the datacenter Borgm
 
 *Figure 10-3. A data flow model of a hierarchy of Borgmon in three clusters*
 
-### Black-Box Monitoring
+## Black-Box Monitoring
 
 Borgmon is a white-box monitoring system—it inspects the internal state of the target service, and the rules are written with knowledge of the internals in mind. The transparent nature of this model provides great power to identify quickly what components are failing, which queues are full, and where bottlenecks occur, both when responding to an incident and when testing a new feature deployment.
 
@@ -388,7 +384,7 @@ Teams at Google solve this coverage issue with Prober, which runs a protocol che
 
 Prober can be pointed at either the frontend domain or behind the load balancer. By using both targets, we can detect localized failures and suppress alerts. For example, we might monitor both the load balanced *www.google.com* and the web servers in each datacenter behind the load balancer. This setup allows us to either know that traffic is still served when a datacenter fails, or to quickly isolate an edge in the traffic flow graph where a failure has occurred.
 
-### Maintaining the Configuration
+## Maintaining the Configuration
 
 Borgmon configuration separates the definition of the rules from the targets being monitored. This means the same sets of rules can be applied to many targets at once, instead of writing nearly identical configuration over and over. This separation of concerns might seem incidental, but it greatly reduces the cost of maintaining the monitoring by avoiding lots of repetition in describing the target systems.
 
@@ -414,7 +410,7 @@ Thus, we have multiple uses for labels on a time-series, though all are intercha
 
 The templated nature of these libraries allows flexibility in their use. The same template can be used to aggregate from each tier.
 
-### Ten Years On...
+## Ten Years On...
 
 Borgmon transposed the model of check-and-alert per target into mass variable collection and a centralized rule evaluation across the time-series for alerting and diagnostics.
 
@@ -426,7 +422,7 @@ Ten years is a long time, though, and of course today the shape of the monitorin
 
 Even though Borgmon remains internal to Google, the idea of treating time-series data as a data source for generating alerts is now accessible to everyone through those open source tools like Prometheus, Riemann, Heka, and Bosun, and probably others by the time you read this.
 
-### Notes
+## Notes
 
 [^p2-1]: Prometheus is an open source monitoring and time-series database system available at *http://prometheus.io*.
 

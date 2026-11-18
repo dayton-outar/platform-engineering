@@ -1,8 +1,4 @@
-# Chapter 18
-
-## Software Engineering in SRE
-
-Source: [Site.Reliability.Engineering-2016-18.pdf](./Site.Reliability.Engineering-2016-18.pdf), PDF pages 1–18.
+# Software Engineering in SRE
 
 The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
 
@@ -14,7 +10,7 @@ Ask someone to name a Google software engineering effort and they’ll likely li
 
 Google’s production environment is—by some measures—one of the most complex machines humanity has ever built. SREs have firsthand experience with the intricacies of production, making them uniquely well suited to develop the appropriate tools to solve internal problems and use cases related to keeping production running. The majority of these tools are related to the overall directive of maintaining uptime and keeping latency low, but take many forms: examples include binary rollout mechanisms, monitoring, or a development environment built on dynamic server composition. Overall, these SRE-developed tools are full-fledged software engineering projects, distinct from one-off solutions and quick hacks, and the SREs who develop them have adopted a product-based mindset that takes both internal customers and a roadmap for future plans into account.
 
-### Why Is Software Engineering Within SRE Important?
+## Why Is Software Engineering Within SRE Important?
 
 In many ways, the vast scale of Google production has necessitated internal software development, because few third-party tools are designed at sufficient scale for Google’s needs. The company’s history of successful software projects has led us to appreciate the benefits of developing directly within SRE.
 
@@ -34,11 +30,11 @@ Fully fledged software development projects within SRE provide career developmen
 
 Beyond the design of automation tools and other efforts to reduce the workload for engineers in SRE, software development projects can further benefit the SRE organization by attracting and helping to retain engineers with a broad variety of skills. The desirability of team diversity is doubly true for SRE, where a variety of backgrounds and problem-solving approaches can help prevent blind spots. To this end, Google always strives to staff its SRE teams with a mix of engineers with traditional software development experience and engineers with systems engineering experience.
 
-### Auxon Case Study: Project Background and Problem Space
+## Auxon Case Study: Project Background and Problem Space
 
 This case study examines Auxon, a powerful tool developed within SRE to automate capacity planning for services running in Google production. To best understand how Auxon was conceived and the problems it addresses, we’ll first examine the problem space associated with capacity planning, and the difficulties that traditional approaches to this task present for services at Google and across the industry as a whole. For more context on how Google uses the terms *service* and *cluster*, see [The Production Environment at Google, from the Viewpoint of an SRE](../GOOGLE.PRODUCTION.ENVIRONMENT.md).
 
-#### Traditional Capacity Planning
+### Traditional Capacity Planning
 
 There are myriad tactics for capacity planning of compute resources (see [Hix15a]), but the majority of these approaches boil down to a *cycle* that can be approximated as follows:
 
@@ -56,7 +52,7 @@ There are myriad tactics for capacity planning of compute resources (see [Hix15a
 
 It bears stressing that capacity planning is a neverending *cycle*: assumptions change, deployments slip, and budgets are cut, resulting in revision upon revision of The Plan. And each revision has trickle-down effects that must propagate throughout the plans of all subsequent quarters. For example, a shortfall this quarter must be made up in future quarters. Traditional capacity planning uses demand as a key driver, and manually shapes supply to fit demand in response to each change.
 
-##### Brittle by nature
+#### Brittle by nature
 
 Traditional capacity planning produces a resource allocation plan that can be disrupted by any seemingly minor change. For example:
 
@@ -72,7 +68,7 @@ Minor changes require cross-checking the entire allocation plan to make sure tha
 
 Also, consider that the capacity plan for any given quarter (or other time frame) is based on the expected outcome of the capacity plans of previous quarters, meaning that a change in any one quarter results in work to update subsequent quarters.
 
-##### Laborious and imprecise
+#### Laborious and imprecise
 
 For many teams, the process of collecting the data necessary to generate demand forecasts is slow and error-prone. And when it is time to find capacity to meet this future demand, not all resources are equally suitable. For example, if latency requirements mean that a service must commit to serve user demand on the same continent as the user, obtaining additional resources in North America won’t alleviate a capacity shortfall in Asia. Every forecast has *constraints*, or parameters around how it can be fulfilled; constraints are fundamentally related to intent, which is discussed in the next section.
 
@@ -84,7 +80,7 @@ When service owners face the challenges of fitting a series of requests for capa
 
 The net result is a massive expenditure of human effort to come up with a bin packing that is approximate, at best. The process is brittle to change, and there are no known bounds on an optimal solution.
 
-#### Our Solution: Intent-Based Capacity Planning
+### Our Solution: Intent-Based Capacity Planning
 
 *Specify the requirements, not the implementation.*
 
@@ -94,7 +90,7 @@ With a service’s true requirements and flexibility captured, the capacity plan
 
 As an added benefit, using computational optimization to map from intent to implementation achieves much greater precision, ultimately resulting in cost savings to the organization. Bin packing is still far from a solved problem, because certain types are still considered NP-hard; however, today’s algorithms can solve to a known optimal solution.
 
-### Intent-Based Capacity Planning
+## Intent-Based Capacity Planning
 
 *Intent* is the rationale for how a service owner wants to run their service. Moving from concrete resource demands to motivating reasons in order to arrive at the true capacity planning intent often requires several layers of abstraction. Consider the following chain of abstraction:
 
@@ -110,23 +106,23 @@ Suddenly greater flexibility is introduced and we can understand at a more “hu
 
 So what level of intent should be used by intent-driven capacity planning? Ideally, all levels of intent should be supported together, with services benefiting the more they shift to specifying intent versus implementation. In Google’s experience, services tend to achieve the best wins as they cross to step 3: good degrees of flexibility are available, and the ramifications of this request are in higher-level and understandable terms. Particularly sophisticated services may aim for step 4.
 
-#### Precursors to Intent
+### Precursors to Intent
 
 What information do we need in order to capture a service’s intent? Enter dependencies, performance metrics, and prioritization.
 
-##### Dependencies
+#### Dependencies
 
 Services at Google depend on many other infrastructure and user-facing services, and these dependencies heavily influence where a service can be placed. For example, imagine user-facing service Foo, which depends upon Bar, an infrastructure storage service. Foo expresses a requirement that Bar must be located within 30 milliseconds of network latency of Foo. This requirement has important repercussions for where we place both Foo *and* Bar, and intent-driven capacity planning must take these constraints into account.
 
 Furthermore, production dependencies are nested: to build upon the preceding example, imagine service Bar has its own dependencies on Baz, a lower-level distributed storage service, and Qux, an application management service. Therefore, where we can now place Foo depends on where we can place Bar, Baz, and Qux. A given set of production dependencies can be shared, possibly with different stipulations around intent.
 
-##### Performance metrics
+#### Performance metrics
 
 Demand for one service trickles down to result in demand for one or more other services. Understanding the chain of dependencies helps formulate the general scope of the bin packing problem, but we still need more information about expected resource usage. How many compute resources does service Foo need to serve *N* user queries? For every *N* queries of service Foo, how many Mbps of data do we expect for service Bar?
 
 Performance metrics are the glue between dependencies. They convert from one or more higher-level resource type(s) to one or more lower-level resource type(s). Deriving appropriate performance metrics for a service can involve load testing and resource usage monitoring.
 
-##### Prioritization
+#### Prioritization
 
 Inevitably, resource constraints result in trade-offs and hard decisions: of the many requirements that all services have, which requirements should be sacrificed in the face of insufficient capacity?
 
@@ -134,7 +130,7 @@ Perhaps *N* + 2 redundancy for service Foo is more important than *N* + 1 redund
 
 Intent-driven planning forces these decisions to be made transparently, openly, and consistently. Resource constraints entail the same trade-offs, but all too often, the prioritization can be ad hoc and opaque to service owners. Intent-based planning allows prioritization to be as granular or coarse as needed.
 
-#### Introduction to Auxon
+### Introduction to Auxon
 
 Auxon is Google’s implementation of an intent-based capacity planning and resource allocation solution, and a prime example of an SRE-designed and developed software engineering product: it was built by a small group of software engineers and a technical program manager within SRE over the course of two years. Auxon is a perfect case study to demonstrate how software development can be fostered within SRE.
 
@@ -164,13 +160,13 @@ Figure 18-1 and the explanations that follow it outline Auxon’s major componen
 
 *Allocation Plan* is the output of the Auxon Solver. It prescribes which resources should be allocated to which services in what locations. It is the computed implementation details of the intent-based definition of the capacity planning problem’s requirements. The Allocation Plan also includes information about any requirements that could not be satisfied—for example, if a requirement couldn’t be met due to a lack of resources, or competing requirements that were otherwise too strict.
 
-#### Requirements and Implementation: Successes and Lessons Learned
+### Requirements and Implementation: Successes and Lessons Learned
 
 Auxon was first imagined by an SRE and a technical program manager who had separately been tasked by their respective teams with capacity planning large portions of Google’s infrastructure. Having performed manual capacity planning in spreadsheets, they were well positioned to understand the inefficiencies and opportunities for improvement through automation, and the features such a tool might require.
 
 Throughout Auxon’s development, the SRE team behind the product continued to be deeply involved in the production world. The team maintained a role in on-call rotations for several of Google’s services, and participated in design discussions and technical leadership of these services. Through these ongoing interactions, the team was able to stay grounded in the production world: they acted as both the consumer and developer of their own product. When the product failed, the team was directly impacted. Feature requests were informed through the team’s own firsthand experiences. Not only did firsthand experience of the problem space buy a huge sense of ownership in the product’s success, but it also helped give the product credibility and legitimacy within SRE.
 
-##### Approximation
+#### Approximation
 
 Don’t focus on perfection and purity of solution, especially if the bounds of the problem aren’t well known. Launch and iterate.
 
@@ -184,7 +180,7 @@ We also leveraged modular designs to deal with fuzzy requirements when building 
 
 If there’s one theme to draw from our Auxon case study, it’s that the old motto of “launch and iterate” is particularly relevant in SRE software development projects. Don’t wait for the perfect design; rather, keep the overall vision in mind while moving ahead with design and development. When you encounter areas of uncertainty, design the software to be flexible enough so that if process or strategy changes at a higher level, you don’t incur a huge rework cost. But at the same time, stay grounded by making sure that general solutions have a real-world–specific implementation that demonstrates the utility of the design.
 
-#### Raising Awareness and Driving Adoption
+### Raising Awareness and Driving Adoption
 
 As with any product, SRE-developed software must be designed with knowledge of its users and requirements. It needs to drive adoption through utility, performance, and demonstrated ability to both benefit Google’s production reliability goals and to better the lives of SREs. The process of socializing a product and achieving buy-in across an organization is key to the project’s success.
 
@@ -198,7 +194,7 @@ Don’t underestimate the effort required to raise awareness and interest in you
 
 It’s important to consider the perspective of the customer in making your product usable. An engineer might not have the time or the inclination to dig into the source code to figure out how to use a tool. Although internal customers are generally more tolerant of rough edges and early alphas than external customers, it’s still necessary to provide documentation. SREs are busy, and if your solution is too difficult or confusing, they will write their own solution.
 
-##### Set expectations
+#### Set expectations
 
 When an engineer with years of familiarity in a problem space begins designing a product, it’s easy to imagine a utopian end-state for the work. However, it’s important to differentiate aspirational goals of the product from minimum success criteria (or Minimum Viable Product). Projects can lose credibility and fail by promising too much, too soon; at the same time, if a product doesn’t promise a sufficiently rewarding outcome, it can be difficult to overcome the necessary activation energy to convince internal teams to try something new. Demonstrating steady, incremental progress via small releases raises user confidence in your team’s ability to deliver useful software.
 
@@ -208,25 +204,25 @@ In the case of Auxon, we struck a balance by planning a long-term roadmap alongs
 
 - As additional features were developed for Auxon, the same configuration files would carry over and provide new, and much broader, long-term cost savings and other benefits. The project road map enabled services to quickly determine if their use cases or required features weren’t implemented in the early versions. Meanwhile, Auxon’s iterative development approach fed into development priorities and new milestones for the road map.
 
-##### Identify appropriate customers
+#### Identify appropriate customers
 
 The team developing Auxon realized that a one-size solution might not fit all; many larger teams already had home-grown solutions for capacity planning that worked passably well. While their custom tools weren’t perfect, these teams didn’t experience sufficient pain in the capacity planning process to try a new tool, especially an alpha release with rough edges.
 
 The initial versions of Auxon intentionally targeted teams that had no existing capacity planning processes in place. Because these teams would have to invest configuration effort whether they adopted an existing tool or our new approach, they were interested in adopting the newest tool. The early successes Auxon achieved with these teams demonstrated the utility of the project, and turned the customers themselves into advocates for the tool. Quantifying the usefulness of the product proved further beneficial; when we onboarded one of Google’s Business Areas, the team authored a case study detailing the process and comparing the before and after results. The time savings and reduction of human toil alone presented a huge incentive for other teams to give Auxon a try.
 
-##### Customer service
+#### Customer service
 
 Even though software developed within SRE targets an audience of TPMs and engineers with high technical proficiency, any sufficiently innovative software still presents a learning curve to new users. Don’t be afraid to provide white glove customer support for early adopters to help them through the onboarding process. Sometimes automation also entails a host of emotional concerns, such as fear that someone’s job will be replaced by a shell script. By working one-on-one with early users, you can address those fears personally, and demonstrate that rather than owning the toil of performing a tedious task manually, the team instead owns the configurations, processes, and ultimate results of their technical work. Later adopters are convinced by the happy examples of early adopters.
 
 Furthermore, because Google’s SRE teams are distributed across the globe, early-adopter advocates for a project are particularly beneficial, because they can serve as local experts for other teams interested in trying out the project.
 
-##### Designing at the right level
+#### Designing at the right level
 
 An idea that we’ve termed *agnosticism*—writing the software to be generalized to allow myriad data sources as input—was a key principle of Auxon’s design. Agnosticism meant that customers weren’t required to commit to any one tool in order to use the Auxon framework. This approach allowed Auxon to remain of sufficient general utility even as teams with divergent use cases began to use it. We approached potential users with the message, “come as you are; we’ll work with what you’ve got.” By avoiding over-customizing for one or two big users, we achieved broader adoption across the organization and lowered the barrier to entry for new services.
 
 We’ve also consciously endeavored to avoid the pitfall of defining success as 100% adoption across the organization. In many cases, there are diminishing returns on closing the last mile to enable a feature set that is sufficient for every service in the long tail at Google.
 
-#### Team Dynamics
+### Team Dynamics
 
 In selecting engineers to work on an SRE software development product, we’ve found great benefit from creating a seed team that combines generalists who are able to get up to speed quickly on a new topic with engineers possessing a breadth of knowledge and experience. A diversity of experiences covers blind spots as well as the pitfalls of assuming that every team’s use case is the same as yours.
 
@@ -236,7 +232,7 @@ As project development continued and Auxon’s feature set grew more broad and c
 
 The right time to engage specialists will, of course, vary from project to project. As a rough guideline, the project should be successfully off the ground and demonstrably successful, such that the skills of the current team would be significantly bolstered by the additional expertise.
 
-### Fostering Software Engineering in SRE
+## Fostering Software Engineering in SRE
 
 What makes a project a good candidate to take the leap from one-off tool to fully fledged software engineering effort? Strong positive signals include engineers with firsthand experience in the relative domain who are interested in working on the project, and a target user base that is highly technical (and therefore able to provide high-signal bug reports during the early phases of development). The project should provide noticeable benefits, such as reducing toil for SREs, improving an existing piece of infrastructure, or streamlining a complex process.
 
@@ -246,7 +242,7 @@ What makes a poor candidate project? Many of the same red flags you might instin
 
 As an example of a broad use case: a layer-3 load balancer developed by Google SREs proved so successful over the years that it was repurposed as a customer-facing product offering via Google Cloud Load Balancer [Eis16].
 
-#### Successfully Building a Software Engineering Culture in SRE: Staffing and Development Time
+### Successfully Building a Software Engineering Culture in SRE: Staffing and Development Time
 
 SREs are often generalists, as the desire to learn breadth-first instead of depth-first lends itself well to understanding the bigger picture (and there are few pictures bigger than the intricate inner workings of modern technical infrastructure). These engineers often have strong coding and software development skills, but may not have the traditional SWE experience of being part of a product team or having to think about customer feature requests. A quote from an engineer on an early SRE software development project sums up the conventional SRE approach to software: “I have a design doc; why do we need requirements?” Partnering with engineers, TPMs, or PMs who are familiar with user-facing software development can help build a team software development culture that brings together the best of both software product development and hands-on production experience.
 
@@ -262,7 +258,7 @@ The majority of software products developed within SRE begin as side projects wh
 
 However, in any of these scenarios—and this is a point worth stressing—it’s essential that the SREs involved in any development effort continue working as SREs instead of becoming full-time developers embedded in the SRE organization. Immersion in the world of production gives SREs performing development work an invaluable perspective, as they are both the creator and the customer for any product.
 
-#### Getting There
+### Getting There
 
 If you like the idea of organized software development in SRE, you’re probably wondering how to introduce a software development model to an SRE organization focused on production support.
 
@@ -300,6 +296,6 @@ As you start to develop software, you may be tempted to cut corners. Resist this
 
 It takes a long time to build credibility for your software development efforts, but only a short time to lose credibility due to a misstep.
 
-### Conclusions
+## Conclusions
 
 Software engineering projects within Google SRE have flourished as the organization has grown, and in many cases the lessons learned from and successful execution of earlier software development projects have paved the way for subsequent endeavors. The unique hands-on production experience that SREs bring to developing tools can lead to innovative approaches to age-old problems, as seen with the development of Auxon to address the complex problem of capacity planning. SRE-driven software projects are also noticeably beneficial to the company in developing a sustainable model for supporting services at scale. Because SREs often develop software to streamline inefficient processes or automate common tasks, these projects mean that the SRE team doesn’t have to scale linearly with the size of the services they support. Ultimately, the benefits of having SREs devoting some of their time to software development are reaped by the company, the SRE organization, and the SREs themselves.

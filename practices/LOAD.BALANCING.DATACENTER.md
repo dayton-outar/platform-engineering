@@ -1,8 +1,4 @@
-# Chapter 20
-
-## Load Balancing in the Datacenter
-
-Source: [Site.Reliability.Engineering-2016-20.pdf](./Site.Reliability.Engineering-2016-20.pdf), PDF pages 1–16.
+# Load Balancing in the Datacenter
 
 The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
 
@@ -18,7 +14,7 @@ We should note that Google datacenters house a vastly diverse set of services th
 
 These techniques are applied at many parts of our stack. For example, most external HTTP requests reach the GFE (Google Frontend), our HTTP reverse proxying system. The GFE uses these algorithms, along with the algorithms described in [Load Balancing at the Frontend](LOAD.BALANCING.FRONTEND.md), to route the request payloads and metadata to the individual processes running the applications that can process this information. This is based on a configuration that maps various URL patterns to individual applications under the control of different teams. In order to produce the response payloads (which they return to the GFE, to be returned back to browsers), these applications often use these same algorithms in turn, to communicate with the infrastructure or complementary services they depend on. Sometimes the stack of dependencies can get relatively deep, where a single incoming HTTP request can trigger a long transitive chain of dependent requests to several systems, potentially with high fan-out at various points.
 
-### The Ideal Case
+## The Ideal Case
 
 In an ideal case, the load for a given service is spread perfectly over all its backend tasks and, at any given point in time, the least and most loaded backend tasks consume exactly the same amount of CPU.
 
@@ -38,17 +34,17 @@ More formally, let *CPU[i]* be the CPU rate consumed by task *i* at a given poin
 
 This example illustrates how poor in-datacenter load balancing practices artificially limit resource availability: you may be reserving 1,000 CPUs for your service in a given datacenter, but be unable to actually use more than, say, 700 CPUs.
 
-### Identifying Bad Tasks: Flow Control and Lame Ducks
+## Identifying Bad Tasks: Flow Control and Lame Ducks
 
 Before we can decide which backend task should receive a client request, we need to identify—and avoid—unhealthy tasks in our pool of backends.
 
-#### A Simple Approach to Unhealthy Tasks: Flow Control
+### A Simple Approach to Unhealthy Tasks: Flow Control
 
 Assume our client tasks track the number of active requests they have sent on each connection to a backend task. When this active-request count reaches a configured limit, the client treats the backend as unhealthy and no longer sends it requests. For most backends, 100 is a reasonable limit; in the average case, requests tend to finish fast enough that it is very rare for the number of active requests from a given client to reach this limit under normal operating conditions. This (very basic!) form of flow control also serves as a simplistic form of load balancing: if a given backend task becomes overloaded and requests start piling up, clients will avoid that backend, and the workload spreads organically among the other backend tasks.
 
 Unfortunately, this very simplistic approach only protects backend tasks against very extreme forms of overload and it’s very easy for backends to become overloaded well before this limit is ever reached. The converse is also true: in some cases, clients may reach this limit when their backends still have plenty of spare resources. For example, some backends may have very long-lived requests that prohibit quick responses. We’ve seen cases in which this default limit has backfired, causing all backend tasks to become unreachable, with requests blocked in the clients until they time out and fail. Raising the active-request limit can avoid this situation, but doesn’t solve the underlying problem of knowing if a task is truly unhealthy or simply slow to respond.
 
-#### A Robust Approach to Unhealthy Tasks: Lame Duck State
+### A Robust Approach to Unhealthy Tasks: Lame Duck State
 
 From a client perspective, a given backend task can be in any of the following states:
 
@@ -80,7 +76,7 @@ The main advantage of allowing a task to exist in a quasi-operational lame duck 
 
 This strategy also allows a client to establish connections to backend tasks while performing potentially long-lived initialization procedures (and thus are not yet ready to start serving). The backend tasks could otherwise start listening for connections only when they’re ready to serve, but doing so would delay the negotiation of the connections unnecessarily. As soon as the backend task is ready to start serving, it signals this explicitly to the clients.
 
-### Limiting the Connections Pool with Subsetting
+## Limiting the Connections Pool with Subsetting
 
 In addition to health management, another consideration for load balancing is *subsetting*: limiting the pool of potential backend tasks with which a client task interacts.
 
@@ -88,7 +84,7 @@ Each client in our RPC system maintains a pool of long-lived connections to its 
 
 Every connection requires some memory and CPU (due to periodic health checking) at both ends. While this overhead is small in theory, it can quickly become significant when it occurs across many machines. Subsetting avoids the situation in which a single client connects to a very large number of backend tasks or a single backend task receives connections from a very large number of client tasks. In both cases, you potentially waste a very large amount of resources for very little gain.
 
-#### Picking the Right Subset
+### Picking the Right Subset
 
 Picking the right subset comes down to choosing how many backend tasks each client connects to—the subset size—and the selection algorithm. We typically use a subset size of 20 to 100 backend tasks, but the “right” subset size for a system depends heavily on the typical behavior of your service. For example, you may want to use a larger subset size if:
 
@@ -102,7 +98,7 @@ The selection algorithm for clients should assign backends uniformly to optimize
 
 The algorithm should also handle resizes in the number of clients and/or number of backends, with minimal connection churn and without knowing these numbers in advance. This functionality is particularly important (and tricky) when the entire set of client or backend tasks are restarted one at a time (e.g., to push a new version). As backends are pushed, we want clients to continue serving, transparently, with as little connection churn as possible.
 
-#### A Subset Selection Algorithm: Random Subsetting
+### A Subset Selection Algorithm: Random Subsetting
 
 A naive implementation of a subset selection algorithm might have each client randomly shuffle the list of backends once and fill its subset by selecting resolvable/ healthy backends from the list. Shuffling once and then picking backends from the start of the list handles restarts and failures robustly (e.g., with relatively little churn) because it explicitly limits them from consideration. However, we’ve found that this strategy actually works very poorly in most practical scenarios because it spreads load very unevenly.
 
@@ -128,7 +124,7 @@ Unfortunately, smaller subset sizes lead to even worse imbalances. For example, 
 
 We concluded that for random subsetting to spread the load relatively evenly across all available tasks, we would need subset sizes as large as 75%. A subset that large is simply impractical; the variance in the number of clients connecting to a task is just too large to consider random subsetting a good subset selection policy at scale.
 
-#### A Subset Selection Algorithm: Deterministic Subsetting
+### A Subset Selection Algorithm: Deterministic Subsetting
 
 Google’s solution to the limitations of random subsetting is *deterministic* subsetting. The following code implements this algorithm, described in detail next:
 
@@ -187,13 +183,13 @@ As Figure 20-5 shows, the distribution for the former example of 300 clients eac
 
 *Figure 20-5. Connection distribution with 300 clients and deterministic subsetting to 10 of 300 backends*
 
-### Load Balancing Policies
+## Load Balancing Policies
 
 Now that we’ve established the groundwork for how a given client task maintains a set of connections that are known to be healthy, let’s examine *load balancing policies*. These are the mechanisms used by client tasks to select which backend task in its subset receives a client request. Many of the complexities in load balancing policies stem from the distributed nature of the decision-making process in which clients need to decide, in real time (and with only partial and/or stale backend state information), which backend should be used for each request.
 
 Load balancing policies can be very simple and not take into account any information about the state of the backends (e.g., *Round Robin*) or can act with more information about the backends (e.g., *Least-Loaded Round Robin* or *Weighted Round Robin*).
 
-#### Simple Round Robin
+### Simple Round Robin
 
 One very simple approach to load balancing has each client send requests in round-robin fashion to each backend task in its subset to which it can successfully connect and which isn’t in lame duck state. For many years, this was our most common approach, and it’s still used by many services.
 
@@ -207,11 +203,11 @@ Unfortunately, while Round Robin has the advantage of being very simple and perf
 
 - Unpredictable performance factors
 
-##### Small subsetting
+#### Small subsetting
 
 One of the simplest reasons Round Robin distributes load poorly is that all of its clients may not issue requests at the same rate. Different rates of requests among clients are especially likely when vastly different processes share the same backends. In this case, and especially if you’re using relatively small subset sizes, backends in the subsets of the clients generating the most traffic will naturally tend to be more loaded.
 
-##### Varying query costs
+#### Varying query costs
 
 Many services handle requests that require vastly different amounts of resources for processing. In practice, we’ve found that the semantics of many services in Google are such that the most expensive requests consume 1000*x* (or more) CPU than the cheapest requests. Load balancing using Round Robin is even more difficult when query cost can’t be predicted in advance. For example, a query such as “return all emails received by user XYZ in the last day” could be very cheap (if the user has received little email over the course of the day) or extremely expensive.
 
@@ -219,13 +215,13 @@ Load balancing in a system with large discrepancies in potential query cost is v
 
 To keep interfaces (and their implementations) simple, services are often defined to allow the most expensive requests to consume 100, 1,000, or even 10,000 times more resources than the cheapest requests. However, varying resource requirements per-request naturally mean that some backend tasks will be unlucky and occasionally receive more expensive requests than others. The extent to which this situation affects load balancing depends on how expensive the most expensive requests are. For example, for one of our Java backends, queries consume around 15 ms of CPU on average but some queries can easily require up to 10 seconds. Each task in this backend reserves multiple CPU cores, which reduces latency by allowing some of the computations to happen in parallel. But despite these reserved cores, when a backend receives one of these large queries, its load increases significantly for a few seconds. A poorly behaved task may run out of memory or even stop responding entirely (e.g., due to memory thrashing), but even in the normal case (i.e., the backend has sufficient resources and its load normalizes once the large query completes), the latency of other requests suffers due to resource competition with the expensive request.
 
-##### Machine diversity
+#### Machine diversity
 
 Another challenge to Simple Round Robin is the fact that not all machines in the same datacenter are necessarily the same. A given datacenter may have machines with CPUs of varying performance, and therefore, the same request may represent a significantly different amount of work for different machines.
 
 Dealing with machine diversity—*without* requiring strict homogeneity—was a challenge for many years at Google. In theory, the solution to working with heterogeneous resource capacity in a fleet is simple: scale the CPU reservations depending on the processor/machine type. However, in practice, rolling out this solution required significant effort because it required our job scheduler to account for resource equivalencies based on average machine performance across a sampling of services. For example, 2 CPU units in machine X (a “slow” machine) is equivalent to 0.8 CPU units in machine Y (a “fast” machine). With this information, the job scheduler is then required to adjust CPU reservations for a process based upon the equivalence factor and the type of machine on which the process was scheduled. In an attempt to mitigate this complexity, we created a virtual unit for CPU rate called “GCU” (Google Compute Units). GCUs became the standard for modeling CPU rates, and were used to maintain a mapping from each CPU architecture in our datacenters to its corresponding GCU based upon its performance.
 
-##### Unpredictable performance factors
+#### Unpredictable performance factors
 
 Perhaps the largest complicating factor for Simple Round Robin is that machines—or, more accurately, the performance of backend tasks—may differ vastly due to several *unpredictable* aspects that cannot be accounted for statically.
 
@@ -241,7 +237,7 @@ When a task gets restarted, it often requires significantly more resources for a
 
 If your load balancing policy can’t adapt to unforeseen performance limitations, you will inherently end up with a suboptimal load distribution when working at scale.
 
-#### Least-Loaded Round Robin
+### Least-Loaded Round Robin
 
 An alternative approach to Simple Round Robin is to have each client task keep track of the number of active requests it has to each backend task in its subset and use Round Robin *among the set of tasks with a minimal number of active requests*.
 
@@ -292,7 +288,7 @@ That is, each client task has only a very limited view into the state of its bac
 
 In practice, we’ve found that large services using Least-Loaded Round Robin will see their most loaded backend task using twice as much CPU as the least loaded, performing about as poorly as Round Robin.
 
-#### Weighted Round Robin
+### Weighted Round Robin
 
 Weighted Round Robin is an important load balancing policy that improves on Simple and Least-Loaded Round Robin by incorporating backend-provided information into the decision process.
 

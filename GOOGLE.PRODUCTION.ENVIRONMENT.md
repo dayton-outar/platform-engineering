@@ -1,9 +1,6 @@
 # Chapter 2
 
 ## The Production Environment at Google, from the Viewpoint of an SRE
-
-Source: [Site.Reliability.Engineering-2016-2.pdf](./Site.Reliability.Engineering-2016-2.pdf), PDF pages 1–10.
-
 ***Written by JC van Winkel***
 
 ***Edited by Betsy Beyer***

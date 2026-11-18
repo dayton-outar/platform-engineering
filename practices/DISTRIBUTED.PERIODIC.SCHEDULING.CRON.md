@@ -1,8 +1,4 @@
-# Chapter 24
-
-## Distributed Periodic Scheduling with Cron
-
-Source: [Site.Reliability.Engineering-2016-24.pdf](./Site.Reliability.Engineering-2016-24.pdf), PDF pages 1–12.
+# Distributed Periodic Scheduling with Cron
 
 The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
 
@@ -14,17 +10,17 @@ This document describes Google’s implementation of a distributed cron service 
 
 Cron is a common Unix utility designed to periodically launch arbitrary jobs at user-defined times or intervals. We first analyze the base principles of cron and its most common implementations, and then review how an application such as cron can work in a large, distributed environment in order to increase the reliability of the system against single-machine failures. We describe a distributed cron system that is deployed on a small number of machines, but can launch cron jobs across an entire datacenter in conjunction with a datacenter scheduling system like Borg [Ver15].
 
-### Cron
+## Cron
 
 Let’s discuss how cron is typically used, in the single machine case, before diving into running it as a cross-datacenter service.
 
-#### Introduction
+### Introduction
 
 Cron is designed so that the system administrators and common users of the system can specify commands to run, and when these commands run. Cron executes various types of jobs, including garbage collection and periodic data analysis. The most common time specification format is called “crontab.” This format supports simple intervals (e.g., “once a day at noon” or “every hour on the hour”). Complex intervals, such as “every Saturday, which is also the 30th day of the month,” can also be configured.
 
 Cron is usually implemented using a single component, which is commonly referred to as crond. crond is a daemon that loads the list of scheduled cron jobs. Jobs are launched according to their specified execution times.
 
-#### Reliability Perspective
+### Reliability Perspective
 
 Several aspects of the cron service are notable from a reliability perspective:
 
@@ -34,7 +30,7 @@ Several aspects of the cron service are notable from a reliability perspective:
 
 - anacron is a notable exception to this. anacron attempts to launch jobs that would have been launched when the system was down. Relaunch attempts are limited to jobs that run daily or less frequently. This functionality is very useful for running maintenance jobs on workstations and notebooks, and is facilitated by a file that retains the timestamp of the last launch for all registered cron jobs.
 
-### Cron Jobs and Idempotency
+## Cron Jobs and Idempotency
 
 Cron jobs are designed to perform periodic work, but beyond that, it is hard to know in advance what function they have. The variety of requirements that the diverse set of cron jobs entails obviously impacts reliability requirements.
 
@@ -44,11 +40,11 @@ To make matters more complicated, failure to launch is acceptable for some cron 
 
 This large variety of cron jobs makes reasoning about failure modes difficult: in a system like the cron service, there is no single answer that fits every situation. In general, we favor skipping launches rather than risking double launches, as much as the infrastructure allows. This is because recovering from a skipped launch is more tenable than recovering from a double launch. Cron job owners can (and should!) monitor their cron jobs; for example, an owner might have the cron service expose state for its managed cron jobs, or set up independent monitoring of the effect of cron jobs. In case of a skipped launch, cron job owners can take action that appropriately matches the nature of the cron job. However, undoing a double launch, such as the previously mentioned newsletter example, may be difficult or even entirely impossible. Therefore, we prefer to “fail closed” to avoid systemically creating bad state.
 
-### Cron at Large Scale
+## Cron at Large Scale
 
 Moving away from single machines toward large-scale deployments requires some fundamental rethinking of how to make cron work well in such an environment. Before presenting the details of the Google cron solution, we’ll discuss those differences between small-scale and large-scale deployment, and describe what design changes large-scale deployments necessitated.
 
-#### Extended Infrastructure
+### Extended Infrastructure
 
 In its “regular” implementations, cron is limited to a single machine. Large-scale system deployments extend our cron solution to multiple machines.
 
@@ -60,7 +56,7 @@ This process is, however, not instantaneous. Discovering a dead machine entails 
 
 Because moving a process to a different machine can mean loss of any local state stored on the old machine (unless live migration is employed), and the rescheduling time may exceed the smallest scheduling interval of one minute, we need procedures in place to mitigate both data loss and excessive time requirements. To retain local state of the old machine, you might simply persist the state on a distributed filesystem such as GFS, and use this filesystem during startup to identify jobs that failed to launch due to rescheduling. However, this solution falls short in terms of timeliness expectations: if you run a cron job every five minutes, a one- to two-minute delay caused by the total overhead of cron system rescheduling is potentially unacceptably substantial. In this case, hot spares, which would be able to quickly jump in and resume operation, can significantly shorten this time window.
 
-#### Extended Requirements
+### Extended Requirements
 
 Single-machine systems typically just colocate all running processes with limited isolation. While containers are now commonplace, it’s not necessary or common to use containers to isolate every single component of a service that’s deployed on a single machine. Therefore, if cron were deployed on a single machine, crond and all the cron jobs it runs would likely not be isolated.
 
@@ -72,11 +68,11 @@ In terms of the failure mode, a datacenter is a substantially more complex ecosy
 
 It may be possible to deploy a single cron service across the globe, but deploying cron within a single datacenter has benefits: the service enjoys low latency and shares fate with the datacenter scheduler, cron’s core dependency.
 
-### Building Cron at Google
+## Building Cron at Google
 
 This section address the problems that must be resolved in order to provide a large-scale distributed deployment of cron reliably. It also highlights some important decisions made in regards to distributed cron at Google.
 
-#### Tracking the State of Cron Jobs
+### Tracking the State of Cron Jobs
 
 As discussed in previous sections, we need to hold some amount of state about cron jobs, and be able to restore that information quickly in case of failure. Moreover, the consistency of that state is paramount. Recall that many cron jobs, like a payroll run or sending an email newsletter, are not idempotent.
 
@@ -92,7 +88,7 @@ When designing the distributed cron, we chose the second option. We made this ch
 
 - Base services for which outages have wide impact (such as cron) should have very few dependencies. Even if parts of the datacenter go away, the cron service should be able to function for at least some amount of time. But this requirement does not mean that the storage has to be part of the cron process directly (how storage is handled is essentially an implementation detail). However, cron should be able to operate independently of downstream systems that cater to a large number of internal users.
 
-#### The Use of Paxos
+### The Use of Paxos
 
 We deploy multiple replicas of the cron service and use the Paxos distributed consensus algorithm (see [Managing Critical State: Distributed Consensus for Reliability](DISTRIBUTED.CONSENSUS.RELIABILITY.md)) to ensure they have consistent state. As long as the majority of group members are available, the distributed system as a whole can successfully process new state changes despite the failure of bounded subsets of the infrastructure.
 
@@ -106,11 +102,11 @@ If the leader replica dies, the health-checking mechanism of the Paxos group dis
 
 The most important state we keep in Paxos is information regarding which cron jobs are launched. We synchronously inform a quorum of replicas of the beginning and end of each scheduled launch for each cron job.
 
-#### The Roles of the Leader and the Follower
+### The Roles of the Leader and the Follower
 
 As just described, our use of Paxos and its deployment in the cron service has two assigned roles: the leader and the follower. The following sections describe each role.
 
-##### The leader
+#### The leader
 
 The leader replica is the only replica that actively launches cron jobs. The leader has an internal scheduler that, much like the simple crond described at the beginning of this document, maintains the list of cron jobs ordered by their scheduled launch time. The leader replica waits until the scheduled launch time of the first job.
 
@@ -126,7 +122,7 @@ The completion of the cron job launch is announced via Paxos to the other replic
 
 Another extremely important feature of the leader is that as soon as it loses its leadership for any reason, it must immediately stop interacting with the datacenter scheduler. Holding the leadership should guarantee mutual exclusion of access to the datacenter scheduler. In the absence of this condition of mutual exclusion, the old and new leaders might perform conflicting actions on the datacenter scheduler.
 
-##### The follower
+#### The follower
 
 The follower replicas keep track of the state of the world, as provided by the leader, in order to take over at a moment’s notice if needed. All the state changes tracked by follower replicas are communicated via Paxos, from the leader replica. Much like the leader, followers also maintain a list of all cron jobs in the system, and this list must be kept consistent among the replicas (through the use of Paxos).
 
@@ -134,7 +130,7 @@ Upon receiving notification about a commenced launch, the follower replica updat
 
 If a leader replica dies or otherwise malfunctions (e.g., is partitioned away from the other replicas on the network), a follower should be elected as a new leader. The election must converge faster than one minute, in order to avoid the risk of missing or unreasonably delaying a cron job launch. Once a leader is elected, all open launches (i.e., partial failures) must be concluded. This process can be quite complicated, imposing additional requirements on both the cron system and the datacenter infrastructure. The following section discusses how to resolve partial failures of this type.
 
-##### Resolving partial failures
+#### Resolving partial failures
 
 As mentioned, the interaction between the leader replica and the datacenter scheduler can fail in between sending multiple RPCs that describe a single logical cron job launch. Our systems should be able to handle this condition.
 
@@ -162,7 +158,7 @@ Recall that we track the scheduled launch time when keeping the internal state b
 
 The actual implementation has a more complicated system for state lookup, driven by the implementation details of the underlying infrastructure. However, the preceding description covers the implementation-independent requirements of any such system. Depending on the available infrastructure, you may also need to consider the trade-off between risking a double launch and risking skipping a launch.
 
-#### Storing the State
+### Storing the State
 
 Using Paxos to achieve consensus is only one part of the problem of how to handle the state. Paxos is essentially a continuous log of state changes, appended to synchronously as state changes occur. This characteristic of Paxos has two implications:
 
@@ -188,7 +184,7 @@ We do not store logs on our distributed filesystem. We consciously decided that 
 
 In addition to the logs and snapshots stored on the local disk and snapshot backups on the distributed filesystem, a freshly started replica can fetch the state snapshot and all logs from an already running replica over the network. This ability makes replica startup independent of any state on the local machine. Therefore, rescheduling a replica to a different machine upon restart (or machine death) is essentially a nonissue for the reliability of the service.
 
-#### Running Large Cron
+### Running Large Cron
 
 There are other smaller but equally interesting implications of running a large cron deployment. A traditional cron is small: at most, it probably contains on the order of tens of cron jobs. However, if you run a cron service for thousands of machines in a datacenter, your usage will grow, and you may run into problems.
 
@@ -202,13 +198,13 @@ Despite this change, the load caused by the cron jobs is still very spiky. The g
 
 *Figure 24-3. The number of cron jobs launched globally*
 
-### Summary
+## Summary
 
 A cron service has been a fundamental feature in UNIX systems for many decades. The industry move toward large distributed systems, in which a datacenter may be the smallest effective unit of hardware, requires changes in large portions of the stack. Cron is no exception to this trend. A careful look at the required properties of a cron service and the requirements of cron jobs drives Google’s new design.
 
 We have discussed the new constraints demanded by a distributed-system environment, and a possible design of the cron service based on Google’s solution. This solution requires strong consistency guarantees in the distributed environment. The core of the distributed cron implementation is therefore Paxos, a commonplace algorithm to reach consensus in an unreliable environment. The use of Paxos and correct analysis of new failure modes of cron jobs in a large-scale, distributed environment allowed us to build a robust cron service that is heavily used in Google.
 
-### Notes
+## Notes
 
 [^p1-1]: This document was previously published in part in *ACM Queue* (March 2015, vol. 13, issue 3).
 

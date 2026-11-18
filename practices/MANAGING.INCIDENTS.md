@@ -1,8 +1,4 @@
-# Chapter 14
-
-## Managing Incidents
-
-Source: [Site.Reliability.Engineering-2016-14.pdf](./Site.Reliability.Engineering-2016-14.pdf), PDF pages 1–6.
+# Managing Incidents
 
 The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
 
@@ -14,7 +10,7 @@ Effective incident management is key to limiting the disruption caused by an inc
 
 This document walks through a portrait of an incident that spirals out of control due to ad hoc incident management practices, outlines a well-managed approach to the incident, and reviews how the same incident might have played out if handled with well-functioning incident management.
 
-### Unmanaged Incidents
+## Unmanaged Incidents
 
 Put yourself in the shoes of Mary, the on-call engineer for The Firm. It’s 2 p.m. on a Friday afternoon and your pager has just exploded. Black-box monitoring tells you that your service has stopped serving *any* traffic in an entire datacenter. With a sigh, you put down your coffee and set about the job of fixing it. A few minutes into the task, another alert tells you that a second datacenter has stopped serving. Then the third out of your five datacenters fails. To exacerbate the situation, there is more traffic than the remaining datacenters can handle, so they start to overload. Before you know it, the service is overloaded and unable to serve any requests.
 
@@ -24,29 +20,29 @@ Now one of the suits has phoned your boss and is angrily demanding to know why h
 
 Time passes; the two remaining datacenters fail completely. Unbeknown to you, sleep-addled Josephine called Malcolm. He had a brainwave: something about CPU affinity. He felt certain that he could optimize the remaining server processes if he could just deploy this one simple change to the production environment, so he did so. Within seconds, the servers restarted, picking up the change. And then died.
 
-### The Anatomy of an Unmanaged Incident
+## The Anatomy of an Unmanaged Incident
 
 Note that everybody in the preceding scenario was doing their job, as they saw it. How could things go so wrong? A few common hazards caused this incident to spiral out of control.
 
-#### Sharp Focus on the Technical Problem
+### Sharp Focus on the Technical Problem
 
 We tend to hire people like Mary for their technical prowess. So it’s not surprising that she was busy making operational changes to the system, trying valiantly to solve the problem. She wasn’t in a position to think about the bigger picture of how to mitigate the problem because the technical task at hand was overwhelming.
 
-#### Poor Communication
+### Poor Communication
 
 For the same reason, Mary was far too busy to communicate clearly. Nobody knew what actions their coworkers were taking. Business leaders were angry, customers were frustrated, and other engineers who could have lent a hand in debugging or fixing the issue weren’t used effectively.
 
-#### Freelancing
+### Freelancing
 
 Malcolm was making changes to the system with the best of intentions. However, he didn’t coordinate with his coworkers—not even Mary, who was technically in charge of troubleshooting. His changes made a bad situation far worse.
 
-### Elements of Incident Management Process
+## Elements of Incident Management Process
 
 Incident management skills and practices exist to channel the energies of enthusiastic individuals. Google’s incident management system is based on the Incident Command System,[^p3-2] which is known for its clarity and scalability.
 
 A well-designed incident management process has the following features.
 
-#### Recursive Separation of Responsibilities
+### Recursive Separation of Responsibilities
 
 It’s important to make sure that everybody involved in the incident knows their role and doesn’t stray onto someone else’s turf. Somewhat counterintuitively, a clear separation of responsibilities allows individuals more autonomy than they might otherwise have, since they need not second-guess their colleagues.
 
@@ -70,23 +66,23 @@ This person is the public face of the incident response task force. Their duties
 
 The planning role supports Ops by dealing with longer-term issues, such as filing bugs, ordering dinner, arranging handoffs, and tracking how the system has diverged from the norm so it can be reverted once the incident is resolved.
 
-#### A Recognized Command Post
+### A Recognized Command Post
 
 Interested parties need to understand where they can interact with the incident commander. In many situations, locating the incident task force members into a central designated “War Room” is appropriate. Others teams may prefer to work at their desks, keeping alert to incident updates via email and IRC.
 
 Google has found IRC to be a huge boon in incident response. IRC is very reliable and can be used as a log of communications about this event, and such a record is invaluable in keeping detailed state changes in mind. We’ve also written bots that log incident-related traffic (which is helpful for postmortem analysis), and other bots that log events such as alerts to the channel. IRC is also a convenient medium over which geographically distributed teams can coordinate.
 
-#### Live Incident State Document
+### Live Incident State Document
 
 The incident commander’s most important responsibility is to keep a living incident document. This can live in a wiki, but should ideally be editable by several people concurrently. Most of our teams use Google Docs, though Google Docs SRE use Google Sites: after all, depending on the software you are trying to fix as part of your incident management system is unlikely to end well.
 
 See [Example Incident State Document](../management/SRE.SUPPLEMENTARY.MATERIAL.md#appendix-c-example-incident-state-document) for a sample incident document. This living doc can be messy, but must be functional. Using a template makes generating this documentation easier, and keeping the most important information at the top makes it more usable. Retain this documentation for postmortem analysis and, if necessary, meta analysis.
 
-#### Clear, Live Handoff
+### Clear, Live Handoff
 
 It’s essential that the post of incident commander be clearly handed off at the end of the working day. If you’re handing off command to someone at another location, you can simply and safely update the new incident commander over the phone or a video call. Once the new incident commander is fully apprised, the outgoing commander should be explicit in their handoff, specifically stating, “You’re now the incident commander, okay?”, and should not leave the call until receiving firm acknowledgment of handoff. The handoff should be communicated to others working on the incident so that it’s clear who is leading the incident management efforts at all times.
 
-### A Managed Incident
+## A Managed Incident
 
 Now let’s examine how this incident might have played out if it were handled using principles of incident management.
 
@@ -104,7 +100,7 @@ At 5 p.m., Sabrina starts finding replacement staff to take on the incident, as 
 
 Mary returns to work the following morning to find that her transatlantic colleagues have assumed responsibility for the bug, mitigated the problem, closed the incident, and started work on the postmortem. Problem solved, she brews some fresh coffee and settles down to plan structural improvements so problems of this category don’t afflict the team again.
 
-### When to Declare an Incident
+## When to Declare an Incident
 
 It is better to declare an incident early and then find a simple fix and close out the incident than to have to spin up the incident management framework hours into a burgeoning problem. Set clear conditions for declaring an incident. My team follows these broad guidelines—if any of the following is true, the event is an incident:
 
@@ -116,11 +112,11 @@ It is better to declare an incident early and then find a simple fix and close o
 
 Incident management proficiency atrophies quickly when it’s not in constant use. So how can engineers keep their incident management skills up to date—handle more incidents? Fortunately, the incident management framework can apply to other operational changes that need to span time zones and/or teams. If you use the framework frequently as a regular part of your change management procedures, you can easily follow this framework when an actual incident occurs. If your organization performs disaster-recovery testing (you should, it’s *fun*: see [Kri12]), incident management should be part of that testing process. We often role-play the response to an on-call issue that has already been solved, perhaps by colleagues in another location, to further familiarize ourselves with incident management.
 
-### In Summary
+## In Summary
 
 We’ve found that by formulating an incident management strategy in advance, structuring this plan to scale smoothly, and regularly putting the plan to use, we were able to reduce our mean time to recovery and provide staff a less stressful way to work on emergent problems. Any organization concerned with reliability would benefit from pursuing a similar strategy.
 
-### Notes
+## Notes
 
 [^p1-1]: An earlier version of this document appeared as an article in *;login:* (April 2015, vol. 40, no. 2).
 

@@ -1,8 +1,4 @@
-# Chapter 16
-
-## Tracking Outages
-
-Source: [Site.Reliability.Engineering-2016-16.pdf](./Site.Reliability.Engineering-2016-16.pdf), PDF pages 1–6.
+# Tracking Outages
 
 The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
 
@@ -16,11 +12,11 @@ Systematically learning from past problems is essential to effective service man
 
 We can also get useful information from questions such as, “How many alerts per on-call shift does this team get?”, “What’s the ratio of actionable/nonactionable alerts over the last quarter?”, or even simply “Which of the services this team manages creates the most toil?”
 
-### Escalator
+## Escalator
 
 At Google, all alert notifications for SRE share a central replicated system that tracks whether a human has acknowledged receipt of the notification. If no acknowledgment is received after a configured interval, the system escalates to the next configured destination(s)—e.g., from primary on-call to secondary. This system, called “The Escalator,” was initially designed as a largely transparent tool that received copies of emails sent to on-call aliases. This functionality allowed Escalator to easily integrate with existing workflows without requiring any change in user behavior (or, at the time, monitoring system behavior).
 
-### Outalator
+## Outalator
 
 Following Escalator’s example, where we added useful features to existing infrastructure, we created a system that would deal not just with the individual escalating notifications, but with the next layer of abstraction: outages.
 
@@ -38,23 +34,23 @@ Multiple escalating notifications (“alerts”) can be combined into a single e
 
 *Figure 16-2. Outalator view of an incident*
 
-#### Building Your Own Outalator
+### Building Your Own Outalator
 
 Many organizations use messaging systems like Slack, Hipchat, or even IRC for internal communication and/or updating status dashboards. These systems are great places to hook into with a system like Outalator.
 
-#### Aggregation
+### Aggregation
 
 A single event may, and often will, trigger multiple alerts. For example, network failures cause timeouts and unreachable backend services for everyone, so all affected teams receive their own alerts, including the owners of backend services; meanwhile, the network operations center will have its own klaxons ringing. However, even smaller issues affecting a single service may trigger multiple alerts due to multiple error conditions being diagnosed. While it is worthwhile to attempt to minimize the number of alerts triggered by a single event, triggering multiple alerts is unavoidable in most trade-off calculations between false positives and false negatives.
 
 The ability to group multiple alerts together into a single *incident* is critical in dealing with this duplication. Sending an email saying “this is the same thing as that other thing; they are symptoms of the same incident” works for a given alert: it can prevent duplication of debugging or panic. But sending an email for each alert is not a practical or scalable solution for handling duplicate alerts within a team, let alone between teams or over longer periods of time.
 
-#### Tagging
+### Tagging
 
 Of course, not every alerting event is an incident. False-positive alerts occur, as well as test events or mistargeted emails from humans. The Outalator itself does not distinguish between these events, but it allows general-purpose *tagging* to add metadata to notifications, at any level. Tags are mostly free-form, single “words.” Colons, however, are interpreted as semantic separators, which subtly promotes the use of hierarchical namespaces and allows some automatic treatment. This namespacing is supported by suggested tag prefixes, primarily “cause” and “action,” but the list is team-specific and generated based on historical usage. For example, “cause:network” might be sufficient information for some teams, whereas another team might opt for more specific tags, such as “cause:network:switch” versus “cause:network:cable.” Some teams may frequently use “customer:132456”-style tags, so “customer” would be suggested for those teams, but not for others.
 
 Tags can be parsed and turned into a convenient link (“bug:76543” links to the bug tracking system). Other tags are just a single word (“bogus” is widely used for false positives). Of course, some tags are typos (“cause:netwrok”) and some tags aren’t particularly helpful (“problem-went-away”), but avoiding a predetermined list and allowing teams to find their own preferences and standards will result in a more useful tool and better data. Overall, tags have been a remarkably powerful tool for teams to obtain and provide an overview of a given service’s pain points, even without much, or even any, formal analysis. As trivial as tagging appears, it is probably one of the Outalator’s most useful unique features.
 
-#### Analysis
+### Analysis
 
 Of course, SRE does much more than just react to incidents. Historical data is useful when one is responding to an incident—the question “what did we do last time?” is always a good starting point. But historical information is far more useful when it concerns systemic, periodic, or other wider problems that may exist. Enabling such analysis is one of the most important functions of an outage tracking tool.
 
@@ -62,17 +58,17 @@ The bottom layer of analysis encompasses counting and basic aggregate statistics
 
 The next step in data analysis is finding wider issues, which are not just raw counts but require some semantic analysis. For example, identifying the infrastructure component causing most incidents, and therefore the potential benefit from increasing the stability or performance of this component,[^p5-2] assumes that there is a straightforward way to provide this information alongside the incident records. As a simple example: different teams have service-specific alert conditions such as “stale data” or “high latency.” Both conditions may be caused by network congestion leading to database replication delays and need intervention. Or, they could be within the nominal service level objective, but are failing to meet the higher expectations of users. Examining this information across multiple teams allows us to identify systemic problems and choose the correct solution, especially if the solution may be the introduction of more artificial failures to stop over-performing.
 
-##### Reporting and communication
+#### Reporting and communication
 
 Of more immediate use to frontline SREs is the ability to select zero or more outalations and include their subjects, tags, and “important” annotations in an email to the next on-call engineer (and an arbitrary cc list) in order to pass on recent state between shifts. For periodic reviews of the production services (which occur weekly for most teams), the Outalator also supports a “report mode,” in which the important annotations are expanded inline with the main list in order to provide a quick overview of lowlights.
 
-#### Unexpected Benefits
+### Unexpected Benefits
 
 Being able to identify that an alert, or a flood of alerts, coincides with a given other outage has obvious benefits: it increases the speed of diagnosis and reduces load on other teams by acknowledging that there is indeed an incident. There are additional nonobvious benefits. To use Bigtable as an example, if a service has a disruption due to an apparent Bigtable incident, but you can see that the Bigtable SRE team has not been alerted, manually alerting the team is probably a good idea. Improved cross-team visibility can and does make a big difference in incident resolution, or at least in incident mitigation.
 
 Some teams across the company have gone so far as to set up dummy escalator configurations: no human receives the notifications sent there, but the notifications appear in the Outalator and can be tagged, annotated, and reviewed. One example for this “system of record” use is to log and audit the use of privileged or role accounts (though it must be noted that this functionality is basic, and used for technical, rather than legal, audits). Another use is to record and automatically annotate runs of periodic jobs that may not be idempotent—for example, automatic application of schema changes from version control to database systems.
 
-### Notes
+## Notes
 
 [^p1-1]: For example, it might take significant engineering effort to make a particular change to Bigtable that only has a small mitigating effect for one outage. However, if that same mitigation were available across many events, the engineering effort may well be worthwhile.
 

@@ -1,8 +1,4 @@
-# Chapter 7
-
-## The Evolution of Automation at Google
-
-Source: [Site.Reliability.Engineering-2016-7.pdf](./Site.Reliability.Engineering-2016-7.pdf), printed pages 67–85.
+# The Evolution of Automation at Google
 
 The Google practices and case studies below reflect the source’s 2016 account.
 
@@ -14,38 +10,38 @@ The Google practices and case studies below reflect the source’s 2016 account.
 
 For SRE, automation is a force multiplier, not a panacea. Of course, just *multiplying* force does not naturally change the accuracy of where that force is applied: doing automation thoughtlessly can create as many problems as it solves. Therefore, while Google’s engineers believe that software-based automation is superior to manual operation in most circumstances, better than either option is a higher-level system design requiring neither of them—an *autonomous* system. Or to put it another way, the value of automation comes from both what it does and its judicious application. The following sections discuss both the value of automation and how Google’s approach evolved over time.
 
-### The Value of Automation
+## The Value of Automation
 
 What exactly is the value of automation?[^1]
 
-#### Consistency
+### Consistency
 
 Although scale is an obvious motivation for automation, there are many other reasons to use it. Take the example of university computing systems, where many systems engineering folks started their careers. Systems administrators of that background were generally charged with running a collection of machines or some software, and were accustomed to manually performing various actions in the discharge of that duty. One common example is creating user accounts; others include purely operational duties like making sure backups happen, managing server failover, and small data manipulations like changing the upstream DNS servers’ *resolv.conf*, DNS server zone data, and similar activities. Ultimately, however, this prevalence of manual tasks is unsatisfactory for both the organizations and indeed the people maintaining systems in this way. For a start, any action performed by a human or humans hundreds of times won’t be performed the same way each time: even with the best will in the world, very few of Google’s engineers will ever be as consistent as a machine. This inevitable lack of consistency leads to mistakes, oversights, issues with data quality, and, yes, reliability problems. In this domain—the execution of well-scoped, known procedures—the value of consistency is in many ways the primary value of automation.
 
-#### A Platform
+### A Platform
 
 Automation doesn’t just provide consistency. Designed and done properly, automatic systems also provide a *platform* that can be extended, applied to more systems, or perhaps even spun out for profit.[^2] (The alternative, no automation, is neither cost effective nor extensible: it is instead a tax levied on the operation of a system.)
 
 A platform also *centralizes mistakes*. In other words, a bug fixed in the code will be fixed there once and forever, unlike a sufficiently large set of humans performing the same procedure, as discussed previously. A platform can be extended to perform additional tasks more easily than humans can be instructed to perform them (or sometimes even realize that they have to be done). Depending on the nature of the task, it can run either continuously or much more frequently than humans could appropriately accomplish the task, or at times that are inconvenient for humans. Furthermore, a platform can export metrics about its performance, or otherwise allow you to discover details about your process you didn’t know previously, because these details are more easily measurable within the context of a platform.
 
-#### Faster Repairs
+### Faster Repairs
 
 There’s an additional benefit for systems where automation is used to resolve common faults in a system (a frequent situation for SRE-created automation). If automation runs regularly and successfully enough, the result is a reduced mean time to repair (MTTR) for those common faults. You can then spend your time on other tasks instead, thereby achieving increased developer velocity because you don’t have to spend time either preventing a problem or (more commonly) cleaning up after it.
 
 As is well understood in the industry, the later in the product lifecycle a problem is discovered, the more expensive it is to fix. Generally, problems that occur in actual production are most expensive to fix, both in terms of time and money, which means that an automated system looking for problems as soon as they arise has a good chance of lowering the total cost of the system, given that the system is sufficiently large.
 
-#### Faster Action
+### Faster Action
 
 In the infrastructural situations where SRE automation tends to be deployed, humans don’t usually react as fast as machines. In most common cases, where, for example, failover or traffic switching can be well defined for a particular application, it makes no sense to effectively require a human to intermittently press a button called “Allow system to continue to run.” (Yes, it is true that sometimes automatic procedures can end up making a bad situation worse, but that is why such procedures should be scoped over well-defined domains.) Google has a large amount of automation; in many cases, the services Google’s engineers support could not long survive without this automation because they crossed the threshold of manageable manual operation long ago.
 
-#### Time Saving
+### Time Saving
 
 Finally, time saving is an oft-quoted rationale for automation. Although people cite this rationale for automation more than the others, in many ways the benefit is often less immediately calculable. Engineers often waver over whether a particular piece of automation or code is worth writing, in terms of effort saved in not requiring a task to be performed manually versus the effort required to write it.[^3] It’s easy to overlook the fact that once you have encapsulated some task in automation, anyone can execute the task. Therefore, the time savings apply across anyone who would plausibly use the automation. Decoupling operator from operation is very powerful.
 
 > Joseph Bironas, an SRE who led Google’s datacenter turnup efforts for a time, forcefully argued:
 > “If we are engineering processes and solutions that are not automatable, we continue having to staff humans to maintain the system. If we have to staff humans to do the work, we are feeding the machines with the blood, sweat, and tears of human beings. Think *The Matrix* with less special effects and more pissed off System Administrators.”
 
-### The Value for Google SRE
+## The Value for Google SRE
 
 All of these benefits and trade-offs apply to Google’s engineers just as much as anyone else, and Google does have a strong bias toward automation. Part of Google’s preference for automation springs from Google’s particular business challenges: the products and services they look after are planet-spanning in scale, and they don’t typically have time to engage in the same kind of machine or service hand-holding common in other organizations.[^4] For truly large services, the factors of consistency, quickness, and reliability dominate most conversations about the trade-offs of performing automation.
 
@@ -53,7 +49,7 @@ Another argument in favor of automation, particularly in the case of Google, is 
 
 Of course, although Google is ideologically bent upon using machines to manage machines where possible, reality requires some modification of Google’s approach. It isn’t appropriate to automate every component of every system, and not everyone has the ability or inclination to develop automation at a particular time. Some essential systems started out as quick prototypes, not designed to last or to interface with automation. The previous paragraphs state a maximalist view of Google’s position, but one that Google’s engineers have been broadly successful at putting into action within the Google context. In general, they have chosen to create platforms where they could, or to *position* themselves so that they could create platforms over time. They view this platform-based approach as necessary for manageability and scalability.
 
-### The Use Cases for Automation
+## The Use Cases for Automation
 
 In the industry, *automation* is the term generally used for writing code to solve a wide variety of problems, although the motivations for writing this code, and the solutions themselves, are often quite different. More broadly, in this view, automation is “meta-software”—software to act on software.
 
@@ -73,7 +69,7 @@ Automation has a number of use cases. Here is a non-exhaustive list of examples:
 
 This list could continue essentially *ad infinitum*.
 
-#### Google SRE’s Use Cases for Automation
+### Google SRE’s Use Cases for Automation
 
 Google has all of the use cases just listed, and more.
 
@@ -85,7 +81,7 @@ Widely available tools like Puppet, Chef, cfengine, and even Perl, which all pro
 
 SRE has a number of philosophies and products in the domain of automation, some of which look more like generic rollout tools without particularly detailed modeling of higher-level entities, and some of which look more like languages for describing service deployment (and so on) at a very abstract level. Work done in the latter tends to be more reusable and be more of a common platform than the former, but the complexity of Google’s production environment sometimes means that the former approach is the most immediately tractable option.
 
-#### A Hierarchy of Automation Classes
+### A Hierarchy of Automation Classes
 
 Although all of these automation steps are valuable, and indeed an automation platform is valuable in and of itself, in an ideal world, Google’s engineers wouldn’t need externalized automation. In fact, instead of having a system that *has* to have external glue logic, it would be even better to have a system that needs *no glue logic at all*, not just because internalization is more efficient (although such efficiency is useful), but because it has been designed to not need glue logic in the first place. Accomplishing that involves taking the use cases for glue logic—generally “first order” manipulations of a system, such as adding accounts or performing system turnup—and finding a way to handle those use cases directly within the application.
 
@@ -107,7 +103,7 @@ There is additionally a subvariety of automation that applies changes not across
 
 Let’s use internal case studies to illustrate some of the preceding points in detail. The first case study is about how, due to some diligent, far-sighted work, Google’s engineers managed to achieve the self-professed nirvana of SRE: to automate themselves out of a job.
 
-### Automate Yourself Out of a Job: Automate ALL the Things!
+## Automate Yourself Out of a Job: Automate ALL the Things!
 
 For a long while, the Ads products at Google stored their data in a MySQL database. Because Ads data obviously has high reliability requirements, an SRE team was charged with looking after that infrastructure. From 2005 to 2008, the Ads Database mostly ran in what Google’s engineers considered to be a mature and managed state. For example, they had automated away the worst, but not all, of the routine work for standard replica replacements. They believed the Ads Database was well managed and that they had harvested most of the low-hanging fruit in terms of optimization and scale. However, as daily operations became comfortable, team members began to look at the next level of system development: migrating MySQL onto Google’s cluster scheduling system, Borg.
 
@@ -135,7 +131,7 @@ The main upshot of this new automation was that Google’s engineers had a lot m
 
 This example demonstrates the wisdom of going the extra mile to deliver a platform rather than replacing existing manual procedures. The next example comes from the cluster infrastructure group, and illustrates some of the more difficult trade-offs you might encounter on your way to automating *all* the things.
 
-### Soothing the Pain: Applying Automation to Cluster Turnups
+## Soothing the Pain: Applying Automation to Cluster Turnups
 
 Ten years ago, the Cluster Infrastructure SRE team seemed to get a new hire every few months. As it turned out, that was approximately the same frequency at which Google’s engineers turned up a new cluster. Because turning up a service in a new cluster gives new hires exposure to a service’s internals, this task seemed like a natural and useful training tool.
 
@@ -161,7 +157,7 @@ In one case, a multi-petabyte Bigtable cluster was configured to not use the fir
 
 Early automation focused on accelerating cluster delivery. This approach tended to rely upon creative use of SSH for tedious package distribution and service initialization problems. This strategy was an initial win, but those free-form scripts became a cholesterol of technical debt.
 
-#### Detecting Inconsistencies with Prodtest
+### Detecting Inconsistencies with Prodtest
 
 As the numbers of clusters grew, some clusters required hand-tuned flags and settings. As a result, teams wasted more and more time chasing down difficult-to-spot misconfigurations. If a flag that made GFS more responsive to log processing leaked into the default templates, cells with many files could run out of memory under load. Infuriating and time-consuming misconfigurations crept in with nearly every large configuration change.
 
@@ -185,7 +181,7 @@ Any time a team encountered a delay due to another team’s unexpected misconfig
 
 For the first time, Google’s project managers could predict when a cluster could “go live,” and had a complete understanding of *why* each cluster took six or more weeks to go from “network-ready” to “serving live traffic.” Out of the blue, SRE received a mission from senior management: *In three months, five new clusters will reach network-ready on the same day. Please turn them up in one week.*
 
-#### Resolving Inconsistencies Idempotently
+### Resolving Inconsistencies Idempotently
 
 A “One Week Turnup” was a terrifying mission. Google’s engineers had tens of thousands of lines of shell script owned by dozens of teams. They could quickly tell how unprepared any given cluster was, but fixing it meant that the dozens of teams would have to file hundreds of bugs, and then they had to hope that these bugs would be promptly fixed.
 
@@ -203,7 +199,7 @@ Looking back, this approach was deeply flawed; the latency between the test, the
 
 *Figure 7-2. ProdTest for DNS Service, showing that one failed test resulted in only running one fix*
 
-#### The Inclination to Specialize
+### The Inclination to Specialize
 
 Automation processes can vary in three respects:
 
@@ -233,7 +229,7 @@ The most functional tools are usually written by those who use them. A similar a
 
 Turnups were again high-latency, inaccurate, and incompetent—the worst of all worlds. However, an unrelated security mandate allowed Google’s engineers out of this trap. Much of distributed automation relied at that time on SSH. This is clumsy from a security perspective, because people must have root on many machines to run most commands. A growing awareness of advanced, persistent security threats drove them to reduce the privileges SREs enjoyed to the absolute minimum they needed to do their jobs. They had to replace Google’s use of sshd with an authenticated, ACL-driven, RPC-based Local Admin Daemon, also known as Admin Servers, which had permissions to perform those local changes. As a result, no one could install or modify a server without an audit trail. Changes to the Local Admin Daemon and the Package Repo were gated on code reviews, making it very difficult for someone to exceed their authority; giving someone the access to install packages would not let them view colocated logs. The Admin Server logged the RPC requestor, any parameters, and the results of all RPCs to enhance debugging and security audits.
 
-#### Service-Oriented Cluster-Turnup
+### Service-Oriented Cluster-Turnup
 
 In the next iteration, Admin Servers became part of service teams’ workflows, both as related to the machine-specific Admin Servers (for installing packages and rebooting) and cluster-level Admin Servers (for actions like draining or turning up a service). SREs moved from writing shell scripts in their home directories to building peer-reviewed RPC servers with fine-grained ACLs.
 
@@ -255,7 +251,7 @@ As mentioned earlier, Google’s evolution of turnup automation followed a path:
 
 While this evolution has, broadly speaking, been a success, the Borg case study illustrates another way Google’s engineers have come to think of the problem of automation.
 
-### Borg: Birth of the Warehouse-Scale Computer
+## Borg: Birth of the Warehouse-Scale Computer
 
 Another way to understand the development of Google’s attitude toward automation, and when and where that automation is best deployed, is to consider the history of the development of Google’s cluster management systems.[^6] Like MySQL on Borg, which demonstrated the success of converting manual operations to automatic ones, and the cluster turnup process, which demonstrated the downside of not thinking carefully enough about where and how automation was implemented, developing cluster management also ended up demonstrating another lesson about how automation should be done. Like the previous two examples, something quite sophisticated was created as the eventual result of continuous evolution from simpler beginnings.
 
@@ -277,7 +273,7 @@ This functionality ultimately resulted in continuous and automatic operating sys
 
 An interesting analogy is possible here: Google’s engineers can make a direct mapping between the single machine case and the development of cluster management abstractions. In this view, rescheduling on another machine looks a lot like a process moving from one CPU to another: of course, those compute resources happen to be at the other end of a network link, but to what extent does that actually matter? Thinking in these terms, rescheduling looks like an intrinsic feature of the system rather than something one would “automate”—humans couldn’t react fast enough anyway. Similarly in the case of cluster turnup: in this metaphor, cluster turnup is simply additional schedulable capacity, a bit like adding disk or RAM to a single computer. However, a single-node computer is not, in general, expected to continue operating when a large number of components fail. The global computer is—it *must* be self-repairing to operate once it grows past a certain size, due to the essentially statistically guaranteed large number of failures taking place every second. This implies that as they move systems up the hierarchy from manually triggered, to automatically triggered, to autonomous, some capacity for self-introspection is necessary to survive.
 
-### Reliability Is the Fundamental Feature
+## Reliability Is the Fundamental Feature
 
 Of course, for effective troubleshooting, the details of internal operation that the introspection relies upon should also be exposed to the humans managing the overall system. Analogous discussions about the impact of automation in the noncomputer domain—for example, in airplane flight[^8] or industrial applications—often point out the downside of highly effective automation:[^9] human operators are progressively more relieved of useful direct contact with the system as the automation covers more and more daily activities over time. Inevitably, then, a situation arises in which the automation fails, and the humans are now unable to successfully operate the system.
 
@@ -285,11 +281,11 @@ The fluidity of their reactions has been lost due to lack of practice, and their
 
 Google’s engineers have experienced situations where automation has been actively harmful on a number of occasions—see [Automation: Enabling Failure at Scale](#automation-enabling-failure-at-scale)—but in Google’s experience, there are more systems for which automation or autonomous behavior are no longer optional extras. As you scale, this is of course the case, but there are still strong arguments for more autonomous behavior of systems irrespective of size. Reliability is the fundamental feature, and autonomous, resilient behavior is one useful way to get that.
 
-### Recommendations
+## Recommendations
 
 You might read the examples here and decide that you need to be Google-scale before you have anything to do with automation whatsoever. This is untrue, for two reasons: automation provides more than just time saving, so it’s worth implementing in more cases than a simple time-expended versus time-saved calculation might suggest. But the approach with the highest leverage actually occurs in the design phase: shipping and iterating rapidly might allow you to implement functionality faster, yet rarely makes for a resilient system. Autonomous operation is difficult to convincingly retrofit to sufficiently large systems, but standard good practices in software engineering will help considerably: having decoupled subsystems, introducing APIs, minimizing side effects, and so on.
 
-#### Automation: Enabling Failure at Scale
+### Automation: Enabling Failure at Scale
 
 Google runs over a dozen of its own large datacenters, but Google’s engineers also depend on machines in many third-party colocation facilities (or “colos”). Google’s machines in these colos are used to terminate most incoming connections, or as a cache for Google’s own Content Delivery Network, in order to lower end-user latency. At any point in time, a number of these racks are being installed or decommissioned; both of these processes are largely automated. One step during decommission involves overwriting the full content of the disk of all the machines in the rack, after which point an independent system verifies the successful erase. They call this process “Diskerase.”
 
@@ -297,7 +293,7 @@ Once upon a time, the automation in charge of decommissioning a particular rack 
 
 Within minutes, the highly efficient Diskerase wiped the disks on all machines in Google’s CDN, and the machines were no longer able to terminate connections from users (or do anything else useful). Google’s engineers were still able to serve all the users from Google’s own datacenters, and after a few minutes the only effect visible externally was a slight increase in latency. As far as they could tell, very few users noticed the problem at all, thanks to good capacity planning (the capacity plan worked). Meanwhile, they spent the better part of two days reinstalling the machines in the affected colo racks; then they spent the following weeks auditing and adding more sanity checks—including rate limiting—into Google’s automation, and making Google’s decommission workflow idempotent.
 
-### Notes
+## Notes
 
 [^1]: For readers who already feel they precisely understand the value of automation, skip ahead to [The Value for Google SRE](#the-value-for-google-sre). The preceding discussion includes nuances that may help when reading the examples.
 

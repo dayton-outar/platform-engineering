@@ -1,8 +1,4 @@
-# Chapter 21
-
-## Handling Overload
-
-Source: [Site.Reliability.Engineering-2016-21.pdf](./Site.Reliability.Engineering-2016-21.pdf), PDF pages 1–12.
+# Handling Overload
 
 The first-person accounts and Google-specific practices below reflect the source authors’ perspective in 2016.
 
@@ -20,7 +16,7 @@ One option for handling overload is to serve degraded responses: responses that 
 
 However, under extreme overload, the service might not even be able to compute and serve degraded responses. At this point it may have no immediate option but to serve errors. One way to mitigate this scenario is to balance traffic across datacenters such that no datacenter receives more traffic than it has the capacity to process. For example, if a datacenter runs 100 backend tasks and each task can process up to 500 requests per second, the load balancing algorithm will not allow more than 50,000 queries per second to be sent to that datacenter. However, even this constraint can prove insufficient to avoid overload when you’re operating at scale. At the end of the day, it’s best to build clients and backends to handle resource restrictions gracefully: redirect when possible, serve degraded results when necessary, and handle resource errors transparently when all else fails.
 
-### The Pitfalls of “Queries per Second”
+## The Pitfalls of “Queries per Second”
 
 Different queries can have vastly different resource requirements. A query’s cost can vary based on arbitrary factors such as the code in the client that issues them (for services that have many different clients) or even the time of the day (e.g., home users versus work users; or interactive end-user traffic versus batch traffic).
 
@@ -36,7 +32,7 @@ In a majority of cases (although certainly not in all), we’ve found that simpl
 
 In cases where over-provisioning the non-CPU resources is prohibitively expensive, we take each system resource into account separately when considering resource consumption.
 
-### Per-Customer Limits
+## Per-Customer Limits
 
 One component of dealing with overload is deciding what to do in the case of *global* overload. In a perfect world, where teams coordinate their launches carefully with the owners of their backend dependencies, global overload never happens and backend services always have enough capacity to serve their customers. Unfortunately, we don’t live in a perfect world. Here in reality, global overload occurs quite frequently (especially for internal services that tend to have many clients run by many teams).
 
@@ -58,7 +54,7 @@ Note that these numbers may add up to more than the 10,000 CPUs allocated to the
 
 We aggregate global usage information in real time from all backend tasks, and use that data to push effective limits to individual backend tasks. A closer look at the system that implements this logic is outside of the scope of this discussion, but we’ve written significant code to implement this in our backend tasks. An interesting part of the puzzle is computing in real time the amount of resources—specifically CPU— consumed by each individual request. This computation is particularly tricky for servers that don’t implement a thread-per-request model, where a pool of threads just executes different parts of all requests as they come in, using nonblocking APIs.
 
-### Client-Side Throttling
+## Client-Side Throttling
 
 When a customer is out of quota, a backend task should reject requests quickly with the expectation that returning a “customer is out of quota” error consumes significantly fewer resources than actually processing the request and serving back a correct response. However, this logic doesn’t hold true for all services. For example, it’s almost equally expensive to reject a request that requires a simple RAM lookup (where the overhead of the request/response protocol handling is significantly larger than the overhead of producing the response) as it is to accept and run that request. And even in the case where rejecting requests saves significant resources, those requests *still* consume some resources. If the amount of rejected requests is significant, these numbers add up quickly. In such cases, the backend can become overloaded even though the vast majority of its CPU is spent just rejecting requests!
 
@@ -96,7 +92,7 @@ We generally prefer the 2x multiplier. By allowing more requests to reach the ba
 
 One additional consideration is that client-side throttling may not work well with clients that only very sporadically send requests to their backends. In this case, the view that each client has of the state of the backend is reduced drastically, and approaches to increment this visibility tend to be expensive.
 
-### Criticality
+## Criticality
 
 *Criticality* is another notion that we’ve found very useful in the context of global quotas and throttling. A request made to a backend is associated with one of four possible criticality values, depending on how critical we consider that request:
 
@@ -132,7 +128,7 @@ We’ve also significantly extended our RPC system to propagate criticality auto
 
 In the past, many systems at Google had evolved their own ad hoc notions of criticality that were often incompatible across services. By standardizing and propagating criticality as a part of our RPC system, we are now able to consistently set the criticality at specific points. This means we can be confident that overloaded dependencies will abide by the desired high-level criticality as they reject traffic, regardless of how deep down the RPC stack they are. Our practice is thus to set the criticality as close as possible to the browsers or mobile clients—typically in the HTTP frontends that produce the HTML to be returned—and only override the criticality in specific cases where it makes sense at specific points in the stack.
 
-### Utilization Signals
+## Utilization Signals
 
 Our implementation of task-level overload protection is based on the notion of *utilization*. In many cases, the utilization is just a measurement of the CPU rate (i.e., the current CPU rate divided by the total CPUs reserved for the task), but in some cases we also factor in measurements such as the portion of the memory reserved that is currently being used. As utilization approaches configured thresholds, we start rejecting requests based on their criticality (higher thresholds for higher criticalities).
 
@@ -142,7 +138,7 @@ To find the executor load average, we count the number of active threads in the 
 
 While the executor load average has proven to be a very useful signal, our system can plug in any utilization signal that a particular backend may need. For example, we might use memory pressure—which indicates whether the memory usage in a backend task has grown beyond normal operational parameters—as another possible utilization signal. The system can also be configured to combine multiple signals and reject requests that would surpass the combined (or individual) target utilization thresholds.
 
-### Handling Overload Errors
+## Handling Overload Errors
 
 In addition to handling load gracefully, we’ve put a significant amount of thought into how clients should react when they receive a load-related error response. In the case of overload errors, we distinguish between two possible situations.
 
@@ -160,7 +156,7 @@ From the point of view of our load balancing policies, retries of requests are i
 
 Even if a backend is only slightly overloaded, a client request is often better served if the backend rejects retry and new requests equally and quickly. These requests can then be retried immediately on a different backend task that may have spare resources. The consequence of treating retries and new requests identically at the backend is that retrying requests in different tasks becomes a form of organic load balancing: it redirects load to tasks that may be better suited for those requests.
 
-#### Deciding to Retry
+### Deciding to Retry
 
 When a client receives a “task overloaded” error response, it needs to decide whether to retry the request. We have a few mechanisms in place to avoid retries when a significant portion of the tasks in a cluster are overloaded.
 
@@ -194,7 +190,7 @@ Consider the example from Figure 21-2 (in practice, our stacks are often signifi
 
 The key point is that a failed request from the DB Frontend should only be retried by Backend B, the layer immediately above it. If multiple layers retried, we’d have a combinatorial explosion.
 
-### Load from Connections
+## Load from Connections
 
 The load associated with connections is one last factor worth mentioning. We sometimes only take into account load at the backends that is caused directly by the requests they receive (which is one of the problems with approaches that model load based upon queries per second). However, doing so overlooks the CPU and memory costs of maintaining a large pool of connections or the cost of a fast rate of churn of connections. Such issues are negligible in small systems, but quickly become problematic when running very large-scale RPC systems.
 
@@ -206,7 +202,7 @@ Handling bursts of new connection requests is a second (but related) problem. We
 
 - Mandate that batch client jobs use a separate set of *batch proxy* backend tasks that do nothing but forward requests to the underlying backends and hand their responses back to the clients in a controlled way. Therefore, instead of “batch client → backend,” you have “batch client → batch proxy → backend.” In this case, when the very large job starts, only the batch proxy job suffers, shielding the actual backends (and higher-priority clients). Effectively, the batch proxy acts like a fuse. Another advantage of using the proxy is that it typically reduces the number of connections against the backend, which can improve the load balancing against the backend (e.g., the proxy tasks can use bigger subsets and probably have a better view of the state of the backend tasks).
 
-### Conclusions
+## Conclusions
 
 This document and [Load Balancing in the Datacenter](LOAD.BALANCING.DATACENTER.md) have discussed how various techniques (deterministic subsetting, Weighted Round Robin, client-side throttling, customer quotas, etc.) can help to spread load over tasks in a datacenter relatively evenly. However, these mechanisms depend on the propagation of state over a distributed system. While they perform reasonably well in the general case, real-world application has resulted in a small number of situations where they work imperfectly.
 
@@ -218,6 +214,6 @@ It’s a common mistake to assume that an overloaded backend should turn down an
 
 While we have a vast array of tools to implement good load balancing and overload protections, there is no magic bullet: load balancing often requires deep understanding of a system and the semantics of its requests. The techniques described in this document have evolved along with the needs of many systems at Google, and will likely continue to evolve as the nature of our systems continues to change.
 
-### Notes
+## Notes
 
 [^p4-1]: For example, see Doorman, which provides a cooperative distributed client-side throttling system.

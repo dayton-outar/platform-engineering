@@ -1,9 +1,6 @@
 # Chapter 1
 
 ## Introduction
-
-Source: [Site.Reliability.Engineering-2016-1.pdf](./Site.Reliability.Engineering-2016-1.pdf), PDF pages 1–10.
-
 ***Written by Benjamin Treynor Sloss[^p1-1]***
 
 ***Edited by Betsy Beyer***
