@@ -1,7 +1,5 @@
 # Evolving Schemas and Data over Time
 
-Source: [Designing.Event-Driven.Systems-2018-13.pdf](./Designing.Event-Driven.Systems-2018-13.pdf), PDF pages 1–7.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 Schemas are the APIs used by event-driven services, so a publisher and subscriber need to agree on exactly how a message is formatted. This creates a logical coupling between sender and receiver based on the schema they both share. In the same way that request-driven services make use of service discovery technology to discover APIs, event-driven technologies need some mechanism to discover what topics are available, and what data (i.e., schema) they provide.

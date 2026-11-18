@@ -1,7 +1,5 @@
 # Lean Data
 
-Source: [Designing.Event-Driven.Systems-2018-10.pdf](./Designing.Event-Driven.Systems-2018-10.pdf), PDF pages 1–7.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 Lean data is a simple idea: rather than collecting and curating large datasets, applications carefully select small, lean ones—just the data they need at a point in time—which are pushed from a central event store into caches, or stores they control. The resulting lightweight views are propped up by operational processes that make rederiving those views practical.

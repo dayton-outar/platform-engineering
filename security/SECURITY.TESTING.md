@@ -1,7 +1,5 @@
 # Designing Secure Software-2021
 
-Source: [Designing.Secure.Software-2021-12.pdf](Designing.Secure.Software-2021-12.pdf) — 16 PDF pages.
-
 First-person accounts and opinions in this document are those of the original source author.
 
 ## Security Testing

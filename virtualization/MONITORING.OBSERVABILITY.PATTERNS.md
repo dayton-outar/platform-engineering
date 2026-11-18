@@ -1,7 +1,5 @@
 # Monitoring and Observability Patterns
 
-Source: [Designing.Distributed.Systems-2025-14.pdf](./Designing.Distributed.Systems-2025-14.pdf), PDF pages 1–12.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 One of the core differences between client applications and distributed systems is that generally distributed systems implement services. Services are always on, always available for users around the world in all time zones and ways of working. Because of the 24/7 nature of these systems, monitoring and observability become critical to building reliable systems. To deliver reliability, you must notice a problem before the customer notices a problem; and to solve any problems you find, you need to be able to understand how your system is operating. This document focuses on best practices for such monitoring and observability.

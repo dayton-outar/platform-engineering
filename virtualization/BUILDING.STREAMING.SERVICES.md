@@ -1,7 +1,5 @@
 # Building Streaming Services
 
-Source: [Designing.Event-Driven.Systems-2018-15.pdf](./Designing.Event-Driven.Systems-2018-15.pdf), PDF pages 1–12.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 ## An Order Validation Ecosystem

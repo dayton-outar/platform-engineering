@@ -1,7 +1,5 @@
 # Replicated Load-Balanced Services
 
-Source: [Designing.Distributed.Systems-2025-6.pdf](./Designing.Distributed.Systems-2025-6.pdf), PDF pages 1–13.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 The simplest distributed pattern, and one that most are familiar with, is a replicated load-balanced service. In such a service, every server is identical to every other server, and all are capable of supporting traffic from any client. The pattern consists of a scalable number of servers with a load balancer in front of them. The load balancer is typically either completely round-robin or uses some form of session stickiness. This document gives a concrete example of how to deploy such a service in Kubernetes.

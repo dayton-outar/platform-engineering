@@ -1,7 +1,5 @@
 # Work Queue Systems
 
-Source: [Designing.Distributed.Systems-2025-11.pdf](./Designing.Distributed.Systems-2025-11.pdf), PDF pages 1–12.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 The simplest form of batch processing is a *work queue*. In a work queue system, there is a batch of work to be performed. Each piece of work is wholly independent of the other and can be processed without any interactions. Generally, the goals of the work queue system are to ensure that each piece of work is processed within a certain amount of time. Workers are scaled up or scaled down to ensure that the work can be handled. An illustration of a generic work queue is shown in Figure 11-1.

@@ -1,7 +1,5 @@
 # Sharded Services
 
-Source: [Designing.Distributed.Systems-2025-7.pdf](./Designing.Distributed.Systems-2025-7.pdf), PDF pages 1–14.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 In [Replicated Load-Balanced Services](REPLICATED.LOAD.BALANCED.SERVICES.md), we saw the value of replicating stateless services for reliability, redundancy, and scaling. This document considers sharded services. With the replicated services that we introduced in [Replicated Load-Balanced Services](REPLICATED.LOAD.BALANCED.SERVICES.md), each replica was entirely homogeneous and capable of serving every request. In contrast to replicated services, with sharded services, each replica, or *shard*, is only capable of serving a subset of all requests. A load-balancing node, or *root*, is responsible for examining each request and distributing each request to the appropriate shard or shards for processing. The contrast between replicated and sharded services is represented in Figure 7-1.

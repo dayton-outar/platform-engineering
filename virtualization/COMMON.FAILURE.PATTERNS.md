@@ -1,7 +1,5 @@
 # Common Failure Patterns
 
-Source: [Designing.Distributed.Systems-2025-16.pdf](./Designing.Distributed.Systems-2025-16.pdf), PDF pages 1–12.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 So far this repository has covered various patterns to help you build your distributed system. This document is going to be a little different. Instead of helping you know what to do, it is intended to help you know what *not* to do. Over numerous years of developing, operating, and debugging systems, certain kinds of problems repeat themselves. These patterns are divided into mistakes that are made in building the systems, as well as common ways in which systems fail. By understanding both what not to do and what to try to prevent, we can learn from these shared mistakes and prevent them from repeating in the future.

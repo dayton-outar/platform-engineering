@@ -1,7 +1,5 @@
 # Event Streams as a Shared Source of Truth
 
-Source: [Designing.Event-Driven.Systems-2018-9.pdf](./Designing.Event-Driven.Systems-2018-9.pdf), PDF pages 1–4.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 As we saw in Part II of this repository, events are a useful tool for system design, providing notification, state transfer, and decoupling. For a couple of decades now, messaging systems have leveraged these properties, moving events from system to system, but only in the last few years have messaging systems started to be used as a storage layer, retaining the datasets that flow through them. This creates an interesting architectural pattern. A company’s core datasets are stored as centralized event streams, with all the decoupling effects of a message broker built in. But unlike traditional brokers, which delete messages once they have been read, historic data is stored and made available to any team that needs it. This links closely with the ideas developed in Event Sourcing (see [Event Sourcing, CQRS, and Other Stateful Patterns](EVENT.SOURCING.CQRS.STATEFUL.PATTERNS.md)) and Pat Helland’s concept of data on the outside. ThoughtWorks calls this pattern event streaming as the source of truth.

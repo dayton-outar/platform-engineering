@@ -1,7 +1,5 @@
 # Coordinated Batch Processing
 
-Source: [Designing.Distributed.Systems-2025-13.pdf](./Designing.Distributed.Systems-2025-13.pdf), PDF pages 1–9.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 [Event-Driven Batch Processing](EVENT.DRIVEN.BATCH.PROCESSING.md) described a number of patterns for splitting and chaining queues together to achieve more complex batch processing. Duplicating and producing multiple different outputs is often an important part of batch processing, but sometimes it is equally important to pull multiple outputs back together in order to generate some sort of aggregate output. A generic illustration of such a pattern is shown in Figure 13-1.

@@ -1,7 +1,5 @@
 # Service-Based Architecture Style
 
-Source: [Fundamentals.of.Software.Architecture-2020-13.pdf](./Fundamentals.of.Software.Architecture-2020-13.pdf), PDF pages 1–16.
-
 *Service-based* architecture is a hybrid of the microservices architecture style and is considered one of the most pragmatic architecture styles, mostly due to its architectural flexibility. Although service-based architecture is a distributed architecture, it doesn’t have the same level of complexity and cost as other distributed architectures, such as microservices or event-driven architecture, making it a very popular choice for many business-related applications.
 
 ## Topology

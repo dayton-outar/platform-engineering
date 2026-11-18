@@ -1,7 +1,5 @@
 # Web Security for Developers-2020
 
-Source: [Web.Security.for.Developers-2020-17.pdf](Web.Security.for.Developers-2020-17.pdf) — 6 PDF pages.
-
 First-person accounts and opinions in this document are those of the original source author.
 
 ## Denial-of-Service Attacks

@@ -1,7 +1,5 @@
 # Orchestration-Driven Service-Oriented Architecture
 
-Source: [Fundamentals.of.Software.Architecture-2020-16.pdf](./Fundamentals.of.Software.Architecture-2020-16.pdf), PDF pages 1–9.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 Architecture styles, like art movements, must be understood in the context of the era in which they evolved, and this architecture exemplifies this rule more than any other. The combination of external forces that often influence architecture decisions, combined with a logical but ultimately disastrous organizational philosophy, doomed this architecture to irrelevance. However, it provides a great example of how a particular organizational idea can make logical sense yet hinder most important parts of the development process.

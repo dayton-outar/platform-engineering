@@ -1,7 +1,5 @@
 # Adapters
 
-Source: [Designing.Distributed.Systems-2025-5.pdf](./Designing.Distributed.Systems-2025-5.pdf), PDF pages 1–9.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 [The Sidecar Pattern](SIDECAR.PATTERN.md) explains how to extend and augment existing application containers. [Ambassadors](AMBASSADORS.md) explains how to alter and broker an application container’s communication with the external world. This document describes the final single-node pattern: the *adapter* pattern. In the adapter pattern, the *adapter container* is used to modify the interface of the *application container* so that it conforms to some predefined interface that is expected of all applications. For example, an adapter might ensure that an application implements a consistent monitoring interface. Or it might ensure that log files are always written to stdout or any number of other conventions.

@@ -1,7 +1,5 @@
 # Designing Secure Software-2021
 
-Source: [Designing.Secure.Software-2021-13.pdf](Designing.Secure.Software-2021-13.pdf) — 12 PDF pages.
-
 First-person accounts and opinions in this document are those of the original source author.
 
 ## Secure Development Best Practices

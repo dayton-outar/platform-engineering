@@ -1,7 +1,5 @@
 # The Origins of Streaming
 
-Source: [Designing.Event-Driven.Systems-2018-2.pdf](./Designing.Event-Driven.Systems-2018-2.pdf), PDF pages 1–4.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 This repository is about building business systems with stream processing tools, so it is useful to have an appreciation for where stream processing came from. The maturation of this toolset, in the world of real-time analytics, has heavily influenced the way we build event-driven systems today.

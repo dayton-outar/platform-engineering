@@ -1,7 +1,5 @@
 # Transactions, but Not as We Know Them
 
-Source: [Designing.Event-Driven.Systems-2018-12.pdf](./Designing.Event-Driven.Systems-2018-12.pdf), PDF pages 1–11.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 Kafka ships with built-in transactions, in much the same way that most relational databases do. The implementation is quite different, as we will see, but the goal is similar: to ensure that our programs create predictable and repeatable results, even when things fail.

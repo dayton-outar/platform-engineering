@@ -1,7 +1,5 @@
 # Beyond Messaging: An Overview of the Kafka Broker
 
-Source: [Designing.Event-Driven.Systems-2018-4.pdf](./Designing.Event-Driven.Systems-2018-4.pdf), PDF pages 1–10.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 A Kafka cluster is essentially a collection of files, filled with messages, spanning many different machines. Most of Kafka’s code involves tying these various individual logs together, routing messages from producers to consumers reliably, replicating for fault tolerance, and handling failure gracefully. So it is a messaging system, at least of sorts, but it’s quite different from the message brokers that preceded it. Like any technology, it comes with both pros and cons, and these shape the design of the systems we write. This document examines the Kafka broker (i.e., the server component) from the context of building business systems. We’ll explore a little about how it works, as well as dipping into the less conventional use cases it supports like data storage, dynamic failover, and bandwidth protection.

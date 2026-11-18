@@ -1,7 +1,5 @@
 # Important Distributed System Concepts
 
-Source: [Designing.Distributed.Systems-2025-2.pdf](./Designing.Distributed.Systems-2025-2.pdf), PDF pages 1–8.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 Before we get too deep into the design of distributed systems, it is valuable to ground ourselves in some key concepts that underpin the development of these distributed systems. If you are already experienced in distributed systems or systems design in general, some of these ideas may be familiar to you, and you may want to skip ahead, but hopefully at the completion of this document, you will have a core foundation for the patterns and designs presented in the related documents.

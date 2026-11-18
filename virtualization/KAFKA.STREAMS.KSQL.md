@@ -1,7 +1,5 @@
 # Kafka Streams and KSQL
 
-Source: [Designing.Event-Driven.Systems-2018-14.pdf](./Designing.Event-Driven.Systems-2018-14.pdf), PDF pages 1–6.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 When it comes to building event-driven services, the Kafka Streams API provides the most complete toolset for handling a distributed, asynchronous world. Kafka Streams is designed to perform streaming computations. We discussed a simple example of such a use case, where we processed app open/close events emitted from mobile phones in [The Origins of Streaming](ORIGINS.STREAMING.md). We also touched on its stateful elements in [Processing Events with Stateful Functions](PROCESSING.EVENTS.STATEFUL.FUNCTIONS.md). This led us to three types of services we can build: event-driven, streaming, and stateful streaming.

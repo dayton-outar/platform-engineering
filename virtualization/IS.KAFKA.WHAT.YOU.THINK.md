@@ -1,7 +1,5 @@
 # Is Kafka What You Think It Is?
 
-Source: [Designing.Event-Driven.Systems-2018-3.pdf](./Designing.Event-Driven.Systems-2018-3.pdf), PDF pages 1–4.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 There is an old parable about an elephant and a group of blind men. None of the men had come across an elephant before. One blind man approaches the leg and declares, “It’s like a tree.” Another man approaches the tail and declares, “It’s like a rope.” A third approaches the trunk and declares, “It’s like a snake.” So each blind man senses the elephant from his particular point of view, and comes to a subtly different conclusion as to what an elephant is. Of course the elephant is like all these things, but it is really just an elephant!

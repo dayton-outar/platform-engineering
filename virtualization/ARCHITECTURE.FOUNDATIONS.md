@@ -1,7 +1,5 @@
 # Foundations
 
-Source: [Fundamentals.of.Software.Architecture-2020-9.pdf](./Fundamentals.of.Software.Architecture-2020-9.pdf), PDF pages 1–14.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 Architecture styles, sometimes called architecture patterns, describe a named relationship of components covering a variety of architecture characteristics. An architecture style name, similar to design patterns, creates a single name that acts as shorthand between experienced architects. For example, when an architect talks about a layered monolith, their target in the conversation understands aspects of structure, which kinds of architecture characteristics work well (and which ones can cause problems), typical deployment models, data strategies, and a host of other information. Thus, architects should be familiar with the basic names of fundamental generic architecture styles.

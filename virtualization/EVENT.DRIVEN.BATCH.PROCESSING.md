@@ -1,7 +1,5 @@
 # Event-Driven Batch Processing
 
-Source: [Designing.Distributed.Systems-2025-12.pdf](./Designing.Distributed.Systems-2025-12.pdf), PDF pages 1–15.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 In [Work Queue Systems](WORK.QUEUE.SYSTEMS.md), we saw a generic framework for work queue processing, as well as a number of example applications of simple work queue processing. Work queues are great for enabling individual transformations of one input to one output. However, there are a number of batch applications where you want to perform more than a single action, or you may need to generate multiple different outputs from a single data input. In these cases, you start to link work queues together so that the output of one work queue becomes the input to one or more other work queues, and so on. This forms a series of processing steps that respond to events, with the events being the completion of the preceding step in the work queue that came before it.

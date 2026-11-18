@@ -1,7 +1,5 @@
 # Processing Events with Stateful Functions
 
-Source: [Designing.Event-Driven.Systems-2018-6.pdf](./Designing.Event-Driven.Systems-2018-6.pdf), PDF pages 1–8.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 Imperative styles of programming are some of the oldest of all, and their popularity persists for good reason. Procedures execute sequentially, spelling out a story on the page and altering the program’s state as they do so.

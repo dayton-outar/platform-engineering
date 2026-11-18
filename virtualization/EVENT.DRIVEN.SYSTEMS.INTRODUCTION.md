@@ -1,7 +1,5 @@
 # Introduction
 
-Source: [Designing.Event-Driven.Systems-2018-1.pdf](./Designing.Event-Driven.Systems-2018-1.pdf), PDF pages 1–5.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 While the main focus of this repository is the building of event-driven systems of different sizes, there is a deeper focus on software that spans many teams. This is the realm of service-oriented architectures: an idea that arose around the start of the century, where a company reconfigures itself around shared services that do commonly useful things.

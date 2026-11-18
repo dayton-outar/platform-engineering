@@ -4,8 +4,6 @@
 
 ## Implementing Security for Applications-2005
 
-Source: [Implementing.Security.for.Applications-2005-3-2.pdf](Implementing.Security.for.Applications-2005-3-2.pdf) — section 2, 10 pages.
-
 First-person accounts and opinions in this document are those of the original source authors.
 
 ## Lesson 2: Testing Assemblies for Vulnerabilities

@@ -1,7 +1,5 @@
 # Sharing Data and Services Across an Organization
 
-Source: [Designing.Event-Driven.Systems-2018-8.pdf](./Designing.Event-Driven.Systems-2018-8.pdf), PDF pages 1–11.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 When we build software, our main focus is, quite rightly, aimed at solving some real-world problem. It might be a new web page, a report of sales features, an analytics program searching for fraudulent behavior, or an almost infinite set of options that provide clear and physical benefits to our users. These are all very tangible goals—goals that serve our business today.

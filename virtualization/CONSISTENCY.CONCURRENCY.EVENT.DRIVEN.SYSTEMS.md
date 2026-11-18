@@ -1,7 +1,5 @@
 # Consistency and Concurrency in Event-Driven Systems
 
-Source: [Designing.Event-Driven.Systems-2018-11.pdf](./Designing.Event-Driven.Systems-2018-11.pdf), PDF pages 1–10.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 The term *consistency* is quite overused in our industry, with several different meanings applied in a range of contexts. Consistency in CAP theorem differs from consistency in ACID transactions, and there is a whole spectrum of subtly different guarantees, including strong consistency and eventual consistency, among others. The lack of consistent terminology around this word may seem a little ironic, but it is really a reflection of the complexity of a subject that goes way beyond the scope of this repository.[^p1-1]

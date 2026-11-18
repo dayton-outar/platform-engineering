@@ -1,7 +1,5 @@
 # The Sidecar Pattern
 
-Source: [Designing.Distributed.Systems-2025-3.pdf](./Designing.Distributed.Systems-2025-3.pdf), PDF pages 1–10.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 The first single-node pattern is the sidecar pattern. The sidecar pattern is a single-node pattern made up of two containers. The first is the *application container*. It contains the core logic for the application. Without this container, the application would not exist. In addition to the application container, there is a *sidecar container*. The role of the sidecar is to augment and improve the application container, often without the application container’s knowledge. In its simplest form, a sidecar container can be used to add functionality to a container that might otherwise be difficult to improve. Sidecar containers are coscheduled onto the same machine via an atomic *container group*, such as the pod API object in Kubernetes. In addition to being scheduled on the same machine, the application container and sidecar container share a number of resources, including parts of the filesystem, hostname, and network, and many other namespaces. A generic image of this sidecar pattern is shown in Figure 3-1.

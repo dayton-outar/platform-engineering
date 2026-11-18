@@ -1,7 +1,5 @@
 # Introduction
 
-Source: [Designing.Distributed.Systems-2025-1.pdf](./Designing.Distributed.Systems-2025-1.pdf), PDF pages 1–6.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 Today’s world of always-on applications and APIs has availability and reliability requirements that would have been required of only a handful of mission-critical services around the globe only a few decades ago. Likewise, the potential for rapid, viral growth of a service means that every application has to be built to scale nearly instantly in response to user demand. These constraints and requirements mean that almost every application that is built—whether it is a consumer mobile app or a backend payments application—needs to be a distributed system.

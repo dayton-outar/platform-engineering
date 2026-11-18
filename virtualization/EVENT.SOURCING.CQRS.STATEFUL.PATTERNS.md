@@ -1,7 +1,5 @@
 # Event Sourcing, CQRS, and Other Stateful Patterns
 
-Source: [Designing.Event-Driven.Systems-2018-7.pdf](./Designing.Event-Driven.Systems-2018-7.pdf), PDF pages 1–18.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 In [Events: A Basis for Collaboration](EVENTS.BASIS.COLLABORATION.md) we introduced the Event Collaboration pattern, where events describe an evolving business process—like processing an online purchase or booking and settling a trade—and several services collaborate to push that workflow forward.

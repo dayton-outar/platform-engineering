@@ -1,7 +1,5 @@
 # Choosing the Appropriate Architecture Style
 
-Source: [Fundamentals.of.Software.Architecture-2020-18.pdf](./Fundamentals.of.Software.Architecture-2020-18.pdf), PDF pages 1–12.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 It depends! With all the choices available (and new ones arriving almost daily), we would like to tell you which one to use—but we cannot. Nothing is more contextual to a number of factors within an organization and what software it builds. Choosing an architecture style represents the culmination of analysis and thought about trade-offs for architecture characteristics, domain considerations, strategic goals, and a host of other things.

@@ -4,8 +4,6 @@
 
 ## Implementing Security for Applications-2005
 
-Source: [Implementing.Security.for.Applications-2005-1-1.pdf](Implementing.Security.for.Applications-2005-1-1.pdf) — section 1, 14 pages.
-
 First-person accounts and opinions in this document are those of the original source authors.
 
 ## Lesson 1: Evaluating Security Threats
@@ -317,8 +315,6 @@ f. Password cracking
 <a id="section-2"></a>
 
 ## Implementing Security for Applications-2005
-
-Source: [Implementing.Security.for.Applications-2005-1-2.pdf](Implementing.Security.for.Applications-2005-1-2.pdf) — section 2, 18 pages.
 
 ## Lesson 2: Implementing Best Practices to Design Secure Applications
 
@@ -635,8 +631,6 @@ f. Providing error messages to end users that include detailed descriptions of f
 <a id="section-3"></a>
 
 ## Implementing Security for Applications-2005
-
-Source: [Implementing.Security.for.Applications-2005-1-3.pdf](Implementing.Security.for.Applications-2005-1-3.pdf) — section 3, 15 pages.
 
 ## Lesson 3: Accessing Resources with Least Privilege
 

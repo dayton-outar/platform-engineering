@@ -1,7 +1,5 @@
 # Microservices Architecture
 
-Source: [Fundamentals.of.Software.Architecture-2020-17.pdf](./Fundamentals.of.Software.Architecture-2020-17.pdf), PDF pages 1–22.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 *Microservices* is an extremely popular architecture style that has gained significant momentum in recent years. In this document, we provide an overview of the important characteristics that set this architecture apart, both topologically and philosophically.

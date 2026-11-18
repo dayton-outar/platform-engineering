@@ -1,7 +1,5 @@
 # Microkernel Architecture Style
 
-Source: [Fundamentals.of.Software.Architecture-2020-12.pdf](./Fundamentals.of.Software.Architecture-2020-12.pdf), PDF pages 1–14.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 The *microkernel* architecture style (also referred to as the *plug-in* architecture) was coined several decades ago and is still widely used today. This architecture style is a natural fit for product-based applications (packaged and made available for download and installation as a single, monolithic deployment, typically installed on the customer’s site as a third-party product) but is widely used in many nonproduct custom business applications as well.

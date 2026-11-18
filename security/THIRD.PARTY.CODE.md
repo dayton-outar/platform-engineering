@@ -1,7 +1,5 @@
 # Web Security for Developers-2020
 
-Source: [Web.Security.for.Developers-2020-14.pdf](Web.Security.for.Developers-2020-14.pdf) — 14 PDF pages.
-
 First-person accounts and opinions in this document are those of the original source author.
 
 ## Third-Party Code

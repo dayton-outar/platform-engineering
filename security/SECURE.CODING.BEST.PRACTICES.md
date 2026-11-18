@@ -4,8 +4,6 @@
 
 ## Implementing Security for Applications-2005
 
-Source: [Implementing.Security.for.Applications-2005-2-1.pdf](Implementing.Security.for.Applications-2005-2-1.pdf) — section 1, 17 pages.
-
 First-person accounts and opinions in this document are those of the original source authors.
 
 ## Lesson 1: Validating Input
@@ -430,8 +428,6 @@ Answer the following questions to show that you can implement best practices for
 
 ## Implementing Security for Applications-2005
 
-Source: [Implementing.Security.for.Applications-2005-2-2.pdf](Implementing.Security.for.Applications-2005-2-2.pdf) — section 2, 6 pages.
-
 ## Lesson 2: Minimizing Canonicalization Problems
 
 Attacks exploiting canonicalization problems in Web applications have been, and will continue to be, one of the biggest challenges to Web developers. *Canonicalization* problems are not unique to Web applications, however. The same problems can be exploited in Windows Forms applications, because local filenames can be represented in multiple, and often confusing, ways. This lesson provides best practices for reducing your vulnerability to canonicalization problems by using features built into the .NET Framework.
@@ -610,8 +606,6 @@ Try
 <a id="section-3"></a>
 
 ## Implementing Security for Applications-2005
-
-Source: [Implementing.Security.for.Applications-2005-2-3.pdf](Implementing.Security.for.Applications-2005-2-3.pdf) — section 3, 14 pages.
 
 ## Lesson 3: Minimizing SQL Injection Attacks
 
@@ -1039,8 +1033,6 @@ In this exercise, you fix the vulnerable application, and then answer questions 
 <a id="section-4"></a>
 
 ## Implementing Security for Applications-2005
-
-Source: [Implementing.Security.for.Applications-2005-2-4.pdf](Implementing.Security.for.Applications-2005-2-4.pdf) — section 4, 6 pages.
 
 ## Lesson 4: Minimizing Cross-Site Scripting
 

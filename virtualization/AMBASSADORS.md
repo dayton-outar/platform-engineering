@@ -1,7 +1,5 @@
 # Ambassadors
 
-Source: [Designing.Distributed.Systems-2025-4.pdf](./Designing.Distributed.Systems-2025-4.pdf), PDF pages 1–9.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 [The Sidecar Pattern](SIDECAR.PATTERN.md) introduced the sidecar pattern, where one container augments a pre-existing container to add functionality. This document introduces the ambassador pattern, where an ambassador container brokers interactions between the application container and the rest of the world. As with other single-node patterns, the two containers are tightly linked in a symbiotic pairing that is scheduled to a single machine. A canonical diagram of this pattern is shown in Figure 4-1.

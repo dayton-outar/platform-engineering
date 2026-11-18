@@ -1,7 +1,5 @@
 # Ownership Election
 
-Source: [Designing.Distributed.Systems-2025-10.pdf](./Designing.Distributed.Systems-2025-10.pdf), PDF pages 1–13.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 The previous patterns that we have seen have been about distributing requests in order to scale requests per second, the state being served, or the time to process a request. This document on multinode serving patterns is about how you scale assignment. In many different systems, there is a notion of *ownership* where a specific process owns a specific task. We have previously seen this in the context of sharded and hot-sharded systems where specific instances owned specific sections of the sharded key space.

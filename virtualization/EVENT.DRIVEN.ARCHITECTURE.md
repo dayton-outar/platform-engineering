@@ -1,7 +1,5 @@
 # Event-Driven Architecture Style
 
-Source: [Fundamentals.of.Software.Architecture-2020-14.pdf](./Fundamentals.of.Software.Architecture-2020-14.pdf), PDF pages 1–32.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 The *event-driven* architecture style is a popular distributed asynchronous architecture style used to produce highly scalable and high-performance applications. It is also highly adaptable and can be used for small applications and as well as large, complex ones. Event-driven architecture is made up of decoupled event processing components that asynchronously receive and process events. It can be used as a standalone architecture style or embedded within other architecture styles (such as an event-driven microservices architecture).

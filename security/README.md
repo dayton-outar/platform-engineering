@@ -2,8 +2,6 @@
 
 Explore software threats, secure design, web vulnerabilities, and application security testing. The collections below retain their chapter order, progressing from design principles to specific attacks and defenses. The .NET collection covers historical application security practices.
 
-## Table of Contents
-
 ## Overview
 
 1. [Security overview and web security checklist](SECURITY.OVERVIEW.md)

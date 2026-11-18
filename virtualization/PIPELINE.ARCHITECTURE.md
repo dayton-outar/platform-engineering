@@ -1,7 +1,5 @@
 # Pipeline Architecture Style
 
-Source: [Fundamentals.of.Software.Architecture-2020-11.pdf](./Fundamentals.of.Software.Architecture-2020-11.pdf), PDF pages 1–6.
-
 One of the fundamental styles in software architecture that appears again and again is the *pipeline* architecture (also known as the *pipes and filters* architecture). As soon as developers and architects decided to split functionality into discrete parts, this pattern followed. Most developers know this architecture as this underlying principle behind Unix terminal shell languages, such as Bash and Zsh.
 
 Developers in many functional programming languages will see parallels between language constructs and elements of this architecture. In fact, many tools that utilize the MapReduce programming model follow this basic topology. While these examples show a low-level implementation of the pipeline architecture style, it can also be used for higher-level business applications.

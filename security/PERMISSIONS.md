@@ -1,7 +1,5 @@
 # Web Security for Developers-2020
 
-Source: [Web.Security.for.Developers-2020-11.pdf](Web.Security.for.Developers-2020-11.pdf) — 10 PDF pages.
-
 First-person accounts and opinions in this document are those of the original source author.
 
 ## Permissions

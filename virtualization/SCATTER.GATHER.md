@@ -1,7 +1,5 @@
 # Scatter/Gather
 
-Source: [Designing.Distributed.Systems-2025-8.pdf](./Designing.Distributed.Systems-2025-8.pdf), PDF pages 1–8.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 So far we’ve examined systems that replicate for scalability in terms of the number of requests processed per second (the stateless replicated pattern), as well as scalability for the size of the data (the sharded data pattern). In this document we introduce the *scatter/gather* pattern, which uses replication for scalability in terms of time. Specifically, the scatter/gather pattern allows you to achieve parallelism in servicing requests, enabling you to service them significantly faster than you could if you had to service them sequentially.

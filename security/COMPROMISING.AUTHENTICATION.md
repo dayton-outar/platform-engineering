@@ -1,14 +1,6 @@
-# Web Security for Developers-2020
-
-Source: [Web.Security.for.Developers-2020-9.pdf](Web.Security.for.Developers-2020-9.pdf) — 12 PDF pages.
+# Compromising Authentication
 
 First-person accounts and opinions in this document are those of the original source author.
-
-## Compromising Authentication
-
-![Figure 9-5: Chapter-opening artwork](/.attachments/9-5-Web.Security.for.Developers-2020-9.png)
-
-*Figure 9-5: Chapter-opening artwork*
 
 Most websites provide some sort of login functionality. This is a form of *authentication*, the process of identifying users when they return to your website. Authenticating your users allows them to have an identity in an online community where they can contribute content, send messages to others, make purchases, and so on.
 

@@ -1,7 +1,5 @@
 # AI Inference and Serving
 
-Source: [Designing.Distributed.Systems-2025-15.pdf](./Designing.Distributed.Systems-2025-15.pdf), PDF pages 1–7.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 In the last few years, AI has become a key part of many different types of applications. Though the basics of neural networks and machine learning have been around for decades, in the last decade advances in deep learning and large language models (LLMs) have created a phase shift in the quality of models and the applications that are possible for AI. More crucially, these systems have captured the imagination of application developers all over the world who see limitless ways to apply LLMs to their particular business domains.

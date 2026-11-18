@@ -1,7 +1,5 @@
 # Functions and Event-Driven Processing
 
-Source: [Designing.Distributed.Systems-2025-9.pdf](./Designing.Distributed.Systems-2025-9.pdf), PDF pages 1–11.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 So far, we have examined design for systems with long-running computation. The servers that handle user requests are always up and running. This pattern is the right one for many applications that are under heavy load, keep a large amount of data in memory, or require some sort of background processing. However, there is a class of applications that might only need to temporarily come into existence to handle a single request, or simply need to respond to a specific event. This style of request or event-driven application design has flourished recently as large-scale public cloud providers have developed *function-as-a-service* (FaaS) products. More recently, FaaS implementations have also emerged running on top of cluster orchestrators in private cloud or physical environments. This document describes emerging architectures for this new style of computing. In many cases, FaaS is a component in a broader architecture rather than a complete solution.

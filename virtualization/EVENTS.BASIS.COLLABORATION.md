@@ -1,7 +1,5 @@
 # Events: A Basis for Collaboration
 
-Source: [Designing.Event-Driven.Systems-2018-5.pdf](./Designing.Event-Driven.Systems-2018-5.pdf), PDF pages 1–16.
-
 First-person accounts and opinions in this document reflect the original source authors’ perspective.
 
 Service-based architectures, like microservices or SOA, are commonly built with synchronous request-response protocols. This approach is very natural. It is, after all, the way we write programs: we make calls to other code modules, await a response, and continue. It also fits closely with a lot of use cases we see each day: front-facing websites where users hit buttons and expect things to happen, then return.
