@@ -1,10 +1,4 @@
-# Web Security for Developers-2020
-
-## Denial-of-Service Attacks
-
-![Figure 17-1: Chapter-opening artwork](/.attachments/17-1-Web.Security.for.Developers-2020-17.png)
-
-*Figure 17-1: Chapter-opening artwork*
+# Denial-of-Service Attacks
 
 On October 21, 2016, internet users woke up and found that many of their favorite websites were inaccessible: Twitter, Spotify, Netflix, GitHub, Amazon, and many others all appeared to be offline. The root cause was an attack against a DNS provider. A massive wave of DNS lookup requests had brought the popular DNS provider Dyn to its knees. It took most of the day—during which two more huge waves of DNS lookups occurred—before services were fully restored.
 

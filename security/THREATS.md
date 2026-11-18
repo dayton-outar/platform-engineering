@@ -1,14 +1,8 @@
-# Designing Secure Software-2021
-
-## Threats
+# Threats
 
 *The threat is usually more terrifying than the thing itself.*
 
 —Saul Alinsky
-
-![Figure 2-2: Chapter-opening artwork](/.attachments/2-2-Designing.Secure.Software-2021-2.png)
-
-*Figure 2-2: Chapter-opening artwork*
 
 Threats are omnipresent, but you can live with them if you manage them. Software is no different, except that you don’t have the benefit of millions of years of evolution to prepare yourself. That is why you need to adopt a software security mindset, which requires you to flip from the builder’s perspective to that of the attackers. Understanding the potential threats to a system is the essential starting point in order to bake solid defenses and mitigations into your software designs. But to perceive these threats in the first place, you’ll have to stop thinking about typical use cases and using the software as intended. Instead, you must simply see it for what it is: a bunch of code and components, with data flowing around and getting stored here and there.
 

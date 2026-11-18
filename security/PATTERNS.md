@@ -1,8 +1,4 @@
-# Chapter 4 - Patterns
-
-![Figure 4-4: Chapter-opening artwork](/.attachments/4-4-Designing.Secure.Software-2021-4.png)
-
-*Figure 4-4: Chapter-opening artwork*
+# Patterns
 
 > _Art is pattern informed by sensibility._
 

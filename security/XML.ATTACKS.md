@@ -1,6 +1,4 @@
-# Web Security for Developers-2020
-
-## XML Attacks
+# XML Attacks
 
 ![Figure 15-1: Chapter-opening artwork](/.attachments/15-1-Web.Security.for.Developers-2020-15.png)
 

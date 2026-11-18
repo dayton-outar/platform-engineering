@@ -1,14 +1,8 @@
-# Designing Secure Software-2021
-
-## Security Testing
+# Security Testing
 
 *Testing leads to failure, and failure leads to understanding.*
 
 —Burt Rutan
-
-![Figure 12-2: Chapter-opening artwork](/.attachments/12-2-Designing.Secure.Software-2021-12.png)
-
-*Figure 12-2: Chapter-opening artwork*
 
 This document introduces security testing as an essential part of developing reliable, secure code. Testing proactively to detect security vulnerabilities is both well understood and not difficult to do, but it’s vastly underutilized in practice and so represents a major opportunity to raise security assurance.
 

@@ -1,15 +1,6 @@
-# Chapter 8
-
-Source: [Web.Security.for.Developers-2020-8.pdf](Web.Security.for.Developers-2020-8.pdf)
-
-## Cross-Site Request Forgery Attacks
+# Cross-Site Request Forgery Attacks
 
 A *cross-site request forgery (CSRF or XSRF)* attack causes a victim's browser to submit an unwanted request using credentials the browser attaches automatically. The application mistakes the authenticated request for the user's intent. Unlike [Cross-Site Scripting](CROSS.SITE.SCRIPTING.ATTACKS.md), CSRF does not require injecting script into the target application or reading its response.
-
-![Figure 8-1: Chapter-opening artwork](/.attachments/8-1-Web.Security.for.Developers-2020-8.png)
-
-*Figure 8-1: Chapter-opening artwork*
-<!-- Source: Web.Security.for.Developers-2020-8.pdf, PDF page 1; generated artwork number. -->
 
 ### Anatomy of a CSRF Attack
 

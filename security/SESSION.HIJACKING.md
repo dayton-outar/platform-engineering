@@ -1,10 +1,4 @@
-# Web Security for Developers-2020
-
-## Session Hijacking
-
-![Figure 10-1: Chapter-opening artwork](/.attachments/10-1-Web.Security.for.Developers-2020-10.png)
-
-*Figure 10-1: Chapter-opening artwork*
+# Session Hijacking
 
 When a website successfully authenticates a user, the browser and the server open a session. A *session* is an HTTP conversation in which the browser sends a series of HTTP requests corresponding to user actions, and the web server recognizes them as coming from the same authenticated user without requiring the user to log back in for each request.
 

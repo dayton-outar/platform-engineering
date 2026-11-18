@@ -1,15 +1,6 @@
-# Chapter 6
-
-Source: [Designing.Secure.Software-2021-6.pdf](Designing.Secure.Software-2021-6.pdf)
-
-## Secure Design
+# Secure Design
 
 Secure design incorporates threats and mitigations while architecture is still inexpensive to change. A later review provides another perspective, but designers remain responsible for making security part of the design. Use [Threats](THREATS.md), [Mitigation](MITIGATION.md), and [Patterns](PATTERNS.md) as foundations, then use [Security Design Reviews](SECURITY.DESIGN.REVIEWS.md) to challenge the result.
-
-![Figure 6-1: Chapter-opening artwork](/.attachments/6-1-Designing.Secure.Software-2021-6.png)
-
-*Figure 6-1: Chapter-opening artwork*
-<!-- Source: Designing.Secure.Software-2021-6.pdf, PDF page 1; generated number for uncaptioned artwork. -->
 
 The guidance below follows the source's section order, with a practical document-service example added for this repository.
 

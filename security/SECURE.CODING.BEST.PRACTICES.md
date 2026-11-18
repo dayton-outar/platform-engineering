@@ -1,8 +1,6 @@
-# Chapter 2
+# Using Secure Coding Best Practices
 
 <a id="section-1"></a>
-
-## Implementing Security for Applications-2005
 
 First-person accounts and opinions in this document are those of the original source authors.
 

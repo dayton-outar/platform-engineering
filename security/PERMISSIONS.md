@@ -1,10 +1,4 @@
-# Web Security for Developers-2020
-
-## Permissions
-
-![Figure 11-3: Chapter-opening artwork](/.attachments/11-3-Web.Security.for.Developers-2020-11.png)
-
-*Figure 11-3: Chapter-opening artwork*
+# Permissions
 
 Users on your website will usually have different levels of permissions. In a content management system, for instance, some users are administrators who have the ability to edit the site’s content, while most users can only view and interact with the content. Social media sites have a more complex web of permissions: users may opt to share only certain content with friends or to keep their profile locked. For webmail sites, each user should be able to access only their own email! It’s important that you correctly and uniformly enforce these types of permissions across your site, or your users will lose trust in you.
 

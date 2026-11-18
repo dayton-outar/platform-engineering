@@ -1,15 +1,6 @@
-# Chapter 12
-
-Source: [Web.Security.for.Developers-2020-12.pdf](Web.Security.for.Developers-2020-12.pdf)
-
-## Information Leaks
+# Information Leaks
 
 Information leaks expose details that help an attacker choose an attack, or disclose sensitive data directly. A version banner may reveal a vulnerable component; a debug response may reveal database credentials. Removing unnecessary disclosures reduces reconnaissance opportunities, but does not replace patching, authorization, or protection of secrets.
-
-![Figure 12-1: Chapter-opening artwork](/.attachments/12-1-Web.Security.for.Developers-2020-12.png)
-
-*Figure 12-1: Chapter-opening artwork*
-<!-- Source: Web.Security.for.Developers-2020-12.pdf, PDF page 1; generated artwork number. -->
 
 ### Disable Telltale Server Headers
 

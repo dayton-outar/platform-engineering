@@ -1,8 +1,6 @@
-# Chapter 3
+# Testing Applications for Vulnerabilities
 
 <a id="section-2"></a>
-
-## Implementing Security for Applications-2005
 
 First-person accounts and opinions in this document are those of the original source authors.
 

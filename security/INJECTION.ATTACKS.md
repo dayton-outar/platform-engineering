@@ -1,15 +1,6 @@
-# Chapter 6
-
-Source: [Web.Security.for.Developers-2020-6.pdf](Web.Security.for.Developers-2020-6.pdf)
-
-## Injection Attacks
+# Injection Attacks
 
 *Injection attacks* occur when untrusted data is interpreted as instructions. The interpreter might be a SQL engine, operating-system shell, template engine, or object deserializer. A browser's form restrictions do not constrain an attacker: scripts can construct requests directly, and request headers such as `User-Agent` do not establish trust.
-
-![Figure 6-3: Chapter-opening artwork](/.attachments/6-3-Web.Security.for.Developers-2020-6.png)
-
-*Figure 6-3: Chapter-opening artwork*
-<!-- Source: Web.Security.for.Developers-2020-6.pdf, PDF page 1; generated artwork number follows the two source-numbered figures. -->
 
 The central defense is to keep data separate from executable instructions. Validation, least privilege, and monitoring add protection, but cannot make unsafe string construction reliable. This guide follows the source's sequence: SQL injection, command injection, remote code execution, and file uploads.
 

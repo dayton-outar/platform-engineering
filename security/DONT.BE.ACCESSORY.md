@@ -1,10 +1,4 @@
-# Web Security for Developers-2020
-
-## Don’t Be an Accessory
-
-![Figure 16-1: Chapter-opening artwork](/.attachments/16-1-Web.Security.for.Developers-2020-16.png)
-
-*Figure 16-1: Chapter-opening artwork*
+# Don’t Be an Accessory
 
 Malicious actors have a lot of places to hide on the internet. Hackers routinely impersonate other people and use compromised servers to evade detection. This document explores various ways that your web presence may be helping attackers get away with malicious acts, even when you aren’t the target of their attacks.
 

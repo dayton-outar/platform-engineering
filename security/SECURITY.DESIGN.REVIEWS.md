@@ -1,8 +1,4 @@
-# Chapter 7
-
-Source: [Designing.Secure.Software-2021-7.pdf](Designing.Secure.Software-2021-7.pdf)
-
-## Security Design Reviews
+# Security Design Reviews
 
 A *security design review (SDR)* examines whether a proposed architecture addresses its important threats. It helps find missing protections before they become expensive implementation changes. It also records the security properties on which later implementation and testing depend. A review cannot prove that code faithfully implements a design; combine it with [Security Testing](SECURITY.TESTING.md).
 

@@ -1,16 +1,4 @@
-# Web Security for Developers-2020
-
-> Source boundary note: PDF page 1 is printed page 64, the concluding page of chapter 6. It is retained here with its supplied source. Chapter 7 begins on PDF page 2.
-
-You can mitigate the risks around all types of injection attacks by following the principle of least privilege: processes and software components should run with only the permissions they require to perform their assigned tasks, and no more. This approach reduces the harm an attack can do if they inject harmful code. Examples of following the principle of least privilege include limiting file and network access for your web server process, and connecting to your database under an account with limited permissions.
-
-In [Cross Site Request Forgery Attacks](CROSS.SITE.REQUEST.FORGERY.ATTACKS.md), you’ll look at how hackers can use JavaScript vulnerabilities to attack your website.
-
-## Cross-Site Scripting Attacks
-
-![Figure 7-4: Chapter-opening artwork](/.attachments/7-4-Web.Security.for.Developers-2020-7.png)
-
-*Figure 7-4: Chapter-opening artwork*
+# Cross-Site Scripting Attacks
 
 In [Injection Attacks](INJECTION.ATTACKS.md), you saw how attackers can inject code into web servers to compromise websites. If your web server is secure, a hacker’s next best injection target is the web browser. Browsers obediently execute any JavaScript code that appears in a web page, so if an attacker can find a way to inject malicious JavaScript into a user’s browser while the user views your website, that user is in for a bad time. We call this type of code injection a *cross-site scripting (XSS) attack*.
 
