@@ -1,41 +1,48 @@
-# DevOps
+# Platform Engineering
 
-Herein this repo is a library of cheat sheets and examples that can be used to start up or maintain any task involved in packaging and shipping software.
+This repository is a library of cheat sheets, examples, and readings for building and operating the platforms that support software delivery.
 
-DevOps is a set of practices, tools, and a cultural philosophy aimed at improving collaboration between development (Dev) and operations (Ops) teams. Its primary goal is to shorten the software development lifecycle while delivering high-quality software in a continuous and automated manner. Here’s a summary of its scope:
+DevOps has evolved into platform engineering as teams turn collaboration, automation, and shared operational responsibility into reusable, self-service capabilities. Platform engineering builds on those DevOps foundations by treating the internal developer platform as a product: a set of tools, services, and supported workflows that help development teams build, deploy, and operate software with less operational overhead.
 
-1. **Collaboration and Communication**
-   - **Cultural Shift:** DevOps promotes collaboration between development, IT operations, and quality assurance (QA) teams. Breaking down silos is essential to streamline the software release process.
-   
-2. **[Automation](./automation/)**
-   - **Continuous Integration (CI):** Automates code integration from multiple developers into a shared repository. Tools like Jenkins, GitLab CI, or CircleCI are commonly used.
-   - **Continuous Delivery/Deployment (CD):** Ensures code changes are automatically tested and prepared for release to production. This minimizes manual intervention in deployments.
-   - **Infrastructure as Code (IaC):** Managing infrastructure (e.g., servers, networks) using code, allowing versioning, automation, and consistency. Tools include Terraform, Ansible, and AWS CloudFormation.
+The goal is to make reliable software delivery easier through consistent environments, automated workflows, and built-in security and observability. Platform teams work with developers to understand their needs, provide documented paths for common tasks, and improve those paths through feedback.
+
+## Platform Capabilities
+
+1. **Developer Experience and Self-Service**
+   - Provide documented workflows for creating services, provisioning environments, and deploying applications.
+   - Treat developers as platform users and use their feedback to improve usability and reduce repetitive work.
+
+2. **[Automation and Software Delivery](./automation/)**
+   - Build reusable continuous integration and delivery pipelines for testing, packaging, and releasing software.
+   - Manage infrastructure and configuration as code to make environments consistent, versioned, and repeatable.
 
 3. **[Database Management](./databases/)**
-   - **Database Automation:** Integrating databases into CI/CD pipelines by automating schema migrations, version control, and updates using tools like Liquibase or Flyway.
-   - **Monitoring Databases:** Continuous monitoring of database performance, availability, and health to avoid bottlenecks. Tools such as Prometheus, Datadog, and New Relic are often used for this.
-   - **Backup and Recovery:** Automating database backups, replication, and disaster recovery processes to ensure data availability and integrity.
+   - Support repeatable database provisioning, schema migrations, and operational maintenance.
+   - Incorporate performance monitoring, backups, and recovery into the service lifecycle.
 
-4. **[Monitoring and Feedback](./logging/)**
-   - **Continuous Monitoring:** Real-time performance monitoring and alerting on applications, servers, and networks, using tools like Prometheus, Grafana, or ELK Stack (Elasticsearch, Logstash, and Kibana).
-   - **Incident Response:** Detecting and addressing performance bottlenecks, bugs, or security issues in production environments. Feedback loops provide insights for development teams to improve the product.
+4. **[Observability and Feedback](./logging/)**
+   - Provide shared logging, monitoring, and alerting capabilities so teams can understand service health.
+   - Use operational feedback and incident findings to improve both applications and the platform.
 
 5. **[Security](./security/)**
-   - **DevSecOps:** Integrating security practices throughout the development and operational processes. Security automation tools like vulnerability scanners (e.g., SonarQube, Aqua) help ensure compliance and reduce risks.
+   - Integrate security checks, access controls, and secure defaults into platform workflows.
+   - Make security practices repeatable through automation and shared tooling.
 
-6. **Scalability and Reliability**
-   - **High Availability:** Ensuring systems are designed for fault tolerance and reliability, often with cloud-native architectures.
-   - **Elastic Scaling:** Automating scaling based on demand using cloud platforms such as AWS, Azure, and GCP.
+6. **Reliability and Scalability**
+   - Design platform services for fault tolerance, capacity needs, and recovery.
+   - Use service level objectives and reliability testing to guide operational decisions.
 
-7. **[Virtualization](./virtualization/)**
-   - **Cloud Computing:** Use of public or private cloud services for on-demand resources and infrastructure.
-   - **Containerization:** Packaging applications with all dependencies to run consistently across environments using Docker and Kubernetes for orchestration.
-   
-8. **Configuration Management**
-   - **Standardization:** Ensuring system configurations are consistent and repeatable across environments through tools like Puppet or Chef.
+7. **[Virtualization and Runtime Infrastructure](./virtualization/)**
+   - Provide consistent environments through containers, orchestration, and cloud infrastructure.
+   - Standardize deployment and resource management so teams can operate services predictably.
 
-In summary, DevOps is about improving speed, quality, and efficiency in software delivery through a combination of automation, continuous feedback, and cultural collaboration. It touches every phase of the software lifecycle, from planning to development, deployment, and monitoring.
+## Management, Principles, and Practices
+
+The following collections provide the service management and Site Reliability Engineering (SRE) foundations for building and operating a reliable platform. Each README links to the full set of chapters and their references.
+
+- **[Management: Service Management and SRE Teams](./management/README.md)** covers service requirements, planning, resiliency, launches, conversions, disaster recovery, and customer support. It also explores SRE training, interrupt management, operational overload, collaboration, and engagement models. Use this collection to understand platform service ownership and how teams support their users.
+- **[Principles: Site Reliability Engineering Principles](./principles/README.md)** covers risk, service level objectives, toil reduction, monitoring distributed systems, automation, release engineering, and simplicity. These principles help platform teams balance delivery speed with reliability and reduce recurring operational work.
+- **[Practices: Site Reliability Engineering Practices](./practices/README.md)** covers alerting, on-call operations, troubleshooting, incident response, postmortems, and reliability testing. It also develops load balancing, overload handling, distributed consensus, scheduling, data pipelines, data integrity, and reliable launches. Use this collection to apply reliability engineering to platform services and the workloads they support.
 
 ## Further Reading
 
@@ -47,7 +54,7 @@ In summary, DevOps is about improving speed, quality, and efficiency in software
 
 These chapters introduce the SRE approach to service management and explain the production environment behind it. Begin with the responsibilities and engineering principles of SRE, then explore Google’s datacenters, resource management, storage, networking, and the path of a user request.
 
-## Table of Contents
+### Foundational Readings
 
 1. [Introduction](./INTRODUCTION.md)
 2. [The Production Environment at Google, from the Viewpoint of an SRE](./GOOGLE.PRODUCTION.ENVIRONMENT.md)
