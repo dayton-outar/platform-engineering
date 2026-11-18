@@ -4,13 +4,13 @@
 
 Source: [Designing.Secure.Software-2021-13.pdf](Designing.Secure.Software-2021-13.pdf) — 12 PDF pages.
 
-<!-- Source S13, PDF page 1 -->
+First-person accounts and opinions in this document are those of the original source author.
 
 ### Secure Development Best Practices
 
 ### Secure Development Best Practices
 
-They say that nobody is perfect. Then they tell you practice makes perfect. I wish they'd make up their minds.
+*They say that nobody is perfect. Then they tell you practice makes perfect. I wish they'd make up their minds.*
 
 —Winston Churchill
 
@@ -18,23 +18,17 @@ They say that nobody is perfect. Then they tell you practice makes perfect. I wi
 
 *Figure 13-1: Chapter-opening artwork*
 
-<!-- Source: Designing.Secure.Software-2021-13.pdf, PDF page 1. -->
+In this document, we’ll focus on how aspects of the development process itself relate to security and can go wrong. We’ll begin by discussing code quality: the value of good code hygiene, thorough error and exception handling, documenting security properties, and the role of code reviews in promoting security. Second, we’ll look at dealing with dependencies: specifically, how they introduce vulnerabilities into systems. The third area we’ll cover is bug triage—a critical skill for balancing security against other exigencies. Finally, secure development depends on maintaining a secure working environment, so I provide some basic tips on what you need to do to avoid being compromised.
 
-So far in Part III, we have surveyed a collection of security vulnerabilities that arise in the development phase. In this chapter, we’ll focus on how aspects of the development process itself relate to security and can go wrong. We’ll begin by discussing code quality: the value of good code hygiene, thorough error and exception handling, documenting security properties, and the role of code reviews in promoting security. Second, we’ll look at dealing with dependencies: specifically, how they introduce vulnerabilities into systems. The third area we’ll cover is bug triage—a critical skill for balancing security against other exigencies. Finally, secure development depends on maintaining a secure working environment, so I provide some basic tips on what you need to do to avoid being compromised.
-
-For practical reasons, the guidance that follows is generic. Readers should be able to apply it to their own development practices. Many other effective
-
-<!-- Source S13, PDF page 2 -->
-
-techniques are specific to programming languages, operating systems, and other particulars of a given system. For this reason, it’s important that you recognize the big patterns in the following discussion, but also be alert to additional security-related issues and opportunities that arise in your own work.
+For practical reasons, the guidance that follows is generic. Readers should be able to apply it to their own development practices. Many other effective techniques are specific to programming languages, operating systems, and other particulars of a given system. For this reason, it’s important that you recognize the big patterns in the following discussion, but also be alert to additional security-related issues and opportunities that arise in your own work.
 
 ### Code Quality
 
-Quality is always in style.
+*Quality is always in style.*
 
 —Robert Genn
 
-The earlier chapters in Part III explained many of the ways that vulnerabilities slip into code, but here I want to focus on the relationship of bugs in general to security. If you can raise the quality of your code, you’ll make it more secure in the long run, whether you recognize this or not. All vulnerabilities are bugs, so fewer bugs means fewer vulnerabilities and vulnerability chains. But of course, diminishing returns kick in long before you eliminate all bugs, so it’s best to take a balanced approach.
+Here the focus is on the relationship of bugs in general to security. If you can raise the quality of your code, you’ll make it more secure in the long run, whether you recognize this or not. All vulnerabilities are bugs, so fewer bugs means fewer vulnerabilities and vulnerability chains. But of course, diminishing returns kick in long before you eliminate all bugs, so it’s best to take a balanced approach.
 
 The following discussion covers some of the key areas to focus on in the name of security.
 
@@ -42,13 +36,11 @@ The following discussion covers some of the key areas to focus on in the name of
 
 Programmers usually have a good sense of the quality of the code they’re working with, but for various reasons, they often choose to accept known flaws instead of making needed improvements. Code smells, spaghetti code, and postponed “TODO” comments that mark further work needed all tend to be fertile ground for vulnerabilities. At least in areas where security is of special concern, identifying and smoothing out these rough edges can be one of the best ways to avoid vulnerabilities without needing to do any security analysis in order to see how bugs may be exploitable.
 
-In addition to your native sense of the condition of the code, use tools to flag these issues. Compile your code with full warnings and then fix the code to resolve significant issues. Some of these automated warnings, such as misleading indentation or unused code for which there is no execution path, would have identified the GotoFail vulnerability we talked about in Chapter 8, and security tested in Chapter 12. Lint and other static code analysis tools offer even richer scrutiny of the code, providing tips that sometimes reveal bugs and vulnerabilities.
+In addition to your native sense of the condition of the code, use tools to flag these issues. Compile your code with full warnings and then fix the code to resolve significant issues. Some of these automated warnings, such as misleading indentation or unused code for which there is no execution path, would have identified the GotoFail vulnerability examined in [Security Testing](SECURITY.TESTING.md). Lint and other static code analysis tools offer even richer scrutiny of the code, providing tips that sometimes reveal bugs and vulnerabilities.
 
 Code analysis doesn’t always identify security bugs as such, so you’ll have to cast a broader net. Use these tools frequently during development to lower the overall number of potential bugs. This way, if a tool’s output changes significantly you’ll have a better chance of noticing it, because the new content won’t get lost in a torrent of older messages.
 
 Fix all warnings if it’s easy to do so, or when you see that an issue could be serious. For example, unreachable code suggests that although somebody wrote the code for a reason, it’s now out of the picture, and that can’t be right. On the other hand, warnings about variable naming conventions, while being good suggestions, probably won’t relate to any security vulnerability.
-
-<!-- Source S13, PDF page 3 -->
 
 Finding time to do this kind of cleanup is always challenging. Take an incremental approach; even an hour or two a week will make a big difference over time, and the process is a good way to become familiar with a big codebase. If all the warnings are too much to deal with, start with the most promising ones (for example, GCC’s `-Wmisleading-indentation`), then fix what gets flagged.
 
@@ -66,17 +58,15 @@ Much of the reasoning that connects sloppy exception handling to potential vulne
 
 Solid testing is important in order to get error and exception handling right. Ensure that there is test coverage on all code paths, especially the less common ones. Monitor logs of exceptions in production and track down their causes to make sure that exception recovery works correctly. Aggressively investigate and fix intermittent exceptions, because if a smart attacker learns how to trigger one, they may be able to fine-tune it into a malicious exploit from there.
 
-<!-- Source S13, PDF page 4 -->
-
 ### Documenting Security
 
 When you’re writing code with important security consequences, how much do you need to explain your decisions in comments, so others (or your own forgetful self, months or years later) don’t accidentally break it?
 
-For critical code, or wherever the security implications deserve explanation, commenting is important, as it allows anyone who is contemplating changing the code to understand the stakes. When you write comments about security, explain the security implications and be specific: simply writing `// Beware: security consequences` isn’t an explanation. Be clear and stick to the point: include too much verbiage and people will either tune it out or give up. Recalling the Heartbleed bug we discussed in Chapter 9, and security tested in Chapter 12, a good comment would explain that rejecting invalid requests with byte counts exceeding the actual data provided is crucial because it could result in disclosing private data beyond the extent of the buffer. If the security analysis becomes too complex to explain in the comments, write up the details in a separate document, then provide a reference to that document.
+For critical code, or wherever the security implications deserve explanation, commenting is important, as it allows anyone who is contemplating changing the code to understand the stakes. When you write comments about security, explain the security implications and be specific: simply writing `// Beware: security consequences` isn’t an explanation. Be clear and stick to the point: include too much verbiage and people will either tune it out or give up. Recalling the Heartbleed bug examined in [Security Testing](SECURITY.TESTING.md), a good comment would explain that rejecting invalid requests with byte counts exceeding the actual data provided is crucial because it could result in disclosing private data beyond the extent of the buffer. If the security analysis becomes too complex to explain in the comments, write up the details in a separate document, then provide a reference to that document.
 
 This does not mean that you should attempt to flag all code that security depends on. Instead, aim to warn readers about the less-than-obvious issues that might be easily overlooked in the future. Ultimately, comments cannot fully substitute for knowledgeable coders who are constantly vigilant of security implications, which is why this stuff is not easy.
 
-Writing a good security test case (as discussed in Chapter 12) is an ideal way to back up the documentation with a mechanism to prevent others from unwittingly breaking security with future changes. As a working mock-up of what an attack looks like, such a test not only guards against accidental adverse changes, but also serves to show exactly how the code might go wrong.
+Writing a good security test case (as discussed in [Security Testing](SECURITY.TESTING.md)) is an ideal way to back up the documentation with a mechanism to prevent others from unwittingly breaking security with future changes. As a working mock-up of what an attack looks like, such a test not only guards against accidental adverse changes, but also serves to show exactly how the code might go wrong.
 
 ### Security Code Reviews
 
@@ -84,17 +74,13 @@ The professional software development process includes peer code reviews as stan
 
 I recommend that the same code reviewer add an explicit step to consider security, typically after a first pass reading the code, going through it again with their “security hat” on. If the reviewer doesn’t feel up to covering security, they should delegate that part to someone capable. Of course, you can skip this step for code changes that are clearly without security implications.
 
-Reviewing code changes for security differs from an SDR (the topic of Chapter 7) in that you are looking at a narrow subset of the system without the big-picture view you get when reviewing a whole design. Be sure you consider how the code handles a range of untrusted inputs, check that any input validation is robust, and avoid potential Confused Deputy problems. Naturally, code that is crucial to security should get extra attention, and usually merits a higher threshold of quality. The opportunity to focus an
+Reviewing code changes for security differs from an SDR (the topic of [Security Design Reviews](SECURITY.DESIGN.REVIEWS.md)) in that you are looking at a narrow subset of the system without the big-picture view you get when reviewing a whole design. Be sure you consider how the code handles a range of untrusted inputs, check that any input validation is robust, and avoid potential Confused Deputy problems. Naturally, code that is crucial to security should get extra attention, and usually merits a higher threshold of quality. The opportunity to focus an extra pair of eyes on the security of the code has great potential for improving the system as a whole.
 
-<!-- Source S13, PDF page 5 -->
-
-extra pair of eyes on the security of the code has great potential for improving the system as a whole.
-
-Code reviews are also an excellent opportunity to ensure that the security test cases that have been created (as described in Chapter 12) are sufficient. As a reviewer, if you hypothesize that certain inputs might be problematic, write a security test case and see what happens, rather than guessing. Should your exploratory test case reveal a vulnerability, raise the issue and also contribute the test case to ensure it gets fixed.
+Code reviews are also an excellent opportunity to ensure that the security test cases that have been created (as described in [Security Testing](SECURITY.TESTING.md)) are sufficient. As a reviewer, if you hypothesize that certain inputs might be problematic, write a security test case and see what happens, rather than guessing. Should your exploratory test case reveal a vulnerability, raise the issue and also contribute the test case to ensure it gets fixed.
 
 ### Dependencies
 
-Dependence leads to subservience.
+*Dependence leads to subservience.*
 
 —Thomas Jefferson
 
@@ -107,8 +93,6 @@ Adding components to a system can potentially harm security even if those compon
 For the system as a whole to be secure, each of its components must be secure. In addition, the interfaces between them must be secure. Here are some basic factors to consider when choosing secure components:
 
 • What is the security track record of the component in question, and of its maker? • Is the component’s interface proprietary, or are there compatible alternatives? (More choices may provide more secure alternatives.)
-
-<!-- Source S13, PDF page 6 -->
 
 • When (not if) security vulnerabilities are found in the component, are you confident its developers will respond quickly and release a fix? • What are the operational costs (in other words, effort, downtime, and expenses) of keeping the component up to date?
 
@@ -123,8 +107,6 @@ Avoid using deprecated APIs, because they often mask potential security issues. 
 Beyond these basic examples, take extra care whenever an interface exposes its internals, because these often get used in unintended ways that can easily create vulnerabilities. Consider “The Most Dangerous Code in the World” (Georgiev et al., 2012), a great case study of a widely used SSL library that researchers found was repeatedly used unsafely, completely undermining the security properties it was meant to provide. The authors found that “the root cause of most of these vulnerabilities is the terrible design of the APIs to the underlying SSL libraries.”
 
 Also be wary of APIs with complicated configuration options, particularly if security depends on them. When designing your own APIs, honor the Secure by Default pattern, document how to securely configure your system, and where appropriate provide a helper method that ensures proper configuration. When you must expose potentially insecure functionality, do everything possible to ensure that nobody can plausibly use it without knowing exactly what they are doing.
-
-<!-- Source S13, PDF page 7 -->
 
 ### Don’t Reinvent Security Wheels
 
@@ -144,8 +126,6 @@ The bottom line is that security vulnerabilities can be subtle, possible attacks
 
 Digital technology evolves quickly, but security tools tend to lag behind for a number of reasons. This represents an important ongoing challenge. Like the proverbial frog in hot water, legacy security methods often remain in use for far too long unless someone takes a hard look at them, explicitly points out the risk, and proposes a more secure solution and a transition plan.
 
-<!-- Source S13, PDF page 8 -->
-
 To be clear, I’m not saying that existing security methods are necessarily weak, just that almost everything has a “best before” date. Plus, we need to periodically re-evaluate existing systems in the context of the evolving threat landscape. Password-based authentication may need shoring up with a second factor if it becomes susceptible to phishing attacks. Crypto implementations are based on modern hardware cost and capability assessments, and as Moore’s law tells us, this is a moving target; as quantum computing matures, high-security systems are already moving on to postquantum algorithms thought to be resistant to the new technology.
 
 Weak security often persists well past its expiration date for a few reasons. First, inertia is a powerful force. Since systems typically evolve by increments, nobody questions the way authentication or authorization is currently done. Second, enterprise security architecture typically requires all subsystems to be compatible, so any changes will mean modifying every component to interoperate in a new way. That often feels like a huge job and thus raises powerful resistance.
@@ -158,35 +138,33 @@ Once you’ve identified the need to phase out the legacy code, you need to plan
 
 ### Vulnerability Triage
 
-The term “triage” normally means deciding who gets attention first.
+*The term “triage” normally means deciding who gets attention first.*
 
 —Bill Dedman
 
-Most security issues, once identified, are straightforward to fix, and your team will easily reach consensus on how to do so. Occasionally, however, differences of opinion about security issues do happen, particularly in the middle ground where the exploitability of a bug is unclear or the fix is difficult. Unless there are significant constraints that compel expediency, it’s generally wise to fix any bug if there is any chance that it might be vulnerable to exploit. Bear in mind how vulnerability chains can arise when several minor bugs combine to create major vulnerabilities, as we saw in Chapter 8. And always remember that just because you can’t see how to exploit a bug, that by no means proves that a determined attacker won’t.
-
-<!-- Source S13, PDF page 9 -->
+Most security issues, once identified, are straightforward to fix, and your team will easily reach consensus on how to do so. Occasionally, however, differences of opinion about security issues do happen, particularly in the middle ground where the exploitability of a bug is unclear or the fix is difficult. Unless there are significant constraints that compel expediency, it’s generally wise to fix any bug if there is any chance that it might be vulnerable to exploit. Bear in mind how vulnerability chains can arise when several minor bugs combine to create major vulnerabilities. And always remember that just because you can’t see how to exploit a bug, that by no means proves that a determined attacker won’t.
 
 ### DREAD Assessments
 
-In the rare case that your team does not quickly reach consensus on fixing a bug, make a structured assessment of the risk it represents. The DREAD model, originally conceived by Jason Taylor and evangelized by both of us at Microsoft, is a simple tool for evaluating the risk of a specific threat. DREAD enumerates five aspects of the risk that a vulnerability exposes:
+In the rare case that your team does not quickly reach consensus on fixing a bug, make a structured assessment of the risk it represents. The *DREAD model*, originally conceived by Jason Taylor and evangelized by both of us at Microsoft, is a simple tool for evaluating the risk of a specific threat. DREAD enumerates five aspects of the risk that a vulnerability exposes:
 
-Damage potential
+**Damage potential**
 
 If exploited, how harmful could it be?
 
-Reproducibility
+**Reproducibility**
 
 Will attacks succeed every time, some of the time, or only rarely?
 
-Exploitability
+**Exploitability**
 
 How hard, in terms of technical difficulty, effort, and cost, is the vulnerability to exploit? How long is the attack path?
 
-Affected users
+**Affected users**
 
 Will all, some, or only a few users be impacted? Can specific targets be easily attacked, or are the victims arbitrary?
 
-Discoverability
+**Discoverability**
 
 How likely is it that attackers will find the vulnerability?
 
@@ -198,25 +176,23 @@ Let’s see how DREAD works in practice. Pretend we’ve just discovered the Hea
 
 Here is a quick DREAD scoring of the information leakage threat:
 
-Damage potential: XL
+**Damage potential: XL**
 
 Internal memory of the server potentially discloses secret keys.
 
-Reproducibility: M
+**Reproducibility: M**
 
 Leaked memory contents will vary due to many factors and will be innocuous in some cases, but unpredictable.
 
-<!-- Source S13, PDF page 10 -->
-
-Exploitability: L
+**Exploitability: L**
 
 An anonymous attacker needs only send a simple request packet; extracting useful secrets takes a little expertise and then some luck.
 
-Affected users: XL
+**Affected users: XL**
 
 The server and all users are at risk.
 
-Discoverability: L
+**Discoverability: L**
 
 It depends on whether the idea occurs to an attacker (obvious once publicly announced); it’s easily tried and confirmed.
 
@@ -228,9 +204,7 @@ Discussions of DREAD scores are a great way to tease out the nuances of these ju
 
 Constructing a working proof-of-concept attack is the strongest way to make the case to fix a vulnerability. For some bugs the attack is obvious, and when it’s easy to code up the exploit, that seals the deal. However, in my opinion this is rarely necessary, for a couple of reasons. For starters, crafting a demonstration exploit usually involves a lot of work. Actual working exploits often require a lot of refinement after you’ve identified the underlying vulnerability. More importantly, even if you are an experienced penetration tester, just because you fail to create a functional exploit, that is by no means proof that the vulnerability is not exploitable.
 
-This is a controversial topic, but my take is that for all these reasons it’s difficult to justify the effort of creating a working exploit for the purpose of addressing a security vulnerability. That said, by all means write a regression test (as discussed in Chapter 12) that will trigger the bug directly, even if it isn’t a full-fledged working attack.
-
-<!-- Source S13, PDF page 11 -->
+This is a controversial topic, but my take is that for all these reasons it’s difficult to justify the effort of creating a working exploit for the purpose of addressing a security vulnerability. That said, by all means write a regression test (as discussed in [Security Testing](SECURITY.TESTING.md)) that will trigger the bug directly, even if it isn’t a full-fledged working attack.
 
 ### Making Triage Decisions
 
@@ -238,13 +212,13 @@ When using DREAD, or doing any vulnerability assessment for that matter, bear in
 
 Here are some general rules of thumb for making better security triage decisions:
 
-• Bugs in privileged code, or code that accesses valuable assets, should be fixed and then carefully tested to guard against the introduction of new bugs. • Bugs that are well isolated from any attack surface and seem harmless are usually safe to defer. • Carefully confirm claims that a bug is harmless: it may be easier to fix the bug than to accurately assess its full potential impact. • Aggressively fix bugs that could be part of vulnerability chains (discussed in Chapter 8). • Finally, when it’s a toss-up, I always advise fixing the issue: better safe than sorry.
+• Bugs in privileged code, or code that accesses valuable assets, should be fixed and then carefully tested to guard against the introduction of new bugs. • Bugs that are well isolated from any attack surface and seem harmless are usually safe to defer. • Carefully confirm claims that a bug is harmless: it may be easier to fix the bug than to accurately assess its full potential impact. • Aggressively fix bugs that could be part of vulnerability chains. • Finally, when it’s a toss-up, I always advise fixing the issue: better safe than sorry.
 
 When more research is needed, assign someone to investigate the issue and report back with a proposal; don’t waste time debating hypotheticals. In discussions, focus on understanding other perspectives rather than trying to change minds. Trust your intuition. With practice, when you know what to focus on, this will quickly become easier.
 
 ### Maintaining a Secure Development Environment
 
-The secret of landscapes isn’t creation. . . .It’s maintenance.
+*The secret of landscapes isn’t creation. . . .It’s maintenance.*
 
 —Michael Dolan
 
@@ -254,11 +228,7 @@ Malicious code can slip into the product due to even a one-time lapse during dev
 
 ### Separating Development from Production
 
-Strictly separate your development and production environments, if you aren’t doing this already. The core idea is to provide a “wall” between the two, typically consisting of separate subnetworks, or at least mutually exclusive access permission regimes. That is, when developing software, the programmer
-
-<!-- Source S13, PDF page 12 -->
-
-should not have access to production data. Nor should production machines and operations staff have access to the development environment and source code (write access). In smaller shops, where one person handles both production and development, you can switch between user accounts. The inconvenience of switching is more than compensated for by saving the product from even a single mistake. Plus, it provides peace of mind.
+Strictly separate your development and production environments, if you aren’t doing this already. The core idea is to provide a “wall” between the two, typically consisting of separate subnetworks, or at least mutually exclusive access permission regimes. That is, when developing software, the programmer should not have access to production data. Nor should production machines and operations staff have access to the development environment and source code (write access). In smaller shops, where one person handles both production and development, you can switch between user accounts. The inconvenience of switching is more than compensated for by saving the product from even a single mistake. Plus, it provides peace of mind.
 
 ### Securing Development Tools
 
