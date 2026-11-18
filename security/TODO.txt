@@ -1,0 +1,21 @@
+TODO: Complete heading-only security guides
+
+[ ] INFORMATION.LEAKS.md
+    Explain common information leaks, examples, prevention, and detection.
+
+[ ] SECURE.DESIGN.md
+    Cover secure design principles, trust boundaries, threat modeling, and examples.
+
+[ ] INJECTION.ATTACKS.md
+    Explain common injection attacks, examples, and prevention techniques.
+
+[ ] SECURITY.DESIGN.REVIEWS.md
+    Describe the review process, a practical checklist, and tracking findings.
+
+[ ] CROSS.SITE.REQUEST.FORGERY.ATTACKS.md
+    Explain CSRF, attack prerequisites, examples, and mitigation techniques.
+
+For each guide:
+- Add substantive explanations and practical examples beyond the heading.
+- Include prevention or review guidance and links to authoritative references.
+- Cross-link related security guides where useful.
